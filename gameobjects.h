@@ -7,7 +7,9 @@ typedef struct Thing {
     Object proto;
     int x;
     int y;
-    int velo;
+    int xvelo;
+    int yvelo;
+    int mass;
     Uint32 color;
 } Thing;
 

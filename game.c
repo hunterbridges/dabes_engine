@@ -28,17 +28,40 @@ Object GameProto = {
    .destroy = Game_destroy
 };
 
+SDL_Surface *graydient(unsigned int width, unsigned int height) {
+    Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
+    int i = 0;
+    for (i = 0; i < height; i++) {
+        int gradation = 255 * (height - i) / height;
+        Uint32 color = SDL_MapRGBA(surface->format, 0, 255 - gradation, gradation, 255);
+        SDL_Rect rect = {0, i, width, 1};
+        SDL_FillRect(surface, &rect, color);
+    }
+    return surface;
+}
+
 int main(int argc, char *argv[])
 {
     int quit = 0;
     Uint32 start = 0;
 
     SDL_Event event = {};
-    SDL_Surface *hello = NULL;
     SDL_Surface *screen = NULL;
 
     SDL_Init(SDL_INIT_EVERYTHING);
-    hello = SDL_LoadBMP("hello.bmp");
 
     Game *game = NEW(Game, "The game");
 
@@ -46,22 +69,24 @@ int main(int argc, char *argv[])
     Uint32 white = SDL_MapRGBA(screen->format, 255, 255, 255, 255);
     Uint32 black = SDL_MapRGBA(screen->format, 0, 0, 0, 255);
 
+    SDL_Surface *bg = graydient(640, 480);
+
     int skip = 1000 / FPS;
 
-    int last = 0;
-    int init = 0;
+    long unsigned int last_frame_at = 0;
+    short int init = 0;
     while (quit == 0) {
-        int ticks = SDL_GetTicks();
-        int frames = 0;
+        long unsigned int ticks = SDL_GetTicks();
+        long unsigned int ticks_since_last = ticks - last_frame_at;
+        short int frame = 0;
+
         if (init == 0) {
-            debug("frame");
-            start = ticks;
-            last = ticks;
+            last_frame_at = ticks;
             init = 1;
-            frames = 1;
+            frame = 1;
         } else {
-            if (ticks - last >= skip) {
-                frames = (ticks - last) / skip;
+            if (ticks_since_last >= skip) {
+                frame = 1;
             }
         }
 
@@ -73,21 +98,22 @@ int main(int argc, char *argv[])
             }
         }
 
-        int frame = 0;
-        if (frames > 0) {
-            game->_(calc_physics)(game, ticks - last);
+        if (frame) {
+            game->_(calc_physics)(game, ticks_since_last);
 
             SDL_Rect fullscreen = {0, 0, 640, 480};
             SDL_Rect rect = {game->thing->x, game->thing->y, 100, 100};
-            SDL_FillRect(screen, &fullscreen, white);
+
+            SDL_BlitSurface(bg, NULL, screen, NULL);
             SDL_FillRect(screen, &rect, black);
 
             SDL_Flip(screen);
-            last = ticks;
+            last_frame_at = ticks;
         }
     }
 
     game->_(destroy)(game);
+    free(bg);
 
     return 1;
 }
