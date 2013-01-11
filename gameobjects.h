@@ -12,7 +12,7 @@ typedef struct Thing {
 } Thing;
 
 int Thing_init(void *self);
-void Thing_calc_physics(void *self);
+void Thing_calc_physics(void *self, int ticks);
 
 typedef struct Game {
     Object proto;
@@ -20,7 +20,7 @@ typedef struct Game {
 } Game;
 
 int Game_init(void *self);
-void Game_calc_physics(void *self);
+void Game_calc_physics(void *self, int ticks);
 void Game_destroy(void *self);
 
 #endif

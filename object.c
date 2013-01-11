@@ -29,7 +29,7 @@ int Object_init(void *self)
     return 1;
 }
 
-void Object_calc_physics(void *self)
+void Object_calc_physics(void *self, int ticks)
 {
     assert(self != NULL);
 }

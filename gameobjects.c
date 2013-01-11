@@ -15,22 +15,23 @@ error:
     return 0;
 }
 
-void Thing_calc_physics(void *self) {
+void Thing_calc_physics(void *self, int ticks) {
     check_mem(self);
     Thing *thing = (Thing *)self;
     if (thing->y >= 380) return;
 
-    thing->velo += 1;
-    thing->y += thing->velo;
+    thing->velo += ticks * 10;
+    thing->y += thing->velo / 1000;
 
 error:
     return;
 }
 
-void Game_calc_physics(void *self) {
+void Game_calc_physics(void *self, int ticks) {
+    debug("Ticks: %d", ticks);
     check_mem(self);
     Game *game = (Game *)self;
-    game->thing->_(calc_physics)(game->thing);
+    game->thing->_(calc_physics)(game->thing, ticks);
 
 error:
     return;

@@ -74,18 +74,16 @@ int main(int argc, char *argv[])
         }
 
         int frame = 0;
-        for (frame = 0; frame < frames; frame++) {
-            game->_(calc_physics)(game);
+        if (frames > 0) {
+            game->_(calc_physics)(game, ticks - last);
 
-            if (frame == frames - 1) {
-                SDL_Rect fullscreen = {0, 0, 640, 480};
-                SDL_Rect rect = {game->thing->x, game->thing->y, 100, 100};
-                SDL_FillRect(screen, &fullscreen, white);
-                SDL_FillRect(screen, &rect, black);
+            SDL_Rect fullscreen = {0, 0, 640, 480};
+            SDL_Rect rect = {game->thing->x, game->thing->y, 100, 100};
+            SDL_FillRect(screen, &fullscreen, white);
+            SDL_FillRect(screen, &rect, black);
 
-                SDL_Flip(screen);
-                last = ticks;
-            }
+            SDL_Flip(screen);
+            last = ticks;
         }
     }
 
