@@ -19,7 +19,7 @@ int Game_init(void *self) {
     for (i = 0; i < 20; i++) {
         Thing *thing = NEW(Thing, "A thing");
         thing->x = i * (640 / 20);
-        thing->y = i * 10;
+        thing->y = 0;
         thing->width = 20;
         thing->height = 20;
         thing->mass = 1000;

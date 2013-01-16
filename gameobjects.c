@@ -49,8 +49,8 @@ void Thing_calc_physics(void *self, int ticks) {
     }
 
     PhysForce *right = calloc(1, sizeof(PhysForce));
-    right->trajectory = 0;
-    right->magnitude = 3 * thing->mass;
+    right->trajectory = 6 * M_PI / 4;
+    right->magnitude = 5 * thing->mass;
 
     PhysForce *forces[] = { gravity, ground, right };
     int i = 0;
