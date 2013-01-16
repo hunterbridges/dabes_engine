@@ -7,10 +7,13 @@ typedef struct Thing {
     Object proto;
     int x;
     int y;
+    int width;
+    int height;
     int xvelo;
     int yvelo;
     int mass;
     Uint32 color;
+    SDL_Rect (*rect)(void *self);
 } Thing;
 
 int Thing_init(void *self);
@@ -18,7 +21,7 @@ void Thing_calc_physics(void *self, int ticks);
 
 typedef struct Game {
     Object proto;
-    Thing *thing;
+    Thing *things[256];
 } Game;
 
 int Game_init(void *self);

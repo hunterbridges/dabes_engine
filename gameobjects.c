@@ -9,13 +9,22 @@ typedef struct PhysForce {
   int magnitude;
 } PhysForce;
 
+SDL_Rect Thing_rect(void *self) {
+    Thing *thing = (Thing *)self;
+    SDL_Rect rect = {thing->x, thing->y, thing->width, thing->height};
+    return rect;
+}
+
 int Thing_init(void *self) {
     check_mem(self);
-    debug("blah");
     Thing *thing = (Thing *)self;
     thing->x = 270;
     thing->y = 0;
+    thing->width = 100;
+    thing->height = 100;
     thing->mass = 100;
+
+    thing->rect = Thing_rect;
     return 1;
 
 error:
@@ -62,9 +71,9 @@ void Thing_calc_physics(void *self, int ticks) {
     free(gravity);
     free(ground);
 
-    if (thing->y > 380) {
+    if (thing->y > 480 - thing->height) {
       thing->yvelo = 0;
-      thing->y = 380;
+      thing->y = 480 - thing->height;
     }
 error:
     return;
@@ -73,7 +82,12 @@ error:
 void Game_calc_physics(void *self, int ticks) {
     check_mem(self);
     Game *game = (Game *)self;
-    game->thing->_(calc_physics)(game->thing, ticks);
+    int i = 0;
+    for (i = 0; i < 256; i++) {
+        if (game->things[i] == NULL) break;
+        Thing *thing = game->things[i];
+        thing->_(calc_physics)(thing, ticks);
+    }
 
 error:
     return;
@@ -82,7 +96,12 @@ error:
 void Game_destroy(void *self) {
     check_mem(self);
     Game *game = (Game *)self;
-    game->thing->_(destroy)(game->thing);
+    int i = 0;
+    for (i = 0; i < 256; i++) {
+        if (game->things[i] == NULL) break;
+        Thing *thing = game->things[i];
+        thing->_(destroy)(thing);
+    }
 
     Object_destroy(self);
 error:

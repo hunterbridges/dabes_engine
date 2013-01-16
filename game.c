@@ -15,7 +15,16 @@ int Game_init(void *self) {
     check_mem(self);
 
     Game *game = (Game *)self;
-    game->thing = NEW(Thing, "A thing");
+    int i = 0;
+    for (i = 0; i < 20; i++) {
+        Thing *thing = NEW(Thing, "A thing");
+        thing->x = i * (640 / 20);
+        thing->y = i * 10;
+        thing->width = 20;
+        thing->height = 20;
+        thing->mass = 1000;
+        game->things[i] = thing;
+    }
 
     return 1;
 error:
@@ -42,11 +51,13 @@ SDL_Surface *graydient(unsigned int width, unsigned int height) {
     amask = 0xff000000;
 #endif
 
-    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width, height, 32, rmask, gmask, bmask, amask);
+    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width,
+            height, 32, rmask, gmask, bmask, amask);
     int i = 0;
     for (i = 0; i < height; i++) {
         int gradation = 255 * (height - i) / height;
-        Uint32 color = SDL_MapRGBA(surface->format, 0, 255 - gradation, gradation, 255);
+        Uint32 color = SDL_MapRGBA(surface->format, 0,
+                255 - gradation, gradation, 255);
         SDL_Rect rect = {0, i, width, 1};
         SDL_FillRect(surface, &rect, color);
     }
@@ -56,7 +67,6 @@ SDL_Surface *graydient(unsigned int width, unsigned int height) {
 int main(int argc, char *argv[])
 {
     int quit = 0;
-    Uint32 start = 0;
 
     SDL_Event event = {};
     SDL_Surface *screen = NULL;
@@ -66,7 +76,6 @@ int main(int argc, char *argv[])
     Game *game = NEW(Game, "The game");
 
     screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
-    Uint32 white = SDL_MapRGBA(screen->format, 255, 255, 255, 255);
     Uint32 black = SDL_MapRGBA(screen->format, 0, 0, 0, 255);
 
     SDL_Surface *bg = graydient(640, 480);
@@ -75,6 +84,8 @@ int main(int argc, char *argv[])
 
     long unsigned int last_frame_at = 0;
     short int init = 0;
+    SDL_BlitSurface(bg, NULL, screen, NULL);
+
     while (quit == 0) {
         long unsigned int ticks = SDL_GetTicks();
         long unsigned int ticks_since_last = ticks - last_frame_at;
@@ -99,13 +110,22 @@ int main(int argc, char *argv[])
         }
 
         if (frame) {
+            int i = 0;
+            for (i = 0; i < 256; i++) {
+                Thing *thing = game->things[i];
+                if (thing == NULL) break;
+                SDL_Rect rect = thing->rect(thing);
+                SDL_BlitSurface(bg, &rect, screen, &rect);
+            }
+
             game->_(calc_physics)(game, ticks_since_last);
 
-            SDL_Rect fullscreen = {0, 0, 640, 480};
-            SDL_Rect rect = {game->thing->x, game->thing->y, 100, 100};
-
-            SDL_BlitSurface(bg, NULL, screen, NULL);
-            SDL_FillRect(screen, &rect, black);
+            for (i = 0; i < 256; i++) {
+                Thing *thing = game->things[i];
+                if (thing == NULL) break;
+                SDL_Rect rect = thing->rect(thing);
+                SDL_FillRect(screen, &rect, black);
+            }
 
             SDL_Flip(screen);
             last_frame_at = ticks;
