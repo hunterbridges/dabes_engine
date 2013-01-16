@@ -4,7 +4,7 @@
 #include "dbg.h"
 #include "gameobjects.h"
 
-#define FPS 60
+#define FPS 12
 
 Object ThingProto = {
    .init = Thing_init,
@@ -16,12 +16,12 @@ int Game_init(void *self) {
 
     Game *game = (Game *)self;
     int i = 0;
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 200; i++) {
         Thing *thing = NEW(Thing, "A thing");
-        thing->x = i * (640 / 20);
-        thing->y = 0;
-        thing->width = 20;
-        thing->height = 20;
+        thing->x = i * (640 / 200);
+        thing->y = i;
+        thing->width = 2;
+        thing->height = 2;
         thing->mass = 1000;
         game->things[i] = thing;
     }
@@ -133,7 +133,8 @@ int main(int argc, char *argv[])
     }
 
     game->_(destroy)(game);
-    free(bg);
+    SDL_FreeSurface(bg);
+    SDL_FreeSurface(screen);
 
     return 1;
 }

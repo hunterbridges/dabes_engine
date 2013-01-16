@@ -49,8 +49,8 @@ void Thing_calc_physics(void *self, int ticks) {
     }
 
     PhysForce *right = calloc(1, sizeof(PhysForce));
-    right->trajectory = 6 * M_PI / 4;
-    right->magnitude = 5 * thing->mass;
+    right->trajectory = 0;
+    right->magnitude = 4 * thing->mass;
 
     PhysForce *forces[] = { gravity, ground, right };
     int i = 0;
@@ -60,16 +60,20 @@ void Thing_calc_physics(void *self, int ticks) {
       yaccel += sin(force->trajectory) * force->magnitude / thing->mass;
     }
 
-    thing->xvelo += xaccel * ticks / 100;
-    thing->yvelo += yaccel * ticks / 100;
+    thing->xvelo += xaccel * ticks / 200;
+    thing->yvelo += yaccel * ticks / 200;
 
     // debug("Force xa = %d, ya = %d, xv = %d, yv = %d", xaccel, yaccel, thing->xvelo, thing->yvelo);
 
     thing->x += thing->xvelo * ticks / 100;
     thing->y += thing->yvelo * ticks / 100;
 
+    thing->xvelo += xaccel * ticks / 200;
+    thing->yvelo += yaccel * ticks / 200;
+
     free(gravity);
     free(ground);
+    free(right);
 
     if (thing->y > 480 - thing->height) {
       thing->yvelo = 0;
