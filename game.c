@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "SDL/SDL.h"
+#include "SDL_TTF.h"
 #include "dbg.h"
 #include "gameobjects.h"
 
@@ -72,6 +73,9 @@ int main(int argc, char *argv[])
     SDL_Surface *screen = NULL;
 
     SDL_Init(SDL_INIT_EVERYTHING);
+    TTF_Init();
+
+    TTF_Font *font = TTF_OpenFont("uni.ttf", 8);
 
     Game *game = NEW(Game, "The game");
 
@@ -118,6 +122,9 @@ int main(int argc, char *argv[])
                 SDL_BlitSurface(bg, &rect, screen, &rect);
             }
 
+            SDL_Rect debugRect = {10, 10, 200, 100};
+            SDL_BlitSurface(bg, &debugRect, screen, &debugRect);
+
             game->_(calc_physics)(game, ticks_since_last);
 
             for (i = 0; i < 256; i++) {
@@ -127,6 +134,12 @@ int main(int argc, char *argv[])
                 SDL_FillRect(screen, &rect, black);
             }
 
+            SDL_Color txtBlack = {0,0,0,255};
+            SDL_Surface *debugText = TTF_RenderText_Solid(font,
+                    "Test text", txtBlack);
+            SDL_BlitSurface(debugText, NULL, screen, &debugRect);
+            SDL_FreeSurface(debugText);
+
             SDL_Flip(screen);
             last_frame_at = ticks;
         }
@@ -135,6 +148,7 @@ int main(int argc, char *argv[])
     game->_(destroy)(game);
     SDL_FreeSurface(bg);
     SDL_FreeSurface(screen);
+    TTF_CloseFont(font);
 
     return 1;
 }
