@@ -5,7 +5,7 @@
 #include "dbg.h"
 #include "gameobjects.h"
 
-#define FPS 12
+#define FPS 60
 
 Object ThingProto = {
    .init = Thing_init,
@@ -135,8 +135,12 @@ int main(int argc, char *argv[])
             }
 
             SDL_Color txtBlack = {0,0,0,255};
+            char *dTxt = malloc(256 * sizeof(char));
+            sprintf(dTxt, "FPS CAP: %d           ACTUAL: %.2f", FPS,
+                    1000.0 / ticks_since_last);
             SDL_Surface *debugText = TTF_RenderText_Solid(font,
-                    "Test text", txtBlack);
+                    dTxt, txtBlack);
+            free(dTxt);
             SDL_BlitSurface(debugText, NULL, screen, &debugRect);
             SDL_FreeSurface(debugText);
 
