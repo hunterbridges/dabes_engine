@@ -5,13 +5,14 @@
 
 typedef struct Thing {
     Object proto;
-    int x;
-    int y;
+    float x;
+    float y;
     int width;
     int height;
-    int xvelo;
-    int yvelo;
+    float xvelo;
+    float yvelo;
     int mass;
+    float time_scale;
     Uint32 color;
     SDL_Rect (*rect)(void *self);
 } Thing;

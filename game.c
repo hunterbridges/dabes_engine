@@ -24,6 +24,7 @@ int Game_init(void *self) {
         thing->width = 2;
         thing->height = 2;
         thing->mass = 1000;
+        thing->time_scale = (i + 1) / 400.0;
         game->things[i] = thing;
     }
 

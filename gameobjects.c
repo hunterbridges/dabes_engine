@@ -11,7 +11,8 @@ typedef struct PhysForce {
 
 SDL_Rect Thing_rect(void *self) {
     Thing *thing = (Thing *)self;
-    SDL_Rect rect = {thing->x, thing->y, thing->width, thing->height};
+    SDL_Rect rect = {roundf(thing->x), roundf(thing->y),
+                     thing->width, thing->height};
     return rect;
 }
 
@@ -23,6 +24,7 @@ int Thing_init(void *self) {
     thing->width = 100;
     thing->height = 100;
     thing->mass = 100;
+    thing->time_scale = 1.0;
 
     thing->rect = Thing_rect;
     return 1;
@@ -35,47 +37,25 @@ void Thing_calc_physics(void *self, int ticks) {
     check_mem(self);
     Thing *thing = (Thing *)self;
 
-// for each force
     int xaccel = 0;
     int yaccel = 0;
-    PhysForce *gravity = calloc(1, sizeof(PhysForce));
-    gravity->trajectory = M_PI / 2.0;
-    gravity->magnitude = 10 * thing->mass;
 
-    PhysForce *ground = calloc(1, sizeof(PhysForce));
-    if (thing->y >= 380) {
-        ground->trajectory = 3 * M_PI / 2.0;
-        ground->magnitude = gravity->magnitude;
+    if (thing->y < 480 - thing->height) {
+        yaccel = 5;
     }
 
-    PhysForce *right = calloc(1, sizeof(PhysForce));
-    right->trajectory = 0;
-    right->magnitude = 4 * thing->mass;
+    float dt = (ticks / 2) * thing->time_scale / 100.0;
 
-    PhysForce *forces[] = { gravity, ground, right };
-    int i = 0;
-    for (i = 0; i < 3; i++) {
-      PhysForce *force = forces[i];
-      xaccel += cos(force->trajectory) * force->magnitude / thing->mass;
-      yaccel += sin(force->trajectory) * force->magnitude / thing->mass;
-    }
+    thing->xvelo += xaccel * dt;
+    thing->yvelo += yaccel * dt;
 
-    thing->xvelo += xaccel * ticks / 200;
-    thing->yvelo += yaccel * ticks / 200;
+    thing->x += thing->xvelo;
+    thing->y += thing->yvelo;
 
-    // debug("Force xa = %d, ya = %d, xv = %d, yv = %d", xaccel, yaccel, thing->xvelo, thing->yvelo);
+    thing->xvelo += xaccel * dt;
+    thing->yvelo += yaccel * dt;
 
-    thing->x += thing->xvelo * ticks / 100;
-    thing->y += thing->yvelo * ticks / 100;
-
-    thing->xvelo += xaccel * ticks / 200;
-    thing->yvelo += yaccel * ticks / 200;
-
-    free(gravity);
-    free(ground);
-    free(right);
-
-    if (thing->y > 480 - thing->height) {
+    if (thing->y >= 480 - thing->height) {
       thing->yvelo = 0;
       thing->y = 480 - thing->height;
     }
