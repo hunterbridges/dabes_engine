@@ -10,8 +10,8 @@ typedef struct GameEntity {
     int height;
     float xvelo;
     float yvelo;
-    int mass;
     float time_scale;
+    float rotation;
     Uint32 color;
     SDL_Rect (*rect)(void *self);
 } GameEntity;
@@ -19,6 +19,7 @@ typedef struct GameEntity {
 int GameEntity_init(void *self);
 void GameEntity_calc_physics(void *self, void *engine, int ticks);
 void GameEntity_render(void *self, void *engine);
+SDL_Rect GameEntity_bounding_box(GameEntity *entity);
 
 extern Object GameEntityProto;
 

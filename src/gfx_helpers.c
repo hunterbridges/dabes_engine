@@ -63,3 +63,22 @@ SDL_Surface *gradient(unsigned int width, unsigned int height) {
     return surface;
 }
 
+Point rotate_point(Point point, Point pivot, float angle) {
+    Point rotated = {
+        point.x - pivot.x,
+        point.y - pivot.y
+    };
+
+    float radians = angle * M_PI / 180;
+    float s = sin(radians);
+    float c = cos(radians);
+
+    float xnew = rotated.x * c - rotated.y * s;
+    float ynew = rotated.x * s + rotated.y * c;
+
+    rotated.x = xnew + pivot.x;
+    rotated.y = ynew + pivot.y;
+
+    return rotated;
+}
+

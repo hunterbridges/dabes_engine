@@ -5,10 +5,14 @@
 
 typedef struct Scene {
     Object proto;
-    GameEntity *things[256];
-    GLuint bgTexture;
+    GLuint bg_texture;
 
     Mix_Music *music;
+
+    float projection_scale;
+    float projection_rotation;
+
+    GameEntity *things[256];
 } Scene;
 
 int Scene_init(void *self);

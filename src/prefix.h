@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <limits.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 #include "SDL/SDL_mixer.h"

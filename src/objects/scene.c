@@ -15,7 +15,7 @@ void Scene_destroy(void *self) {
         thing->_(destroy)(thing);
     }
 
-    glDeleteTextures(1, &game->bgTexture);
+    glDeleteTextures(1, &game->bg_texture);
     Object_destroy(self);
 error:
     return;
@@ -38,15 +38,17 @@ int Scene_init(void *self) {
         GameEntity *thing = NEW(GameEntity, "A thing");
         thing->width = SCREEN_WIDTH / (2 * NUM_BOXES);
         thing->height = thing->width;
-        thing->x = i * (SCREEN_WIDTH / NUM_BOXES) + thing->width / 2;
+        thing->x = i * (SCREEN_WIDTH / NUM_BOXES) + thing->width;
         thing->y = i;
-        thing->mass = 1000;
         thing->time_scale = (i + 1) / 400.0;
         game->things[i] = thing;
     }
 
     SDL_Surface *bg = gradient(640, 480);
-    game->bgTexture = loadSurfaceAsTexture(bg);
+    game->bg_texture = loadSurfaceAsTexture(bg);
+
+    game->projection_scale = 1;
+    game->projection_rotation = 0;
 
     return 1;
 error:
@@ -71,10 +73,31 @@ void Scene_render(void *self, void *engine) {
     Scene *game = (Scene *)self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    float bgScale = (game->projection_scale + 2) / 2;
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(SCREEN_WIDTH / (-2 * bgScale),
+            SCREEN_WIDTH / (2 * bgScale),
+            SCREEN_HEIGHT / (2 * bgScale),
+            SCREEN_HEIGHT / (-2 * bgScale),
+            1.0, -1.0 );
+
     // Draw the background
-    SDL_Rect rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    SDL_Rect rect = {0, 0,
+        SCREEN_WIDTH, SCREEN_HEIGHT};
     GLfloat color[3] = {1.f, 1.f, 1.f};
-    graphics->draw_rect(graphics, rect, color, game->bgTexture);
+    graphics->draw_rect(graphics, rect, color, game->bg_texture, 0);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(SCREEN_WIDTH / (-2 * game->projection_scale),
+            SCREEN_WIDTH / (2 * game->projection_scale),
+            SCREEN_HEIGHT / (2 * game->projection_scale),
+            SCREEN_HEIGHT / (-2 * game->projection_scale),
+            1.0, -1.0 );
+    glRotatef(game->projection_rotation, 0, 0, -1);
 
     // Draw the stuff
     int i = 0;

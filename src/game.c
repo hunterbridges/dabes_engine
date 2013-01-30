@@ -34,8 +34,6 @@ int main(int argc, char *argv[])
     long unsigned int last_frame_at = 0;
     short int init = 0;
 
-    float gProjectionScale = 1.0;
-    float gRotation = 0;
     int reset = 0;
     int quit = 0;
     int zoom = 0;
@@ -75,37 +73,23 @@ int main(int argc, char *argv[])
 
         if (frame) {
             if (reset) {
-                gProjectionScale = 1;
-                gRotation = 0;
+                game->projection_scale = 1;
+                game->projection_rotation = 0;
                 reset = 0;
             }
-            gProjectionScale += 0.02 * zoom;
-            if (gProjectionScale < 0) gProjectionScale = 0;
+            game->projection_scale += 0.02 * zoom;
+            if (game->projection_scale < 0) game->projection_scale = 0;
 
-            float volume = gProjectionScale * 128.f;
+            float volume = game->projection_scale * 128.f;
             Mix_VolumeMusic(volume);
 
-            gRotation += 2 * rot;
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            glTranslatef(-SCREEN_WIDTH / 2.f,-SCREEN_HEIGHT / 2.f, 0.f );
-
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(SCREEN_WIDTH / (-2 * gProjectionScale),
-                    SCREEN_WIDTH / (2 * gProjectionScale),
-                    SCREEN_HEIGHT / (2 * gProjectionScale),
-                    SCREEN_HEIGHT / (-2 * gProjectionScale),
-                    1.0, -1.0 );
-            glRotatef(gRotation, 0, 0, -1);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            SDL_Rect debugRect = {10, 10, 200, 100};
+            game->projection_rotation += 2 * rot;
 
             game->_(calc_physics)(game, engine, ticks_since_last);
             game->_(render)(game, engine);
 
             // TODO: Make the debug text work again
+            SDL_Rect debugRect = {10, 10, 200, 100};
             SDL_Color txtBlack = {0,0,0,255};
             char *dTxt = malloc(256 * sizeof(char));
             sprintf(dTxt, "FPS CAP: %d           ACTUAL: %.2f", FPS,
