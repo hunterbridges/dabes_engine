@@ -9,6 +9,7 @@
 #include "SDL/SDL_opengl.h"
 #include "constants.h"
 #include "dbg.h"
+#include "graphics.h"
 #include "object.h"
 
 #endif

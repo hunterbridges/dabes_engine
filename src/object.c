@@ -30,6 +30,10 @@ void Object_calc_physics(void *self, int ticks)
     assert(self != NULL);
 }
 
+void Object_render(void *self) {
+    assert(self != NULL);
+}
+
 void *Object_new(size_t size, Object proto, char *description)
 {
     assert(description != NULL);
@@ -39,6 +43,7 @@ void *Object_new(size_t size, Object proto, char *description)
     if (!proto.describe) proto.describe = Object_describe;
     if (!proto.destroy) proto.destroy = Object_destroy;
     if (!proto.calc_physics) proto.calc_physics = Object_calc_physics;
+    if (!proto.render) proto.render = Object_render;
 
     // this seems weird, but we can make a struct of one size,
     // then point a different pointer at it to "cast" it

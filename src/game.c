@@ -21,14 +21,11 @@ int main(int argc, char *argv[])
     TTF_Init();
     TTF_Font *font = TTF_OpenFont("media/fonts/uni.ttf", 8);
 
-    Scene *game = NEW(Scene, "The game");
-
     screen = SDL_SetVideoMode((int)swidth, (int)sheight, 32, SDL_OPENGLBLIT);
 
     check(initGL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 
-    SDL_Surface *bg = gradient(640, 480);
-    GLuint texture = loadSurfaceAsTexture(bg);
+    Scene *game = NEW(Scene, "The game");
 
     int skip = 1000 / FPS;
 
@@ -80,8 +77,8 @@ int main(int argc, char *argv[])
                 gRotation = 0;
                 reset = 0;
             }
-            gProjectionScale += 0.01 * zoom;
-            gRotation += 1 * rot;
+            gProjectionScale += 0.02 * zoom;
+            gRotation += 2 * rot;
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glTranslatef(-SCREEN_WIDTH / 2.f,-SCREEN_HEIGHT / 2.f, 0.f );
@@ -98,39 +95,11 @@ int main(int argc, char *argv[])
             int i = 0;
 
             SDL_Rect debugRect = {10, 10, 200, 100};
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glBegin(GL_TRIANGLE_STRIP);
-                glColor3f(1.f, 1.f, 1.f);
-                glTexCoord2f(0, 0);
-                glVertex2f(0, 0);
-                glTexCoord2f(1, 0);
-                glVertex2f(SCREEN_WIDTH, 0);
-                glTexCoord2f(0, 1);
-                glVertex2f(0, SCREEN_HEIGHT);
-                glTexCoord2f(1, 1);
-                glVertex2f(SCREEN_WIDTH, SCREEN_HEIGHT);
-            glEnd();
-            glBindTexture(GL_TEXTURE_2D, 0);
 
             game->_(calc_physics)(game, ticks_since_last);
+            game->_(render)(game);
 
-            for (i = 0; i < NUM_BOXES; i++) {
-                GameEntity *thing = game->things[i];
-                if (thing == NULL) break;
-                SDL_Rect rect = thing->rect(thing);
-                glBegin(GL_TRIANGLE_STRIP);
-                    glColor3f( 0.f, 0.f, 0.f );
-                    glVertex2f(rect.x,
-                               rect.y);
-                    glVertex2f((rect.x + rect.w),
-                               rect.y);
-                    glVertex2f((rect.x),
-                               (rect.y + rect.h));
-                    glVertex2f((rect.x + rect.w),
-                               (rect.y + rect.h));
-                glEnd();
-            }
-
+            // TODO: Make the debug text work again
             SDL_Color txtBlack = {0,0,0,255};
             char *dTxt = malloc(256 * sizeof(char));
             sprintf(dTxt, "FPS CAP: %d           ACTUAL: %.2f", FPS,
@@ -146,7 +115,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    glDeleteTextures(1, &texture);
     game->_(destroy)(game);
     SDL_FreeSurface(screen);
     TTF_CloseFont(font);

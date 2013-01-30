@@ -54,7 +54,25 @@ error:
     return;
 }
 
+void GameEntity_render(void *self) {
+    GameEntity *thing = self;
+    SDL_Rect rect = thing->rect(thing);
+    glBegin(GL_TRIANGLE_STRIP);
+        glColor3f(0.f, 0.f, 0.f);
+        glVertex2f(rect.x,
+                   rect.y);
+        glVertex2f((rect.x + rect.w),
+                   rect.y);
+        glVertex2f((rect.x),
+                   (rect.y + rect.h));
+        glVertex2f((rect.x + rect.w),
+                   (rect.y + rect.h));
+    glEnd();
+}
+
 Object GameEntityProto = {
    .init = GameEntity_init,
    .calc_physics = GameEntity_calc_physics,
+   .render = GameEntity_render
 };
+
