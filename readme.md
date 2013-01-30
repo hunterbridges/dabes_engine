@@ -4,7 +4,8 @@ DaBes Engine
 _"I'm da besssss"_
 
 Features:
-* A falling box
+* Some falling boxes
+* Sick performant OpenGL drawing
 
 ```
 make game

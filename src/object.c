@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "object.h"
-#include <assert.h>
+#include "prefix.h"
 
 void Object_destroy(void *self)
 {
@@ -34,13 +30,6 @@ void Object_calc_physics(void *self, int ticks)
     assert(self != NULL);
 }
 
-int Object_attack(void *self, int damage)
-{
-    assert(self != NULL);
-    printf("You can't attack that.\n");
-    return 0;
-}
-
 void *Object_new(size_t size, Object proto, char *description)
 {
     assert(description != NULL);
@@ -70,3 +59,4 @@ void *Object_new(size_t size, Object proto, char *description)
         return el;
     }
 }
+
