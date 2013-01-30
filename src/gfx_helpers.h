@@ -1,5 +1,5 @@
-#ifndef __graphics_h
-#define __graphics_h
+#ifndef __gfx_helpers_h
+#define __gfx_helpers_h
 #include "prefix.h"
 
 int initGL(int swidth, int sheight);

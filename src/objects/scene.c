@@ -1,22 +1,13 @@
+#include "engine.h"
 #include "scene.h"
-
-void Scene_calc_physics(void *self, int ticks) {
-    check_mem(self);
-    Scene *game = (Scene *)self;
-    int i = 0;
-    for (i = 0; i < 256; i++) {
-        if (game->things[i] == NULL) break;
-        GameEntity *thing = game->things[i];
-        thing->_(calc_physics)(thing, ticks);
-    }
-
-error:
-    return;
-}
 
 void Scene_destroy(void *self) {
     check_mem(self);
     Scene *game = (Scene *)self;
+
+    Mix_HaltMusic();
+    Mix_FreeMusic(game->music);
+
     int i = 0;
     for (i = 0; i < 256; i++) {
         if (game->things[i] == NULL) break;
@@ -34,6 +25,14 @@ int Scene_init(void *self) {
     check_mem(self);
 
     Scene *game = (Scene *)self;
+    game->music = Mix_LoadMUS("media/music/tower.wav");
+
+    if (game->music == NULL) {
+        printf("Mix_LoadMUS: %s\n", Mix_GetError());
+    }
+
+    Mix_PlayMusic(game->music, 0);
+
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *thing = NEW(GameEntity, "A thing");
@@ -54,27 +53,35 @@ error:
     return 0;
 }
 
-void Scene_render(void *self) {
+void Scene_calc_physics(void *self, void *engine, int ticks) {
+    check_mem(self);
     Scene *game = (Scene *)self;
-    glBindTexture(GL_TEXTURE_2D, game->bgTexture);
-    glBegin(GL_TRIANGLE_STRIP);
-        glColor3f(1.f, 1.f, 1.f);
-        glTexCoord2f(0, 0);
-        glVertex2f(0, 0);
-        glTexCoord2f(1, 0);
-        glVertex2f(SCREEN_WIDTH, 0);
-        glTexCoord2f(0, 1);
-        glVertex2f(0, SCREEN_HEIGHT);
-        glTexCoord2f(1, 1);
-        glVertex2f(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glEnd();
-    glBindTexture(GL_TEXTURE_2D, 0);
+    int i = 0;
+    for (i = 0; i < 256; i++) {
+        if (game->things[i] == NULL) break;
+        GameEntity *thing = game->things[i];
+        thing->_(calc_physics)(thing, engine, ticks);
+    }
 
+error:
+    return;
+}
+
+void Scene_render(void *self, void *engine) {
+    Scene *game = (Scene *)self;
+    Graphics *graphics = ((Engine *)engine)->graphics;
+
+    // Draw the background
+    SDL_Rect rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    GLfloat color[3] = {1.f, 1.f, 1.f};
+    graphics->draw_rect(graphics, rect, color, game->bgTexture);
+
+    // Draw the stuff
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *thing = game->things[i];
         if (thing == NULL) break;
-        thing->_(render)(thing);
+        thing->_(render)(thing, engine);
     }
 }
 

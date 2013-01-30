@@ -7,9 +7,10 @@
 #include <math.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
+#include "SDL/SDL_mixer.h"
 #include "constants.h"
 #include "dbg.h"
-#include "graphics.h"
+#include "gfx_helpers.h"
 #include "object.h"
 
 #endif

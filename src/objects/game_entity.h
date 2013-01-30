@@ -17,8 +17,8 @@ typedef struct GameEntity {
 } GameEntity;
 
 int GameEntity_init(void *self);
-void GameEntity_calc_physics(void *self, int ticks);
-void GameEntity_render(void *self);
+void GameEntity_calc_physics(void *self, void *engine, int ticks);
+void GameEntity_render(void *self, void *engine);
 
 extern Object GameEntityProto;
 

@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include "gfx_helpers.h"
 
 int initGL(int swidth, int sheight) {
     glEnable(GL_TEXTURE_2D);

@@ -1,3 +1,4 @@
+#include "engine.h"
 #include "game_entity.h"
 
 SDL_Rect GameEntity_rect(void *self) {
@@ -24,7 +25,7 @@ error:
     return 0;
 }
 
-void GameEntity_calc_physics(void *self, int ticks) {
+void GameEntity_calc_physics(void *self, void *engine, int ticks) {
     check_mem(self);
     GameEntity *thing = (GameEntity *)self;
 
@@ -54,20 +55,13 @@ error:
     return;
 }
 
-void GameEntity_render(void *self) {
+void GameEntity_render(void *self, void *engine) {
     GameEntity *thing = self;
+    Graphics *graphics = ((Engine *)engine)->graphics;
+
     SDL_Rect rect = thing->rect(thing);
-    glBegin(GL_TRIANGLE_STRIP);
-        glColor3f(0.f, 0.f, 0.f);
-        glVertex2f(rect.x,
-                   rect.y);
-        glVertex2f((rect.x + rect.w),
-                   rect.y);
-        glVertex2f((rect.x),
-                   (rect.y + rect.h));
-        glVertex2f((rect.x + rect.w),
-                   (rect.y + rect.h));
-    glEnd();
+    GLfloat color[3] = {0.f, 0.f, 0.f};
+    graphics->draw_rect(graphics, rect, color, 0);
 }
 
 Object GameEntityProto = {

@@ -1,3 +1,4 @@
 game
 *.o
 *.dSYM
+*.wav

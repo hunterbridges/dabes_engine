@@ -1,6 +1,5 @@
 #include "prefix.h"
 #include "gameobjects.h"
-#include "graphics.h"
 #include "SDL/SDL_TTF.h"
 
 int main(int argc, char *argv[])
@@ -10,6 +9,8 @@ int main(int argc, char *argv[])
 
     float swidth = SCREEN_WIDTH;
     float sheight = SCREEN_HEIGHT;
+    Engine *engine = NULL;
+    Scene *game = NULL;
 
     SDL_Event event = {};
     SDL_Surface *screen = NULL;
@@ -25,7 +26,8 @@ int main(int argc, char *argv[])
 
     check(initGL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 
-    Scene *game = NEW(Scene, "The game");
+    engine = NEW(Engine, "The game engine");
+    game = NEW(Scene, "The game");
 
     int skip = 1000 / FPS;
 
@@ -92,12 +94,11 @@ int main(int argc, char *argv[])
                     1.0, -1.0 );
             glRotatef(gRotation, 0, 0, -1);
             glClear(GL_COLOR_BUFFER_BIT);
-            int i = 0;
 
             SDL_Rect debugRect = {10, 10, 200, 100};
 
-            game->_(calc_physics)(game, ticks_since_last);
-            game->_(render)(game);
+            game->_(calc_physics)(game, engine, ticks_since_last);
+            game->_(render)(game, engine);
 
             // TODO: Make the debug text work again
             SDL_Color txtBlack = {0,0,0,255};
@@ -116,12 +117,14 @@ int main(int argc, char *argv[])
     }
 
     game->_(destroy)(game);
+    engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
     TTF_CloseFont(font);
 
     return 0;
 error:
-    game->_(destroy)(game);
+    if (game) game->_(destroy)(game);
+    if (engine) engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
     TTF_CloseFont(font);
     return 1;

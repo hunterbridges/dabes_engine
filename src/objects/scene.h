@@ -7,12 +7,14 @@ typedef struct Scene {
     Object proto;
     GameEntity *things[256];
     GLuint bgTexture;
+
+    Mix_Music *music;
 } Scene;
 
 int Scene_init(void *self);
-void Scene_calc_physics(void *self, int ticks);
 void Scene_destroy(void *self);
-void Scene_render(void *self);
+void Scene_calc_physics(void *self, void *engine, int ticks);
+void Scene_render(void *self, void *engine);
 
 extern Object SceneProto;
 

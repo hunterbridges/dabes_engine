@@ -25,12 +25,12 @@ int Object_init(void *self)
     return 1;
 }
 
-void Object_calc_physics(void *self, int ticks)
+void Object_calc_physics(void *self, void *engine, int ticks)
 {
     assert(self != NULL);
 }
 
-void Object_render(void *self) {
+void Object_render(void *self, void *engine) {
     assert(self != NULL);
 }
 
