@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     TTF_Init();
     TTF_Font *font = TTF_OpenFont("media/fonts/uni.ttf", 8);
 
-    screen = SDL_SetVideoMode((int)swidth, (int)sheight, 32, SDL_OPENGLBLIT);
+    screen = SDL_SetVideoMode((int)swidth, (int)sheight, 32, SDL_OPENGL);
 
     check(initGL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 
@@ -80,6 +80,11 @@ int main(int argc, char *argv[])
                 reset = 0;
             }
             gProjectionScale += 0.02 * zoom;
+            if (gProjectionScale < 0) gProjectionScale = 0;
+
+            float volume = gProjectionScale * 128.f;
+            Mix_VolumeMusic(volume);
+
             gRotation += 2 * rot;
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
@@ -87,10 +92,10 @@ int main(int argc, char *argv[])
 
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(SCREEN_WIDTH / -2 * gProjectionScale,
-                    SCREEN_WIDTH / 2 * gProjectionScale,
-                    SCREEN_HEIGHT / 2 * gProjectionScale,
-                    SCREEN_HEIGHT / -2 * gProjectionScale,
+            glOrtho(SCREEN_WIDTH / (-2 * gProjectionScale),
+                    SCREEN_WIDTH / (2 * gProjectionScale),
+                    SCREEN_HEIGHT / (2 * gProjectionScale),
+                    SCREEN_HEIGHT / (-2 * gProjectionScale),
                     1.0, -1.0 );
             glRotatef(gRotation, 0, 0, -1);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -108,6 +113,7 @@ int main(int argc, char *argv[])
             SDL_Surface *debugText = TTF_RenderText_Solid(font,
                     dTxt, txtBlack);
             free(dTxt);
+
             SDL_BlitSurface(debugText, NULL, screen, &debugRect);
             SDL_FreeSurface(debugText);
 

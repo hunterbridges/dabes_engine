@@ -31,7 +31,7 @@ int Scene_init(void *self) {
         printf("Mix_LoadMUS: %s\n", Mix_GetError());
     }
 
-    Mix_PlayMusic(game->music, 0);
+    Mix_PlayMusic(game->music, -1);
 
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
