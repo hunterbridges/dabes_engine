@@ -102,7 +102,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
 
         Fixture *fixture = World_create_fixture(world);
         fixture->width =  world->width / (2 * NUM_BOXES);
-        fixture->height = fixture->width;
+        fixture->height = fixture->width + fixture->width * 2 * i / NUM_BOXES;
         fixture->x = i * (world->width / NUM_BOXES) + fixture->width;
         fixture->y = i;
         fixture->time_scale = (i + 1) / 400.0;
