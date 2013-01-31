@@ -10,8 +10,8 @@ void Scene_destroy(void *self) {
 
     int i = 0;
     for (i = 0; i < 256; i++) {
-        if (game->things[i] == NULL) break;
-        GameEntity *thing = game->things[i];
+        if (game->entities[i] == NULL) break;
+        GameEntity *thing = game->entities[i];
         thing->_(destroy)(thing);
     }
 
@@ -35,13 +35,8 @@ int Scene_init(void *self) {
 
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
-        GameEntity *thing = NEW(GameEntity, "A thing");
-        thing->width = SCREEN_WIDTH / (2 * NUM_BOXES);
-        thing->height = thing->width;
-        thing->x = i * (SCREEN_WIDTH / NUM_BOXES) + thing->width;
-        thing->y = i;
-        thing->time_scale = (i + 1) / 400.0;
-        game->things[i] = thing;
+        GameEntity *entity = NEW(GameEntity, "A thing");
+        game->entities[i] = entity;
     }
 
     SDL_Surface *bg = gradient(640, 480);
@@ -53,20 +48,6 @@ int Scene_init(void *self) {
     return 1;
 error:
     return 0;
-}
-
-void Scene_calc_physics(void *self, void *engine, int ticks) {
-    check_mem(self);
-    Scene *game = (Scene *)self;
-    int i = 0;
-    for (i = 0; i < 256; i++) {
-        if (game->things[i] == NULL) break;
-        GameEntity *thing = game->things[i];
-        thing->_(calc_physics)(thing, engine, ticks);
-    }
-
-error:
-    return;
 }
 
 void Scene_render(void *self, void *engine) {
@@ -102,15 +83,39 @@ void Scene_render(void *self, void *engine) {
     // Draw the stuff
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
-        GameEntity *thing = game->things[i];
+        GameEntity *thing = game->entities[i];
         if (thing == NULL) break;
         thing->_(render)(thing, engine);
     }
 }
 
+World *Scene_create_world(Scene *scene, Physics *physics) {
+    check_mem(scene);
+
+    World *world = NEW(World, "The world");
+    check_mem(world);
+
+    int i = 0;
+    for (i = 0; i < NUM_BOXES; i++) {
+        GameEntity *entity = scene->entities[i];
+        if (entity == NULL) break;
+
+        Fixture *fixture = World_create_fixture(world);
+        fixture->width =  world->width / (2 * NUM_BOXES);
+        fixture->height = fixture->width;
+        fixture->x = i * (world->width / NUM_BOXES) + fixture->width;
+        fixture->y = i;
+        fixture->time_scale = (i + 1) / 400.0;
+
+        entity->fixture = fixture;
+    }
+    return world;
+error:
+    return NULL;
+}
+
 Object SceneProto = {
    .init = Scene_init,
-   .calc_physics = Scene_calc_physics,
    .destroy = Scene_destroy,
    .render = Scene_render
 };

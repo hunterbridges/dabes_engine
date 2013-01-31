@@ -2,6 +2,7 @@
 #define __scene_h
 #include "../prefix.h"
 #include "game_entity.h"
+#include "world.h"
 
 typedef struct Scene {
     Object proto;
@@ -12,13 +13,13 @@ typedef struct Scene {
     float projection_scale;
     float projection_rotation;
 
-    GameEntity *things[256];
+    GameEntity *entities[256];
 } Scene;
 
 int Scene_init(void *self);
 void Scene_destroy(void *self);
-void Scene_calc_physics(void *self, void *engine, int ticks);
 void Scene_render(void *self, void *engine);
+World *Scene_create_world(Scene *scene, Physics *physics);
 
 extern Object SceneProto;
 

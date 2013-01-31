@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     float sheight = SCREEN_HEIGHT;
     Engine *engine = NULL;
     Scene *game = NULL;
+    World *world = NULL;
 
     SDL_Event event = {};
     SDL_Surface *screen = NULL;
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
 
     engine = NEW(Engine, "The game engine");
     game = NEW(Scene, "The game");
+    world = Scene_create_world(game, engine->physics);
 
     int skip = 1000 / FPS;
 
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
 
             game->projection_rotation += 2 * rot;
 
-            game->_(calc_physics)(game, engine, ticks_since_last);
+            World_solve(engine->physics, world, ticks_since_last);
             game->_(render)(game, engine);
 
             // TODO: Make the debug text work again
