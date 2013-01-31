@@ -27,4 +27,9 @@
 
 #define check_debug(A, M, ...) if(!(A)) { debug(M, ##__VA_ARGS__); errno=0; goto error; }
 
+#define debug_rect(a) \
+    debug("(%f, %f), (%f, %f), (%f, %f), (%f, %f)", \
+            a.tl.x, a.tl.y, a.tr.x, a.tr.y, a.bl.x, a.bl.y, a.br.x, a.br.y)
+
+
 #endif

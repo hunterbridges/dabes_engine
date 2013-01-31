@@ -10,6 +10,9 @@ int World_init(void *self) {
     world->height = SCREEN_HEIGHT / DEFAULT_PPM;
     world->pixels_per_meter = DEFAULT_PPM;
 
+    world->gravity = 9.81; // Da earff
+    world->air_density = 1.2;
+
     return 1;
 error:
     return 0;

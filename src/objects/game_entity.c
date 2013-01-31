@@ -32,9 +32,10 @@ void GameEntity_render(void *self, void *engine) {
     graphics->draw_rect(graphics, bounding_box, bcolor, 0, 0);
     */
 
-    SDL_Rect rect = Fixture_display_rect(entity->fixture);
+    GfxRect rect = Fixture_display_rect(entity->fixture);
     GLfloat color[3] = {0.f, 0.f, 0.f};
-    graphics->draw_rect(graphics, rect, color, 0, entity->fixture->rotation);
+    float degrees = Fixture_rotation_degrees(entity->fixture);
+    Graphics_draw_rect(graphics, rect, color, 0, degrees);
 }
 
 Object GameEntityProto = {

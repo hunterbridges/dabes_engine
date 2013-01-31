@@ -66,10 +66,9 @@ void Scene_render(void *self, void *engine) {
             1.0, -1.0 );
 
     // Draw the background
-    SDL_Rect rect = {0, 0,
-        SCREEN_WIDTH, SCREEN_HEIGHT};
+    GfxRect gfx_rect = GfxRect_from_xywh(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     GLfloat color[3] = {1.f, 1.f, 1.f};
-    graphics->draw_rect(graphics, rect, color, game->bg_texture, 0);
+    Graphics_draw_rect(graphics, gfx_rect, color, game->bg_texture, 0);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -102,10 +101,10 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
 
         Fixture *fixture = World_create_fixture(world);
         fixture->width =  world->width / (2 * NUM_BOXES);
-        fixture->height = fixture->width + fixture->width * 2 * i / NUM_BOXES;
+        fixture->height = fixture->width; //+ fixture->width * 2 * i / NUM_BOXES;
         fixture->x = i * (world->width / NUM_BOXES) + fixture->width;
         fixture->y = i;
-        fixture->time_scale = (i + 1) / 400.0;
+        fixture->time_scale = (float)(i + 1) / (NUM_BOXES + 1);
 
         entity->fixture = fixture;
     }

@@ -9,6 +9,8 @@ typedef struct World {
     float width;
     float time_scale;
     float pixels_per_meter;
+    float gravity;
+    float air_density;
     uint num_fixtures;
     Fixture *fixtures[256];
 } World;
