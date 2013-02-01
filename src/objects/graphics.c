@@ -18,7 +18,7 @@ GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
     return GfxRect_from_xywh(rect.x, rect.y, rect.w, rect.h);
 }
 
-void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat *color,
+void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
         GLuint texture, float rotation) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -31,12 +31,13 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat *color,
     };
     glTranslatef(-SCREEN_WIDTH/2,-SCREEN_HEIGHT/2, 0.f );
     glTranslatef(center.x,center.y, 0.f );
-    glRotatef(rotation,0,0,1);
+    glRotatef(rotation,0,0,-1);
     //printf("%f\n", rotation);
 
     glBindTexture(GL_TEXTURE_2D, texture);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_TRIANGLE_STRIP);
-        glColor3fv(color);
+        glColor4fv(color);
         glTexCoord2f(0, 0);
         glVertex2f(-w / 2.0, -h / 2.0);
         glTexCoord2f(1, 0);

@@ -10,22 +10,28 @@ typedef struct Fixture {
     float y;  // Y CENTER
     float width;
     float height;
-    float rotation_radians;
-
-    float x_last_accel;
-    float y_last_accel;
-    float x_velo;
-    float y_velo;
-
-    float time_scale;
 
     float restitution;
     float mass;
     float drag;
     float surface_area;
+
+    float rotation_radians;
+    float angular_velocity;
+    float angular_acceleration;
+    float moment_of_inertia;
+
+    PhysPoint velocity;
+    PhysPoint acceleration;
+
+    PhysPoint spring;
+
+    float time_scale;
 } Fixture;
 
 void Fixture_set_rotation_degrees(Fixture *fixture, float degrees);
+void Fixture_set_wh(Fixture *fixture, float w, float h);
+void Fixture_set_mass(Fixture *fixture, float m);
 float Fixture_rotation_degrees(Fixture *fixture);
 int Fixture_init(void *self);
 void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms);

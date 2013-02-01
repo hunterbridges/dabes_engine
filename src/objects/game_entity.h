@@ -8,6 +8,7 @@ typedef struct GameEntity {
     Fixture *fixture;
     Uint32 color;
     SDL_Rect (*rect)(void *self);
+    GLfloat alpha;
 } GameEntity;
 
 int GameEntity_init(void *self);

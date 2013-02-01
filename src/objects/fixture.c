@@ -9,21 +9,47 @@ int Fixture_init(void *self) {
     fixture->y = 0;
     fixture->width = 100 / DEFAULT_PPM;
     fixture->height = 100 / DEFAULT_PPM;
-    fixture->rotation_radians = 0;
 
-    fixture->x_last_accel = 0;
-    fixture->y_last_accel = 0;
+    fixture->rotation_radians = 0;
+    fixture->angular_velocity = 0;
+    fixture->angular_acceleration = 0;
+
+    PhysPoint velocity = {0,0};
+    fixture->velocity = velocity;
+    PhysPoint acceleration = {0,0};
+    fixture->acceleration = acceleration;
 
     fixture->time_scale = 1.0;
 
     fixture->restitution = -0.5;
     fixture->mass = 100;
+    fixture->moment_of_inertia =
+        fixture->mass * (pow(fixture->height, 2) + pow(fixture->width, 2)) / 12;
     fixture->drag = 0.47;
     fixture->surface_area = pow(fixture->width, 2);
+
+    PhysPoint spring = {0, 0};
+    fixture->spring = spring;
 
     return 1;
 error:
     return 0;
+}
+
+void Fixture_calc_moment_of_inertia(Fixture *fixture) {
+    fixture->moment_of_inertia =
+        fixture->mass * (pow(fixture->height, 2) + pow(fixture->width, 2)) / 12;
+}
+
+void Fixture_set_wh(Fixture *fixture, float w, float h) {
+    fixture->width = w;
+    fixture->height = h;
+    Fixture_calc_moment_of_inertia(fixture);
+}
+
+void Fixture_set_mass(Fixture *fixture, float m) {
+    fixture->mass = m;
+    Fixture_calc_moment_of_inertia(fixture);
 }
 
 void Fixture_set_rotation_degrees(Fixture *fixture, float degrees) {
@@ -39,38 +65,64 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
     check_mem(physics);
     check_mem(fixture);
     PhysBox bounding_box = Fixture_bounding_box(fixture);
+    PhysPoint center = {fixture->x, fixture->y};
+    PhysBox real_box = PhysBox_rotate(Fixture_base_box(fixture), center,
+            fixture->rotation_radians);
     World *world = fixture->world;
 
-    float fy = 0;
+    float stiffness = 10;
 
-    // Weight
-    if (bounding_box.bl.y < world->height) {
-        fy += fixture->mass * world->gravity;
-    }
-
-    // Air resistance
-    //fy += -1 * 0.5 * world->air_density * fixture->drag * fixture->surface_area * pow(fixture->y_velo, 2);
-
+    PhysPoint f = {0,0};
+    float torque = 0;
     float dt = fixture->time_scale * advance_ms / 1000.0;
 
-    float dy = fixture->y_velo * dt + (0.5 * fixture->y_last_accel * pow(dt, 2));
+    // Start velocity verlet
+    PhysPoint displacement = PhysPoint_scale(fixture->velocity, dt);
+    displacement = PhysPoint_add(displacement,
+            PhysPoint_scale(fixture->acceleration, 0.5 * dt * dt));
 
-    fixture->y += dy;
+    // TODO: Make center a PhysPoint
+    fixture->x += displacement.x;
+    fixture->y += displacement.y;
+    real_box = PhysBox_move(real_box, displacement);
+    center = PhysBox_center(real_box);
 
-    float new_ay = fy / fixture->mass;
-    float avg_ay = 0.5 * (new_ay + fixture->y_last_accel);
-    fixture->y_velo += avg_ay * dt;
-    fixture->y_last_accel = avg_ay;
+    if (bounding_box.bl.y < world->height) {
+        PhysPoint gravity = {0, world->gravity * fixture->mass};
+        f = PhysPoint_add(f, gravity);
+    }
 
-    if (bounding_box.bl.y > world->height && fixture->y_velo > 0) {
+    // Spring thing
+    PhysPoint spring_force = PhysPoint_subtract(real_box.tl, fixture->spring);
+    spring_force = PhysPoint_scale(spring_force , -1 * stiffness);
+    PhysPoint radius = PhysPoint_subtract(center, real_box.tl);
+    float spring_xforce = PhysPoint_cross(radius, spring_force);
+
+    torque += -1 * spring_xforce;
+    f = PhysPoint_add(f, spring_force);
+
+    float damping = -1;
+    f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
+
+    // Finish velocity verlet
+    PhysPoint new_a = PhysPoint_scale(f, 1 / fixture->mass);
+    PhysPoint avg_a = PhysPoint_scale(
+            PhysPoint_add(new_a, fixture->acceleration), 0.5);
+    fixture->velocity = PhysPoint_add(fixture->velocity,
+            PhysPoint_scale(avg_a, dt));
+    fixture->acceleration = avg_a;
+
+    // TODO: angular damping
+    float angular_damping = -7;
+    torque += fixture->angular_velocity * angular_damping;
+    fixture->angular_acceleration = torque / fixture->moment_of_inertia;
+    fixture->angular_velocity += fixture->angular_acceleration * dt;
+    float delta_theta = fixture->angular_acceleration * dt;
+    fixture->rotation_radians += delta_theta;
+
+    if (bounding_box.bl.y > world->height && fixture->velocity.y > 0) {
         fixture->y = PhysBox_center(bounding_box).y - 0.01;
-        fixture->y_velo *= fixture->restitution;
-    } else {
-        float degs = Fixture_rotation_degrees(fixture);
-        degs += 2 * dt * 100;
-        Fixture_set_rotation_degrees(fixture, degs);
-        while (fixture->rotation_radians > 2 * M_PI)
-            fixture->rotation_radians -= 2 * M_PI;
+        fixture->velocity.y *= fixture->restitution;
     }
 error:
     return;

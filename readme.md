@@ -4,7 +4,7 @@ DaBes Engine
 _"I'm da besssss"_
 
 Features:
-* Some falling boxes
+* Some falling semitransparent boxes suspended from invisible springs
 * Sick performant OpenGL drawing
 * Soothing musical engine
 

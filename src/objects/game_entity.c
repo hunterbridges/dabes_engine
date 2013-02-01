@@ -5,6 +5,7 @@ int GameEntity_init(void *self) {
     check_mem(self);
     GameEntity *entity = (GameEntity *)self;
     entity->fixture = NULL;
+    entity->alpha = 1.f;
 
     return 1;
 
@@ -33,7 +34,7 @@ void GameEntity_render(void *self, void *engine) {
     */
 
     GfxRect rect = Fixture_display_rect(entity->fixture);
-    GLfloat color[3] = {0.f, 0.f, 0.f};
+    GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
     float degrees = Fixture_rotation_degrees(entity->fixture);
     Graphics_draw_rect(graphics, rect, color, 0, degrees);
 }

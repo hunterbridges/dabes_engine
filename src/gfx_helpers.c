@@ -3,6 +3,8 @@
 int initGL(int swidth, int sheight) {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_MULTISAMPLE);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glClearColor(0.f, 0.f, 0.f, 1.f);
