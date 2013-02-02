@@ -21,7 +21,7 @@ int Fixture_init(void *self) {
 
     fixture->time_scale = 1.0;
 
-    fixture->restitution = -0.5;
+    fixture->restitution = 0.5;
     fixture->mass = 100;
     fixture->moment_of_inertia =
         fixture->mass * (pow(fixture->height, 2) + pow(fixture->width, 2)) / 12;
@@ -64,10 +64,8 @@ float Fixture_rotation_degrees(Fixture *fixture) {
 void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
     check_mem(physics);
     check_mem(fixture);
-    PhysBox bounding_box = Fixture_bounding_box(fixture);
     PhysPoint center = {fixture->x, fixture->y};
-    PhysBox real_box = PhysBox_rotate(Fixture_base_box(fixture), center,
-            fixture->rotation_radians);
+    PhysBox real_box = Fixture_real_box(fixture);
     World *world = fixture->world;
 
     float stiffness = 10;
@@ -87,12 +85,41 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
     real_box = PhysBox_move(real_box, displacement);
     center = PhysBox_center(real_box);
 
-    if (bounding_box.bl.y < world->height) {
+    PhysPoint mtv = {0, 0};
+    PhysBox floor_box = World_floor_box(world);
+    int hit_floor = PhysBox_collision(real_box, floor_box, &mtv);
+    if (hit_floor) {
+        PhysPoint collision_normal = {0, 1};
+        PhysPoint poc = PhysBox_poc(real_box, floor_box, mtv);
+
+        PhysPoint vai = fixture->velocity;
+        float wai = fixture->angular_velocity;
+        PhysPoint r = PhysPoint_subtract(poc, center);
+        PhysPoint vap = PhysPoint_add(vai, PhysPoint_scale(r, wai));
+        //debug("%f, %f", vap.x, vap.y);
+
+        // TODO: Bodies colliding with each OTHER (poop)
+        float impulse_magnitude =
+            PhysPoint_dot(PhysPoint_scale(vap, -(1 + fixture->restitution)),
+                    collision_normal);
+        //debug("%f", impulse_magnitude);
+        float imp_div = (1 / fixture->mass) +
+            pow(PhysPoint_cross(r, collision_normal), 2) / fixture->moment_of_inertia;
+        //debug("%f", PhysPoint_cross(r, collision_normal));
+        //debug("%f", imp_div);
+        impulse_magnitude /= imp_div;
+        //debug("%f", impulse_magnitude);
+        fixture->velocity = PhysPoint_add(vai, PhysPoint_scale(collision_normal,
+                    impulse_magnitude / fixture->mass));
+        torque -= PhysPoint_cross(r,
+                PhysPoint_scale(collision_normal, impulse_magnitude)) / fixture->moment_of_inertia;
+    } else if (!hit_floor) {
         PhysPoint gravity = {0, world->gravity * fixture->mass};
         f = PhysPoint_add(f, gravity);
     }
 
     // Spring thing
+    /*
     PhysPoint spring_force = PhysPoint_subtract(real_box.tl, fixture->spring);
     spring_force = PhysPoint_scale(spring_force , -1 * stiffness);
     PhysPoint radius = PhysPoint_subtract(center, real_box.tl);
@@ -100,6 +127,7 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
 
     torque += -1 * spring_xforce;
     f = PhysPoint_add(f, spring_force);
+    */
 
     float damping = -1;
     f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
@@ -112,55 +140,22 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
             PhysPoint_scale(avg_a, dt));
     fixture->acceleration = avg_a;
 
-    // TODO: angular damping
     float angular_damping = -7;
     torque += fixture->angular_velocity * angular_damping;
     fixture->angular_acceleration = torque / fixture->moment_of_inertia;
     fixture->angular_velocity += fixture->angular_acceleration * dt;
-    float delta_theta = fixture->angular_acceleration * dt;
+    float delta_theta = fixture->angular_velocity * dt;
     fixture->rotation_radians += delta_theta;
+    check(delta_theta == delta_theta, "Got a nan bro");
 
-    if (bounding_box.bl.y > world->height && fixture->velocity.y > 0) {
-        fixture->y = PhysBox_center(bounding_box).y - 0.01;
-        fixture->velocity.y *= fixture->restitution;
+    if (hit_floor) {
+        fixture->x -= mtv.x;
+        fixture->y -= mtv.y;
     }
-error:
     return;
-}
-
-PhysBox Fixture_bounding_box(Fixture *fixture) {
-    PhysBox rect = Fixture_base_box(fixture);
-    PhysPoint pivot = {
-        fixture->x,
-        fixture->y
-    };
-
-    rect = PhysBox_rotate(rect, pivot, fixture->rotation_radians);
-
-    float min_x, max_x, min_y, max_y;
-
-    int i = 0;
-    for (i = 0; i < 4; i++) {
-        PhysPoint point = PhysBox_vertex(rect, i);
-        if (i == 0) {
-            min_x = point.x;
-            max_x = point.x;
-            min_y = point.y;
-            max_y = point.y;
-        }
-        if (point.x < min_x) min_x = point.x;
-        if (point.y < min_y) min_y = point.y;
-        if (point.x > max_x) max_x = point.x;
-        if (point.y > max_y) max_y = point.y;
-    }
-
-    PhysPoint tl = {min_x, min_y};
-    PhysPoint tr = {max_x, min_y};
-    PhysPoint br = {max_x, max_y};
-    PhysPoint bl = {min_x, max_y};
-
-    PhysBox bounding = {tl, tr, br, bl};
-    return bounding;
+error:
+    exit(1);
+    return;
 }
 
 PhysBox Fixture_base_box(Fixture *fixture) {
@@ -177,6 +172,17 @@ PhysBox Fixture_base_box(Fixture *fixture) {
         {fixture->x - fixture->width / 2.0,
         fixture->y + fixture->height / 2.0}
     };
+    return rect;
+}
+
+PhysBox Fixture_real_box(Fixture *fixture) {
+    PhysBox rect = Fixture_base_box(fixture);
+    PhysPoint pivot = {
+        fixture->x,
+        fixture->y
+    };
+
+    rect = PhysBox_rotate(rect, pivot, fixture->rotation_radians);
     return rect;
 }
 

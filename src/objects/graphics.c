@@ -31,7 +31,7 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
     };
     glTranslatef(-SCREEN_WIDTH/2,-SCREEN_HEIGHT/2, 0.f );
     glTranslatef(center.x,center.y, 0.f );
-    glRotatef(rotation,0,0,-1);
+    glRotatef(rotation,0,0,1);
     //printf("%f\n", rotation);
 
     glBindTexture(GL_TEXTURE_2D, texture);

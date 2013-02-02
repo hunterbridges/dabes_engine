@@ -19,6 +19,7 @@ int World_init(void *self);
 void World_destroy(void *self);
 void World_solve(Physics *physics, World *world, float advance_ms);
 Fixture *World_create_fixture(World *world);
+PhysBox World_floor_box(World *world);
 
 extern Object WorldProto;
 

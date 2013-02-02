@@ -1,3 +1,4 @@
+#include <float.h>
 #include "physics.h"
 
 int Physics_init(void *self) {
@@ -59,6 +60,37 @@ PhysPoint PhysPoint_rotate(PhysPoint point, PhysPoint pivot,
     return rotated;
 }
 
+PhysPoint PhysPoint_perp(PhysPoint a) {
+    PhysPoint new = a;
+    float tmp = new.y;
+    new.y = -1 * new.x;
+    new.x = tmp;
+    return new;
+}
+
+PhysPoint PhysPoint_normalize(PhysPoint a) {
+    PhysPoint new = a;
+    float length = PhysPoint_magnitude(a);
+    new.x /= length;
+    new.y /= length;
+    return new;
+}
+
+float PhysPoint_magnitude(PhysPoint a) {
+    return sqrt(a.x * a.x + a.y * a.y);
+}
+
+// ========================
+// PhysProjection functions
+// ========================
+int PhysProjection_does_overlap(PhysProjection a, PhysProjection b) {
+    return !(b.max < a.min || a.max < b.min);
+}
+
+float PhysProjection_get_overlap(PhysProjection a, PhysProjection b) {
+    return (a.max < b.max ? a.max - b.min : b.max - a.min);
+}
+
 // =================
 // PhysBox functions
 // =================
@@ -96,3 +128,122 @@ PhysBox PhysBox_move(PhysBox box, PhysPoint move) {
     moved.bl = PhysPoint_add(moved.bl, move);
     return moved;
 }
+
+void PhysBox_find_axes(PhysBox box, PhysPoint *axes) {
+    int i = 0;
+    for (int i = 0; i < 2; i++) {
+        PhysPoint p1 = PhysBox_vertex(box, i);
+        PhysPoint p2 = PhysBox_vertex(box, i + 1);
+        PhysPoint edge = PhysPoint_subtract(p1, p2);
+        PhysPoint perp = PhysPoint_perp(edge);
+        PhysPoint normal = PhysPoint_normalize(perp);
+        axes[i] = normal;
+    }
+}
+
+PhysProjection PhysBox_project_onto(PhysBox box, PhysPoint axis) {
+    float min = PhysPoint_dot(axis, PhysBox_vertex(box, 0));
+    float max = min;
+    int i = 0;
+    for (i = 0; i < 4; i++) {
+        float dot = PhysPoint_dot(axis, PhysBox_vertex(box, i));
+        if (dot < min) min = dot;
+        if (dot > max) max = dot;
+    }
+    PhysProjection proj = {min, max};
+    return proj;
+}
+
+int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv) {
+    float overlap = FLT_MAX;
+    PhysPoint smallest = {0, 0};
+    PhysPoint axes_a[2];
+    PhysBox_find_axes(a, axes_a);
+
+    PhysPoint axes_b[2];
+    PhysBox_find_axes(b, axes_b);
+    int i = 0;
+    for (i = 0; i < 2; i++) {
+        PhysPoint axis = axes_a[i];
+        PhysProjection p1 = PhysBox_project_onto(a, axis);
+        PhysProjection p2 = PhysBox_project_onto(b, axis);
+        int overlaps = PhysProjection_does_overlap(p1, p2);
+        if (overlaps) {
+            float o = PhysProjection_get_overlap(p1, p2);
+            if (o < overlap) {
+                overlap = o;
+                smallest = axis;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    for (i = 0; i < 2; i++) {
+        PhysPoint axis = axes_b[i];
+        PhysProjection p1 = PhysBox_project_onto(a, axis);
+        PhysProjection p2 = PhysBox_project_onto(b, axis);
+        int overlaps = PhysProjection_does_overlap(p1, p2);
+        if (overlaps) {
+            float o = PhysProjection_get_overlap(p1, p2);
+            if (o < overlap) {
+                overlap = o;
+                smallest = axis;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    if (mtv != NULL) {
+        *mtv = PhysPoint_scale(smallest, overlap);
+    }
+    return 1;
+}
+
+PhysPoint PhysBox_poc(PhysBox a, PhysBox b, PhysPoint mtv) {
+    PhysBox t = PhysBox_move(a, PhysPoint_scale(mtv, -1));
+    PhysPoint b_center = PhysBox_center(b);
+    PhysPoint closest = {0,0};
+    int i = 0;
+    for (i = 0; i < 4; i++) {
+        PhysPoint vertex = PhysBox_vertex(a, i);
+        if (PhysBox_contains_point(b, vertex)) return vertex;
+    }
+    return closest;
+}
+
+PhysBox PhysBox_bounding_box(PhysBox rect) {
+    float min_x, max_x, min_y, max_y;
+
+    int i = 0;
+    for (i = 0; i < 4; i++) {
+        PhysPoint point = PhysBox_vertex(rect, i);
+        if (i == 0) {
+            min_x = point.x;
+            max_x = point.x;
+            min_y = point.y;
+            max_y = point.y;
+        }
+        if (point.x < min_x) min_x = point.x;
+        if (point.y < min_y) min_y = point.y;
+        if (point.x > max_x) max_x = point.x;
+        if (point.y > max_y) max_y = point.y;
+    }
+
+    PhysPoint tl = {min_x, min_y};
+    PhysPoint tr = {max_x, min_y};
+    PhysPoint br = {max_x, max_y};
+    PhysPoint bl = {min_x, max_y};
+
+    PhysBox bounding = {tl, tr, br, bl};
+    return bounding;
+}
+
+int PhysBox_contains_point(PhysBox box, PhysPoint point) {
+    // TODO: Make more precise
+    PhysBox bounding = PhysBox_bounding_box(box);
+    return point.x >= bounding.tl.x && point.x <= bounding.tr.x &&
+        point.y >= bounding.tl.y && point.y <= bounding.bl.y;
+}
+

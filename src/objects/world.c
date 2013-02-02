@@ -50,6 +50,16 @@ error:
     return NULL;
 }
 
+PhysBox World_floor_box(World *world) {
+    PhysBox floor = {
+        {0, world->height},
+        {world->width, world->height},
+        {world->width, world->height * 2},
+        {0, world->height * 2}
+    };
+    return floor;
+}
+
 Object WorldProto = {
     .init = World_init,
     .destroy = World_destroy

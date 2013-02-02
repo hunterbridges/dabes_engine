@@ -35,8 +35,8 @@ void Fixture_set_mass(Fixture *fixture, float m);
 float Fixture_rotation_degrees(Fixture *fixture);
 int Fixture_init(void *self);
 void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms);
-PhysBox Fixture_bounding_box(Fixture *fixture);
 PhysBox Fixture_base_box(Fixture *fixture);
+PhysBox Fixture_real_box(Fixture *fixture);
 GfxRect Fixture_display_rect(Fixture *fixture);
 
 extern Object FixtureProto;

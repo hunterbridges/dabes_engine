@@ -101,12 +101,13 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         if (entity == NULL) break;
 
         Fixture *fixture = World_create_fixture(world);
-        fixture->width =  world->width / (2 * NUM_BOXES);
-        fixture->height = fixture->width; //+ fixture->width * 2 * i / NUM_BOXES;
-        fixture->x = i * (world->width / NUM_BOXES) + fixture->width;
+        fixture->width =  world->width / (2 * 10/*NUM_BOXES*/);
+        fixture->height = fixture->width; // + fixture->width * 2 * i / NUM_BOXES;
+        fixture->x = (world->width - (NUM_BOXES - i) * fixture->width * 4 + 2 * (NUM_BOXES + 1) * fixture->width) / 2;
         fixture->y = 1;
         fixture->time_scale = (float)(i + 1) / (NUM_BOXES + 1);
         fixture->time_scale = 1;
+        fixture->angular_velocity = M_PI * 2;
         Fixture_set_mass(fixture,
                 fixture->mass * (float)(i + 1) / (NUM_BOXES + 1));
 
