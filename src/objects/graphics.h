@@ -3,8 +3,8 @@
 #include "../prefix.h"
 
 typedef struct GfxPoint {
-    float x;
-    float y;
+    double x;
+    double y;
 } GfxPoint;
 
 typedef struct GfxRect {
@@ -14,15 +14,15 @@ typedef struct GfxRect {
     GfxPoint br;
 } GfxRect;
 
-GfxRect GfxRect_from_xywh(float x, float y, float w, float h);
+GfxRect GfxRect_from_xywh(double x, double y, double w, double h);
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect);
 
 typedef struct Graphics {
     Object proto;
 } Graphics;
 
-void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
-        GLuint texture, float rotation);
+void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
+        GLuint texture, double rotation);
 int Graphics_init(void *self);
 
 extern Object GraphicsProto;

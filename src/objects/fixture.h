@@ -6,35 +6,35 @@
 
 typedef struct Fixture {
     void *world;
-    float x;  // X CENTER
-    float y;  // Y CENTER
-    float width;
-    float height;
+    double x;  // X CENTER
+    double y;  // Y CENTER
+    double width;
+    double height;
 
-    float restitution;
-    float mass;
-    float drag;
-    float surface_area;
+    double restitution;
+    double mass;
+    double drag;
+    double surface_area;
 
-    float rotation_radians;
-    float angular_velocity;
-    float angular_acceleration;
-    float moment_of_inertia;
+    double rotation_radians;
+    double angular_velocity;
+    double angular_acceleration;
+    double moment_of_inertia;
 
     PhysPoint velocity;
     PhysPoint acceleration;
 
     PhysPoint spring;
 
-    float time_scale;
+    double time_scale;
 } Fixture;
 
-void Fixture_set_rotation_degrees(Fixture *fixture, float degrees);
-void Fixture_set_wh(Fixture *fixture, float w, float h);
-void Fixture_set_mass(Fixture *fixture, float m);
-float Fixture_rotation_degrees(Fixture *fixture);
+void Fixture_set_rotation_degrees(Fixture *fixture, double degrees);
+void Fixture_set_wh(Fixture *fixture, double w, double h);
+void Fixture_set_mass(Fixture *fixture, double m);
+double Fixture_rotation_degrees(Fixture *fixture);
 int Fixture_init(void *self);
-void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms);
+void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms);
 PhysBox Fixture_base_box(Fixture *fixture);
 PhysBox Fixture_real_box(Fixture *fixture);
 GfxRect Fixture_display_rect(Fixture *fixture);

@@ -7,8 +7,8 @@ int main(int argc, char *argv[])
     argc = (int)argc;
     argv = (char **)argv;
 
-    float swidth = SCREEN_WIDTH;
-    float sheight = SCREEN_HEIGHT;
+    double swidth = SCREEN_WIDTH;
+    double sheight = SCREEN_HEIGHT;
     Engine *engine = NULL;
     Scene *game = NULL;
     World *world = NULL;
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             game->projection_scale += 0.02 * zoom;
             if (game->projection_scale < 0) game->projection_scale = 0;
 
-            float volume = game->projection_scale * 128.f;
+            double volume = game->projection_scale * 128.f;
             Mix_VolumeMusic(volume);
 
             game->projection_rotation += 2 * rot;

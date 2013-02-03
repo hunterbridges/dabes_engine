@@ -37,7 +37,7 @@ int Scene_init(void *self) {
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *entity = NEW(GameEntity, "A thing");
         game->entities[i] = entity;
-        entity->alpha = (float)i / NUM_BOXES * 0.75 + 0.25;
+        entity->alpha = (double)i / NUM_BOXES * 0.75 + 0.25;
     }
 
     SDL_Surface *bg = gradient(640, 480);
@@ -57,7 +57,7 @@ void Scene_render(void *self, void *engine) {
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    float bgScale = (game->projection_scale + 2) / 2;
+    double bgScale = (game->projection_scale + 2) / 2;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(SCREEN_WIDTH / (-2 * bgScale),
@@ -68,7 +68,7 @@ void Scene_render(void *self, void *engine) {
 
     // Draw the background
     GfxRect gfx_rect = GfxRect_from_xywh(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    GLfloat color[4] = {1.f, 1.f, 1.f, 1.f};
+    GLdouble color[4] = {1.f, 1.f, 1.f, 1.f};
     Graphics_draw_rect(graphics, gfx_rect, color, game->bg_texture, 0);
 
     glMatrixMode(GL_PROJECTION);
@@ -105,7 +105,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         fixture->height = fixture->width;// + fixture->width * 2 * i / NUM_BOXES;
         fixture->x = (world->width - (NUM_BOXES - i) * fixture->width * 4 + 2 * (NUM_BOXES + 1) * fixture->width) / 2;
         fixture->y = 1;
-        fixture->time_scale = (float)(i + 1) / (NUM_BOXES + 1);
+        fixture->time_scale = (double)(i + 1) / (NUM_BOXES + 1);
         fixture->time_scale = 1;
         fixture->rotation_radians = M_PI / 16 * (i % 8);
         Fixture_set_mass(fixture, 10 * (i + 1));

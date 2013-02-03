@@ -10,8 +10,8 @@ typedef struct Scene {
 
     Mix_Music *music;
 
-    float projection_scale;
-    float projection_rotation;
+    double projection_scale;
+    double projection_rotation;
 
     GameEntity *entities[256];
 } Scene;

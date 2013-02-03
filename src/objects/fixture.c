@@ -21,7 +21,7 @@ int Fixture_init(void *self) {
 
     fixture->time_scale = 1.0;
 
-    fixture->restitution = 0.5;
+    fixture->restitution = 0.2;
     fixture->mass = 100;
     fixture->moment_of_inertia =
         fixture->mass * (pow(fixture->height, 2) + pow(fixture->width, 2)) / 12;
@@ -41,38 +41,38 @@ void Fixture_calc_moment_of_inertia(Fixture *fixture) {
         fixture->mass * (pow(fixture->height, 2) + pow(fixture->width, 2)) / 12;
 }
 
-void Fixture_set_wh(Fixture *fixture, float w, float h) {
+void Fixture_set_wh(Fixture *fixture, double w, double h) {
     fixture->width = w;
     fixture->height = h;
     Fixture_calc_moment_of_inertia(fixture);
 }
 
-void Fixture_set_mass(Fixture *fixture, float m) {
+void Fixture_set_mass(Fixture *fixture, double m) {
     fixture->mass = m;
     Fixture_calc_moment_of_inertia(fixture);
 }
 
-void Fixture_set_rotation_degrees(Fixture *fixture, float degrees) {
-    float rads = degrees * M_PI / 180;
+void Fixture_set_rotation_degrees(Fixture *fixture, double degrees) {
+    double rads = degrees * M_PI / 180;
     fixture->rotation_radians = rads;
 }
 
-float Fixture_rotation_degrees(Fixture *fixture) {
+double Fixture_rotation_degrees(Fixture *fixture) {
     return fixture->rotation_radians * 180 / M_PI;
 }
 
-void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
+void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     check_mem(physics);
     check_mem(fixture);
     PhysPoint center = {fixture->x, fixture->y};
     PhysBox real_box = Fixture_real_box(fixture);
     World *world = fixture->world;
 
-    float stiffness = 10;
+    double stiffness = 10;
 
     PhysPoint f = {0,0};
-    float torque = 0;
-    float dt = fixture->time_scale * advance_ms / 1000.0;
+    double torque = 0;
+    double dt = fixture->time_scale * advance_ms / 1000.0;
 
     // Start velocity verlet
     PhysPoint displacement = PhysPoint_scale(fixture->velocity, dt);
@@ -103,14 +103,14 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
         PhysPoint poc = PhysBox_poc(real_box, floor_box, mtv);
 
         PhysPoint vai = fixture->velocity;
-        float wai = fixture->angular_velocity;
+        double wai = fixture->angular_velocity;
         PhysPoint r = PhysPoint_subtract(center, poc);
         PhysPoint perp_norm = PhysPoint_perp(r);
         PhysPoint rot_v = PhysPoint_scale(PhysPoint_normalize(perp_norm), wai);
         PhysPoint vap = PhysPoint_add(vai, rot_v);
 
         // TODO: Bodies colliding with each OTHER (poop)
-        float impulse_magnitude = -(1 + fixture->restitution) *
+        double impulse_magnitude = -(1 + fixture->restitution) *
             PhysPoint_dot(vap, collision_normal);
         impulse_magnitude /= PhysPoint_dot(collision_normal, collision_normal) *
             (1 / fixture->mass) +
@@ -122,7 +122,7 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
                 PhysPoint_scale(collision_normal, impulse_magnitude)) / fixture->moment_of_inertia;
     }
 
-    float damping = -1;
+    double damping = -1;
     //f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
 
     // Finish velocity verlet
@@ -133,11 +133,11 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
             PhysPoint_scale(avg_a, dt));
     fixture->acceleration = avg_a;
 
-    float angular_damping = -7;
+    double angular_damping = -7;
     torque += fixture->angular_velocity * angular_damping;
     fixture->angular_acceleration = torque / fixture->moment_of_inertia;
     fixture->angular_velocity += fixture->angular_acceleration * dt;
-    float delta_theta = fixture->angular_velocity * dt;
+    double delta_theta = fixture->angular_velocity * dt;
     fixture->rotation_radians += delta_theta;
     return;
 error:

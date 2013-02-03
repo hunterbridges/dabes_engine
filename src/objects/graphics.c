@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-GfxRect GfxRect_from_xywh(float x, float y, float w, float h) {
+GfxRect GfxRect_from_xywh(double x, double y, double w, double h) {
     GfxPoint tl = { x, y };
     GfxPoint tr = { x + w, y };
     GfxPoint bl = { x, y + h };
@@ -18,12 +18,12 @@ GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
     return GfxRect_from_xywh(rect.x, rect.y, rect.w, rect.h);
 }
 
-void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
-        GLuint texture, float rotation) {
+void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
+        GLuint texture, double rotation) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    float w = rect.tr.x - rect.tl.x;
-    float h = rect.bl.y - rect.tl.y;
+    double w = rect.tr.x - rect.tl.x;
+    double h = rect.bl.y - rect.tl.y;
 
     GfxPoint center = {
         rect.tl.x + w / 2,

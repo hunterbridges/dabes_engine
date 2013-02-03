@@ -27,7 +27,7 @@ error:
     free(self);
 }
 
-void World_solve(Physics *physics, World *world, float advance_ms) {
+void World_solve(Physics *physics, World *world, double advance_ms) {
     advance_ms *= world->time_scale;
 
     uint i = 0;

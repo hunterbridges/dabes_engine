@@ -26,33 +26,33 @@ PhysPoint PhysPoint_subtract(PhysPoint a, PhysPoint b) {
     return new;
 }
 
-PhysPoint PhysPoint_scale(PhysPoint a, float b) {
+PhysPoint PhysPoint_scale(PhysPoint a, double b) {
     PhysPoint new = {a.x * b, a.y * b};
     return new;
 }
 
-float PhysPoint_dot(PhysPoint a, PhysPoint b) {
+double PhysPoint_dot(PhysPoint a, PhysPoint b) {
     return a.x * b.x + a.y * b.y;
 }
 
-float PhysPoint_cross(PhysPoint a, PhysPoint b) {
+double PhysPoint_cross(PhysPoint a, PhysPoint b) {
     return a.x * b.x - a.y * b.y;
 }
 
 PhysPoint PhysPoint_rotate(PhysPoint point, PhysPoint pivot,
-        float angle_in_rads) {
+        double angle_in_rads) {
 
     PhysPoint rotated = {
         point.x - pivot.x,
         point.y - pivot.y
     };
 
-    float radians = angle_in_rads;
-    float s = sin(radians);
-    float c = cos(radians);
+    double radians = angle_in_rads;
+    double s = sin(radians);
+    double c = cos(radians);
 
-    float xnew = rotated.x * c - rotated.y * s;
-    float ynew = rotated.x * s + rotated.y * c;
+    double xnew = rotated.x * c - rotated.y * s;
+    double ynew = rotated.x * s + rotated.y * c;
 
     rotated.x = xnew + pivot.x;
     rotated.y = ynew + pivot.y;
@@ -62,7 +62,7 @@ PhysPoint PhysPoint_rotate(PhysPoint point, PhysPoint pivot,
 
 PhysPoint PhysPoint_perp(PhysPoint a) {
     PhysPoint new = a;
-    float tmp = new.y;
+    double tmp = new.y;
     new.y = -1 * new.x;
     new.x = tmp;
     return new;
@@ -70,13 +70,13 @@ PhysPoint PhysPoint_perp(PhysPoint a) {
 
 PhysPoint PhysPoint_normalize(PhysPoint a) {
     PhysPoint new = a;
-    float length = PhysPoint_magnitude(a);
+    double length = PhysPoint_magnitude(a);
     new.x /= length;
     new.y /= length;
     return new;
 }
 
-float PhysPoint_magnitude(PhysPoint a) {
+double PhysPoint_magnitude(PhysPoint a) {
     return sqrt(a.x * a.x + a.y * a.y);
 }
 
@@ -87,7 +87,7 @@ int PhysProjection_does_overlap(PhysProjection a, PhysProjection b) {
     return !(b.max < a.min || a.max < b.min);
 }
 
-float PhysProjection_get_overlap(PhysProjection a, PhysProjection b) {
+double PhysProjection_get_overlap(PhysProjection a, PhysProjection b) {
     return (a.max < b.max ? a.max - b.min : b.max - a.min);
 }
 
@@ -111,7 +111,7 @@ PhysPoint PhysBox_vertex(PhysBox box, uint index) {
     return no;
 }
 
-PhysBox PhysBox_rotate(PhysBox box, PhysPoint pivot, float angle_in_rads) {
+PhysBox PhysBox_rotate(PhysBox box, PhysPoint pivot, double angle_in_rads) {
     PhysBox rotated = box;
     rotated.tl = PhysPoint_rotate(rotated.tl, pivot, angle_in_rads);
     rotated.tr = PhysPoint_rotate(rotated.tr, pivot, angle_in_rads);
@@ -142,11 +142,11 @@ void PhysBox_find_axes(PhysBox box, PhysPoint *axes) {
 }
 
 PhysProjection PhysBox_project_onto(PhysBox box, PhysPoint axis) {
-    float min = PhysPoint_dot(axis, PhysBox_vertex(box, 0));
-    float max = min;
+    double min = PhysPoint_dot(axis, PhysBox_vertex(box, 0));
+    double max = min;
     int i = 0;
     for (i = 0; i < 4; i++) {
-        float dot = PhysPoint_dot(axis, PhysBox_vertex(box, i));
+        double dot = PhysPoint_dot(axis, PhysBox_vertex(box, i));
         if (dot < min) min = dot;
         if (dot > max) max = dot;
     }
@@ -155,7 +155,7 @@ PhysProjection PhysBox_project_onto(PhysBox box, PhysPoint axis) {
 }
 
 int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv) {
-    float overlap = FLT_MAX;
+    double overlap = FLT_MAX;
     PhysPoint smallest = {0, 0};
     PhysPoint axes_a[2];
     PhysBox_find_axes(a, axes_a);
@@ -169,7 +169,7 @@ int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv) {
         PhysProjection p2 = PhysBox_project_onto(b, axis);
         int overlaps = PhysProjection_does_overlap(p1, p2);
         if (overlaps) {
-            float o = PhysProjection_get_overlap(p1, p2);
+            double o = PhysProjection_get_overlap(p1, p2);
             if (o < overlap) {
                 overlap = o;
                 smallest = axis;
@@ -185,7 +185,7 @@ int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv) {
         PhysProjection p2 = PhysBox_project_onto(b, axis);
         int overlaps = PhysProjection_does_overlap(p1, p2);
         if (overlaps) {
-            float o = PhysProjection_get_overlap(p1, p2);
+            double o = PhysProjection_get_overlap(p1, p2);
             if (o < overlap) {
                 overlap = o;
                 smallest = axis;
@@ -222,7 +222,7 @@ PhysPoint PhysBox_poc(PhysBox a, PhysBox b, PhysPoint mtv) {
 }
 
 PhysBox PhysBox_bounding_box(PhysBox rect) {
-    float min_x, max_x, min_y, max_y;
+    double min_x, max_x, min_y, max_y;
 
     int i = 0;
     for (i = 0; i < 4; i++) {
