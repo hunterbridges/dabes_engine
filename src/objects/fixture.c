@@ -88,49 +88,42 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
     PhysPoint mtv = {0, 0};
     PhysBox floor_box = World_floor_box(world);
     int hit_floor = PhysBox_collision(real_box, floor_box, &mtv);
+    PhysPoint gravity = {0, world->gravity * fixture->mass};
+    f = PhysPoint_add(f, gravity);
     if (hit_floor) {
-        PhysPoint collision_normal = {0, 1};
+        f = PhysPoint_subtract(f, gravity);
+        real_box = PhysBox_move(real_box, PhysPoint_scale(mtv, -1));
+        center = PhysBox_center(real_box);
+        fixture->x = center.x;
+        fixture->y = center.y;
+
+        PhysPoint collision_normal = {0, -1};
+        mtv.x = 0;
+        mtv.y = 0;
         PhysPoint poc = PhysBox_poc(real_box, floor_box, mtv);
 
         PhysPoint vai = fixture->velocity;
         float wai = fixture->angular_velocity;
-        PhysPoint r = PhysPoint_subtract(poc, center);
-        PhysPoint vap = PhysPoint_add(vai, PhysPoint_scale(r, wai));
-        //debug("%f, %f", vap.x, vap.y);
+        PhysPoint r = PhysPoint_subtract(center, poc);
+        PhysPoint perp_norm = PhysPoint_perp(r);
+        PhysPoint rot_v = PhysPoint_scale(PhysPoint_normalize(perp_norm), wai);
+        PhysPoint vap = PhysPoint_add(vai, rot_v);
 
         // TODO: Bodies colliding with each OTHER (poop)
-        float impulse_magnitude =
-            PhysPoint_dot(PhysPoint_scale(vap, -(1 + fixture->restitution)),
-                    collision_normal);
-        //debug("%f", impulse_magnitude);
-        float imp_div = (1 / fixture->mass) +
-            pow(PhysPoint_cross(r, collision_normal), 2) / fixture->moment_of_inertia;
-        //debug("%f", PhysPoint_cross(r, collision_normal));
-        //debug("%f", imp_div);
-        impulse_magnitude /= imp_div;
-        //debug("%f", impulse_magnitude);
+        float impulse_magnitude = -(1 + fixture->restitution) *
+            PhysPoint_dot(vap, collision_normal);
+        impulse_magnitude /= PhysPoint_dot(collision_normal, collision_normal) *
+            (1 / fixture->mass) +
+            (pow(PhysPoint_dot(perp_norm, collision_normal), 2) /
+             fixture->moment_of_inertia);
         fixture->velocity = PhysPoint_add(vai, PhysPoint_scale(collision_normal,
                     impulse_magnitude / fixture->mass));
-        torque -= PhysPoint_cross(r,
+        fixture->angular_velocity += PhysPoint_dot(perp_norm,
                 PhysPoint_scale(collision_normal, impulse_magnitude)) / fixture->moment_of_inertia;
-    } else if (!hit_floor) {
-        PhysPoint gravity = {0, world->gravity * fixture->mass};
-        f = PhysPoint_add(f, gravity);
     }
 
-    // Spring thing
-    /*
-    PhysPoint spring_force = PhysPoint_subtract(real_box.tl, fixture->spring);
-    spring_force = PhysPoint_scale(spring_force , -1 * stiffness);
-    PhysPoint radius = PhysPoint_subtract(center, real_box.tl);
-    float spring_xforce = PhysPoint_cross(radius, spring_force);
-
-    torque += -1 * spring_xforce;
-    f = PhysPoint_add(f, spring_force);
-    */
-
     float damping = -1;
-    f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
+    //f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
 
     // Finish velocity verlet
     PhysPoint new_a = PhysPoint_scale(f, 1 / fixture->mass);
@@ -146,12 +139,6 @@ void Fixture_solve(Physics *physics, Fixture *fixture, float advance_ms) {
     fixture->angular_velocity += fixture->angular_acceleration * dt;
     float delta_theta = fixture->angular_velocity * dt;
     fixture->rotation_radians += delta_theta;
-    check(delta_theta == delta_theta, "Got a nan bro");
-
-    if (hit_floor) {
-        fixture->x -= mtv.x;
-        fixture->y -= mtv.y;
-    }
     return;
 error:
     exit(1);
