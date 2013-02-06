@@ -2,15 +2,14 @@
 #include "gameobjects.h"
 #include "SDL/SDL_TTF.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     argc = (int)argc;
     argv = (char **)argv;
 
     double swidth = SCREEN_WIDTH;
     double sheight = SCREEN_HEIGHT;
     Engine *engine = NULL;
-    Scene *game = NULL;
+    Scene *scene = NULL;
     World *world = NULL;
 
     SDL_Event event = {};
@@ -21,15 +20,14 @@ int main(int argc, char *argv[])
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("media/fonts/uni.ttf", 8);
 
     screen = SDL_SetVideoMode((int)swidth, (int)sheight, 32, SDL_OPENGL);
 
     check(initGL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 
     engine = NEW(Engine, "The game engine");
-    game = NEW(Scene, "The game");
-    world = Scene_create_world(game, engine->physics);
+    scene = NEW(Scene, "The game");
+    world = Scene_create_world(scene, engine->physics);
 
     int skip = 1000 / FPS;
 
@@ -75,49 +73,36 @@ int main(int argc, char *argv[])
 
         if (frame) {
             if (reset) {
-                game->projection_scale = 1;
-                game->projection_rotation = 0;
+                scene->projection_scale = 1;
+                scene->projection_rotation = 0;
                 reset = 0;
             }
-            game->projection_scale += 0.02 * zoom;
-            if (game->projection_scale < 0) game->projection_scale = 0;
+            scene->projection_scale += 0.02 * zoom;
+            if (scene->projection_scale < 0) scene->projection_scale = 0;
+            scene->projection_rotation += 2 * rot;
 
-            double volume = game->projection_scale * 128.f;
+            double volume = scene->projection_scale * 128.f;
             Mix_VolumeMusic(volume);
 
-            game->projection_rotation += 2 * rot;
-
             World_solve(engine->physics, world, ticks_since_last);
-            game->_(render)(game, engine);
-
-            // TODO: Make the debug text work again
-            SDL_Rect debugRect = {10, 10, 200, 100};
-            SDL_Color txtBlack = {0,0,0,255};
-            char *dTxt = malloc(256 * sizeof(char));
-            sprintf(dTxt, "FPS CAP: %d           ACTUAL: %.2f", FPS,
-                    1000.0 / ticks_since_last);
-            SDL_Surface *debugText = TTF_RenderText_Solid(font,
-                    dTxt, txtBlack);
-            free(dTxt);
-
-            SDL_BlitSurface(debugText, NULL, screen, &debugRect);
-            SDL_FreeSurface(debugText);
+            Scene_render(scene, engine);
+#ifdef DEBUG
+            Graphics_draw_debug_text(engine->graphics, ticks_since_last);
+#endif
 
             SDL_GL_SwapBuffers();
             last_frame_at = ticks;
         }
     }
 
-    game->_(destroy)(game);
+    scene->_(destroy)(scene);
     engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
-    TTF_CloseFont(font);
 
     return 0;
 error:
-    if (game) game->_(destroy)(game);
+    if (scene) scene->_(destroy)(scene);
     if (engine) engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
-    TTF_CloseFont(font);
     return 1;
 }

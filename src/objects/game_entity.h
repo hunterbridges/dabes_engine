@@ -13,7 +13,7 @@ typedef struct GameEntity {
 
 int GameEntity_init(void *self);
 void GameEntity_destroy(void *self);
-void GameEntity_render(void *self, void *engine);
+void GameEntity_render(GameEntity *self, void *engine);
 
 extern Object GameEntityProto;
 

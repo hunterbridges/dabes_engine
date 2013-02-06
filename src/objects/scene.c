@@ -58,26 +58,12 @@ void Scene_render(void *self, void *engine) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     double bgScale = (game->projection_scale + 2) / 2;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(SCREEN_WIDTH / (-2 * bgScale),
-            SCREEN_WIDTH / (2 * bgScale),
-            SCREEN_HEIGHT / (2 * bgScale),
-            SCREEN_HEIGHT / (-2 * bgScale),
-            1.0, -1.0 );
-
-    // Draw the background
+    Graphics_scale_projection_matrix(graphics, bgScale);
     GfxRect gfx_rect = GfxRect_from_xywh(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     GLdouble color[4] = {1.f, 1.f, 1.f, 1.f};
     Graphics_draw_rect(graphics, gfx_rect, color, game->bg_texture, 0);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(SCREEN_WIDTH / (-2 * game->projection_scale),
-            SCREEN_WIDTH / (2 * game->projection_scale),
-            SCREEN_HEIGHT / (2 * game->projection_scale),
-            SCREEN_HEIGHT / (-2 * game->projection_scale),
-            1.0, -1.0 );
+    Graphics_scale_projection_matrix(graphics, game->projection_scale);
     glRotatef(game->projection_rotation, 0, 0, -1);
 
     // Draw the stuff
@@ -85,7 +71,7 @@ void Scene_render(void *self, void *engine) {
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *thing = game->entities[i];
         if (thing == NULL) break;
-        thing->_(render)(thing, engine);
+        GameEntity_render(thing, engine);
     }
 }
 
@@ -121,7 +107,6 @@ error:
 
 Object SceneProto = {
    .init = Scene_init,
-   .destroy = Scene_destroy,
-   .render = Scene_render
+   .destroy = Scene_destroy
 };
 

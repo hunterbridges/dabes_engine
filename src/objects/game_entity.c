@@ -23,7 +23,7 @@ error:
     return;
 }
 
-void GameEntity_render(void *self, void *engine) {
+void GameEntity_render(GameEntity *self, void *engine) {
     GameEntity *entity = self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
@@ -34,7 +34,7 @@ void GameEntity_render(void *self, void *engine) {
     */
 
     GfxRect rect = Fixture_display_rect(entity->fixture);
-    GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
+    GLdouble color[4] = {0.f, 0.f, 0.f, entity->alpha};
     float degrees = Fixture_rotation_degrees(entity->fixture);
     Graphics_draw_rect(graphics, rect, color, 0, degrees);
 }
@@ -42,6 +42,5 @@ void GameEntity_render(void *self, void *engine) {
 Object GameEntityProto = {
     .destroy = GameEntity_destroy,
     .init = GameEntity_init,
-    .render = GameEntity_render
 };
 
