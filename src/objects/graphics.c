@@ -78,8 +78,9 @@ void Graphics_draw_debug_text(Graphics *graphics,
 
     SDL_Color txtBlack = {255,255,255,255};
     char *dTxt = malloc(256 * sizeof(char));
-    sprintf(dTxt, "FPS CAP: %d           ACTUAL: %.2f", FPS,
-            1000.0 / ticks_since_last);
+    sprintf(dTxt, "FPS CAP: %d           ACTUAL: %d", FPS,
+            (int)ceil(1000.0 / ticks_since_last));
+    //debug("%s", dTxt);
     SDL_Surface *debugText = TTF_RenderText_Solid(graphics->debug_text_font,
             dTxt, txtBlack);
     free(dTxt);
