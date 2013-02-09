@@ -34,10 +34,11 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
     glRotatef(rotation,0,0,1);
     //printf("%f\n", rotation);
 
+    glColor4dv(color);
     glBindTexture(GL_TEXTURE_2D, texture);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_TRIANGLE_STRIP);
-        glColor4dv(color);
         glTexCoord2f(0, 0);
         glVertex2f(-w / 2.0, -h / 2.0);
         glTexCoord2f(1, 0);
@@ -87,7 +88,7 @@ void Graphics_draw_debug_text(Graphics *graphics,
 
     SDL_BlitSurface(debugText, NULL, surface, &debugRect);
     SDL_FreeSurface(debugText);
-    graphics->debug_text_texture = loadSurfaceAsTexture(surface);
+    graphics->debug_text_texture = load_surface_as_texture(surface);
     //debug("%d", graphics->debug_text_texture);
 
     GfxRect rect = GfxRect_from_SDL_Rect(debugRect);
@@ -120,9 +121,6 @@ void Graphics_destroy(void *self) {
     TTF_CloseFont(graphics->debug_text_font);
     GLuint textures[] = {graphics->debug_text_texture};
     glDeleteTextures(1, textures);
-    free(graphics);
-    return;
-error:
     free(graphics);
 }
 

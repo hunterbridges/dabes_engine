@@ -36,12 +36,13 @@ int Scene_init(void *self) {
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *entity = NEW(GameEntity, "A thing");
+        entity->texture = load_image_as_texture("media/sprites/dumblock.png");
         game->entities[i] = entity;
         entity->alpha = (double)i / NUM_BOXES * 0.75 + 0.25;
     }
 
     SDL_Surface *bg = gradient(640, 480);
-    game->bg_texture = loadSurfaceAsTexture(bg);
+    game->bg_texture = load_surface_as_texture(bg);
 
     game->projection_scale = 1;
     game->projection_rotation = 0;

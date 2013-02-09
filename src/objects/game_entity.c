@@ -6,6 +6,7 @@ int GameEntity_init(void *self) {
     GameEntity *entity = (GameEntity *)self;
     entity->fixture = NULL;
     entity->alpha = 1.f;
+    entity->texture = 0;
 
     return 1;
 
@@ -27,16 +28,10 @@ void GameEntity_render(GameEntity *self, void *engine) {
     GameEntity *entity = self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
-    /*
-    SDL_Rect bounding_box = GameEntity_bounding_box(thing);
-    GLfloat bcolor[3] = {1.f, 0.f, 0.f};
-    graphics->draw_rect(graphics, bounding_box, bcolor, 0, 0);
-    */
-
     GfxRect rect = Fixture_display_rect(entity->fixture);
     GLdouble color[4] = {0.f, 0.f, 0.f, entity->alpha};
     float degrees = Fixture_rotation_degrees(entity->fixture);
-    Graphics_draw_rect(graphics, rect, color, 0, degrees);
+    Graphics_draw_rect(graphics, rect, color, entity->texture, degrees);
 }
 
 Object GameEntityProto = {

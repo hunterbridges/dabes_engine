@@ -1,6 +1,6 @@
 #include "gfx_helpers.h"
 
-int initGL(int swidth, int sheight) {
+int init_GL(int swidth, int sheight) {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_MULTISAMPLE);
     glDisable(GL_DEPTH_TEST);
@@ -19,7 +19,7 @@ error:
     return 0;
 }
 
-int loadSurfaceAsTexture(SDL_Surface *surface) {
+GLuint load_surface_as_texture(SDL_Surface *surface) {
     check_mem(surface);
 
     GLuint texture;
@@ -30,12 +30,18 @@ int loadSurfaceAsTexture(SDL_Surface *surface) {
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, surface->w, surface->h,
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h,
         0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
     SDL_FreeSurface(surface);
     return texture;
 error:
     return 0;
+}
+
+// TODO: Hashmap
+GLuint load_image_as_texture(char *image_name) {
+    SDL_Surface *surface = IMG_Load(image_name);
+    return load_surface_as_texture(surface);
 }
 
 SDL_Surface *gradient(unsigned int width, unsigned int height) {

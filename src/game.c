@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
     screen = SDL_SetVideoMode((int)swidth, (int)sheight, 32, SDL_OPENGL);
 
-    check(initGL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
+    check(init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 
     engine = NEW(Engine, "The game engine");
     scene = NEW(Scene, "The game");

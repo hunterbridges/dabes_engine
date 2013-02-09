@@ -123,7 +123,7 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     }
 
     double damping = -1;
-    //f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
+    f = PhysPoint_add(f, PhysPoint_scale(fixture->velocity, damping));
 
     // Finish velocity verlet
     PhysPoint new_a = PhysPoint_scale(f, 1 / fixture->mass);
