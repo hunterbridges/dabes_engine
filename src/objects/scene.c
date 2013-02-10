@@ -38,7 +38,7 @@ int Scene_init(void *self) {
         GameEntity *entity = NEW(GameEntity, "A thing");
         entity->texture = load_image_as_texture("media/sprites/dumblock.png");
         game->entities[i] = entity;
-        entity->alpha = (double)i / NUM_BOXES * 0.75 + 0.25;
+        entity->alpha = (double)i / NUM_BOXES * 1.0;
     }
 
     SDL_Surface *bg = gradient(640, 480);
@@ -93,9 +93,9 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         fixture->x = (world->width - (NUM_BOXES - i) * fixture->width * 4 + 2 * (NUM_BOXES + 1) * fixture->width) / 2;
         fixture->y = 1;
         fixture->time_scale = (double)(i + 1) / (NUM_BOXES + 1);
-        fixture->time_scale = 1;
+        fixture->time_scale = 1 + (float)i / NUM_BOXES;
         fixture->rotation_radians = M_PI / 16 * (i % 8);
-        Fixture_set_mass(fixture, 10 * (i + 1));
+        Fixture_set_mass(fixture, 10);
 
         fixture->spring.x = fixture->x - fixture->width / 2;
 

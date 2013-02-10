@@ -29,14 +29,12 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
         rect.tl.x + w / 2,
         rect.tl.y + h / 2
     };
-    glTranslatef(-SCREEN_WIDTH/2,-SCREEN_HEIGHT/2, 0.f );
-    glTranslatef(center.x,center.y, 0.f );
-    glRotatef(rotation,0,0,1);
-    //printf("%f\n", rotation);
+    glTranslatef(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
+    glTranslatef(center.x,center.y, 0.f);
+    glRotatef(rotation, 0, 0, 1);
 
     glColor4dv(color);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0, 0);
@@ -113,6 +111,9 @@ int Graphics_init(void *self) {
     graphics->debug_text_texture = 0;
     graphics->screen_size.w = SCREEN_WIDTH;
     graphics->screen_size.h = SCREEN_HEIGHT;
+    graphics->shader = 0;
+    Graphics_load_shader(graphics, "media/shaders/decal.vert",
+        "media/shaders/decal.frag");
     return 1;
 }
 
@@ -122,6 +123,82 @@ void Graphics_destroy(void *self) {
     GLuint textures[] = {graphics->debug_text_texture};
     glDeleteTextures(1, textures);
     free(graphics);
+}
+
+GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
+        char *frag_name) {
+    GLuint vertex_shader, fragment_shader;
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    GLuint *last_shader = NULL;
+    GLchar *v_src, *f_src;
+    GLuint v_size, f_size;
+    read_text_file(vert_name, &v_src, &v_size);
+    read_text_file(frag_name, &f_src, &f_size);
+
+    glShaderSource(vertex_shader, 1, (const GLchar**)&v_src, &v_size);
+    glShaderSource(fragment_shader, 1, (const GLchar**)&f_src, &f_size);
+    free(v_src);
+    free(f_src);
+
+    GLint compiled = 0;
+    last_shader = &vertex_shader;
+
+    glCompileShader(vertex_shader);
+    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &compiled);
+    Graphics_log_shader(vertex_shader);
+    check(compiled == 1, "Vertex shader compile");
+
+    last_shader = &fragment_shader;
+    glCompileShader(fragment_shader);
+    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &compiled);
+    Graphics_log_shader(fragment_shader);
+    check(compiled == 1, "Fragment shader compile");
+    last_shader = NULL;
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    Graphics_log_program(program);
+
+    GLuint linked = 0;
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+    check(linked == 1, "Linking shader program");
+
+    graphics->shader = program;
+    printf("SHADER LINKD!\n");
+    return 1;
+error: {
+    return 0;
+}
+}
+
+void Graphics_log_shader(GLuint shader) {
+    GLint blen = 0;
+    GLsizei slen = 0;
+
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH , &blen);
+    if (blen > 1) {
+     GLchar* compiler_log = (GLchar*)malloc(blen);
+     glGetShaderInfoLog(shader, blen, &slen, compiler_log);
+     debug("compiler_log:\n%s\n", compiler_log);
+     free (compiler_log);
+    }
+}
+
+void Graphics_log_program(GLuint program) {
+    GLint blen = 0;
+    GLsizei slen = 0;
+
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH , &blen);
+    if (blen > 1) {
+     GLchar* linker_log = (GLchar*)malloc(blen);
+     glGetProgramInfoLog(program, blen, &slen, linker_log);
+     debug("linker_log:\n%s\n", linker_log);
+     free (linker_log);
+    }
 }
 
 Object GraphicsProto = {

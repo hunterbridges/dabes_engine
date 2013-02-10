@@ -31,7 +31,10 @@ void GameEntity_render(GameEntity *self, void *engine) {
     GfxRect rect = Fixture_display_rect(entity->fixture);
     GLdouble color[4] = {0.f, 0.f, 0.f, entity->alpha};
     float degrees = Fixture_rotation_degrees(entity->fixture);
+    glUseProgram(graphics->shader);
+
     Graphics_draw_rect(graphics, rect, color, entity->texture, degrees);
+    glUseProgram(0);
 }
 
 Object GameEntityProto = {

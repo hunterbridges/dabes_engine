@@ -14,5 +14,6 @@
 #include "dbg.h"
 #include "gfx_helpers.h"
 #include "object.h"
+#include "util.h"
 
 #endif
