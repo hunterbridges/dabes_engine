@@ -127,6 +127,8 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
 
     // Finish velocity verlet
     PhysPoint new_a = PhysPoint_scale(f, 1 / fixture->mass);
+    new_a = PhysPoint_add(new_a, fixture->input_acceleration);
+
     PhysPoint avg_a = PhysPoint_scale(
             PhysPoint_add(new_a, fixture->acceleration), 0.5);
     fixture->velocity = PhysPoint_add(fixture->velocity,

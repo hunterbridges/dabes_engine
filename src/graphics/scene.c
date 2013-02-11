@@ -106,6 +106,26 @@ error:
     return NULL;
 }
 
+void Scene_control(Scene *scene, Input *input) {
+    if (input->cam_reset) {
+        scene->projection_scale = 1;
+        scene->projection_rotation = 0;
+    }
+    scene->projection_scale += 0.02 * input->cam_zoom;
+    if (scene->projection_scale < 0) scene->projection_scale = 0;
+
+    scene->projection_rotation += 2 * input->cam_rotate;
+
+    double volume = scene->projection_scale * 128.f;
+    Mix_VolumeMusic(volume);
+
+    int i = 0;
+    for (i = 0; i < NUM_BOXES; i++) {
+        GameEntity *entity = scene->entities[i];
+        GameEntity_control(entity, input);
+    }
+}
+
 Object SceneProto = {
    .init = Scene_init,
    .destroy = Scene_destroy

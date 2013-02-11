@@ -19,6 +19,7 @@ typedef struct Scene {
 int Scene_init(void *self);
 void Scene_destroy(void *self);
 void Scene_render(void *self, void *engine);
+void Scene_control(Scene *scene, Input *input);
 World *Scene_create_world(Scene *scene, Physics *physics);
 
 extern Object SceneProto;

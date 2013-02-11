@@ -24,6 +24,8 @@ typedef struct Fixture {
     PhysPoint velocity;
     PhysPoint acceleration;
 
+    PhysPoint input_acceleration;
+
     PhysPoint spring;
 
     double time_scale;

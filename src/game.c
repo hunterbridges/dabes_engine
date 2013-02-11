@@ -12,7 +12,6 @@ int main(int argc, char *argv[]) {
     Scene *scene = NULL;
     World *world = NULL;
 
-    SDL_Event event = {};
     SDL_Surface *screen = NULL;
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -29,16 +28,15 @@ int main(int argc, char *argv[]) {
     scene = NEW(Scene, "The game");
     world = Scene_create_world(scene, engine->physics);
 
+    //TODO: Put this in a civilized place.
+    scene->entities[0]->controller = engine->input->controllers[0];
+
     int skip = 1000 / FPS;
 
     long unsigned int last_frame_at = 0;
     short int init = 0;
 
-    int reset = 0;
-    int quit = 0;
-    int zoom = 0;
-    int rot = 0;
-    while (quit == 0) {
+    while (engine->input->game_quit == 0) {
         long unsigned int ticks = SDL_GetTicks();
         long unsigned int ticks_since_last = ticks - last_frame_at;
         short int frame = 0;
@@ -53,45 +51,21 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        //TODO: Abstract into control handler
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_q) quit = 1;
-                if (event.key.keysym.sym == SDLK_r) reset = 1;
-                if (event.key.keysym.sym == SDLK_j) zoom += 1;
-                if (event.key.keysym.sym == SDLK_k) zoom -= 1;
-                if (event.key.keysym.sym == SDLK_u) rot += 1;
-                if (event.key.keysym.sym == SDLK_i) rot -= 1;
-            }
-            if (event.type == SDL_KEYUP) {
-                if (event.key.keysym.sym == SDLK_j) zoom -= 1;
-                if (event.key.keysym.sym == SDLK_k) zoom += 1;
-                if (event.key.keysym.sym == SDLK_u) rot -= 1;
-                if (event.key.keysym.sym == SDLK_i) rot += 1;
-            }
-        }
+        Input_poll(engine->input);
 
         if (frame) {
-            if (reset) {
-                scene->projection_scale = 1;
-                scene->projection_rotation = 0;
-                reset = 0;
-            }
-            scene->projection_scale += 0.02 * zoom;
-            if (scene->projection_scale < 0) scene->projection_scale = 0;
-            scene->projection_rotation += 2 * rot;
-
-            double volume = scene->projection_scale * 128.f;
-            Mix_VolumeMusic(volume);
+            Scene_control(scene, engine->input);
 
             World_solve(engine->physics, world, ticks_since_last);
             Scene_render(scene, engine);
 #ifdef DEBUG
             Graphics_draw_debug_text(engine->graphics, ticks_since_last);
 #endif
-
             SDL_GL_SwapBuffers();
+
             last_frame_at = ticks;
+            if (engine->input->game_quit) break;
+            Input_reset(engine->input);
         }
     }
 

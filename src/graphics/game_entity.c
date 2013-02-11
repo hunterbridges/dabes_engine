@@ -5,6 +5,7 @@ int GameEntity_init(void *self) {
     check_mem(self);
     GameEntity *entity = (GameEntity *)self;
     entity->fixture = NULL;
+    entity->controller = NULL;
     entity->alpha = 1.f;
     entity->texture = 0;
 
@@ -35,6 +36,22 @@ void GameEntity_render(GameEntity *self, void *engine) {
 
     Graphics_draw_rect(graphics, rect, color, entity->texture, degrees);
     glUseProgram(0);
+}
+
+void GameEntity_control(GameEntity *entity, Input *input) {
+    check_mem(entity);
+    if (entity->controller == NULL) return;
+    if (entity->fixture == NULL) return;
+
+    entity->fixture->input_acceleration.x = 0;
+    if (entity->controller->dpad & CONTROLLER_DPAD_RIGHT)
+        entity->fixture->input_acceleration.x = 90;
+    if (entity->controller->dpad & CONTROLLER_DPAD_LEFT)
+        entity->fixture->input_acceleration.x = -90;
+
+    return;
+error:
+    return;
 }
 
 Object GameEntityProto = {
