@@ -45,10 +45,20 @@ void GameEntity_control(GameEntity *entity, Input *input) {
     if (entity->fixture == NULL) return;
 
     entity->fixture->input_acceleration.x = 0;
-    if (entity->controller->dpad & CONTROLLER_DPAD_RIGHT)
-        entity->fixture->input_acceleration.x = 90;
-    if (entity->controller->dpad & CONTROLLER_DPAD_LEFT)
-        entity->fixture->input_acceleration.x = -90;
+    if (entity->controller->dpad & CONTROLLER_DPAD_RIGHT) {
+        if (entity->fixture->velocity.x < 0) {
+            entity->fixture->input_acceleration.x = MVMT_TURN_ACCEL;
+        } else {
+            entity->fixture->input_acceleration.x = MVMT_RUN_ACCEL;
+        }
+    }
+    if (entity->controller->dpad & CONTROLLER_DPAD_LEFT) {
+        if (entity->fixture->velocity.x > 0) {
+            entity->fixture->input_acceleration.x = -1 * MVMT_TURN_ACCEL;
+        } else {
+            entity->fixture->input_acceleration.x = -1 * MVMT_RUN_ACCEL;
+        }
+    }
 
     return;
 error:
