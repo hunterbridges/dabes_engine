@@ -3,7 +3,6 @@
 
 int Physics_init(void *self) {
     check_mem(self);
-    Physics *physics = self;
     return 1;
 error:
     return 0;
@@ -130,7 +129,6 @@ PhysBox PhysBox_move(PhysBox box, PhysPoint move) {
 }
 
 void PhysBox_find_axes(PhysBox box, PhysPoint *axes) {
-    int i = 0;
     for (int i = 0; i < 2; i++) {
         PhysPoint p1 = PhysBox_vertex(box, i);
         PhysPoint p2 = PhysBox_vertex(box, i + 1);
@@ -203,13 +201,12 @@ int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv) {
 
 PhysPoint PhysBox_poc(PhysBox a, PhysBox b, PhysPoint mtv) {
     PhysBox t = PhysBox_move(a, PhysPoint_scale(mtv, -1));
-    PhysPoint b_center = PhysBox_center(b);
     PhysPoint closest = {0,0};
 
     int num_colliding_verts = 0;
     int i = 0;
     for (i = 0; i < 4; i++) {
-        PhysPoint vertex = PhysBox_vertex(a, i);
+        PhysPoint vertex = PhysBox_vertex(t, i);
         if (PhysBox_contains_point(b, vertex)) {
             closest.x = closest.x * num_colliding_verts + vertex.x;
             closest.y = closest.y * num_colliding_verts + vertex.y;

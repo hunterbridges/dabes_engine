@@ -68,8 +68,6 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     PhysBox real_box = Fixture_real_box(fixture);
     World *world = fixture->world;
 
-    double stiffness = 10;
-
     PhysPoint f = {0,0};
     double torque = 0;
     double dt = fixture->time_scale * advance_ms / 1000.0;

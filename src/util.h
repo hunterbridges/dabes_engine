@@ -2,6 +2,6 @@
 #define __util_h
 #include "prefix.h"
 
-int read_text_file(char *filename, GLchar **out, GLuint *size);
+int read_text_file(char *filename, GLchar **out, GLint *size);
 
 #endif

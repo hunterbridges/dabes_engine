@@ -40,6 +40,7 @@ void GameEntity_render(GameEntity *self, void *engine) {
 
 void GameEntity_control(GameEntity *entity, Input *input) {
     check_mem(entity);
+    check_mem(input);
     if (entity->controller == NULL) return;
     if (entity->fixture == NULL) return;
 

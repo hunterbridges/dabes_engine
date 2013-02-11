@@ -7,6 +7,7 @@ int Input_init(void *self) {
         input->controllers[i] = NEW(Controller, "A Controller");
     }
     Input_reset(input);
+    return 1;
 }
 
 void Input_destroy(void *self) {

@@ -20,6 +20,7 @@ GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
 
 void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
         GLuint texture, double rotation) {
+    check_mem(graphics);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     double w = rect.tr.x - rect.tl.x;
@@ -47,6 +48,9 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
         glVertex2f(w / 2.0, h / 2.0);
     glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
+    return;
+error:
+    return;
 }
 
 void Graphics_draw_debug_text(Graphics *graphics,
@@ -133,7 +137,7 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
 
     GLuint *last_shader = NULL;
     GLchar *v_src, *f_src;
-    GLuint v_size, f_size;
+    GLint v_size, f_size;
     read_text_file(vert_name, &v_src, &v_size);
     read_text_file(frag_name, &f_src, &f_size);
 
@@ -163,7 +167,7 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     glLinkProgram(program);
     Graphics_log_program(program);
 
-    GLuint linked = 0;
+    GLint linked = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
     check(linked == 1, "Linking shader program");
 

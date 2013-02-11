@@ -60,7 +60,7 @@ SDL_Surface *gradient(unsigned int width, unsigned int height) {
 
     SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width,
             height, 32, rmask, gmask, bmask, amask);
-    int i = 0;
+    unsigned int i = 0;
     for (i = 0; i < height; i++) {
         int gradation = 255 * (height - i) / height;
         Uint32 color = SDL_MapRGBA(surface->format, 0,

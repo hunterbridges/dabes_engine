@@ -78,6 +78,7 @@ void Scene_render(void *self, void *engine) {
 
 World *Scene_create_world(Scene *scene, Physics *physics) {
     check_mem(scene);
+    check_mem(physics);
 
     World *world = NEW(World, "The world");
     check_mem(world);
@@ -92,8 +93,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         fixture->height = fixture->width;// + fixture->width * 2 * i / NUM_BOXES;
         fixture->x = (world->width - (NUM_BOXES - i) * fixture->width * 4 + 2 * (NUM_BOXES + 1) * fixture->width) / 2;
         fixture->y = 1;
-        fixture->time_scale = (double)(i + 1) / (NUM_BOXES + 1);
-        fixture->time_scale = 1 + (float)i / NUM_BOXES;
+        fixture->time_scale = 1;
         fixture->rotation_radians = M_PI / 16 * (i % 8);
         Fixture_set_mass(fixture, 10);
 

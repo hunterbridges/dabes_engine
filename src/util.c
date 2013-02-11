@@ -1,6 +1,6 @@
 #include "util.h"
 
-int read_text_file(char *filename, GLchar **out, GLuint *size) {
+int read_text_file(char *filename, GLchar **out, GLint *size) {
     FILE *file = fopen(filename, "r");
     check_mem(file);
 
