@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "../core/engine.h"
 #include "game_entity.h"
 
 int GameEntity_init(void *self) {

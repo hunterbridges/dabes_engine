@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "../core/engine.h"
 #include "scene.h"
 
 void Scene_destroy(void *self) {

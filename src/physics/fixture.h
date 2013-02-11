@@ -1,7 +1,7 @@
 #ifndef __fixture_h
 #define __fixture_h
 #include "../prefix.h"
-#include "graphics.h"
+#include "../graphics/graphics.h"
 #include "physics.h"
 
 typedef struct Fixture {

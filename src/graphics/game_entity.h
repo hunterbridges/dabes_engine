@@ -1,7 +1,7 @@
 #ifndef __game_entity_h
 #define __game_entity_h
 #include "../prefix.h"
-#include "fixture.h"
+#include "../physics/fixture.h"
 
 typedef struct GameEntity {
     Object proto;

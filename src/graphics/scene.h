@@ -2,7 +2,7 @@
 #define __scene_h
 #include "../prefix.h"
 #include "game_entity.h"
-#include "world.h"
+#include "../physics/world.h"
 
 typedef struct Scene {
     Object proto;

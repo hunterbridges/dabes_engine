@@ -3,9 +3,9 @@
 
 #include "../prefix.h"
 #include "audio.h"
-#include "input.h"
-#include "graphics.h"
-#include "physics.h"
+#include "../input/input.h"
+#include "../graphics/graphics.h"
+#include "../physics/physics.h"
 
 typedef struct Engine {
     Object proto;
