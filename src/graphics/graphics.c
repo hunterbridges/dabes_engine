@@ -83,7 +83,6 @@ void Graphics_draw_debug_text(Graphics *graphics,
     char *dTxt = malloc(256 * sizeof(char));
     sprintf(dTxt, "FPS CAP: %d           ACTUAL: %d", FPS,
             (int)ceil(1000.0 / ticks_since_last));
-    //debug("%s", dTxt);
     SDL_Surface *debugText = TTF_RenderText_Solid(graphics->debug_text_font,
             dTxt, txtBlack);
     free(dTxt);
@@ -91,7 +90,6 @@ void Graphics_draw_debug_text(Graphics *graphics,
     SDL_BlitSurface(debugText, NULL, surface, &debugRect);
     SDL_FreeSurface(debugText);
     graphics->debug_text_texture = load_surface_as_texture(surface);
-    //debug("%d", graphics->debug_text_texture);
 
     GfxRect rect = GfxRect_from_SDL_Rect(debugRect);
     GLdouble glBlack[4] = {0,0,0,255};
@@ -172,11 +170,9 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     check(linked == 1, "Linking shader program");
 
     graphics->shader = program;
-    printf("SHADER LINKD!\n");
     return 1;
-error: {
+error:
     return 0;
-}
 }
 
 void Graphics_log_shader(GLuint shader) {
