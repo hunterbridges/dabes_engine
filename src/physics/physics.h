@@ -49,7 +49,7 @@ PhysBox PhysBox_move(PhysBox box, PhysPoint move);
 PhysProjection PhysBox_project_onto(PhysBox box, PhysPoint axis);
 void PhysBox_find_axes(PhysBox box, PhysPoint *axes);
 int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv);
-PhysPoint PhysBox_poc(PhysBox a, PhysBox b, PhysPoint mtv);
+PhysPoint PhysBox_poc(PhysBox a, PhysBox b);
 int PhysBox_contains_point(PhysBox box, PhysPoint point);
 PhysBox PhysBox_bounding_box(PhysBox rect);
 

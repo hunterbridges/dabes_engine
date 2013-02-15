@@ -39,7 +39,18 @@ void World_solve(Physics *physics, World *world, double advance_ms) {
     unsigned int i = 0;
     for (i = 0; i < world->num_fixtures; i++) {
         Fixture *fixture = world->fixtures[i];
-        Fixture_solve(physics, fixture, advance_ms);
+        Fixture_step_reset(physics, fixture, advance_ms);
+        Fixture_step_displace(physics, fixture);
+        Fixture_step_apply_environment(physics, fixture);
+    }
+
+    // TODO: Broad phase collisions
+
+    for (i = 0; i < world->num_fixtures; i++) {
+        Fixture *fixture = world->fixtures[i];
+        Fixture_step_apply_forces(physics, fixture);
+        Fixture_step_control(fixture, fixture->controller);
+        Fixture_step_commit(physics, fixture);
     }
 }
 

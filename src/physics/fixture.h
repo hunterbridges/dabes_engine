@@ -27,22 +27,37 @@ typedef struct Fixture {
     PhysPoint velocity;
     PhysPoint acceleration;
 
+    double step_dt;
+    PhysPoint step_force;
+    double step_torque;
+    PhysPoint step_displacement;
+    PhysPoint step_velocity;
+    PhysPoint step_acceleration;
+    double step_rotation;
+    double step_angular_velocity;
+    double step_angular_acceleration;
+
     Controller *controller;
     PhysPoint input_acceleration;
 
     int on_ground;
 } Fixture;
 
+int Fixture_init(void *self);
 void Fixture_set_rotation_degrees(Fixture *fixture, double degrees);
 void Fixture_set_wh(Fixture *fixture, double w, double h);
 void Fixture_set_mass(Fixture *fixture, double m);
 double Fixture_rotation_degrees(Fixture *fixture);
-int Fixture_init(void *self);
-void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms);
-void Fixture_control(Fixture *fixture, Controller *controller);
 PhysBox Fixture_base_box(Fixture *fixture);
 PhysBox Fixture_real_box(Fixture *fixture);
 GfxRect Fixture_display_rect(Fixture *fixture);
+
+void Fixture_step_reset(Physics *physics, Fixture *fixture, double advance_ms);
+void Fixture_step_displace(Physics *physics, Fixture *fixture);
+void Fixture_step_apply_environment(Physics *physics, Fixture *fixture);
+void Fixture_step_apply_forces(Physics *physics, Fixture *fixture);
+void Fixture_step_control(Fixture *fixture, Controller *controller);
+void Fixture_step_commit(Physics *physics, Fixture *fixture);
 
 extern Object FixtureProto;
 
