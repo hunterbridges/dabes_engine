@@ -130,7 +130,6 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     center = PhysBox_center(real_box);
 
     // INTERACT
-    PhysPoint fric_a = {0,0};
     PhysPoint mtv = {0, 0};
     PhysBox floor_box = World_floor_box(world);
     int hit_floor = PhysBox_collision(real_box, floor_box, &mtv);
@@ -167,11 +166,6 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
                     impulse_magnitude / fixture->mass));
         fixture->angular_velocity += PhysPoint_dot(perp_norm,
                 PhysPoint_scale(collision_normal, impulse_magnitude)) / fixture->moment_of_inertia;
-
-        if (fixture->velocity.x != 0 && fixture->input_acceleration.x == 0) {
-            fric_a.x = -1 * fixture->velocity.x / fabs(fixture->velocity.x) *
-                MVMT_FRICTION;
-        }
     }
 
     double damping = -1;
@@ -187,13 +181,21 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
         fixture->input_acceleration.x = 0;
     }
     new_a = PhysPoint_add(new_a, fixture->input_acceleration);
-    new_a = PhysPoint_add(new_a, fric_a); //TODO: proper friction
 
     // REACT
     PhysPoint avg_a = PhysPoint_scale(
             PhysPoint_add(new_a, fixture->acceleration), 0.5);
     fixture->velocity = PhysPoint_add(fixture->velocity,
             PhysPoint_scale(avg_a, dt));
+
+    if (fixture->input_acceleration.x == 0 && fixture->on_ground) {
+        //TODO: proper friction
+        int dir = sign(fixture->velocity.x);
+        fixture->velocity.x -= dir * MVMT_FRICTION * dt;
+        fixture->velocity.x = dir > 0 ? MAX(fixture->velocity.x, 0) :
+            MIN(fixture->velocity.x, 0);
+    }
+
     fixture->acceleration = avg_a;
 
     double angular_damping = -7;
