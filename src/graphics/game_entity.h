@@ -17,6 +17,7 @@ typedef struct GameEntity {
 int GameEntity_init(void *self);
 void GameEntity_destroy(void *self);
 void GameEntity_render(GameEntity *self, void *engine);
+void GameEntity_assign_controller(GameEntity *entity, Controller *controller);
 void GameEntity_control(GameEntity *entity, Input *input);
 
 extern Object GameEntityProto;

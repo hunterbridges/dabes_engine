@@ -38,6 +38,15 @@ void GameEntity_render(GameEntity *self, void *engine) {
     glUseProgram(0);
 }
 
+void GameEntity_assign_controller(GameEntity *entity, Controller *controller) {
+    check_mem(entity);
+    entity->controller = controller;
+    entity->fixture->controller = controller;
+    return;
+error:
+    return;
+}
+
 void GameEntity_control(GameEntity *entity, Input *input) {
     check_mem(entity);
     check_mem(input);

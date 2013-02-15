@@ -5,6 +5,7 @@
 #include "fixture.h"
 
 typedef struct World {
+    Object proto;
     double height;
     double width;
     double time_scale;

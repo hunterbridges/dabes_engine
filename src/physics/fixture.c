@@ -5,8 +5,8 @@ int Fixture_init(void *self) {
     check_mem(self);
 
     Fixture *fixture = self;
-    fixture->x = 0;
-    fixture->y = 0;
+    PhysPoint center = {0,0};
+    fixture->center = center;
     fixture->width = 100 / DEFAULT_PPM;
     fixture->height = 100 / DEFAULT_PPM;
 
@@ -27,9 +27,6 @@ int Fixture_init(void *self) {
         fixture->mass * (pow(fixture->height, 2) + pow(fixture->width, 2)) / 12;
     fixture->drag = 0.47;
     fixture->surface_area = pow(fixture->width, 2);
-
-    PhysPoint spring = {0, 0};
-    fixture->spring = spring;
 
     fixture->on_ground = 0;
 
@@ -109,7 +106,6 @@ error:
 void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     check_mem(physics);
     check_mem(fixture);
-    PhysPoint center = {fixture->x, fixture->y};
     PhysBox real_box = Fixture_real_box(fixture);
     World *world = fixture->world;
 
@@ -123,11 +119,8 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     displacement = PhysPoint_add(displacement,
             PhysPoint_scale(fixture->acceleration, 0.5 * dt * dt));
 
-    // TODO: Make center a PhysPoint
-    fixture->x += displacement.x;
-    fixture->y += displacement.y;
+    fixture->center = PhysPoint_add(fixture->center, displacement);
     real_box = PhysBox_move(real_box, displacement);
-    center = PhysBox_center(real_box);
 
     // INTERACT
     PhysPoint mtv = {0, 0};
@@ -139,9 +132,8 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     if (hit_floor) {
         f = PhysPoint_subtract(f, gravity);
         real_box = PhysBox_move(real_box, PhysPoint_scale(mtv, -1));
-        center = PhysBox_center(real_box);
-        fixture->x = center.x;
-        fixture->y = center.y;
+        fixture->center = PhysPoint_add(fixture->center,
+                PhysPoint_scale(mtv, -1));
 
         PhysPoint collision_normal = {0, -1};
         mtv.x = 0;
@@ -150,7 +142,7 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
 
         PhysPoint vai = fixture->velocity;
         double wai = fixture->angular_velocity;
-        PhysPoint r = PhysPoint_subtract(center, poc);
+        PhysPoint r = PhysPoint_subtract(fixture->center, poc);
         PhysPoint perp_norm = PhysPoint_perp(r);
         PhysPoint rot_v = PhysPoint_scale(PhysPoint_normalize(perp_norm), wai);
         PhysPoint vap = PhysPoint_add(vai, rot_v);
@@ -213,29 +205,25 @@ error:
 
 PhysBox Fixture_base_box(Fixture *fixture) {
     PhysBox rect = {
-        {fixture->x - fixture->width / 2.0,
-        fixture->y - fixture->height / 2.0},
+        {fixture->center.x - fixture->width / 2.0,
+        fixture->center.y - fixture->height / 2.0},
 
-        {fixture->x + fixture->width / 2.0,
-        fixture->y - fixture->height / 2.0},
+        {fixture->center.x + fixture->width / 2.0,
+        fixture->center.y - fixture->height / 2.0},
 
-        {fixture->x + fixture->width / 2.0,
-        fixture->y + fixture->height / 2.0},
+        {fixture->center.x + fixture->width / 2.0,
+        fixture->center.y + fixture->height / 2.0},
 
-        {fixture->x - fixture->width / 2.0,
-        fixture->y + fixture->height / 2.0}
+        {fixture->center.x - fixture->width / 2.0,
+        fixture->center.y + fixture->height / 2.0}
     };
     return rect;
 }
 
 PhysBox Fixture_real_box(Fixture *fixture) {
     PhysBox rect = Fixture_base_box(fixture);
-    PhysPoint pivot = {
-        fixture->x,
-        fixture->y
-    };
 
-    rect = PhysBox_rotate(rect, pivot, fixture->rotation_radians);
+    rect = PhysBox_rotate(rect, fixture->center, fixture->rotation_radians);
     return rect;
 }
 

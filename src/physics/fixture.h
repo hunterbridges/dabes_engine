@@ -6,9 +6,11 @@
 #include "physics.h"
 
 typedef struct Fixture {
+    Object proto;
     void *world;
-    double x;  // X CENTER
-    double y;  // Y CENTER
+    double time_scale;
+
+    PhysPoint center;
     double width;
     double height;
 
@@ -25,13 +27,9 @@ typedef struct Fixture {
     PhysPoint velocity;
     PhysPoint acceleration;
 
+    Controller *controller;
     PhysPoint input_acceleration;
 
-    PhysPoint spring;
-
-    double time_scale;
-
-    Controller *controller;
     int on_ground;
 } Fixture;
 

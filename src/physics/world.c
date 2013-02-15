@@ -20,7 +20,13 @@ error:
 
 void World_destroy(void *self) {
     check_mem(self);
+    World *world = self;
 
+    unsigned int i = 0;
+    for (i = 0; i < world->num_fixtures; i++) {
+        Fixture *fixture = world->fixtures[i];
+        fixture->_(destroy)(fixture);
+    }
     free(self);
     return;
 error:
@@ -30,7 +36,7 @@ error:
 void World_solve(Physics *physics, World *world, double advance_ms) {
     advance_ms *= world->time_scale;
 
-    uint i = 0;
+    unsigned int i = 0;
     for (i = 0; i < world->num_fixtures; i++) {
         Fixture *fixture = world->fixtures[i];
         Fixture_solve(physics, fixture, advance_ms);
