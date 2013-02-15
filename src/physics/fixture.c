@@ -31,6 +31,8 @@ int Fixture_init(void *self) {
     PhysPoint spring = {0, 0};
     fixture->spring = spring;
 
+    fixture->on_ground = 0;
+
     return 1;
 error:
     return 0;
@@ -61,6 +63,49 @@ double Fixture_rotation_degrees(Fixture *fixture) {
     return fixture->rotation_radians * 180 / M_PI;
 }
 
+void Fixture_control(Fixture *fixture, Controller *controller) {
+    check_mem(fixture);
+    if (controller == NULL) return;
+
+    fixture->input_acceleration.x = 0;
+    if (controller->dpad & CONTROLLER_DPAD_RIGHT) {
+        if (!fixture->on_ground) {
+            fixture->input_acceleration.x = MVMT_AIR_ACCEL;
+            return;
+        }
+
+        if (fixture->velocity.x < 0) {
+            fixture->input_acceleration.x = MVMT_TURN_ACCEL;
+        } else {
+            fixture->input_acceleration.x = MVMT_RUN_ACCEL;
+        }
+    }
+    if (controller->dpad & CONTROLLER_DPAD_LEFT) {
+        if (!fixture->on_ground) {
+            fixture->input_acceleration.x = -1 * MVMT_AIR_ACCEL;
+            return;
+        }
+
+        if (fixture->velocity.x > 0) {
+            fixture->input_acceleration.x = -1 * MVMT_TURN_ACCEL;
+        } else {
+            fixture->input_acceleration.x = -1 * MVMT_RUN_ACCEL;
+        }
+    }
+    if (controller->jump) {
+        if (fixture->on_ground) {
+            fixture->velocity.y = MVMT_JUMP_VELO_HI;
+        }
+    } else {
+        if (fixture->velocity.y < MVMT_JUMP_VELO_LO) {
+            fixture->velocity.y = MVMT_JUMP_VELO_LO;
+        }
+    }
+    return;
+error:
+    return;
+}
+
 void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     check_mem(physics);
     check_mem(fixture);
@@ -72,6 +117,7 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     double torque = 0;
     double dt = fixture->time_scale * advance_ms / 1000.0;
 
+    // PROACT
     // Start velocity verlet
     PhysPoint displacement = PhysPoint_scale(fixture->velocity, dt);
     displacement = PhysPoint_add(displacement,
@@ -83,12 +129,14 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     real_box = PhysBox_move(real_box, displacement);
     center = PhysBox_center(real_box);
 
+    // INTERACT
     PhysPoint fric_a = {0,0};
     PhysPoint mtv = {0, 0};
     PhysBox floor_box = World_floor_box(world);
     int hit_floor = PhysBox_collision(real_box, floor_box, &mtv);
     PhysPoint gravity = {0, world->gravity * fixture->mass};
     f = PhysPoint_add(f, gravity);
+    fixture->on_ground = hit_floor;
     if (hit_floor) {
         f = PhysPoint_subtract(f, gravity);
         real_box = PhysBox_move(real_box, PhysPoint_scale(mtv, -1));
@@ -132,14 +180,16 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     // Finish velocity verlet
     PhysPoint new_a = PhysPoint_scale(f, 1 / fixture->mass);
 
+    // CONTROL
+    Fixture_control(fixture, fixture->controller);
     if (fabs(fixture->velocity.x) >= MVMT_MAX_VELO &&
             sign(fixture->velocity.x) == sign(fixture->input_acceleration.x)) {
         fixture->input_acceleration.x = 0;
     }
     new_a = PhysPoint_add(new_a, fixture->input_acceleration);
-    //TODO: proper friction
-    new_a = PhysPoint_add(new_a, fric_a);
+    new_a = PhysPoint_add(new_a, fric_a); //TODO: proper friction
 
+    // REACT
     PhysPoint avg_a = PhysPoint_scale(
             PhysPoint_add(new_a, fixture->acceleration), 0.5);
     fixture->velocity = PhysPoint_add(fixture->velocity,
@@ -152,6 +202,7 @@ void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms) {
     fixture->angular_velocity += fixture->angular_acceleration * dt;
     double delta_theta = fixture->angular_velocity * dt;
     fixture->rotation_radians += delta_theta;
+
     return;
 error:
     exit(1);

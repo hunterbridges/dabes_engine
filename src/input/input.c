@@ -40,6 +40,8 @@ void Input_poll(Input *input) {
         input->controllers[0]->dpad |= CONTROLLER_DPAD_LEFT;
     if (keystate[SDLK_RIGHT])
         input->controllers[0]->dpad |= CONTROLLER_DPAD_RIGHT;
+    if (keystate[SDLK_SPACE])
+        input->controllers[0]->jump = 1;
 
     // Momentary keys
     SDL_Event event = {};
@@ -47,9 +49,6 @@ void Input_poll(Input *input) {
         if (event.type == SDL_KEYDOWN) {
             if (event.key.keysym.sym == SDLK_q) input->game_quit = 1;
             if (event.key.keysym.sym == SDLK_r) input->cam_reset = 1;
-
-            if (event.key.keysym.sym == SDLK_SPACE)
-                input->controllers[0]->jump = 1;
         }
     }
 }

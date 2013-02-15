@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
 
     //TODO: Put this in a civilized place.
     scene->entities[0]->controller = engine->input->controllers[0];
+    scene->entities[0]->fixture->controller = engine->input->controllers[0];
 
     long unsigned int skip = 1000 / FPS;
     long unsigned int last_frame_at = 0;

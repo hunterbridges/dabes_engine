@@ -2,6 +2,7 @@
 #define __fixture_h
 #include "../prefix.h"
 #include "../graphics/graphics.h"
+#include "../input/controller.h"
 #include "physics.h"
 
 typedef struct Fixture {
@@ -29,6 +30,9 @@ typedef struct Fixture {
     PhysPoint spring;
 
     double time_scale;
+
+    Controller *controller;
+    int on_ground;
 } Fixture;
 
 void Fixture_set_rotation_degrees(Fixture *fixture, double degrees);
@@ -37,6 +41,7 @@ void Fixture_set_mass(Fixture *fixture, double m);
 double Fixture_rotation_degrees(Fixture *fixture);
 int Fixture_init(void *self);
 void Fixture_solve(Physics *physics, Fixture *fixture, double advance_ms);
+void Fixture_control(Fixture *fixture, Controller *controller);
 PhysBox Fixture_base_box(Fixture *fixture);
 PhysBox Fixture_real_box(Fixture *fixture);
 GfxRect Fixture_display_rect(Fixture *fixture);
