@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     scene = NEW(Scene, "The game");
     world = Scene_create_world(scene, engine->physics);
 
-    GameEntity_assign_controller(scene->entities[0],
+    GameEntity_assign_controller(scene->entities->first->value,
             engine->input->controllers[0]);
 
     while (engine->input->game_quit == 0) {

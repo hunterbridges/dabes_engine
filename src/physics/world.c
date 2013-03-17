@@ -13,6 +13,8 @@ int World_init(void *self) {
     world->gravity = 9.81; // Da earff
     world->air_density = 1.2;
 
+    world->fixtures = List_create();
+
     return 1;
 error:
     return 0;
@@ -22,11 +24,12 @@ void World_destroy(void *self) {
     check_mem(self);
     World *world = self;
 
-    unsigned int i = 0;
-    for (i = 0; i < world->num_fixtures; i++) {
-        Fixture *fixture = world->fixtures[i];
+    LIST_FOREACH(world->fixtures, first, next, current) {
+        Fixture *fixture = current->value;
         fixture->_(destroy)(fixture);
     }
+
+    List_destroy(world->fixtures);
     free(self);
     return;
 error:
@@ -36,18 +39,19 @@ error:
 void World_solve(Physics *physics, World *world, double advance_ms) {
     advance_ms *= world->time_scale;
 
-    unsigned int i = 0;
-    for (i = 0; i < world->num_fixtures; i++) {
-        Fixture *fixture = world->fixtures[i];
+    {
+    LIST_FOREACH(world->fixtures, first, next, current) {
+        Fixture *fixture = current->value;
         Fixture_step_reset(physics, fixture, advance_ms);
         Fixture_step_displace(physics, fixture);
         Fixture_step_apply_environment(physics, fixture);
     }
+    }
 
     // TODO: Broad phase collisions
 
-    for (i = 0; i < world->num_fixtures; i++) {
-        Fixture *fixture = world->fixtures[i];
+    LIST_FOREACH(world->fixtures, first, next, current) {
+        Fixture *fixture = current->value;
         Fixture_step_apply_forces(physics, fixture);
         Fixture_step_control(fixture, fixture->controller);
         Fixture_step_commit(physics, fixture);
@@ -58,7 +62,7 @@ Fixture *World_create_fixture(World *world) {
     check_mem(world);
 
     Fixture *fixture = NEW(Fixture, "New fixture");
-    world->fixtures[world->num_fixtures] = fixture;
+    List_push(world->fixtures, fixture);
     fixture->world = world;
 
     world->num_fixtures++;

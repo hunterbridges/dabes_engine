@@ -8,13 +8,12 @@ void Scene_destroy(void *self) {
     Mix_HaltMusic();
     Mix_FreeMusic(game->music);
 
-    int i = 0;
-    for (i = 0; i < 256; i++) {
-        if (game->entities[i] == NULL) break;
-        GameEntity *thing = game->entities[i];
+    LIST_FOREACH(game->entities, first, next, current) {
+        GameEntity *thing = current->value;
         thing->_(destroy)(thing);
     }
 
+    List_destroy(game->entities);
     glDeleteTextures(1, &game->bg_texture);
     Object_destroy(self);
 error:
@@ -33,11 +32,13 @@ int Scene_init(void *self) {
 
     Mix_PlayMusic(game->music, -1);
 
+    game->entities = List_create();
+
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *entity = NEW(GameEntity, "A thing");
         entity->texture = load_image_as_texture("media/sprites/dumblock.png");
-        game->entities[i] = entity;
+        List_push(game->entities, entity);
         entity->alpha = (double)i / NUM_BOXES * 1.0;
     }
 
@@ -68,9 +69,8 @@ void Scene_render(void *self, void *engine) {
     glRotatef(game->projection_rotation, 0, 0, -1);
 
     // Draw the stuff
-    int i = 0;
-    for (i = 0; i < NUM_BOXES; i++) {
-        GameEntity *thing = game->entities[i];
+    LIST_FOREACH(game->entities, first, next, current) {
+        GameEntity *thing = current->value;
         if (thing == NULL) break;
         GameEntity_render(thing, engine);
     }
@@ -84,8 +84,8 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
     check_mem(world);
 
     int i = 0;
-    for (i = 0; i < NUM_BOXES; i++) {
-        GameEntity *entity = scene->entities[i];
+    LIST_FOREACH(scene->entities, first, next, current) {
+        GameEntity *entity = current->value;
         if (entity == NULL) break;
 
         Fixture *fixture = World_create_fixture(world);
@@ -98,6 +98,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         Fixture_set_mass(fixture, 10);
 
         entity->fixture = fixture;
+        i++;
     }
     return world;
 error:
@@ -117,9 +118,8 @@ void Scene_control(Scene *scene, Input *input) {
     double volume = scene->projection_scale * 128.f;
     Mix_VolumeMusic(volume);
 
-    int i = 0;
-    for (i = 0; i < NUM_BOXES; i++) {
-        GameEntity *entity = scene->entities[i];
+    LIST_FOREACH(scene->entities, first, next, current) {
+        GameEntity *entity = current->value;
         GameEntity_control(entity, input);
     }
 }

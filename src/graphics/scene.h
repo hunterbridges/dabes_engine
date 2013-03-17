@@ -1,5 +1,6 @@
 #ifndef __scene_h
 #define __scene_h
+#include <lcthw/liblcthw.h>
 #include "../prefix.h"
 #include "game_entity.h"
 #include "../physics/world.h"
@@ -13,7 +14,7 @@ typedef struct Scene {
     double projection_scale;
     double projection_rotation;
 
-    GameEntity *entities[256];
+    List *entities;
 } Scene;
 
 int Scene_init(void *self);

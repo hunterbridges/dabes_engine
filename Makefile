@@ -1,5 +1,5 @@
-CFLAGS=-Wall -O2 -Wextra -Isrc -DDEBUG $(OPTFLAGS) -g
-LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer
+CFLAGS=-Wall -O2 -Wextra -Isrc -DDEBUG $(OPTFLAGS) -g -Iinclude
+LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer -Llib -llcthw
 
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local

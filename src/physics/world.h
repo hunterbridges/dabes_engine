@@ -1,5 +1,6 @@
 #ifndef __world_h
 #define __world_h
+#include <lcthw/liblcthw.h>
 #include "../prefix.h"
 #include "physics.h"
 #include "fixture.h"
@@ -13,7 +14,7 @@ typedef struct World {
     double gravity;
     double air_density;
     uint num_fixtures;
-    Fixture *fixtures[256];
+    List *fixtures;
 } World;
 
 int World_init(void *self);
