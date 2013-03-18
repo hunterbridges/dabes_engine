@@ -1,6 +1,8 @@
 #include "../core/engine.h"
 #include "scene.h"
 
+void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
+
 void Scene_destroy(void *self) {
     check_mem(self);
     Scene *game = (Scene *)self;
@@ -14,6 +16,7 @@ void Scene_destroy(void *self) {
     }
 
     List_destroy(game->entities);
+    if (game->world) game->world->_(destroy)(game->world);
     glDeleteTextures(1, &game->bg_texture);
     Object_destroy(self);
 error:
@@ -32,6 +35,7 @@ int Scene_init(void *self) {
 
     Mix_PlayMusic(game->music, -1);
 
+    game->world = NULL;
     game->entities = List_create();
 
     int i = 0;
@@ -47,6 +51,8 @@ int Scene_init(void *self) {
 
     game->projection_scale = 1;
     game->projection_rotation = 0;
+
+    game->draw_grid = 0;
 
     return 1;
 error:
@@ -74,6 +80,10 @@ void Scene_render(void *self, void *engine) {
         if (thing == NULL) break;
         GameEntity_render(thing, engine);
     }
+
+    // Draw the grid
+    if (!game->draw_grid || !game->world) return;
+    Scene_draw_debug_grid(game, graphics);
 }
 
 World *Scene_create_world(Scene *scene, Physics *physics) {
@@ -89,7 +99,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         if (entity == NULL) break;
 
         Fixture *fixture = World_create_fixture(world);
-        fixture->width =  3;
+        fixture->width =  1;
         fixture->height = fixture->width;// + fixture->width * 2 * i / NUM_BOXES;
         fixture->center.x = (world->width - (NUM_BOXES - i) * fixture->width * 4 + 2 * (NUM_BOXES + 1) * fixture->width) / 2;
         fixture->center.y = 1;
@@ -98,8 +108,18 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         Fixture_set_mass(fixture, 10);
 
         entity->fixture = fixture;
+        /*
+        PhysBox real_box = Fixture_real_box(fixture);
+        fixture->history[0] = real_box;
+        fixture->history[1] = real_box;
+        */
+
+        WorldGrid_add_fixture(world->grid, fixture);
+
         i++;
     }
+
+    scene->world = world;
     return world;
 error:
     return NULL;
@@ -115,6 +135,8 @@ void Scene_control(Scene *scene, Input *input) {
 
     scene->projection_rotation += 2 * input->cam_rotate;
 
+    if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
+
     double volume = scene->projection_scale * 128.f;
     Mix_VolumeMusic(volume);
 
@@ -122,6 +144,48 @@ void Scene_control(Scene *scene, Input *input) {
         GameEntity *entity = current->value;
         GameEntity_control(entity, input);
     }
+}
+
+void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
+    glDisable(GL_MULTISAMPLE);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
+
+    Graphics_scale_projection_matrix(graphics, scene->projection_scale);
+    glRotatef(scene->projection_rotation, 0, 0, -1);
+    glLineWidth(0);
+    glColor3f(1.0, 0.0, 0.0);
+    double grid = scene->world->grid_size;
+    double ppm = scene->world->pixels_per_meter;
+    int rows = ceil(scene->world->height / scene->world->grid_size);
+    int cols = ceil(scene->world->width / scene->world->grid_size);
+    int row = 0;
+    int col = 0;
+    for (row = 0; row < rows; row++) {
+        for (col = 0; col < cols; col++) {
+            glBegin(GL_LINES);
+            glVertex2f((col * grid) * ppm, (row * grid) * ppm);
+            glVertex2f((col * grid + grid) * ppm, (row * grid) * ppm);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glVertex2f((col * grid + grid) * ppm, (row * grid) * ppm);
+            glVertex2f((col * grid + grid) * ppm, (row * grid + grid) * ppm);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glVertex2f((col * grid + grid) * ppm, (row * grid + grid) * ppm);
+            glVertex2f((col * grid) * ppm, (row * grid + grid) * ppm);
+            glEnd();
+
+            glBegin(GL_LINES);
+            glVertex2f((col * grid) * ppm, (row * grid + grid) * ppm);
+            glVertex2f((col * grid) * ppm, (row * grid) * ppm);
+            glEnd();
+        }
+    }
+    glEnable(GL_MULTISAMPLE);
 }
 
 Object SceneProto = {

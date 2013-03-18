@@ -13,11 +13,11 @@ What is done:
 * Physics engine:
     * Physics model that supports angular impulse collisions
     * Time scaling
+    * Grid-based collision detection
 * Audio engine:
     * Can play music and control the volume of it
 
 What is not yet done:
-* Inter-entity collision detection
 * Automatic camera
 * Parallax layers
 * High-level state management

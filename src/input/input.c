@@ -49,6 +49,8 @@ void Input_poll(Input *input) {
         if (event.type == SDL_KEYDOWN) {
             if (event.key.keysym.sym == SDLK_q) input->game_quit = 1;
             if (event.key.keysym.sym == SDLK_r) input->cam_reset = 1;
+            if (event.key.keysym.sym == SDLK_g)
+                input->debug_scene_draw_grid = 1;
         }
     }
 }
@@ -56,6 +58,7 @@ void Input_poll(Input *input) {
 void Input_reset(Input *input) {
     check_mem(input);
     input->game_quit = 0;
+    input->debug_scene_draw_grid = 0;
     input->cam_reset = 0;
     input->cam_zoom = 0;
     input->cam_rotate = 0;

@@ -7,6 +7,7 @@ typedef struct Input {
     Object proto;
     Controller *controllers[4];
     int game_quit;
+    int debug_scene_draw_grid;
     int cam_reset;
     int cam_zoom;
     int cam_rotate;

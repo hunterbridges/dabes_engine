@@ -14,6 +14,9 @@ typedef struct Scene {
     double projection_scale;
     double projection_rotation;
 
+    short int draw_grid;
+
+    World *world;
     List *entities;
 } Scene;
 

@@ -4,17 +4,20 @@
 #include "../prefix.h"
 #include "physics.h"
 #include "fixture.h"
+#include "world_grid.h"
 
 typedef struct World {
     Object proto;
     double height;
     double width;
+    double grid_size;
     double time_scale;
     double pixels_per_meter;
     double gravity;
     double air_density;
     uint num_fixtures;
     List *fixtures;
+    WorldGrid *grid;
 } World;
 
 int World_init(void *self);

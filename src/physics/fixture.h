@@ -1,5 +1,6 @@
 #ifndef __fixture_h
 #define __fixture_h
+#include <lcthw/list.h>
 #include "../prefix.h"
 #include "../graphics/graphics.h"
 #include "../input/controller.h"
@@ -41,9 +42,15 @@ typedef struct Fixture {
     PhysPoint input_acceleration;
 
     int on_ground;
+    int moving;
+    int colliding;
+
+    PhysBox history[FIXTURE_HISTORY_LENGTH];
+    List *touching_fixtures;
 } Fixture;
 
 int Fixture_init(void *self);
+void Fixture_destroy(void *self);
 void Fixture_set_rotation_degrees(Fixture *fixture, double degrees);
 void Fixture_set_wh(Fixture *fixture, double w, double h);
 void Fixture_set_mass(Fixture *fixture, double m);

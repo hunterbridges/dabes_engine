@@ -7,8 +7,8 @@ int Fixture_init(void *self) {
     Fixture *fixture = self;
     PhysPoint center = {0,0};
     fixture->center = center;
-    fixture->width = 100 / DEFAULT_PPM;
-    fixture->height = 100 / DEFAULT_PPM;
+    fixture->width = 1;
+    fixture->height = 1;
 
     fixture->rotation_radians = 0;
     fixture->angular_velocity = 0;
@@ -29,10 +29,20 @@ int Fixture_init(void *self) {
     fixture->surface_area = pow(fixture->width, 2);
 
     fixture->on_ground = 0;
+    fixture->moving = 0;
 
     return 1;
 error:
     return 0;
+}
+
+void Fixture_destroy(void *self) {
+    check(self != NULL, "No fixture to destroy");
+    Fixture *fixture = self;
+    List_destroy(fixture->touching_fixtures);
+    free(fixture);
+error:
+    return;
 }
 
 void Fixture_calc_moment_of_inertia(Fixture *fixture) {
@@ -175,7 +185,25 @@ void Fixture_step_reset(Physics *physics, Fixture *fixture, double advance_ms) {
     fixture->step_rotation = fixture->rotation_radians;
     fixture->step_angular_velocity = fixture->angular_velocity;
     fixture->step_angular_acceleration = fixture->angular_acceleration;
+    fixture->moving = 0;
+    fixture->colliding = 0;
 
+    if (fixture->touching_fixtures != NULL &&
+            fixture->touching_fixtures->count > 0) {
+        List_destroy(fixture->touching_fixtures);
+        fixture->touching_fixtures = List_create(fixture->touching_fixtures);
+    }
+
+    int i = 0;
+    for (i = FIXTURE_HISTORY_LENGTH - 2; i >= 0; i--) {
+        int last_frame = i + 1;
+        PhysBox old = fixture->history[i];
+        fixture->history[last_frame] = old;
+        if (i == 0) {
+            PhysBox empty = {{0,0},{0,0},{0,0},{0,0}};
+            fixture->history[i] = empty;
+        }
+    }
     return;
 error:
     return;
@@ -190,6 +218,10 @@ void Fixture_step_displace(Physics *physics, Fixture *fixture) {
     displacement = PhysPoint_add(displacement,
             PhysPoint_scale(fixture->acceleration, 0.5 * dt * dt));
     fixture->step_displacement = displacement;
+    fixture->history[0] = Fixture_real_box(fixture);
+    if (!PhysBox_is_equal(&fixture->history[0], &fixture->history[1]))
+        fixture->moving = 1;
+
     return;
 error:
     return;
@@ -225,6 +257,7 @@ void Fixture_step_apply_forces(Physics *physics, Fixture *fixture) {
 
     fixture->step_acceleration = PhysPoint_scale(fixture->step_force,
             1 / fixture->mass);
+
     return;
 error:
     return;
@@ -319,6 +352,7 @@ error:
 }
 
 Object FixtureProto = {
-    .init = Fixture_init
+    .init = Fixture_init,
+    .destroy = Fixture_destroy
 };
 

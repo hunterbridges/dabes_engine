@@ -99,7 +99,7 @@ PhysPoint PhysBox_center(PhysBox box) {
     return center;
 }
 
-PhysPoint PhysBox_vertex(PhysBox box, uint index) {
+PhysPoint PhysBox_vertex(PhysBox box, unsigned int index) {
     assert(index <= 3);
     if (index == 0) return box.tl;
     if (index == 1) return box.tr;
@@ -251,3 +251,10 @@ int PhysBox_contains_point(PhysBox box, PhysPoint point) {
         point.y >= bounding.tl.y && point.y <= bounding.bl.y;
 }
 
+int PhysBox_is_equal(PhysBox *a, PhysBox *b) {
+    if (a->tl.x == b->tl.x && a->tl.y == b->tl.y &&
+            a->tr.x == b->tr.x && a->tr.y == b->tr.y &&
+            a->br.x == b->br.x && a->br.y == b->br.y &&
+            a->bl.x == b->bl.x && a->bl.y == b->bl.y) return 1;
+    return 0;
+}

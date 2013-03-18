@@ -2,8 +2,6 @@
 #define __physics_h
 #include "../prefix.h"
 
-#define DEFAULT_PPM 10
-
 typedef struct Physics {
     Object proto;
 } Physics;
@@ -43,7 +41,7 @@ typedef struct PhysBox {
 } PhysBox;
 
 PhysPoint PhysBox_center(PhysBox box);
-PhysPoint PhysBox_vertex(PhysBox box, uint index);
+PhysPoint PhysBox_vertex(PhysBox box, unsigned int index);
 PhysBox PhysBox_rotate(PhysBox box, PhysPoint pivot, double angle_in_rads);
 PhysBox PhysBox_move(PhysBox box, PhysPoint move);
 PhysProjection PhysBox_project_onto(PhysBox box, PhysPoint axis);
@@ -52,5 +50,6 @@ int PhysBox_collision(PhysBox a, PhysBox b, PhysPoint *mtv);
 PhysPoint PhysBox_poc(PhysBox a, PhysBox b);
 int PhysBox_contains_point(PhysBox box, PhysPoint point);
 PhysBox PhysBox_bounding_box(PhysBox rect);
+int PhysBox_is_equal(PhysBox *a, PhysBox *b);
 
 #endif

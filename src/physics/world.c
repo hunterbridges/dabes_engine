@@ -8,12 +8,17 @@ int World_init(void *self) {
     world->time_scale = 1;
     world->width = SCREEN_WIDTH / DEFAULT_PPM;
     world->height = SCREEN_HEIGHT / DEFAULT_PPM;
+    world->grid_size = PHYS_DEFAULT_GRID_SIZE;
     world->pixels_per_meter = DEFAULT_PPM;
 
     world->gravity = 9.81; // Da earff
     world->air_density = 1.2;
 
     world->fixtures = List_create();
+    world->grid = WorldGrid_create(world->height / world->grid_size,
+            world->width / world->grid_size,
+            world->grid_size);
+    check(world->grid != NULL, "Couldn't create WorldGrid");
 
     return 1;
 error:
@@ -36,22 +41,59 @@ error:
     free(self);
 }
 
+void World_collide_fixture(World *world, Fixture *fixture) {
+    List *near = WorldGrid_members_near_fixture(world->grid, fixture);
+    LIST_FOREACH(near, first, next, current) {
+        WorldGridMember *member = current->value;
+        if (member->member_type == WORLDGRIDMEMBER_FIXTURE) {
+            if (fixture->touching_fixtures == NULL) {
+                fixture->touching_fixtures = List_create();
+            }
+            if (List_contains(fixture->touching_fixtures, member->fixture,
+                    NULL)) continue;
+            if (!PhysBox_collision(fixture->history[0],
+                        member->fixture->history[0],
+                        NULL)) continue;
+            List_push(fixture->touching_fixtures, member->fixture);
+            fixture->colliding = 1;
+
+            if (member->fixture->touching_fixtures == NULL) {
+                member->fixture->touching_fixtures = List_create();
+            }
+            if (List_contains(member->fixture->touching_fixtures,
+                    fixture, NULL)) continue;
+            List_push(member->fixture->touching_fixtures, fixture);
+            member->fixture->colliding = 1;
+        }
+    }
+    List_destroy(near);
+}
+
 void World_solve(Physics *physics, World *world, double advance_ms) {
     advance_ms *= world->time_scale;
 
+    int fixtures_updated = 0;
     {
     LIST_FOREACH(world->fixtures, first, next, current) {
         Fixture *fixture = current->value;
         Fixture_step_reset(physics, fixture, advance_ms);
+
         Fixture_step_displace(physics, fixture);
+        if (fixture->moving) {
+            WorldGrid_update_fixture(world->grid, fixture);
+            fixtures_updated++;
+        }
+
         Fixture_step_apply_environment(physics, fixture);
     }
     }
 
+    // debug("%d fixtures updated", fixtures_updated);
     // TODO: Broad phase collisions
 
     LIST_FOREACH(world->fixtures, first, next, current) {
         Fixture *fixture = current->value;
+        World_collide_fixture(world, fixture);
         Fixture_step_apply_forces(physics, fixture);
         Fixture_step_control(fixture, fixture->controller);
         Fixture_step_commit(physics, fixture);

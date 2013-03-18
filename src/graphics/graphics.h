@@ -31,6 +31,8 @@ typedef struct Graphics {
     GLuint shader;
 } Graphics;
 
+void Graphics_stroke_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
+        double line_width);
 void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLdouble color[4],
         GLuint texture, double rotation);
 void Graphics_draw_debug_text(Graphics *graphics,

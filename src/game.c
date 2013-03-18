@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
     }
 
     scene->_(destroy)(scene);
-    world->_(destroy)(world);
     engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
 
