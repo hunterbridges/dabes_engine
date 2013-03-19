@@ -46,8 +46,7 @@ int Scene_init(void *self) {
         entity->alpha = (double)i / NUM_BOXES * 1.0;
     }
 
-    SDL_Surface *bg = gradient(640, 480);
-    game->bg_texture = load_surface_as_texture(bg);
+    game->bg_texture = load_image_as_texture("media/sprites/clouds.png");
 
     game->projection_scale = 1;
     game->projection_rotation = 0;
@@ -68,7 +67,7 @@ void Scene_render(void *self, void *engine) {
     double bgScale = (game->projection_scale + 2) / 2;
     Graphics_scale_projection_matrix(graphics, bgScale);
     GfxRect gfx_rect = GfxRect_from_xywh(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    GLdouble color[4] = {1.f, 1.f, 1.f, 1.f};
+    GLdouble color[4] = {0, 0, 0, 1};
     Graphics_draw_rect(graphics, gfx_rect, color, game->bg_texture, 0);
 
     Graphics_scale_projection_matrix(graphics, game->projection_scale);

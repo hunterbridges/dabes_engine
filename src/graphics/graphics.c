@@ -169,6 +169,7 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
     check(linked == 1, "Linking shader program");
 
+    // TODO: Hashmap
     graphics->shader = program;
     return 1;
 error:

@@ -215,6 +215,8 @@ int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
         return 1;
     }
 
+    debug("Couldn't remove point <%f, %f>", point.x, point.y);
+
     return 0;
 error:
     return 0;

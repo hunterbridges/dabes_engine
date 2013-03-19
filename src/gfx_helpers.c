@@ -1,5 +1,17 @@
 #include "gfx_helpers.h"
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    static Uint32 rmask = 0xff000000;
+    static Uint32 gmask = 0x00ff0000;
+    static Uint32 bmask = 0x0000ff00;
+    static Uint32 amask = 0x000000ff;
+#else
+    static Uint32 rmask = 0x000000ff;
+    static Uint32 gmask = 0x0000ff00;
+    static Uint32 bmask = 0x00ff0000;
+    static Uint32 amask = 0xff000000;
+#endif
+
 int init_GL(int swidth, int sheight) {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_MULTISAMPLE);
@@ -30,8 +42,9 @@ GLuint load_surface_as_texture(SDL_Surface *surface) {
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h,
-        0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0,
+        (SDL_BYTEORDER == SDL_BIG_ENDIAN ? GL_RGBA : GL_BGRA),
+        GL_UNSIGNED_BYTE, surface->pixels);
     SDL_FreeSurface(surface);
     return texture;
 error:
@@ -40,24 +53,11 @@ error:
 
 // TODO: Hashmap
 GLuint load_image_as_texture(char *image_name) {
-    SDL_Surface *surface = IMG_Load(image_name);
-    return load_surface_as_texture(surface);
+    SDL_Surface *image = IMG_Load(image_name);
+    return load_surface_as_texture(image);
 }
 
 SDL_Surface *gradient(unsigned int width, unsigned int height) {
-    Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
-
     SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width,
             height, 32, rmask, gmask, bmask, amask);
     unsigned int i = 0;

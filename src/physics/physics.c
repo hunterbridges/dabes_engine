@@ -69,6 +69,9 @@ PhysPoint PhysPoint_perp(PhysPoint a) {
 
 PhysPoint PhysPoint_normalize(PhysPoint a) {
     PhysPoint new = a;
+    if (a.x == 0.0 && a.y == 0.0) {
+        return a;
+    }
     double length = PhysPoint_magnitude(a);
     new.x /= length;
     new.y /= length;

@@ -122,7 +122,7 @@ GfxRect Fixture_display_rect(Fixture *fixture) {
     return rect;
 }
 
-int Fixture_hit_wall(Fixture *fixture, PhysBox wall_box) {
+int Fixture_hit_box(Fixture *fixture, PhysBox wall_box, Fixture *collider) {
     check_mem(fixture);
 
     PhysBox real_box = Fixture_real_box(fixture);
@@ -141,7 +141,7 @@ int Fixture_hit_wall(Fixture *fixture, PhysBox wall_box) {
     real_box = PhysBox_move(real_box, scaled_mtv);
     center = PhysPoint_add(center, scaled_mtv);
 
-    PhysPoint collision_normal = {0, -1};
+    PhysPoint collision_normal = PhysPoint_normalize(scaled_mtv);
 
     PhysPoint poc = PhysBox_poc(real_box, wall_box);
 
@@ -152,13 +152,35 @@ int Fixture_hit_wall(Fixture *fixture, PhysBox wall_box) {
     PhysPoint rot_v = PhysPoint_scale(PhysPoint_normalize(perp_norm), wai);
     PhysPoint vap = PhysPoint_add(vai, rot_v);
 
-    // TODO: Bodies colliding with each OTHER (poop)
-    double impulse_magnitude = -(1 + fixture->restitution) *
-        PhysPoint_dot(vap, collision_normal);
-    impulse_magnitude /= PhysPoint_dot(collision_normal, collision_normal) *
+    double elasticity = fixture->restitution;
+    double imp_mag_denom = PhysPoint_dot(collision_normal, collision_normal) *
         (1 / fixture->mass) +
         (pow(PhysPoint_dot(perp_norm, collision_normal), 2) /
          fixture->moment_of_inertia);
+
+    if (collider) {
+        elasticity = (elasticity + collider->restitution) / 2.0;
+        PhysPoint other_vai = collider->step_velocity;
+        double other_wai = collider->step_angular_velocity;
+        PhysPoint other_center = PhysBox_center(wall_box);
+        PhysPoint other_r = PhysPoint_subtract(poc, other_center);
+        PhysPoint other_perp_norm = PhysPoint_perp(other_r);
+        PhysPoint other_rot_v = PhysPoint_scale(PhysPoint_normalize(
+                    other_perp_norm), other_wai);
+        PhysPoint other_vap = PhysPoint_add(other_vai, rot_v);
+
+        imp_mag_denom += collider->mass;
+        imp_mag_denom += pow(PhysPoint_dot(other_perp_norm, collision_normal), 2) /
+         collider->moment_of_inertia;
+    }
+
+    double impulse_magnitude = -(1 + elasticity) *
+        PhysPoint_dot(vap, collision_normal);
+    if (imp_mag_denom != 0.0) {
+        impulse_magnitude /= imp_mag_denom;
+    } else {
+        impulse_magnitude = 0;
+    }
     fixture->step_velocity = PhysPoint_add(vai,
             PhysPoint_scale(collision_normal,
                 impulse_magnitude / fixture->mass));
@@ -236,7 +258,7 @@ void Fixture_step_apply_environment(Physics *physics, Fixture *fixture) {
     fixture->step_force = PhysPoint_add(fixture->step_force, gravity);
 
     PhysBox floor_box = World_floor_box(world);
-    fixture->on_ground = Fixture_hit_wall(fixture, floor_box);
+    fixture->on_ground = Fixture_hit_box(fixture, floor_box, NULL);
     if (fixture->on_ground) {
         PhysPoint gravity = {0, world->gravity * fixture->mass};
         fixture->step_force = PhysPoint_subtract(fixture->step_force, gravity);
@@ -257,6 +279,14 @@ void Fixture_step_apply_forces(Physics *physics, Fixture *fixture) {
 
     fixture->step_acceleration = PhysPoint_scale(fixture->step_force,
             1 / fixture->mass);
+
+    if (fixture->touching_fixtures == NULL) return;
+    LIST_FOREACH(fixture->touching_fixtures, first, next, current) {
+        Fixture *collider = current->value;
+        PhysBox collider_box = PhysBox_move(collider->history[0],
+                collider->step_displacement);
+        Fixture_hit_box(fixture, collider_box, collider);
+    }
 
     return;
 error:
