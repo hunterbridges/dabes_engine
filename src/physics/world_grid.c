@@ -200,6 +200,8 @@ int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
     WorldGridCell *cell = WorldGrid_cell_for_point(grid, point);
     check(cell != NULL, "Tried to remove from nonexistant cell.");
 
+    check(cell->points != NULL, "No points found in cell %p <%d, %d>",
+            cell, cell->col, cell->row);
     ListNode *found = NULL;
     LIST_FOREACH(cell->points, first, next, current) {
         WorldGridPoint *wgpoint = current->value;
@@ -216,6 +218,9 @@ int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
     }
 
     debug("Couldn't remove point <%f, %f>", point.x, point.y);
+    if (owner.fixture == NULL) {
+        debug("oh boy");
+    }
 
     return 0;
 error:
@@ -283,8 +288,11 @@ List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture) {
         }
     }
 
+    List_destroy(cells);
+
     return members;
 error:
+    if (cells) List_destroy(cells);
     return NULL;
 }
 

@@ -50,6 +50,8 @@ void ListNode_swap(ListNode *a, ListNode *b);
 
 typedef int (*List_equal_cb)(void *a, void *b);
 static inline int List_contains(List *list, void *value, List_equal_cb equal) {
+    if (list == NULL) return 0;
+    if (list->count == 0) return 0;
     LIST_FOREACH(list, first, next, current) {
         if (equal != NULL) {
             if (equal(current->value, value)) return 1;

@@ -46,7 +46,7 @@ typedef struct Fixture {
     int colliding;
 
     PhysBox history[FIXTURE_HISTORY_LENGTH];
-    List *touching_fixtures;
+    List *collisions;
 } Fixture;
 
 int Fixture_init(void *self);
@@ -67,5 +67,12 @@ void Fixture_step_control(Fixture *fixture, Controller *controller);
 void Fixture_step_commit(Physics *physics, Fixture *fixture);
 
 extern Object FixtureProto;
+
+typedef struct FixtureCollision {
+    PhysPoint poc;
+    PhysPoint collision_normal;
+    PhysPoint mtv;
+    Fixture *collider;
+} FixtureCollision;
 
 #endif

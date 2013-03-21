@@ -51,5 +51,11 @@ PhysPoint PhysBox_poc(PhysBox a, PhysBox b);
 int PhysBox_contains_point(PhysBox box, PhysPoint point);
 PhysBox PhysBox_bounding_box(PhysBox rect);
 int PhysBox_is_equal(PhysBox *a, PhysBox *b);
+PhysPoint PhysBox_cnormal_from_mtv(PhysBox normal_for, PhysBox against,
+        PhysPoint mtv);
+
+static inline void PhysPoint_debug(PhysPoint point, char *msg) {
+    debug("<%f, %f> %s", point.x, point.y, msg);
+}
 
 #endif

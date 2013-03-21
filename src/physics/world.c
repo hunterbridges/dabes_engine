@@ -43,27 +43,32 @@ error:
 
 void World_collide_fixture(World *world, Fixture *fixture) {
     List *near = WorldGrid_members_near_fixture(world->grid, fixture);
+    if (!near) return;
     LIST_FOREACH(near, first, next, current) {
         WorldGridMember *member = current->value;
         if (member->member_type == WORLDGRIDMEMBER_FIXTURE) {
-            if (fixture->touching_fixtures == NULL) {
-                fixture->touching_fixtures = List_create();
+            PhysPoint mtv = {0,0};
+            //PhysBox this_box = fixture->history[0];
+            PhysBox this_box = Fixture_real_box(fixture);
+            this_box = PhysBox_move(this_box, fixture->step_displacement);
+            //PhysBox other_box = member->fixture->history[0];
+            PhysBox other_box = Fixture_real_box(member->fixture);
+            other_box = PhysBox_move(other_box, member->fixture->step_displacement);
+            if (!PhysBox_collision(this_box, other_box, &mtv)) continue;
+            if (fixture->collisions == NULL) {
+                fixture->collisions = List_create();
             }
-            if (List_contains(fixture->touching_fixtures, member->fixture,
-                    NULL)) continue;
-            if (!PhysBox_collision(fixture->history[0],
-                        member->fixture->history[0],
-                        NULL)) continue;
-            List_push(fixture->touching_fixtures, member->fixture);
-            fixture->colliding = 1;
 
-            if (member->fixture->touching_fixtures == NULL) {
-                member->fixture->touching_fixtures = List_create();
-            }
-            if (List_contains(member->fixture->touching_fixtures,
-                    fixture, NULL)) continue;
-            List_push(member->fixture->touching_fixtures, fixture);
-            member->fixture->colliding = 1;
+            FixtureCollision *collision = calloc(1, sizeof(FixtureCollision));
+            assert(collision != NULL);
+            collision->collider = member->fixture;
+            collision->mtv = mtv;
+            collision->collision_normal = PhysBox_cnormal_from_mtv(
+                    this_box,
+                    other_box,
+                    mtv);
+            List_push(fixture->collisions, collision);
+            fixture->colliding = 1;
         }
     }
     List_destroy(near);
@@ -94,8 +99,8 @@ void World_solve(Physics *physics, World *world, double advance_ms) {
     LIST_FOREACH(world->fixtures, first, next, current) {
         Fixture *fixture = current->value;
         World_collide_fixture(world, fixture);
-        Fixture_step_apply_forces(physics, fixture);
         Fixture_step_control(fixture, fixture->controller);
+        Fixture_step_apply_forces(physics, fixture);
         Fixture_step_commit(physics, fixture);
     }
 }

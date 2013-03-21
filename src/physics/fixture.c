@@ -39,7 +39,7 @@ error:
 void Fixture_destroy(void *self) {
     check(self != NULL, "No fixture to destroy");
     Fixture *fixture = self;
-    List_destroy(fixture->touching_fixtures);
+    if (fixture->collisions) List_destroy(fixture->collisions);
     free(fixture);
 error:
     return;
@@ -136,13 +136,18 @@ int Fixture_hit_box(Fixture *fixture, PhysBox wall_box, Fixture *collider) {
     if (!hit_wall) return 0;
 
     PhysPoint scaled_mtv = PhysPoint_scale(mtv, -1);
-    fixture->step_displacement = PhysPoint_add(fixture->step_displacement,
-            scaled_mtv);
-    real_box = PhysBox_move(real_box, scaled_mtv);
-    center = PhysPoint_add(center, scaled_mtv);
+    PhysPoint other_center = PhysBox_center(wall_box);
+    PhysPoint direction = PhysPoint_subtract(other_center, center);
+    double dot = PhysPoint_dot(mtv, direction);
+    if (dot >= 0) {
+        fixture->step_displacement = PhysPoint_add(fixture->step_displacement,
+                scaled_mtv);
+        real_box = PhysBox_move(real_box, scaled_mtv);
+        center = PhysPoint_add(center, scaled_mtv);
+    }
 
-    PhysPoint collision_normal = PhysPoint_normalize(scaled_mtv);
-
+    PhysPoint collision_normal =
+        PhysBox_cnormal_from_mtv(real_box, wall_box, mtv);
     PhysPoint poc = PhysBox_poc(real_box, wall_box);
 
     PhysPoint vai = fixture->step_velocity;
@@ -159,10 +164,8 @@ int Fixture_hit_box(Fixture *fixture, PhysBox wall_box, Fixture *collider) {
          fixture->moment_of_inertia);
 
     if (collider) {
-        elasticity = (elasticity + collider->restitution) / 2.0;
         PhysPoint other_vai = collider->step_velocity;
         double other_wai = collider->step_angular_velocity;
-        PhysPoint other_center = PhysBox_center(wall_box);
         PhysPoint other_r = PhysPoint_subtract(poc, other_center);
         PhysPoint other_perp_norm = PhysPoint_perp(other_r);
         PhysPoint other_rot_v = PhysPoint_scale(PhysPoint_normalize(
@@ -210,10 +213,10 @@ void Fixture_step_reset(Physics *physics, Fixture *fixture, double advance_ms) {
     fixture->moving = 0;
     fixture->colliding = 0;
 
-    if (fixture->touching_fixtures != NULL &&
-            fixture->touching_fixtures->count > 0) {
-        List_destroy(fixture->touching_fixtures);
-        fixture->touching_fixtures = List_create(fixture->touching_fixtures);
+    if (fixture->collisions != NULL) {
+        if (fixture->collisions->first) List_clear_destroy(fixture->collisions);
+        else List_destroy(fixture->collisions);
+        fixture->collisions = NULL;
     }
 
     int i = 0;
@@ -272,21 +275,23 @@ error:
 void Fixture_step_apply_forces(Physics *physics, Fixture *fixture) {
     check_mem(physics);
     check_mem(fixture);
+
+    if (fixture->collisions) {
+        LIST_FOREACH(fixture->collisions, first, next, current) {
+            FixtureCollision *collision = current->value;
+            PhysBox collider_box = PhysBox_move(collision->collider->history[0],
+                    collision->collider->step_displacement);
+            Fixture_hit_box(fixture, collider_box, collision->collider);
+        }
+    }
+
     double damping = -1; // I guess this is kg/s
     fixture->step_force =
         PhysPoint_add(fixture->step_force,
                 PhysPoint_scale(fixture->velocity, damping));
 
-    fixture->step_acceleration = PhysPoint_scale(fixture->step_force,
-            1 / fixture->mass);
-
-    if (fixture->touching_fixtures == NULL) return;
-    LIST_FOREACH(fixture->touching_fixtures, first, next, current) {
-        Fixture *collider = current->value;
-        PhysBox collider_box = PhysBox_move(collider->history[0],
-                collider->step_displacement);
-        Fixture_hit_box(fixture, collider_box, collider);
-    }
+    fixture->step_acceleration = PhysPoint_add(fixture->input_acceleration,
+            PhysPoint_scale(fixture->step_force, 1 / fixture->mass));
 
     return;
 error:

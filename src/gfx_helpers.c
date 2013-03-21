@@ -32,7 +32,7 @@ error:
 }
 
 GLuint load_surface_as_texture(SDL_Surface *surface) {
-    check_mem(surface);
+    check(surface != NULL, "No surface to load");
 
     GLuint texture;
     glGenTextures(1, &texture);

@@ -261,3 +261,21 @@ int PhysBox_is_equal(PhysBox *a, PhysBox *b) {
             a->bl.x == b->bl.x && a->bl.y == b->bl.y) return 1;
     return 0;
 }
+
+PhysPoint PhysBox_cnormal_from_mtv(PhysBox normal_for, PhysBox against,
+        PhysPoint mtv) {
+    PhysPoint center = PhysBox_center(normal_for);
+    PhysPoint other_center = PhysBox_center(against);
+
+    PhysPoint direction = PhysPoint_subtract(other_center, center);
+    double dot = PhysPoint_dot(mtv, direction);
+    PhysPoint collision_normal = {};
+    if (dot >= 0) {
+        collision_normal = PhysPoint_normalize(
+                PhysPoint_scale(mtv, -1));
+    } else {
+        collision_normal = PhysPoint_normalize(mtv);
+    }
+
+    return collision_normal;
+}
