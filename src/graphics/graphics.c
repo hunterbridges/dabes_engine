@@ -72,7 +72,6 @@ GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
 void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
         GLuint texture, double rotation) {
     check_mem(graphics);
-#pragma message("REIMPLIMENT")
     Graphics_reset_modelview_matrix(graphics);
     double w = rect.tr.x - rect.tl.x;
     double h = rect.bl.y - rect.tl.y;
@@ -213,8 +212,8 @@ static inline GfxUMatrix GFXUMatrix_rotate(GfxUMatrix matrix,
                                            double x, double y, double z) {
 #ifdef DABES_IOS
     GfxUMatrix rotated;
-    rotated.ca =
-        CATransform3DRotate(matrix.ca, 180.0 * rot_degs / M_PI, x, y, z);
+    rotated.glk =
+        GLKMatrix4Rotate(matrix.glk, rot_degs * M_PI / 180.0, x, y, z);
     return rotated;
 #else
     glRotatef(rot_degs, x, y, z);

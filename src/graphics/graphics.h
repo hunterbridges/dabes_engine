@@ -3,7 +3,7 @@
 #include "../prefix.h"
 
 #ifdef DABES_IOS
-#include <GLKit/GLKMathTypes.h>
+#include <GLKit/GLKMath.h>
 #include <OpenGLES/ES2/gl.h>
 #include <QuartzCore/CoreAnimation.h>
 #else
