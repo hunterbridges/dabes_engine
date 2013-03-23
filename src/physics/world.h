@@ -1,6 +1,5 @@
 #ifndef __world_h
 #define __world_h
-#include <lcthw/liblcthw.h>
 #include "../prefix.h"
 #include "physics.h"
 #include "fixture.h"

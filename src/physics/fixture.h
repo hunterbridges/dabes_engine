@@ -1,6 +1,5 @@
 #ifndef __fixture_h
 #define __fixture_h
-#include <lcthw/list.h>
 #include "../prefix.h"
 #include "../graphics/graphics.h"
 #include "../input/controller.h"

@@ -1,8 +1,11 @@
 #ifndef string_algos_h
 #define string_algos_h
 
+#ifdef DABES_IOS
+#else
 #include <lcthw/bstrlib.h>
 #include <lcthw/darray.h>
+#endif
 
 typedef struct StringScanner {
     bstring in;

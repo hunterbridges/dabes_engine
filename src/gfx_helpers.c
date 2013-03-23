@@ -14,20 +14,18 @@
 
 int init_GL(int swidth, int sheight) {
     glEnable(GL_TEXTURE_2D);
+#ifndef DABES_IOS
     glEnable(GL_MULTISAMPLE);
+#endif
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(swidth / 2.f, sheight / 2.f, 0.f);
     GLenum error = glGetError();
     check(error == GL_NO_ERROR, "OpenGL init error...");
     return 1;
 error:
+#ifndef DABES_IOS
     printf("Error initializing OpenGL! %s\n", gluErrorString(error));
+#endif
     return 0;
 }
 
@@ -37,14 +35,19 @@ GLuint load_surface_as_texture(SDL_Surface *surface) {
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GLenum color_format = GL_RGBA;
+#if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
+    color_format = GL_BGRA;
+#endif
+#ifndef DABES_IOS
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+#endif
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0,
-        (SDL_BYTEORDER == SDL_BIG_ENDIAN ? GL_RGBA : GL_BGRA),
-        GL_UNSIGNED_BYTE, surface->pixels);
+        color_format, GL_UNSIGNED_BYTE, surface->pixels);
     SDL_FreeSurface(surface);
     return texture;
 error:
@@ -53,12 +56,15 @@ error:
 
 // TODO: Hashmap
 GLuint load_image_as_texture(char *image_name) {
+#ifndef DABES_IOS
     SDL_Surface *image = IMG_Load(image_name);
     return load_surface_as_texture(image);
+#endif
+    return 0;
 }
 
 SDL_Surface *gradient(unsigned int width, unsigned int height) {
-    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width,
+    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width,
             height, 32, rmask, gmask, bmask, amask);
     unsigned int i = 0;
     for (i = 0; i < height; i++) {

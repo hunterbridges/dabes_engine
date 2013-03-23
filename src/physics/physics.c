@@ -1,4 +1,5 @@
 #include <float.h>
+#include <math.h>
 #include "physics.h"
 
 int Physics_init(void *self) {

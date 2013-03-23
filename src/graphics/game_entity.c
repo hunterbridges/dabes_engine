@@ -30,16 +30,14 @@ void GameEntity_render(GameEntity *self, void *engine) {
     Graphics *graphics = ((Engine *)engine)->graphics;
 
     GfxRect rect = Fixture_display_rect(entity->fixture);
-    GLdouble color[4] = {0.f, 0.f, 0.f, entity->alpha};
+    GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
     if (entity->fixture->colliding) {
         color[1] = 1.f;
         color[3] = 1.f;
     }
     float degrees = Fixture_rotation_degrees(entity->fixture);
-    glUseProgram(graphics->shader);
 
     Graphics_draw_rect(graphics, rect, color, entity->texture, degrees);
-    glUseProgram(0);
 }
 
 void GameEntity_assign_controller(GameEntity *entity, Controller *controller) {

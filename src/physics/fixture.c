@@ -1,3 +1,4 @@
+#include <math.h>
 #include "fixture.h"
 #include "world.h"
 
@@ -276,22 +277,49 @@ void Fixture_step_apply_forces(Physics *physics, Fixture *fixture) {
     check_mem(physics);
     check_mem(fixture);
 
+    double damping = -1; // I guess this is kg/s
+    fixture->step_force =
+        PhysPoint_add(fixture->step_force,
+                PhysPoint_scale(fixture->velocity, damping));
+    PhysPoint input_force = PhysPoint_scale(fixture->input_acceleration,
+            fixture->mass);
+    fixture->step_force = PhysPoint_add(fixture->step_force, input_force);
+
     if (fixture->collisions) {
         LIST_FOREACH(fixture->collisions, first, next, current) {
             FixtureCollision *collision = current->value;
             PhysBox collider_box = PhysBox_move(collision->collider->history[0],
                     collision->collider->step_displacement);
             Fixture_hit_box(fixture, collider_box, collision->collider);
+            /*
+            collision->collider->step_force = PhysPoint_add(collision->collider->step_force,
+                input_force);
+                */
         }
     }
 
-    double damping = -1; // I guess this is kg/s
-    fixture->step_force =
-        PhysPoint_add(fixture->step_force,
-                PhysPoint_scale(fixture->velocity, damping));
+    if (fixture->on_ground) {
+        World *world = fixture->world;
+        PhysPoint gravity = {0, world->gravity * fixture->mass};
+        PhysPoint collision_normal = PhysPoint_normalize(
+                PhysPoint_scale(gravity, -1));
+        double mu = 0.42;
+        double friction_mag = PhysPoint_magnitude(gravity) * mu;
+        PhysPoint friction_force = PhysPoint_scale(fixture->velocity,
+                -1 * friction_mag);
+        if (fixture->controller) {
+            //PhysPoint_debug(friction_force, "friction force");
+            //PhysPoint_debug(fixture->step_force, "old force");
+        }
+        fixture->step_force = PhysPoint_add(fixture->step_force,
+                friction_force);
+        if (fixture->controller) {
+            //PhysPoint_debug(fixture->step_force, "new force");
+        }
+    }
 
-    fixture->step_acceleration = PhysPoint_add(fixture->input_acceleration,
-            PhysPoint_scale(fixture->step_force, 1 / fixture->mass));
+    fixture->step_acceleration =
+        PhysPoint_scale(fixture->step_force, 1 / fixture->mass);
 
     return;
 error:
@@ -360,10 +388,12 @@ void Fixture_step_commit(Physics *physics, Fixture *fixture) {
 
     if (fixture->input_acceleration.x == 0 && fixture->on_ground) {
         //TODO: proper friction
+        /*
         int dir = sign(fixture->step_velocity.x);
         fixture->step_velocity.x -= dir * MVMT_FRICTION * fixture->step_dt;
         fixture->step_velocity.x = dir > 0 ? MAX(fixture->step_velocity.x, 0) :
             MIN(fixture->step_velocity.x, 0);
+            */
     }
 
     fixture->center = PhysPoint_add(fixture->center,

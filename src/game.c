@@ -1,6 +1,5 @@
 #include "prefix.h"
 #include "gameobjects.h"
-#include "SDL/SDL_TTF.h"
 
 int main(int argc, char *argv[]) {
     argc = (int)argc;

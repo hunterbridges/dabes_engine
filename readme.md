@@ -16,13 +16,26 @@ What is done:
     * Grid-based collision detection
 * Audio engine:
     * Can play music and control the volume of it
+* iOS build (ish)
 
 What is not yet done:
-* Automatic camera
+* iOS
+    * Textures
+    * Sound
+    * Debug text
+    * Input
+* Better camera
+* Slimmed down SDL.framework for the iOS proj
+* Physics engine:
+    * Raycasting
+    * Raycast to build an accumulated opposing pressure
+* Tile maps
 * Parallax layers
 * High-level state management
 * Object scripting
-* I guess some kind of level editor
+
+Bugs:
+* Debug grid not working on desktop
 
 ```
 # Ya gonna need dis stuf!

@@ -1,3 +1,4 @@
+#include <math.h>
 #include "../core/engine.h"
 #include "scene.h"
 
@@ -7,8 +8,10 @@ void Scene_destroy(void *self) {
     check_mem(self);
     Scene *game = (Scene *)self;
 
+#ifndef DABES_IOS
     Mix_HaltMusic();
     Mix_FreeMusic(game->music);
+#endif
 
     LIST_FOREACH(game->entities, first, next, current) {
         GameEntity *thing = current->value;
@@ -27,6 +30,7 @@ int Scene_init(void *self) {
     check_mem(self);
 
     Scene *game = (Scene *)self;
+#ifndef DABES_IOS
     game->music = Mix_LoadMUS("media/music/tower.wav");
 
     if (game->music == NULL) {
@@ -34,6 +38,7 @@ int Scene_init(void *self) {
     }
 
     Mix_PlayMusic(game->music, -1);
+#endif
 
     game->world = NULL;
     game->entities = List_create();
@@ -65,13 +70,18 @@ void Scene_render(void *self, void *engine) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     double bgScale = (game->projection_scale + 2) / 2;
+    Graphics_reset_projection_matrix(graphics);
     Graphics_scale_projection_matrix(graphics, bgScale);
+
     GfxRect gfx_rect = GfxRect_from_xywh(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    GLdouble color[4] = {0, 0, 0, 1};
+    GLfloat color[4] = {0, 0, 1, 1};
     Graphics_draw_rect(graphics, gfx_rect, color, game->bg_texture, 0);
 
+    Graphics_reset_projection_matrix(graphics);
     Graphics_scale_projection_matrix(graphics, game->projection_scale);
-    glRotatef(game->projection_rotation, 0, 0, -1);
+    Graphics_rotate_projection_matrix(graphics, game->projection_rotation,
+                                      0, 0, -1);
+    //
 
     // Draw the stuff
     LIST_FOREACH(game->entities, first, next, current) {
@@ -104,7 +114,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         fixture->center.y = 1;
         fixture->time_scale = 1;
         fixture->rotation_radians = M_PI / 16 * (i % 8);
-        Fixture_set_mass(fixture, 10);
+        Fixture_set_mass(fixture, 100);
 
         entity->fixture = fixture;
         /*
@@ -137,7 +147,9 @@ void Scene_control(Scene *scene, Input *input) {
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 
     double volume = scene->projection_scale * 128.f;
+#ifndef DABES_IOS
     Mix_VolumeMusic(volume);
+#endif
 
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;
@@ -146,15 +158,20 @@ void Scene_control(Scene *scene, Input *input) {
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
+#ifndef DABES_IOS
+    glUseProgram(0);
+    Graphics_reset_projection_matrix(graphics);
+    Graphics_reset_modelview_matrix(graphics);
+
     glDisable(GL_MULTISAMPLE);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
+    Graphics_translate_modelview_matrix(graphics,
+            -SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
 
     Graphics_scale_projection_matrix(graphics, scene->projection_scale);
-    glRotatef(scene->projection_rotation, 0, 0, -1);
+    Graphics_rotate_projection_matrix(graphics, scene->projection_rotation,
+            0, 0, -1);
     glLineWidth(0);
-    glColor3f(1.0, 0.0, 0.0);
+    glColor4f(1.0, 0.0, 0.0, 1.0);
     double grid = scene->world->grid_size;
     double ppm = scene->world->pixels_per_meter;
     int rows = ceil(scene->world->height / scene->world->grid_size);
@@ -185,6 +202,8 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
         }
     }
     glEnable(GL_MULTISAMPLE);
+    glUseProgram(graphics->shader);
+#endif
 }
 
 Object SceneProto = {
