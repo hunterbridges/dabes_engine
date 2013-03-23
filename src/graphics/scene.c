@@ -67,7 +67,7 @@ void Scene_render(void *self, void *engine) {
     Scene *game = (Scene *)self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     double bgScale = (game->projection_scale + 2) / 2;
     Graphics_reset_projection_matrix(graphics);

@@ -1,12 +1,12 @@
-precision mediump float;
+precision lowp float;
 varying vec4 colorVarying;
+varying vec4 textureVarying;
+uniform sampler2D texture;
 
 void main()
 {
-  /*
-    vec4 color = texture2D(tex, gl_TexCoord[0].st);
-    vec4 mixed = color + gl_Color * (1.0 - color.a);
-    gl_FragColor = mixed;
-   */
-  gl_FragColor = colorVarying;
+  vec2 texCoord = vec2(textureVarying.x, textureVarying.y);
+  vec4 color = texture2D(texture, texCoord);
+  vec4 mixed = color + colorVarying * (1.0 - color.a);
+  gl_FragColor = mixed;
 }

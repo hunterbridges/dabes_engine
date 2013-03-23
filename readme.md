@@ -16,11 +16,10 @@ What is done:
     * Grid-based collision detection
 * Audio engine:
     * Can play music and control the volume of it
-* iOS build (ish)
+* iOS build
 
 What is not yet done:
 * iOS
-    * Textures
     * Sound
     * Debug text
     * Input
@@ -36,6 +35,7 @@ What is not yet done:
 
 Bugs:
 * Debug grid not working on desktop
+* iOS backgrounding causes collision tunneling
 
 ```
 # Ya gonna need dis stuf!

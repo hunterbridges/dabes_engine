@@ -24,6 +24,7 @@ GLint uniforms[NUM_UNIFORMS];
 enum {
 	ATTRIB_VERTEX,
 	ATTRIB_COLOR,
+  ATTRIB_TEXTURE,
 	NUM_ATTRIBUTES
 } ATTRIBS;
 GLint attributes[NUM_ATTRIBUTES];
@@ -92,17 +93,28 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
                        GL_FALSE, graphics->modelview_matrix.gl);
     GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
 
-    GfxUVertex vertices[8] = {
+    GfxUVertex vertices[12] = {
+      // Vertex
       {-w / 2.0, -h / 2.0, 0, 1},
       {w / 2.0, -h / 2.0, 0, 1},
       {-w / 2.0, h / 2.0, 0, 1},
       {w / 2.0, h / 2.0, 0, 1},
-      cVertex, cVertex, cVertex, cVertex
+      
+      // Color
+      cVertex, cVertex, cVertex, cVertex,
+      
+      // Texture
+      {0, 0, 0, 0},
+      {1, 0, 0, 0},
+      {0, 1, 0, 0},
+      {1, 1, 0, 0}
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Texture
+    glBindTexture(GL_TEXTURE_2D, texture);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindTexture(GL_TEXTURE_2D, 0);
 #else
     glColor4fv(color);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -274,7 +286,9 @@ int Graphics_init(void *self) {
     glGenBuffers(1, &graphics->array_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
     Graphics_load_shader(graphics, shader_path("decal.vert"),
         shader_path("decal.frag"));
 
@@ -347,11 +361,15 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
         glGetUniformLocation(program, "projection");
     glEnableVertexAttribArray(ATTRIB_VERTEX);
     glEnableVertexAttribArray(ATTRIB_COLOR);
+    glEnableVertexAttribArray(ATTRIB_TEXTURE);
     glVertexAttribPointer(ATTRIB_VERTEX, 4, GL_FLOAT, GL_FALSE, 0,
                           0);
 
     glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE,
                           0, (GLvoid *)(sizeof(GfxUVertex) * 4));
+  
+    glVertexAttribPointer(ATTRIB_TEXTURE, 4, GL_FLOAT, GL_FALSE,
+                          0, (GLvoid *)(sizeof(GfxUVertex) * 8));
 #endif
 
   // TODO: Hashmap
