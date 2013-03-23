@@ -20,7 +20,6 @@ What is done:
 
 What is not yet done:
 * iOS
-    * Sound
     * Debug text
     * Input
 * Better camera

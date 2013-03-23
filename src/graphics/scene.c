@@ -8,10 +8,7 @@ void Scene_destroy(void *self) {
     check_mem(self);
     Scene *game = (Scene *)self;
 
-#ifndef DABES_IOS
-    Mix_HaltMusic();
-    Mix_FreeMusic(game->music);
-#endif
+    Music_destroy(game->music);
 
     LIST_FOREACH(game->entities, first, next, current) {
         GameEntity *thing = current->value;
@@ -30,15 +27,8 @@ int Scene_init(void *self) {
     check_mem(self);
 
     Scene *game = (Scene *)self;
-#ifndef DABES_IOS
-    game->music = Mix_LoadMUS("media/music/tower.wav");
-
-    if (game->music == NULL) {
-        printf("Mix_LoadMUS: %s\n", Mix_GetError());
-    }
-
-    Mix_PlayMusic(game->music, -1);
-#endif
+    game->music = Music_load("media/music/Tower.wav");
+    Music_play(game->music);
 
     game->world = NULL;
     game->entities = List_create();
@@ -146,10 +136,8 @@ void Scene_control(Scene *scene, Input *input) {
 
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 
-    double volume = scene->projection_scale * 128.f;
-#ifndef DABES_IOS
-    Mix_VolumeMusic(volume);
-#endif
+    double volume = scene->projection_scale;
+    Music_set_volume(scene->music, volume);
 
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;

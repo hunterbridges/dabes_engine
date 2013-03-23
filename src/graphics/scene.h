@@ -7,10 +7,8 @@
 typedef struct Scene {
     Object proto;
     GLuint bg_texture;
-
-#ifndef DABES_IOS
-    Mix_Music *music;
-#endif
+  
+    Music *music;
 
     double projection_scale;
     double projection_rotation;
