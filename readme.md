@@ -21,7 +21,6 @@ What is done:
 What is not yet done:
 * iOS
     * Debug text
-    * Input
 * Better camera
 * Slimmed down SDL.framework for the iOS proj
 * Physics engine:
@@ -29,12 +28,11 @@ What is not yet done:
     * Raycast to build an accumulated opposing pressure
 * Tile maps
 * Parallax layers
-* High-level state management
+* Scene management
 * Object scripting
 
 Bugs:
 * Debug grid not working on desktop
-* iOS backgrounding causes collision tunneling
 
 ```
 # Ya gonna need dis stuf!

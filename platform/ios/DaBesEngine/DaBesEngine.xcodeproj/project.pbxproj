@@ -20,9 +20,7 @@
 		CA24C74916FC1E7E0045D5DE /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = CA24C74816FC1E7E0045D5DE /* Default.png */; };
 		CA24C74B16FC1E7E0045D5DE /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA24C74A16FC1E7E0045D5DE /* Default@2x.png */; };
 		CA24C74D16FC1E7E0045D5DE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA24C74C16FC1E7E0045D5DE /* Default-568h@2x.png */; };
-		CA24C75416FC1E7E0045D5DE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C75316FC1E7E0045D5DE /* ViewController.m */; };
-		CA24C75716FC1E7E0045D5DE /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = CA24C75516FC1E7E0045D5DE /* ViewController_iPhone.xib */; };
-		CA24C75A16FC1E7E0045D5DE /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = CA24C75816FC1E7E0045D5DE /* ViewController_iPad.xib */; };
+		CA24C75416FC1E7E0045D5DE /* EngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C75316FC1E7E0045D5DE /* EngineViewController.m */; };
 		CA24C79016FC20900045D5DE /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76216FC20900045D5DE /* audio.c */; };
 		CA24C79216FC20900045D5DE /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76516FC20900045D5DE /* engine.c */; };
 		CA24C79516FC20900045D5DE /* gfx_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76B16FC20900045D5DE /* gfx_helpers.c */; };
@@ -45,6 +43,8 @@
 		CAB359B916FE242F004CF684 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAB359B716FE242F004CF684 /* Icon@2x.png */; };
 		CAB359BC16FE690D004CF684 /* AudioBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB359BB16FE690D004CF684 /* AudioBridge.m */; };
 		CAB359BF16FE6AF5004CF684 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB359BE16FE6AF5004CF684 /* AVFoundation.framework */; };
+		CAB359C316FE96E9004CF684 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB359C216FE96E9004CF684 /* InterfaceViewController.m */; };
+		CAB359C716FED230004CF684 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CAB359C616FED230004CF684 /* blueprint.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,10 +104,8 @@
 		CA24C74816FC1E7E0045D5DE /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		CA24C74A16FC1E7E0045D5DE /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		CA24C74C16FC1E7E0045D5DE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		CA24C75216FC1E7E0045D5DE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		CA24C75316FC1E7E0045D5DE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		CA24C75616FC1E7E0045D5DE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
-		CA24C75916FC1E7E0045D5DE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPad.xib; sourceTree = "<group>"; };
+		CA24C75216FC1E7E0045D5DE /* EngineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EngineViewController.h; sourceTree = "<group>"; };
+		CA24C75316FC1E7E0045D5DE /* EngineViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EngineViewController.m; sourceTree = "<group>"; };
 		CA24C76016FC20900045D5DE /* constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = constants.h; path = ../../../../src/constants.h; sourceTree = "<group>"; };
 		CA24C76216FC20900045D5DE /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		CA24C76316FC20900045D5DE /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
@@ -149,6 +147,9 @@
 		CAB359BA16FE690D004CF684 /* AudioBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBridge.h; sourceTree = "<group>"; };
 		CAB359BB16FE690D004CF684 /* AudioBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioBridge.m; sourceTree = "<group>"; };
 		CAB359BE16FE6AF5004CF684 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		CAB359C116FE96E9004CF684 /* InterfaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterfaceViewController.h; sourceTree = "<group>"; };
+		CAB359C216FE96E9004CF684 /* InterfaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterfaceViewController.m; sourceTree = "<group>"; };
+		CAB359C616FED230004CF684 /* blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blueprint.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +244,7 @@
 		CA24C73D16FC1E7E0045D5DE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CAB359C616FED230004CF684 /* blueprint.jpg */,
 				CAB359B616FE242F004CF684 /* Icon.png */,
 				CAB359B716FE242F004CF684 /* Icon@2x.png */,
 				CA72A2B116FC49BE00A545F7 /* game.c */,
@@ -318,10 +320,10 @@
 				CAB359BD16FE6AAE004CF684 /* Audio */,
 				CA24C74516FC1E7E0045D5DE /* AppDelegate.h */,
 				CA24C74616FC1E7E0045D5DE /* AppDelegate.m */,
-				CA24C75216FC1E7E0045D5DE /* ViewController.h */,
-				CA24C75316FC1E7E0045D5DE /* ViewController.m */,
-				CA24C75516FC1E7E0045D5DE /* ViewController_iPhone.xib */,
-				CA24C75816FC1E7E0045D5DE /* ViewController_iPad.xib */,
+				CA24C75216FC1E7E0045D5DE /* EngineViewController.h */,
+				CA24C75316FC1E7E0045D5DE /* EngineViewController.m */,
+				CAB359C116FE96E9004CF684 /* InterfaceViewController.h */,
+				CAB359C216FE96E9004CF684 /* InterfaceViewController.m */,
 			);
 			name = Platform;
 			sourceTree = "<group>";
@@ -442,11 +444,10 @@
 				CA24C74916FC1E7E0045D5DE /* Default.png in Resources */,
 				CA24C74B16FC1E7E0045D5DE /* Default@2x.png in Resources */,
 				CA24C74D16FC1E7E0045D5DE /* Default-568h@2x.png in Resources */,
-				CA24C75716FC1E7E0045D5DE /* ViewController_iPhone.xib in Resources */,
-				CA24C75A16FC1E7E0045D5DE /* ViewController_iPad.xib in Resources */,
 				CAB3597B16FC4EBC004CF684 /* media in Resources */,
 				CAB359B816FE242F004CF684 /* Icon.png in Resources */,
 				CAB359B916FE242F004CF684 /* Icon@2x.png in Resources */,
+				CAB359C716FED230004CF684 /* blueprint.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,7 +459,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA24C74716FC1E7E0045D5DE /* AppDelegate.m in Sources */,
-				CA24C75416FC1E7E0045D5DE /* ViewController.m in Sources */,
+				CA24C75416FC1E7E0045D5DE /* EngineViewController.m in Sources */,
 				CA24C79016FC20900045D5DE /* audio.c in Sources */,
 				CA24C79216FC20900045D5DE /* engine.c in Sources */,
 				CA24C79516FC20900045D5DE /* gfx_helpers.c in Sources */,
@@ -475,6 +476,7 @@
 				CA24C7A916FC20900045D5DE /* util.c in Sources */,
 				CA72A2B316FC4B0000A545F7 /* main.m in Sources */,
 				CAB359BC16FE690D004CF684 /* AudioBridge.m in Sources */,
+				CAB359C316FE96E9004CF684 /* InterfaceViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,22 +502,6 @@
 				CA24C74016FC1E7E0045D5DE /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		CA24C75516FC1E7E0045D5DE /* ViewController_iPhone.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CA24C75616FC1E7E0045D5DE /* en */,
-			);
-			name = ViewController_iPhone.xib;
-			sourceTree = "<group>";
-		};
-		CA24C75816FC1E7E0045D5DE /* ViewController_iPad.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CA24C75916FC1E7E0045D5DE /* en */,
-			);
-			name = ViewController_iPad.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -1,4 +1,4 @@
-#import "ViewController.h"
+#import "EngineViewController.h"
 #import "engine.h"
 #import "scene.h"
 #import "world.h"
@@ -7,21 +7,19 @@
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 char *bundlePath__;
-@interface ViewController () {
-    GLuint _program;
-    
-    GLKMatrix4 _modelViewProjectionMatrix;
-    GLKMatrix3 _normalMatrix;
-    float _rotation;
-    
-    GLuint _vertexArray;
-    GLuint _vertexBuffer;
+@interface EngineViewController () {
+  GLuint _program;
+  
+  GLuint _vertexArray;
+  GLuint _vertexBuffer;
   
   Engine *engine_;
   Scene *scene_;
   World *world_;
   
-  Controller *touchController_;
+  GLKView *glkView_;
+  
+  Input *touchInput_;
   UILongPressGestureRecognizer *moveGesture_;
   UILongPressGestureRecognizer *jumpGesture_;
 }
@@ -33,7 +31,15 @@ char *bundlePath__;
 
 @end
 
-@implementation ViewController
+@implementation EngineViewController
+
+- (id)initWithTouchInput:(Input *)input {
+  self = [super init];
+  if (self) {
+    touchInput_ = input;
+  }
+  return self;
+}
 
 - (void)viewDidLoad {
   [super viewDidLoad];
@@ -47,12 +53,13 @@ char *bundlePath__;
       NSLog(@"Failed to create ES context");
   }
   
-  GLKView *view = (GLKView *)self.view;
-  view.context = self.context;
-  view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-  //view.drawableMultisample = GLKViewDrawableMultisample4X;
-
-  touchController_ = calloc(1, sizeof(Controller));
+  glkView_ = [[GLKView alloc] initWithFrame:self.view.bounds];
+  glkView_.context = self.context;
+  glkView_.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
+                               UIViewAutoresizingFlexibleHeight);
+  glkView_.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+  glkView_.delegate = self;
+  self.view = glkView_;
 
   moveGesture_ =
       [[UILongPressGestureRecognizer alloc]
@@ -84,31 +91,34 @@ char *bundlePath__;
   CGRect screen = self.view.bounds;
   CGPoint loc = [gesture locationOfTouch:0 inView:self.view];
   BOOL ended = gesture.state == UIGestureRecognizerStateEnded;
+  
+  Controller *controller = touchInput_->controllers[0];
   Controller_dpad_direction direction = CONTROLLER_DPAD_NONE;
   
   if (loc.x <= screen.size.width / 2.0) {
-    if (touchController_->dpad & CONTROLLER_DPAD_RIGHT)
-      touchController_->dpad &= ~(CONTROLLER_DPAD_RIGHT);
+    if (controller->dpad & CONTROLLER_DPAD_RIGHT)
+      controller->dpad &= ~(CONTROLLER_DPAD_RIGHT);
     direction = CONTROLLER_DPAD_LEFT;
   } else {
-    if (touchController_->dpad & CONTROLLER_DPAD_LEFT)
-      touchController_->dpad &= ~(CONTROLLER_DPAD_LEFT);
+    if (controller->dpad & CONTROLLER_DPAD_LEFT)
+      controller->dpad &= ~(CONTROLLER_DPAD_LEFT);
     direction = CONTROLLER_DPAD_RIGHT;
   }
   
   if (ended) {
-      touchController_->dpad &= ~(direction);
+      controller->dpad &= ~(direction);
   } else {
-      touchController_->dpad |= direction;
+      controller->dpad |= direction;
   }
 }
 
 - (void)handleJump:(UILongPressGestureRecognizer *)gesture {
+  Controller *controller = touchInput_->controllers[0];
   BOOL ended = gesture.state == UIGestureRecognizerStateEnded;
   if (ended) {
-      touchController_->jump = 0;
+      controller->jump = 0;
   } else {
-      touchController_->jump = 1;
+      controller->jump = 1;
   }
 }
 
@@ -163,12 +173,9 @@ char *bundlePath__;
 
 #pragma mark - GLKView and GLKViewController delegate methods
 
-- (void)update
-{
-  /* Physics, camera, input */
+- (void)update {
   Engine_regulate(engine_);
-  //Input_poll(engine_->input);
-  Input_touch(engine_->input, touchController_, 0);
+  Input_touch(engine_->input, touchInput_);
   
   if (engine_->frame_now) {
     Scene_control(scene_, engine_->input);
@@ -183,6 +190,10 @@ char *bundlePath__;
 #ifdef DEBUG
   Graphics_draw_debug_text(engine_->graphics, engine_->frame_ticks);
 #endif
+}
+
+- (void)willEnterForeground {
+  engine_->last_frame_at = SDL_GetTicks();
 }
 
 @end

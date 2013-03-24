@@ -59,9 +59,18 @@ void Input_poll(Input *input) {
 #endif
 }
 
-void Input_touch(Input *input, Controller *touch_controller, int i) {
-    input->controllers[i]->dpad = touch_controller->dpad;
-    input->controllers[i]->jump = touch_controller->jump;
+void Input_touch(Input *input, Input *touch_input) {
+    int i = 0;
+    input->game_quit = touch_input->game_quit;
+    input->debug_scene_draw_grid = touch_input->debug_scene_draw_grid;
+    input->cam_reset = touch_input->cam_reset;
+    input->cam_zoom = touch_input->cam_zoom;
+    input->cam_rotate = touch_input->cam_rotate;
+  
+    for (i = 0; i < 4; i++) {
+        input->controllers[i]->dpad = touch_input->controllers[i]->dpad;
+        input->controllers[i]->jump = touch_input->controllers[i]->jump;
+    }
 }
 
 void Input_reset(Input *input) {
