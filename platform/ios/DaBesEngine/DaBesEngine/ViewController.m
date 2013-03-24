@@ -20,6 +20,10 @@ char *bundlePath__;
   Engine *engine_;
   Scene *scene_;
   World *world_;
+  
+  Controller *touchController_;
+  UILongPressGestureRecognizer *moveGesture_;
+  UILongPressGestureRecognizer *jumpGesture_;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
@@ -32,23 +36,80 @@ char *bundlePath__;
 @implementation ViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    bundlePath__ = (char *)[[NSString stringWithFormat:@"%@/",
-                             [[NSBundle mainBundle] bundlePath]]
-                   cStringUsingEncoding:NSASCIIStringEncoding];
-  
-    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+  [super viewDidLoad];
+  bundlePath__ = (char *)[[NSString stringWithFormat:@"%@/",
+                           [[NSBundle mainBundle] bundlePath]]
+                 cStringUsingEncoding:NSASCIIStringEncoding];
 
-    if (!self.context) {
-        NSLog(@"Failed to create ES context");
-    }
-    
-    GLKView *view = (GLKView *)self.view;
-    view.context = self.context;
-    view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-    //view.drawableMultisample = GLKViewDrawableMultisample4X;
+  self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+
+  if (!self.context) {
+      NSLog(@"Failed to create ES context");
+  }
   
-    [self setupGL];
+  GLKView *view = (GLKView *)self.view;
+  view.context = self.context;
+  view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+  //view.drawableMultisample = GLKViewDrawableMultisample4X;
+
+  touchController_ = calloc(1, sizeof(Controller));
+
+  moveGesture_ =
+      [[UILongPressGestureRecognizer alloc]
+          initWithTarget:self
+          action:@selector(handleMove:)];
+  moveGesture_.minimumPressDuration=0.05;
+  moveGesture_.delegate = self;
+  [self.view addGestureRecognizer:moveGesture_];
+
+  jumpGesture_ =
+      [[UILongPressGestureRecognizer alloc]
+           initWithTarget:self
+           action:@selector(handleJump:)];
+  jumpGesture_.numberOfTouchesRequired = 2;
+  jumpGesture_.minimumPressDuration=0.05;
+  jumpGesture_.delegate = self;
+  [self.view addGestureRecognizer:jumpGesture_];
+
+  [self setupGL];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:
+        (UIGestureRecognizer *)otherGestureRecognizer {
+  return YES;
+}
+
+- (void)handleMove:(UILongPressGestureRecognizer *)gesture {
+  CGRect screen = self.view.bounds;
+  CGPoint loc = [gesture locationOfTouch:0 inView:self.view];
+  BOOL ended = gesture.state == UIGestureRecognizerStateEnded;
+  Controller_dpad_direction direction = CONTROLLER_DPAD_NONE;
+  
+  if (loc.x <= screen.size.width / 2.0) {
+    if (touchController_->dpad & CONTROLLER_DPAD_RIGHT)
+      touchController_->dpad &= ~(CONTROLLER_DPAD_RIGHT);
+    direction = CONTROLLER_DPAD_LEFT;
+  } else {
+    if (touchController_->dpad & CONTROLLER_DPAD_LEFT)
+      touchController_->dpad &= ~(CONTROLLER_DPAD_LEFT);
+    direction = CONTROLLER_DPAD_RIGHT;
+  }
+  
+  if (ended) {
+      touchController_->dpad &= ~(direction);
+  } else {
+      touchController_->dpad |= direction;
+  }
+}
+
+- (void)handleJump:(UILongPressGestureRecognizer *)gesture {
+  BOOL ended = gesture.state == UIGestureRecognizerStateEnded;
+  if (ended) {
+      touchController_->jump = 0;
+  } else {
+      touchController_->jump = 1;
+  }
 }
 
 - (void)dealloc {
@@ -106,7 +167,8 @@ char *bundlePath__;
 {
   /* Physics, camera, input */
   Engine_regulate(engine_);
-  Input_poll(engine_->input);
+  //Input_poll(engine_->input);
+  Input_touch(engine_->input, touchController_, 0);
   
   if (engine_->frame_now) {
     Scene_control(scene_, engine_->input);

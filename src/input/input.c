@@ -21,10 +21,10 @@ void Input_destroy(void *self) {
 }
 
 void Input_poll(Input *input) {
-    // Hold keys
 #ifdef DABES_IOS
   return;
-#endif
+#else
+    // Hold keys
     Uint8 *keystate = SDL_GetKeyState(NULL);
     input->cam_zoom = 0;
     if (keystate[SDLK_j]) input->cam_zoom += 1;
@@ -56,6 +56,12 @@ void Input_poll(Input *input) {
                 input->debug_scene_draw_grid = 1;
         }
     }
+#endif
+}
+
+void Input_touch(Input *input, Controller *touch_controller, int i) {
+    input->controllers[i]->dpad = touch_controller->dpad;
+    input->controllers[i]->jump = touch_controller->jump;
 }
 
 void Input_reset(Input *input) {

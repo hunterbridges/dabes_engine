@@ -314,6 +314,7 @@
 		CA24C7BB16FC22C10045D5DE /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				CAB359C016FE7BB2004CF684 /* Input */,
 				CAB359BD16FE6AAE004CF684 /* Audio */,
 				CA24C74516FC1E7E0045D5DE /* AppDelegate.h */,
 				CA24C74616FC1E7E0045D5DE /* AppDelegate.m */,
@@ -341,6 +342,13 @@
 				CAB359BB16FE690D004CF684 /* AudioBridge.m */,
 			);
 			name = Audio;
+			sourceTree = "<group>";
+		};
+		CAB359C016FE7BB2004CF684 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Input;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
