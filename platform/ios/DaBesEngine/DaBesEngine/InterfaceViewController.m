@@ -5,6 +5,9 @@
   EngineViewController *engineVC_;
   BOOL showingMenu_;
   UISwipeGestureRecognizer *menuSwipe_;
+  UIScrollView *debugMenuView_;
+  float menuHeight_;
+  int pages_;
 }
 
 @end
@@ -27,6 +30,21 @@
   blueprint.contentMode = UIViewContentModeScaleAspectFill;
   [self.view addSubview:blueprint];
   
+  menuHeight_ = 120.f;
+  pages_ = 5;
+  CGRect debugMenuFrame = CGRectMake(0, 0, self.view.bounds.size.width,
+                                     menuHeight_);
+  debugMenuView_ =
+      [[UIScrollView alloc] initWithFrame:debugMenuFrame];
+  debugMenuView_.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+  debugMenuView_.pagingEnabled = YES;
+  debugMenuView_.scrollEnabled = YES;
+  debugMenuView_.translatesAutoresizingMaskIntoConstraints = YES;
+  debugMenuView_.userInteractionEnabled = YES;
+  debugMenuView_.delegate = self;
+  debugMenuView_.delaysContentTouches = NO;
+  [self.view addSubview:debugMenuView_];
+  
   UILabel *camLabel = [[UILabel alloc] init];
   camLabel.backgroundColor = [UIColor clearColor];
   camLabel.textColor = [UIColor whiteColor];
@@ -34,7 +52,7 @@
   camLabel.text = @"Camera";
   camLabel.font = [UIFont boldSystemFontOfSize:20];
   camLabel.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:camLabel];
+  [debugMenuView_ addSubview:camLabel];
   
   UILabel *envLabel = [[UILabel alloc] init];
   envLabel.backgroundColor = [UIColor clearColor];
@@ -43,7 +61,7 @@
   envLabel.text = @"Environment";
   envLabel.font = [UIFont boldSystemFontOfSize:20];
   envLabel.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:envLabel];
+  [debugMenuView_ addSubview:envLabel];
   
   UILabel *rotLabel = [[UILabel alloc] init];
   rotLabel.backgroundColor = [UIColor clearColor];
@@ -51,7 +69,7 @@
   rotLabel.textAlignment = NSTextAlignmentLeft;
   rotLabel.text = @"Rot";
   rotLabel.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:rotLabel];
+  [debugMenuView_ addSubview:rotLabel];
   
   UISlider *rotSlider = [[UISlider alloc] init];
   rotSlider.minimumValue = -5;
@@ -68,7 +86,7 @@
                      action:@selector(rotReleased:)
            forControlEvents:UIControlEventTouchUpOutside];
   rotSlider.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:rotSlider];
+  [debugMenuView_ addSubview:rotSlider];
   
   UILabel *zoomLabel = [[UILabel alloc] init];
   zoomLabel.backgroundColor = [UIColor clearColor];
@@ -76,7 +94,7 @@
   zoomLabel.textAlignment = NSTextAlignmentLeft;
   zoomLabel.text = @"Zoom";
   zoomLabel.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:zoomLabel];
+  [debugMenuView_ addSubview:zoomLabel];
   
   UISlider *zoomSlider = [[UISlider alloc] init];
   zoomSlider.minimumValue = -2;
@@ -93,11 +111,25 @@
                      action:@selector(zoomReleased:)
            forControlEvents:UIControlEventTouchUpOutside];
   zoomSlider.translatesAutoresizingMaskIntoConstraints = NO;
-  [self.view addSubview:zoomSlider];
+  [debugMenuView_ addSubview:zoomSlider];
+  
+  UIButton *resetCamButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [resetCamButton setTitle:@"Reset" forState:UIControlStateNormal];
+  resetCamButton.translatesAutoresizingMaskIntoConstraints = NO;
+  [resetCamButton addTarget:self
+                     action:@selector(handleCamResetDown:)
+           forControlEvents:(UIControlEventTouchDown)];
+  [resetCamButton addTarget:self
+                     action:@selector(handleCamResetUp:)
+           forControlEvents:(UIControlEventTouchUpInside)];
+  [resetCamButton addTarget:self
+                     action:@selector(handleCamResetUp:)
+           forControlEvents:(UIControlEventTouchUpOutside)];
+  [debugMenuView_ addSubview:resetCamButton];
   
   engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
   [self addChildViewController:engineVC_];
-  [self.view addSubview:engineVC_.view];
+  //[self.view addSubview:engineVC_.view];
   
   UISwipeGestureRecognizer *downSwipe =
       [[UISwipeGestureRecognizer alloc] initWithTarget:self
@@ -116,47 +148,49 @@
   /* LAYOUT CONSTRAINT BULLSHIT */
   NSDictionary *views =
       NSDictionaryOfVariableBindings(camLabel, envLabel, rotLabel,
-                                     rotSlider, zoomLabel, zoomSlider);
+                                     rotSlider, zoomLabel, zoomSlider,
+                                     debugMenuView_, resetCamButton);
   NSArray *headers =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[camLabel]-[envLabel(==camLabel)]-|"
+          @"|-[camLabel]-|"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
-  [self.view addConstraints:headers];
+  NSLayoutConstraint *header =
+    [NSLayoutConstraint constraintWithItem:camLabel
+                                 attribute:NSLayoutAttributeWidth
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:debugMenuView_
+                                 attribute:NSLayoutAttributeWidth
+                                multiplier:1.0
+                                  constant:-40.0];
+  [debugMenuView_ addConstraints:headers];
+  [debugMenuView_ addConstraint:header];
   
-  NSArray *col1 =
+  NSArray *col =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"V:|-[camLabel(20)]-[rotLabel(==camLabel)]-[zoomLabel(==camLabel)]"
+          @"-(40)-[envLabel]"
           options:NSLayoutFormatAlignAllLeft
           metrics:nil
           views:views];
-  [self.view addConstraints:col1];
+  [debugMenuView_ addConstraints:col];
   
   NSArray *row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[rotLabel(50)]-[rotSlider(<=camLabel)]"
+          @"|-[rotLabel(50)]-[rotSlider(<=camLabel)]-[resetCamButton(60)]-|"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
-  NSLayoutConstraint *slider =
-    [NSLayoutConstraint constraintWithItem:rotSlider
-                                 attribute:NSLayoutAttributeRight
-                                 relatedBy:NSLayoutRelationEqual
-                                    toItem:camLabel
-                                 attribute:NSLayoutAttributeRight
-                                multiplier:1.0
-                                  constant:0];
-  [self.view addConstraints:row];
-  [self.view addConstraint:slider];
+  [debugMenuView_ addConstraints:row];
   
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[zoomLabel(50)]-[zoomSlider(==rotSlider)]"
-          options:NSLayoutFormatAlignAllTop
+          @"|-[zoomLabel(50)]-[zoomSlider(==rotSlider)]-[resetCamButton(60)]-|"
+          options:NSLayoutFormatAlignAllBottom
           metrics:nil
           views:views];
-  [self.view addConstraints:row];
+  [debugMenuView_ addConstraints:row];
 }
 
 - (void)dealloc {
@@ -176,13 +210,23 @@
   }
 }
 
+- (void)viewDidLayoutSubviews {
+  debugMenuView_.contentSize = CGSizeMake(self.view.bounds.size.width,
+                                         menuHeight_ * pages_);
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+  
+}
+
 - (void)showMenu {
   if (showingMenu_) return;
   [UIView animateWithDuration:0.5
        animations:^{
-         engineVC_.view.frame = CGRectMake(0, 120,
+         engineVC_.view.frame = CGRectMake(0, menuHeight_,
                                            self.view.bounds.size.width,
-                                           self.view.bounds.size.height - 120);
+                                           self.view.bounds.size.height
+                                               - menuHeight_);
        }];
   showingMenu_ = YES;
 }
@@ -225,5 +269,12 @@
   touchInput_->cam_zoom = 0;
 }
 
+- (void)handleCamResetDown:(UIButton *)sender {
+  touchInput_->cam_reset = 1;
+}
+
+- (void)handleCamResetUp:(UIButton *)sender {
+  touchInput_->cam_reset = 0;
+}
 
 @end

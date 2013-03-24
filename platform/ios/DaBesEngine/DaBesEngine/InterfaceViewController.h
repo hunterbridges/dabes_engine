@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import "input.h"
 
-@interface InterfaceViewController : UIViewController {
+@interface InterfaceViewController : UIViewController <UIScrollViewDelegate> {
     Input *touchInput_;
 }
 
