@@ -25,6 +25,7 @@
     NSError *error = nil;
     avSound_ = [[AVAudioPlayer alloc] initWithContentsOfURL:url
                                                       error:&error];
+    avSound_.numberOfLoops = -1;
     if (error) {
         NSLog(@"%@", [error description]);
         avSound_ = nil;
