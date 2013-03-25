@@ -1,15 +1,17 @@
 #ifndef __prefix_h
 #define __prefix_h
 
-#include <SDL/SDL.h>
 #include <math.h>
 
-#ifndef DABES_IOS
+#ifdef DABES_IOS
+  #include <SDL.h>
+#else
   #include <assert.h>
   #include <stdio.h>
   #include <stdlib.h>
   #include <limits.h>
   #include <lcthw/liblcthw.h>
+  #include <SDL/SDL.h>
   #include <SDL/SDL_image.h>
   #include <SDL/SDL_opengl.h>
   #include <SDL/SDL_mixer.h>
