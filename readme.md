@@ -10,19 +10,28 @@ What is done:
     * Independent camera control (kinda sorta)
     * Can load shaders and draw with them
     * Can load SDL surfaces into OpenGL textures
+    * Independent camera
 * Physics engine:
     * Physics model that supports angular impulse collisions
     * Time scaling
     * Grid-based collision detection
 * Audio engine:
     * Can play music and control the volume of it
+* iOS build
 
 What is not yet done:
-* Automatic camera
+* Slimmed down SDL.framework for the iOS proj
+* Physics engine:
+    * Raycasting
+    * Raycast to build an accumulated opposing pressure
+* Tile maps
 * Parallax layers
-* High-level state management
+* Scene management
 * Object scripting
-* I guess some kind of level editor
+
+Bugs:
+* Debug grid not working on desktop
+* Debug text currently dead
 
 ```
 # Ya gonna need dis stuf!

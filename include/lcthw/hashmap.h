@@ -2,7 +2,10 @@
 #define _lcthw_Hashmap_h
 
 #include <stdint.h>
+#ifdef DABES_IOS
+#else
 #include <lcthw/darray.h>
+#endif
 
 #define DEFAULT_NUMBER_OF_BUCKETS 100
 

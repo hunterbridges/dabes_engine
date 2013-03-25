@@ -21,6 +21,9 @@ void Input_destroy(void *self) {
 }
 
 void Input_poll(Input *input) {
+#ifdef DABES_IOS
+  return;
+#else
     // Hold keys
     Uint8 *keystate = SDL_GetKeyState(NULL);
     input->cam_zoom = 0;
@@ -52,6 +55,21 @@ void Input_poll(Input *input) {
             if (event.key.keysym.sym == SDLK_g)
                 input->debug_scene_draw_grid = 1;
         }
+    }
+#endif
+}
+
+void Input_touch(Input *input, Input *touch_input) {
+    int i = 0;
+    input->game_quit = touch_input->game_quit;
+    input->debug_scene_draw_grid = touch_input->debug_scene_draw_grid;
+    input->cam_reset = touch_input->cam_reset;
+    input->cam_zoom = touch_input->cam_zoom;
+    input->cam_rotate = touch_input->cam_rotate;
+  
+    for (i = 0; i < 4; i++) {
+        input->controllers[i]->dpad = touch_input->controllers[i]->dpad;
+        input->controllers[i]->jump = touch_input->controllers[i]->jump;
     }
 }
 

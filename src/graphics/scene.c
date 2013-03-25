@@ -1,88 +1,97 @@
+#include <math.h>
 #include "../core/engine.h"
 #include "scene.h"
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
 
-void Scene_destroy(void *self) {
-    check_mem(self);
-    Scene *game = (Scene *)self;
-
-    Mix_HaltMusic();
-    Mix_FreeMusic(game->music);
-
-    LIST_FOREACH(game->entities, first, next, current) {
-        GameEntity *thing = current->value;
-        thing->_(destroy)(thing);
-    }
-
-    List_destroy(game->entities);
-    if (game->world) game->world->_(destroy)(game->world);
-    glDeleteTextures(1, &game->bg_texture);
-    Object_destroy(self);
-error:
-    return;
-}
-
 int Scene_init(void *self) {
     check_mem(self);
 
-    Scene *game = (Scene *)self;
-    game->music = Mix_LoadMUS("media/music/tower.wav");
-
-    if (game->music == NULL) {
-        printf("Mix_LoadMUS: %s\n", Mix_GetError());
-    }
-
-    Mix_PlayMusic(game->music, -1);
-
-    game->world = NULL;
-    game->entities = List_create();
+    Scene *scene = (Scene *)self;
+    scene->music = Music_load("media/music/Tower.wav");
+    Music_play(scene->music);
+    scene->world = NULL;
+    scene->entities = List_create();
 
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *entity = NEW(GameEntity, "A thing");
         entity->texture = load_image_as_texture("media/sprites/dumblock.png");
-        List_push(game->entities, entity);
+        List_push(scene->entities, entity);
         entity->alpha = (double)i / NUM_BOXES * 1.0;
     }
 
-    game->bg_texture = load_image_as_texture("media/sprites/clouds.png");
+    scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    Scene_reset_camera(scene);
 
-    game->projection_scale = 1;
-    game->projection_rotation = 0;
+    scene->bg_texture = load_image_as_texture("media/sprites/clouds.png");
 
-    game->draw_grid = 0;
+    scene->draw_grid = 0;
 
     return 1;
 error:
     return 0;
 }
 
-void Scene_render(void *self, void *engine) {
-    Scene *game = (Scene *)self;
+void Scene_destroy(void *self) {
+    check_mem(self);
+    Scene *scene = (Scene *)self;
+
+    Music_destroy(scene->music);
+    Camera_destroy(scene->camera);
+
+    LIST_FOREACH(scene->entities, first, next, current) {
+        GameEntity *thing = current->value;
+        thing->_(destroy)(thing);
+    }
+
+    List_destroy(scene->entities);
+    if (scene->world) scene->world->_(destroy)(scene->world);
+    glDeleteTextures(1, &scene->bg_texture);
+    Object_destroy(self);
+error:
+    return;
+}
+
+void Scene_update(Scene *scene, void *engine) {
+    Camera_track(scene->camera);
+}
+
+void Scene_render(Scene *scene, void *engine) {
     Graphics *graphics = ((Engine *)engine)->graphics;
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    double bgScale = (game->projection_scale + 2) / 2;
-    Graphics_scale_projection_matrix(graphics, bgScale);
-    GfxRect gfx_rect = GfxRect_from_xywh(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    GLdouble color[4] = {0, 0, 0, 1};
-    Graphics_draw_rect(graphics, gfx_rect, color, game->bg_texture, 0);
+    // TODO: Parallax bg camera
+    double bgScale = (scene->camera->scale + 2) / 2;
+    GfxPoint screen_center = {
+      .x = scene->camera->screen_size.w / 2.0,
+      .y = scene->camera->screen_size.h / 2.0
+    };
+    Camera bgCamera = {
+        .focal = screen_center,
+        .screen_size = scene->camera->screen_size,
+        .scale = bgScale,
+        .rotation_radians = 0
+    };
+    Graphics_project_camera(graphics, &bgCamera);
 
-    Graphics_scale_projection_matrix(graphics, game->projection_scale);
-    glRotatef(game->projection_rotation, 0, 0, -1);
+    GLfloat color[4] = {0, 0, 1, 1};
+    GfxSize bg_size = {.w = 512, .h = 384};
+    GfxRect gfx_rect = GfxRect_fill_size(bg_size, scene->camera->screen_size);
+    Graphics_draw_rect(graphics, gfx_rect, color, scene->bg_texture, 0);
+    Graphics_project_camera(graphics, scene->camera);
 
     // Draw the stuff
-    LIST_FOREACH(game->entities, first, next, current) {
+    LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;
         if (thing == NULL) break;
         GameEntity_render(thing, engine);
     }
 
     // Draw the grid
-    if (!game->draw_grid || !game->world) return;
-    Scene_draw_debug_grid(game, graphics);
+    if (!scene->draw_grid || !scene->world) return;
+    Scene_draw_debug_grid(scene, graphics);
 }
 
 World *Scene_create_world(Scene *scene, Physics *physics) {
@@ -104,7 +113,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
         fixture->center.y = 1;
         fixture->time_scale = 1;
         fixture->rotation_radians = M_PI / 16 * (i % 8);
-        Fixture_set_mass(fixture, 10);
+        Fixture_set_mass(fixture, 100);
 
         entity->fixture = fixture;
         /*
@@ -124,20 +133,27 @@ error:
     return NULL;
 }
 
+void Scene_reset_camera(Scene *scene) {
+    scene->camera->scale = 1;
+    scene->camera->rotation_radians = 0;
+    scene->camera->track_entity = scene->entities->first->value;
+    scene->camera->translation.x = 0;
+    scene->camera->translation.y = 0;
+}
+
 void Scene_control(Scene *scene, Input *input) {
     if (input->cam_reset) {
-        scene->projection_scale = 1;
-        scene->projection_rotation = 0;
+        Scene_reset_camera(scene);
     }
-    scene->projection_scale += 0.02 * input->cam_zoom;
-    if (scene->projection_scale < 0) scene->projection_scale = 0;
+    scene->camera->scale += 0.02 * input->cam_zoom;
+    if (scene->camera->scale < 0) scene->camera->scale = 0;
 
-    scene->projection_rotation += 2 * input->cam_rotate;
+    scene->camera->rotation_radians += 2 * input->cam_rotate;
 
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 
-    double volume = scene->projection_scale * 128.f;
-    Mix_VolumeMusic(volume);
+    double volume = scene->camera->scale;
+    Music_set_volume(scene->music, volume);
 
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;
@@ -146,15 +162,22 @@ void Scene_control(Scene *scene, Input *input) {
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
-    glDisable(GL_MULTISAMPLE);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
+#ifndef DABES_IOS
+    glUseProgram(0);
+    Graphics_reset_projection_matrix(graphics);
+    Graphics_reset_modelview_matrix(graphics);
 
-    Graphics_scale_projection_matrix(graphics, scene->projection_scale);
-    glRotatef(scene->projection_rotation, 0, 0, -1);
+    glDisable(GL_MULTISAMPLE);
+    Graphics_translate_modelview_matrix(graphics,
+            -SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
+
+    Graphics_reset_projection_matrix(graphics);
+    Graphics_scale_projection_matrix(graphics, scene->camera->scale,
+            scene->camera->scale, 1);
+    Graphics_rotate_projection_matrix(graphics, scene->camera->rotation_radians,
+            0, 0, -1);
     glLineWidth(0);
-    glColor3f(1.0, 0.0, 0.0);
+    glColor4f(1.0, 0.0, 0.0, 1.0);
     double grid = scene->world->grid_size;
     double ppm = scene->world->pixels_per_meter;
     int rows = ceil(scene->world->height / scene->world->grid_size);
@@ -185,6 +208,8 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
         }
     }
     glEnable(GL_MULTISAMPLE);
+    glUseProgram(graphics->shader);
+#endif
 }
 
 Object SceneProto = {

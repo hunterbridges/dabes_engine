@@ -41,12 +41,14 @@ int Engine_bootstrap(Engine **engine, SDL_Surface **screen) {
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    TTF_Init();
 
+#ifndef DABES_IOS
+    TTF_Init();
     *screen =
         SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_OPENGL);
 
     check(init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
+#endif
 
     *engine = NEW(Engine, "The game engine");
     return 1;

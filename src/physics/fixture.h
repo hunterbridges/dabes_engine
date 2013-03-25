@@ -1,6 +1,5 @@
 #ifndef __fixture_h
 #define __fixture_h
-#include <lcthw/list.h>
 #include "../prefix.h"
 #include "../graphics/graphics.h"
 #include "../input/controller.h"
@@ -58,6 +57,7 @@ double Fixture_rotation_degrees(Fixture *fixture);
 PhysBox Fixture_base_box(Fixture *fixture);
 PhysBox Fixture_real_box(Fixture *fixture);
 GfxRect Fixture_display_rect(Fixture *fixture);
+GfxPoint Fixture_display_center(Fixture *fixture);
 
 void Fixture_step_reset(Physics *physics, Fixture *fixture, double advance_ms);
 void Fixture_step_displace(Physics *physics, Fixture *fixture);
