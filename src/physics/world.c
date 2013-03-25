@@ -128,6 +128,36 @@ PhysBox World_floor_box(World *world) {
     return floor;
 }
 
+PhysBox World_ceil_box(World *world) {
+    PhysBox floor = {
+        {0, -world->height},
+        {world->width, -world->height},
+        {world->width, 0},
+        {0, 0}
+    };
+    return floor;
+}
+
+PhysBox World_left_wall_box(World *world) {
+    PhysBox floor = {
+        {-world->width, 0},
+        {0, 0},
+        {0, world->height},
+        {-world->width, world->height}
+    };
+    return floor;
+}
+
+PhysBox World_right_wall_box(World *world) {
+    PhysBox floor = {
+        {world->width, 0},
+        {world->width * 2, 0},
+        {world->width * 2, world->height},
+        {world->width, world->height}
+    };
+    return floor;
+}
+
 Object WorldProto = {
     .init = World_init,
     .destroy = World_destroy

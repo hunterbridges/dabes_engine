@@ -275,7 +275,12 @@ void Fixture_step_apply_environment(Physics *physics, Fixture *fixture) {
         PhysPoint gravity = {0, world->gravity * fixture->mass};
         fixture->step_force = PhysPoint_subtract(fixture->step_force, gravity);
     }
-
+  
+    // Wall hax
+    Fixture_hit_box(fixture, World_ceil_box(world), NULL);
+    Fixture_hit_box(fixture, World_left_wall_box(world), NULL);
+    Fixture_hit_box(fixture, World_right_wall_box(world), NULL);
+  
     return;
 error:
     return;

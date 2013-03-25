@@ -24,6 +24,9 @@ void World_destroy(void *self);
 void World_solve(Physics *physics, World *world, double advance_ms);
 Fixture *World_create_fixture(World *world);
 PhysBox World_floor_box(World *world);
+PhysBox World_ceil_box(World *world);
+PhysBox World_left_wall_box(World *world);
+PhysBox World_right_wall_box(World *world);
 
 extern Object WorldProto;
 

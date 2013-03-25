@@ -81,7 +81,26 @@ void Scene_render(Scene *scene, void *engine) {
     GfxRect gfx_rect = GfxRect_fill_size(bg_size, scene->camera->screen_size);
     Graphics_draw_rect(graphics, gfx_rect, color, scene->bg_texture, 0);
     Graphics_project_camera(graphics, scene->camera);
-
+  
+    GLfloat fl_color[4] = {0.65, 0.65, 0.65, 1};
+    GfxRect ceil_rect =
+        GfxRect_from_xywh(-SCREEN_WIDTH, -SCREEN_HEIGHT, 3 * SCREEN_WIDTH,
+                          SCREEN_HEIGHT);
+    Graphics_draw_rect(graphics, ceil_rect, fl_color, 0, 0);
+  
+    GfxRect floor_rect =
+        GfxRect_from_xywh(-SCREEN_WIDTH, SCREEN_HEIGHT, 3 * SCREEN_WIDTH,
+                          SCREEN_HEIGHT);
+    Graphics_draw_rect(graphics, floor_rect, fl_color, 0, 0);
+  
+    GfxRect lwall_rect =
+        GfxRect_from_xywh(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Graphics_draw_rect(graphics, lwall_rect, fl_color, 0, 0);
+  
+    GfxRect rwall_rect =
+        GfxRect_from_xywh(-SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Graphics_draw_rect(graphics, rwall_rect, fl_color, 0, 0);
+  
     // Draw the stuff
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;
