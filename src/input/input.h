@@ -18,6 +18,7 @@ extern Object InputProto;
 int Input_init(void *self);
 void Input_destroy(void *self);
 void Input_poll(Input *input);
+void Input_touch(Input *input, Input *touch_input);
 void Input_reset(Input *input);
 
 #endif

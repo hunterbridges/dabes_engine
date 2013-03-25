@@ -2,7 +2,11 @@
 #define _DArray_h
 #include <stdlib.h>
 #include <assert.h>
+#ifdef DABES_IOS
+#include "dbg.h"
+#else
 #include <lcthw/dbg.h>
+#endif
 
 typedef struct DArray {
     int end;

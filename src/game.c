@@ -1,6 +1,5 @@
 #include "prefix.h"
 #include "gameobjects.h"
-#include "SDL/SDL_TTF.h"
 
 int main(int argc, char *argv[]) {
     argc = (int)argc;
@@ -27,6 +26,7 @@ int main(int argc, char *argv[]) {
             Scene_control(scene, engine->input);
 
             World_solve(engine->physics, world, engine->frame_ticks);
+            Scene_update(scene, engine);
             Scene_render(scene, engine);
 #ifdef DEBUG
             Graphics_draw_debug_text(engine->graphics, engine->frame_ticks);

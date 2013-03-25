@@ -1,7 +1,5 @@
 #ifndef __physics_world_grid_h
 #define __physics_world_grid_h
-#include <lcthw/darray.h>
-#include <lcthw/list.h>
 #include "physics.h"
 #include "fixture.h"
 

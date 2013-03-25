@@ -264,9 +264,10 @@ error:
 }
 
 List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture) {
+    List *cells = NULL;
     check(grid != NULL, "No grid to search.");
     PhysBox box = Fixture_real_box(fixture);
-    List *cells = WorldGrid_cells_for_box(grid, box);
+    cells = WorldGrid_cells_for_box(grid, box);
     if (cells == NULL) return NULL;
 
     List *members = List_create();
