@@ -40,6 +40,15 @@ void GameEntity_render(GameEntity *self, void *engine) {
     Graphics_draw_rect(graphics, rect, color, entity->texture, degrees);
 }
 
+GfxPoint GameEntity_center(GameEntity *entity) {
+    if (entity->fixture) {
+        return Fixture_display_center(entity->fixture);
+    } else {
+        GfxPoint zero = {0, 0};
+        return zero;
+    }
+}
+
 void GameEntity_assign_controller(GameEntity *entity, Controller *controller) {
     check_mem(entity);
     entity->controller = controller;

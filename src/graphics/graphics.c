@@ -52,6 +52,7 @@ void mat4f_MultiplyMat4f(const float* a, const float* b, float* mout)
   mout[15] = a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15];
 }
 
+// GFX
 GfxRect GfxRect_from_xywh(double x, double y, double w, double h) {
     GfxPoint tl = { x, y };
     GfxPoint tr = { x + w, y };
@@ -64,6 +65,24 @@ GfxRect GfxRect_from_xywh(double x, double y, double w, double h) {
         .br = br
     };
     return rect;
+}
+
+GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size) {
+    double x, y, w, h;
+    double source_ratio = source_size.w / source_size.h;
+    double dest_ratio = dest_size.w / dest_size.h;
+    double scale = 1;
+    if (source_ratio < dest_ratio) {
+        scale = source_size.w / dest_size.w;
+    } else {
+        scale = source_size.h / dest_size.h;
+    }
+  
+    w = source_size.w / scale;
+    h = source_size.h / scale;
+    x = (w - dest_size.w) / -2;
+    y = (h - dest_size.h) / -2;
+    return GfxRect_from_xywh(x, y, w, h);
 }
 
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
@@ -81,8 +100,6 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
         rect.tl.x + w / 2,
         rect.tl.y + h / 2
     };
-    Graphics_translate_modelview_matrix(graphics, -SCREEN_WIDTH/2,
-                                        -SCREEN_HEIGHT/2, 0.f);
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
@@ -99,10 +116,10 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
       {w / 2.0, -h / 2.0, 0, 1},
       {-w / 2.0, h / 2.0, 0, 1},
       {w / 2.0, h / 2.0, 0, 1},
-      
+
       // Color
       cVertex, cVertex, cVertex, cVertex,
-      
+
       // Texture
       {0, 0, 0, 0},
       {1, 0, 0, 0},
@@ -138,6 +155,7 @@ error:
 
 void Graphics_draw_debug_text(Graphics *graphics,
         int ticks_since_last) {
+    return;
 #ifndef DABES_IOS
     Graphics_reset_projection_matrix(graphics);
     GLuint textures[] = {graphics->debug_text_texture};
@@ -166,56 +184,20 @@ void Graphics_draw_debug_text(Graphics *graphics,
 
     GfxRect rect = GfxRect_from_SDL_Rect(debugRect);
     GLfloat glBlack[4] = {0,0,0,255};
-    Graphics_scale_projection_matrix(graphics, 1);
     Graphics_draw_rect(graphics, rect, glBlack, graphics->debug_text_texture, 0);
 #endif
 }
 
-
-GfxTransform3D GfxTransform3D_ortho(float left, float right, float bottom,
-                                    float top, float near, float far) {
-  GfxTransform3D ortho = {
-    2 / (right - left), 0, 0, -1 * (right + left) / (right - left),
-    0, 2 / (top - bottom), 0, -1 * (top + bottom) / (top - bottom),
-    0, 0, -2 / (far - near), far * near / (far - near),
-    0, 0, 0, 1
-  };
-  return ortho;
-}
-
-void Graphics_scale_projection_matrix(Graphics *graphics, double scale) {
-    double left = graphics->screen_size.w / (-2 * scale);
-    double right = graphics->screen_size.w / (2 * scale);
-    double bottom = graphics->screen_size.h / (2 * scale);
-    double top = graphics->screen_size.h / (-2 * scale);
-
-    GfxUMatrix ortho;
-    ortho.gfx = GfxTransform3D_ortho(left, right, bottom, top, 1.0, -1.0);
-    graphics->projection_matrix = ortho;
-#ifndef DABES_IOS
-    glOrtho(left, right, bottom, top, 1.0, -1.0 );
-#endif
-}
-
-void Graphics_reset_projection_matrix(Graphics *graphics) {
+static inline GfxUMatrix GFXUMatrix_scale(GfxUMatrix matrix,
+                                           double x, double y, double z) {
 #ifdef DABES_IOS
-    GfxUMatrix identity;
-    identity.ca = CATransform3DIdentity;
-    graphics->projection_matrix = identity;
+    GfxUMatrix scaled;
+    scaled.glk =
+        GLKMatrix4Scale(matrix.glk, x, y, z);
+    return scaled;
 #else
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#endif
-}
-
-void Graphics_reset_modelview_matrix(Graphics *graphics) {
-#ifdef DABES_IOS
-    GfxUMatrix identity;
-    identity.ca = CATransform3DIdentity;
-    graphics->modelview_matrix = identity;
-#else
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glScalef(x, y, z);
+    return matrix;
 #endif
 }
 
@@ -233,25 +215,6 @@ static inline GfxUMatrix GFXUMatrix_rotate(GfxUMatrix matrix,
 #endif
 }
 
-void Graphics_rotate_projection_matrix(Graphics *graphics, double rot_degs,
-                                       double x, double y, double z) {
-
-#ifndef DABES_IOS
-    glMatrixMode(GL_PROJECTION);
-#endif
-    graphics->projection_matrix =
-        GFXUMatrix_rotate(graphics->projection_matrix, rot_degs, x, y, z);
-}
-
-void Graphics_rotate_modelview_matrix(Graphics *graphics, double rot_degs,
-                                      double x, double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_MODELVIEW);
-#endif
-    graphics->modelview_matrix =
-        GFXUMatrix_rotate(graphics->modelview_matrix, rot_degs, x, y, z);
-}
-
 static inline GfxUMatrix GFXUMatrix_translate(GfxUMatrix matrix, double x,
                                               double y, double z) {
 #ifdef DABES_IOS
@@ -262,6 +225,96 @@ static inline GfxUMatrix GFXUMatrix_translate(GfxUMatrix matrix, double x,
     glTranslatef(x, y, z);
     return matrix;
 #endif
+}
+
+GfxTransform3D GfxTransform3D_ortho(float left, float right, float top,
+                                    float bottom, float near, float far) {
+  GfxTransform3D ortho = {
+    2 / (right - left), 0, 0, -1 * (right + left) / (right - left),
+    0, 2 / (top - bottom), 0, -1 * (top + bottom) / (top - bottom),
+    0, 0, -2 / (far - near), far * near / (far - near),
+    0, 0, 0, 1
+  };
+#ifndef DABES_IOS
+  glOrtho(left, right, bottom, top, near, far);
+#endif
+  return ortho;
+}
+
+void Graphics_reset_projection_matrix(Graphics *graphics) {
+#ifdef DABES_IOS
+    GfxUMatrix identity;
+    identity.ca = CATransform3DIdentity;
+    graphics->projection_matrix = identity;
+#else
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+#endif
+}
+
+void Graphics_ortho_projection_matrix(Graphics *graphics, double left,
+        double right, double top, double bottom, double near, double far) {
+#ifndef DABES_IOS
+    glMatrixMode(GL_PROJECTION);
+#endif
+    graphics->projection_matrix.gfx =
+        GfxTransform3D_ortho(left, right, top, bottom, near, far);
+}
+
+void Graphics_scale_projection_matrix(Graphics *graphics, double x,
+        double y, double z) {
+#ifndef DABES_IOS
+    glMatrixMode(GL_PROJECTION);
+#endif
+    graphics->projection_matrix =
+        GFXUMatrix_scale(graphics->projection_matrix, x, y, z);
+}
+
+void Graphics_rotate_projection_matrix(Graphics *graphics, double rot_degs,
+                                       double x, double y, double z) {
+#ifndef DABES_IOS
+    glMatrixMode(GL_PROJECTION);
+#endif
+    graphics->projection_matrix =
+        GFXUMatrix_rotate(graphics->projection_matrix, rot_degs, x, y, z);
+}
+
+void Graphics_translate_projection_matrix(Graphics *graphics, double x,
+        double y, double z) {
+#ifndef DABES_IOS
+    glMatrixMode(GL_PROJECTION);
+#endif
+    graphics->projection_matrix =
+        GFXUMatrix_translate(graphics->projection_matrix, x, y, z);
+}
+
+void Graphics_reset_modelview_matrix(Graphics *graphics) {
+#ifdef DABES_IOS
+    GfxUMatrix identity;
+    identity.ca = CATransform3DIdentity;
+    graphics->modelview_matrix = identity;
+#else
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+#endif
+}
+
+void Graphics_scale_modelview_matrix(Graphics *graphics,
+                                     double x, double y, double z) {
+#ifndef DABES_IOS
+    glMatrixMode(GL_MODELVIEW);
+#endif
+    graphics->modelview_matrix =
+        GFXUMatrix_scale(graphics->modelview_matrix, x, y, z);
+}
+
+void Graphics_rotate_modelview_matrix(Graphics *graphics, double rot_degs,
+                                      double x, double y, double z) {
+#ifndef DABES_IOS
+    glMatrixMode(GL_MODELVIEW);
+#endif
+    graphics->modelview_matrix =
+        GFXUMatrix_rotate(graphics->modelview_matrix, rot_degs, x, y, z);
 }
 
 void Graphics_translate_modelview_matrix(Graphics *graphics,
@@ -288,7 +341,7 @@ int Graphics_init(void *self) {
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
+
     Graphics_load_shader(graphics, shader_path("decal.vert"),
         shader_path("decal.frag"));
 
@@ -367,7 +420,7 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
 
     glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE,
                           0, (GLvoid *)(sizeof(GfxUVertex) * 4));
-  
+
     glVertexAttribPointer(ATTRIB_TEXTURE, 4, GL_FLOAT, GL_FALSE,
                           0, (GLvoid *)(sizeof(GfxUVertex) * 8));
 #endif

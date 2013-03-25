@@ -129,7 +129,7 @@
   
   engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
   [self addChildViewController:engineVC_];
-  //[self.view addSubview:engineVC_.view];
+  [self.view addSubview:engineVC_.view];
   
   UISwipeGestureRecognizer *downSwipe =
       [[UISwipeGestureRecognizer alloc] initWithTarget:self

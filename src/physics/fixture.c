@@ -123,6 +123,19 @@ GfxRect Fixture_display_rect(Fixture *fixture) {
     return rect;
 }
 
+GfxPoint Fixture_display_center(Fixture *fixture) {
+    if (fixture == NULL) {
+      GfxPoint zero = {0,0};
+      return zero;
+    }
+    World *c_world = fixture->world;
+    GfxPoint center = {
+        fixture->center.x * c_world->pixels_per_meter,
+        fixture->center.y * c_world->pixels_per_meter
+    };
+    return center;
+}
+
 int Fixture_hit_box(Fixture *fixture, PhysBox wall_box, Fixture *collider) {
     check_mem(fixture);
 

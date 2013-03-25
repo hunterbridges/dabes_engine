@@ -28,6 +28,7 @@ typedef struct GfxRect {
 } GfxRect;
 
 GfxRect GfxRect_from_xywh(double x, double y, double w, double h);
+GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size);
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect);
 
 typedef struct GfxTransform3D {
@@ -37,8 +38,8 @@ typedef struct GfxTransform3D {
     float m41, m42, m43, m44;
 } GfxTransform3D;
 
-GfxTransform3D GfxTransform3D_ortho(float left, float right, float bottom,
-                                    float top, float near, float far);
+GfxTransform3D GfxTransform3D_ortho(float left, float right, float top,
+                                    float bottom, float near, float far);
 typedef union GfxUVertex {
   struct {
     GLfloat x;
@@ -79,11 +80,19 @@ void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
 void Graphics_draw_debug_text(Graphics *graphics,
         int ticks_since_last);
 
-void Graphics_scale_projection_matrix(Graphics *graphics, double scale);
 void Graphics_reset_projection_matrix(Graphics *graphics);
-void Graphics_reset_modelview_matrix(Graphics *graphics);
+void Graphics_ortho_projection_matrix(Graphics *graphics, double left,
+        double right, double top, double bottom, double far, double near);
+void Graphics_scale_projection_matrix(Graphics *graphics, double x,
+        double y, double z);
 void Graphics_rotate_projection_matrix(Graphics *graphics, double rot_degs,
                                        double x, double y, double z);
+void Graphics_translate_projection_matrix(Graphics *graphics,
+                                         double x, double y, double z);
+
+void Graphics_reset_modelview_matrix(Graphics *graphics);
+void Graphics_scale_modelview_matrix(Graphics *graphics,
+                                     double x, double y, double z);
 void Graphics_rotate_modelview_matrix(Graphics *graphics, double rot_degs,
                                        double x, double y, double z);
 void Graphics_translate_modelview_matrix(Graphics *graphics,

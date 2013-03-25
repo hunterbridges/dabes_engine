@@ -36,6 +36,7 @@
 		CA24C7A716FC20900045D5DE /* world_grid.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78A16FC20900045D5DE /* world_grid.c */; };
 		CA24C7A916FC20900045D5DE /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
+		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
 		CAB3595F16FC4C44004CF684 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3595A16FC4C2F004CF684 /* libSDL2.a */; };
 		CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3596516FC4D76004CF684 /* AudioToolbox.framework */; };
 		CAB3597B16FC4EBC004CF684 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CAB3597A16FC4EBC004CF684 /* media */; };
@@ -139,6 +140,8 @@
 		CA24C78E16FC20900045D5DE /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = util.c; path = ../../../../src/util.c; sourceTree = "<group>"; };
 		CA24C78F16FC20900045D5DE /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = ../../../../src/util.h; sourceTree = "<group>"; };
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
+		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
+		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
 		CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../../../sdl-ios-framework/src/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		CAB3596516FC4D76004CF684 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		CAB3597A16FC4EBC004CF684 /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../../media; sourceTree = "<group>"; };
@@ -274,6 +277,8 @@
 		CA24C76D16FC20900045D5DE /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				CA92BF1916FFBEF000252D27 /* camera.c */,
+				CA92BF1A16FFBEF000252D27 /* camera.h */,
 				CA24C76E16FC20900045D5DE /* game_entity.c */,
 				CA24C76F16FC20900045D5DE /* game_entity.h */,
 				CA24C77116FC20900045D5DE /* graphics.c */,
@@ -477,6 +482,7 @@
 				CA72A2B316FC4B0000A545F7 /* main.m in Sources */,
 				CAB359BC16FE690D004CF684 /* AudioBridge.m in Sources */,
 				CAB359C316FE96E9004CF684 /* InterfaceViewController.m in Sources */,
+				CA92BF1B16FFBEF000252D27 /* camera.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

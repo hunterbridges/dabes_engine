@@ -181,11 +181,15 @@ char *bundlePath__;
     Scene_control(scene_, engine_->input);
 
     World_solve(engine_->physics, world_, engine_->frame_ticks);
+    Scene_update(scene_, engine_);
     Input_reset(engine_->input);
   }
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
+  scene_->camera->screen_size.w = self.view.bounds.size.width;
+  scene_->camera->screen_size.h = self.view.bounds.size.height;
+  
   Scene_render(scene_, engine_);
 #ifdef DEBUG
   Graphics_draw_debug_text(engine_->graphics, engine_->frame_ticks);
