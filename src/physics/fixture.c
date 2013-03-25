@@ -178,13 +178,8 @@ int Fixture_hit_box(Fixture *fixture, PhysBox wall_box, Fixture *collider) {
          fixture->moment_of_inertia);
 
     if (collider) {
-        PhysPoint other_vai = collider->step_velocity;
-        double other_wai = collider->step_angular_velocity;
         PhysPoint other_r = PhysPoint_subtract(poc, other_center);
         PhysPoint other_perp_norm = PhysPoint_perp(other_r);
-        PhysPoint other_rot_v = PhysPoint_scale(PhysPoint_normalize(
-                    other_perp_norm), other_wai);
-        PhysPoint other_vap = PhysPoint_add(other_vai, rot_v);
 
         imp_mag_denom += collider->mass;
         imp_mag_denom += pow(PhysPoint_dot(other_perp_norm, collision_normal), 2) /
@@ -314,21 +309,14 @@ void Fixture_step_apply_forces(Physics *physics, Fixture *fixture) {
     if (fixture->on_ground) {
         World *world = fixture->world;
         PhysPoint gravity = {0, world->gravity * fixture->mass};
-        PhysPoint collision_normal = PhysPoint_normalize(
-                PhysPoint_scale(gravity, -1));
+      
+        // TODO: make sure this is actually right
         double mu = 0.42;
         double friction_mag = PhysPoint_magnitude(gravity) * mu;
         PhysPoint friction_force = PhysPoint_scale(fixture->velocity,
                 -1 * friction_mag);
-        if (fixture->controller) {
-            //PhysPoint_debug(friction_force, "friction force");
-            //PhysPoint_debug(fixture->step_force, "old force");
-        }
         fixture->step_force = PhysPoint_add(fixture->step_force,
                 friction_force);
-        if (fixture->controller) {
-            //PhysPoint_debug(fixture->step_force, "new force");
-        }
     }
 
     fixture->step_acceleration =

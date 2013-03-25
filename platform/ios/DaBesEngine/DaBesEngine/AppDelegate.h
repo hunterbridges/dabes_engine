@@ -1,19 +1,11 @@
-//
-//  AppDelegate.h
-//  DaBesEngine
-//
-//  Created by Hunter Bridges on 3/21/13.
-//  Copyright (c) 2013 The Telemetry Group. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
-@class EngineViewController;
+@class InterfaceViewController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) EngineViewController *viewController;
+@property (strong, nonatomic) InterfaceViewController *viewController;
 
 @end

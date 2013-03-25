@@ -5,4 +5,6 @@
     Input *touchInput_;
 }
 
+- (void)willEnterForeground;
+
 @end

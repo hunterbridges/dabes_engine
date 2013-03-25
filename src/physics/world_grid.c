@@ -70,7 +70,7 @@ WorldGrid *WorldGrid_create(int rows, int cols, double grid_size) {
     grid->rows = rows;
     grid->cols = cols;
     grid->grid_size = grid_size;
-    grid->cells = DArray_create(sizeof(WorldGridCell), 80);
+    grid->cells = DArray_create(sizeof(WorldGridCell), cells);
 
     return grid;
 error:

@@ -20,7 +20,7 @@ What is done:
 * iOS build
 
 What is not yet done:
-* Slimmed down SDL.framework for the iOS proj
+* Remove SDL dependency on iOS
 * Physics engine:
     * Raycasting
     * Raycast to build an accumulated opposing pressure

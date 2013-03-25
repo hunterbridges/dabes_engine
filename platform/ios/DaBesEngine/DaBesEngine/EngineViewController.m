@@ -32,6 +32,7 @@ char *bundlePath__;
 @end
 
 @implementation EngineViewController
+@synthesize scene = scene_;
 
 - (id)initWithTouchInput:(Input *)input {
   self = [super init];

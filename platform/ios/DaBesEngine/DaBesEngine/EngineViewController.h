@@ -9,5 +9,5 @@
 - (id)initWithTouchInput:(Input *)input;
 - (void)willEnterForeground;
 
-@property (nonatomic, readonly) Scene *scene_;
+@property (nonatomic, readonly) Scene *scene;
 @end
