@@ -7,7 +7,6 @@ What is done:
 * Base layer of SDL/OpenGL
 * Framework for decoupled graphics, physics, input, and audio engines
 * Graphics engine:
-    * Independent camera control (kinda sorta)
     * Can load shaders and draw with them
     * Can load SDL surfaces into OpenGL textures
     * Independent camera
@@ -20,11 +19,11 @@ What is done:
 * iOS build
 
 What is not yet done:
+* Tile maps
 * Remove SDL dependency on iOS
 * Physics engine:
     * Raycasting
     * Raycast to build an accumulated opposing pressure
-* Tile maps
 * Parallax layers
 * Scene management
 * Object scripting
