@@ -2,6 +2,7 @@ game
 *.o
 *.dSYM
 *.wav
+*.aif
 
 build/*
 *.pbxuser

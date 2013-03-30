@@ -1,14 +1,16 @@
 #include <math.h>
+#include "tile_map_parse.h"
 #include "../core/engine.h"
 #include "scene.h"
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
 
-int Scene_init(void *self) {
-    check_mem(self);
-
-    Scene *scene = (Scene *)self;
-    scene->music = Music_load("media/music/Tower.wav");
+Scene *Scene_create(Engine *engine) {
+    Scene *scene = malloc(sizeof(Scene));
+    check(scene != NULL, "Couldn't create scene");
+  
+    scene->music = Music_load("media/music/Climb.aif",
+                              "media/music/Climb_Loop.aif");
     Music_play(scene->music);
     scene->world = NULL;
     scene->entities = List_create();
@@ -16,7 +18,9 @@ int Scene_init(void *self) {
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *entity = NEW(GameEntity, "A thing");
-        entity->texture = load_image_as_texture("media/sprites/dumblock.png");
+        entity->texture =
+            Graphics_texture_from_image(engine->graphics,
+                                        "media/sprites/dumblock.png");
         List_push(scene->entities, entity);
         entity->alpha = (double)i / NUM_BOXES * 1.0;
     }
@@ -24,18 +28,21 @@ int Scene_init(void *self) {
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
     Scene_reset_camera(scene);
 
-    scene->bg_texture = load_image_as_texture("media/sprites/clouds.png");
+    scene->bg_texture = Graphics_texture_from_image(engine->graphics,
+                                                    "media/sprites/clouds.png");
 
     scene->draw_grid = 0;
-
-    return 1;
+    scene->tile_map = NULL;
+  
+    Scene_load_tile_map(scene, engine, "media/tilemaps/reasonable.tmx", 0);
+  
+    return scene;
 error:
-    return 0;
+    return NULL;
 }
 
-void Scene_destroy(void *self) {
-    check_mem(self);
-    Scene *scene = (Scene *)self;
+void Scene_destroy(Scene *scene) {
+    check(scene != NULL, "No scene to destroy");
 
     Music_destroy(scene->music);
     Camera_destroy(scene->camera);
@@ -47,8 +54,11 @@ void Scene_destroy(void *self) {
 
     List_destroy(scene->entities);
     if (scene->world) scene->world->_(destroy)(scene->world);
-    glDeleteTextures(1, &scene->bg_texture);
-    Object_destroy(self);
+    if (scene->tile_map) {
+        TileMap_destroy(scene->tile_map);
+    }
+  
+    free(scene);
 error:
     return;
 }
@@ -79,29 +89,64 @@ void Scene_render(Scene *scene, void *engine) {
     GLfloat color[4] = {0, 0, 1, 1};
     GfxSize bg_size = {.w = 512, .h = 384};
     GfxRect gfx_rect = GfxRect_fill_size(bg_size, scene->camera->screen_size);
-    Graphics_draw_rect(graphics, gfx_rect, color, scene->bg_texture, 0);
+    Graphics_draw_rect(graphics, gfx_rect, color, scene->bg_texture,
+                       GFX_POINT_ZERO, scene->bg_texture->size,0);
     Graphics_project_camera(graphics, scene->camera);
   
     GLfloat fl_color[4] = {0.65, 0.65, 0.65, 1};
     GfxRect ceil_rect =
         GfxRect_from_xywh(-SCREEN_WIDTH, -SCREEN_HEIGHT, 3 * SCREEN_WIDTH,
                           SCREEN_HEIGHT);
-    Graphics_draw_rect(graphics, ceil_rect, fl_color, 0, 0);
+    Graphics_draw_rect(graphics, ceil_rect, fl_color, 0, GFX_POINT_ZERO,
+                       GFX_SIZE_ZERO, 0);
   
     GfxRect floor_rect =
         GfxRect_from_xywh(-SCREEN_WIDTH, SCREEN_HEIGHT, 3 * SCREEN_WIDTH,
                           SCREEN_HEIGHT);
-    Graphics_draw_rect(graphics, floor_rect, fl_color, 0, 0);
+    Graphics_draw_rect(graphics, floor_rect, fl_color, 0, GFX_POINT_ZERO,
+                       GFX_SIZE_ZERO, 0);
   
     GfxRect lwall_rect =
         GfxRect_from_xywh(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    Graphics_draw_rect(graphics, lwall_rect, fl_color, 0, 0);
+    Graphics_draw_rect(graphics, lwall_rect, fl_color, 0, GFX_POINT_ZERO,
+                       GFX_SIZE_ZERO, 0);
   
     GfxRect rwall_rect =
         GfxRect_from_xywh(-SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    Graphics_draw_rect(graphics, rwall_rect, fl_color, 0, 0);
+    Graphics_draw_rect(graphics, rwall_rect, fl_color, 0, GFX_POINT_ZERO,
+                       GFX_SIZE_ZERO, 0);
   
     // Draw the stuff
+    GLfloat tileColor[4] = {0, 0, 0, 0};
+    Graphics_reset_modelview_matrix(graphics);
+    if (scene->tile_map) {
+      int layer_idx = 0;
+      for (layer_idx = 0; layer_idx < scene->tile_map->layers->end;
+           layer_idx++) {
+        TileMapLayer *layer = DArray_get(scene->tile_map->layers, layer_idx);
+        int gid_idx = 0;
+        for (gid_idx = 0; gid_idx < layer->gid_count; gid_idx++) {
+          uint32_t gid = layer->tile_gids[gid_idx];
+          if (gid != 0) {
+            TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
+            int gid_col = gid_idx % (int)scene->tile_map->cols;
+            int gid_row = gid_idx / (int)scene->tile_map->cols;
+            GfxRect tile_rect =
+                GfxRect_from_xywh(gid_col * tile->size.w,
+                                  gid_row * tile->size.h,
+                                  tile->size.w,
+                                  tile->size.h);
+            Graphics_draw_rect(graphics, tile_rect, tileColor,
+                               tile->tileset->texture, tile->tl,
+                               tile->size, 0);
+            free(tile);
+          }
+        }
+        
+      }
+    }
+  
+  
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;
         if (thing == NULL) break;
@@ -147,6 +192,7 @@ World *Scene_create_world(Scene *scene, Physics *physics) {
     }
 
     scene->world = world;
+  
     return world;
 error:
     return NULL;
@@ -231,8 +277,17 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
 #endif
 }
 
-Object SceneProto = {
-   .init = Scene_init,
-   .destroy = Scene_destroy
-};
+void Scene_set_tile_map(Scene *scene, TileMap *tile_map) {
+    if (scene->tile_map) {
+        TileMap_destroy(scene->tile_map);
+    }
+    scene->tile_map = tile_map;
+}
+
+void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
+                         int abs_path) {
+  const char *map_path = abs_path ? map_file : resource_path(map_file);
+  TileMap *map = TileMap_parse((char *)map_path, engine);
+  Scene_set_tile_map(scene, map);
+}
 

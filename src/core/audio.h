@@ -14,7 +14,7 @@ typedef struct Music {
 #endif
 } Music;
 
-Music *Music_load(char *filename);
+Music *Music_load(char *filename, char *loop);
 void Music_destroy(Music *music);
 void Music_play(Music *music);
 void Music_pause(Music *music);

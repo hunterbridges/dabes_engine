@@ -2,13 +2,11 @@
 #define _lcthw_Hashmap_h
 
 #include <stdint.h>
-#ifdef DABES_IOS
-#else
-#include <lcthw/darray.h>
-#endif
+#include "darray.h"
 
 #define DEFAULT_NUMBER_OF_BUCKETS 100
 
+typedef void (*Hashmap_destroy_func)(void *a);
 typedef int (*Hashmap_compare)(void *a, void *b);
 typedef uint32_t (*Hashmap_hash)(void *key);
 
@@ -27,7 +25,7 @@ typedef struct HashmapNode {
 typedef int (*Hashmap_traverse_cb)(HashmapNode *node);
 
 Hashmap *Hashmap_create(Hashmap_compare compare, Hashmap_hash);
-void Hashmap_destroy(Hashmap *map);
+void Hashmap_destroy(Hashmap *map, Hashmap_destroy_func destroy);
 
 int Hashmap_set(Hashmap *map, void *key, void *data);
 void *Hashmap_get(Hashmap *map, void *key);

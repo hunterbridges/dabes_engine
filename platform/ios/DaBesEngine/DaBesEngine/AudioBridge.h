@@ -5,6 +5,7 @@ struct AudioBridge {
 } AudioBridge;
 
 void AudioBridge_load(struct AudioBridge *bridge, char *filename);
+void AudioBridge_loop(struct AudioBridge *bridge, char *filename);
 void AudioBridge_play(struct AudioBridge *bridge);
 void AudioBridge_pause(struct AudioBridge *bridge);
 void AudioBridge_set_volume(struct AudioBridge *bridge, double volume);

@@ -3,6 +3,7 @@
 #import "scene.h"
 #import "world.h"
 #import "game_entity.h"
+#import "tile_map_parse.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -154,7 +155,7 @@ char *bundlePath__;
    */
   Engine_bootstrap(&engine_, NULL);
   
-  scene_ = NEW(Scene, "The game");
+  scene_ = Scene_create(engine_);
   world_ = Scene_create_world(scene_, engine_->physics);
   
   GameEntity_assign_controller(scene_->entities->first->value,
@@ -167,7 +168,7 @@ char *bundlePath__;
   [EAGLContext setCurrentContext:self.context];
   
   // TODO: CLEANUP
-  scene_->_(destroy)(scene_);
+  Scene_destroy(scene_);
   engine_->_(destroy)(engine_);
   self.effect = nil;
 }
@@ -199,6 +200,19 @@ char *bundlePath__;
 
 - (void)willEnterForeground {
   engine_->last_frame_at = SDL_GetTicks();
+}
+
+- (void)injectMapFromPath:(NSString *)newFilePath {
+  CFStringRef cfNewFilePath = (__bridge CFStringRef)newFilePath;
+  int strlen = CFStringGetLength(cfNewFilePath);
+  int maxSize = CFStringGetMaximumSizeForEncoding(strlen,
+                                                  kCFStringEncodingUTF8);
+  char *cNewFilePath = calloc(1, sizeof(char) * maxSize);
+  CFStringGetCString(cfNewFilePath, cNewFilePath, maxSize,
+                     kCFStringEncodingUTF8);
+  printf("%s\n", cNewFilePath);
+  Engine_log("Injecting map &lt;%@&gt;", [newFilePath lastPathComponent]);
+  Scene_load_tile_map(scene_, engine_, cNewFilePath, 1);
 }
 
 @end

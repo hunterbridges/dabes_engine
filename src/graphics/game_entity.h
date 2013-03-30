@@ -12,7 +12,7 @@ typedef struct GameEntity {
     Uint32 color;
     SDL_Rect (*rect)(void *self);
     GLfloat alpha;
-    GLuint texture;
+    GfxTexture *texture;
 } GameEntity;
 
 int GameEntity_init(void *self);

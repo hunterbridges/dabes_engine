@@ -1,3 +1,4 @@
+#import <QuartzCore/QuartzCore.h>
 #import "InterfaceViewController.h"
 #import "EngineViewController.h"
 
@@ -8,6 +9,7 @@
   UIScrollView *debugMenuView_;
   float menuHeight_;
   int pages_;
+  UIWebView *console_;
 }
 
 @end
@@ -44,6 +46,24 @@
   debugMenuView_.delegate = self;
   debugMenuView_.delaysContentTouches = NO;
   [self.view addSubview:debugMenuView_];
+  
+  console_ = [[UIWebView alloc] init];
+  console_.backgroundColor = [UIColor clearColor];
+  console_.opaque = NO;
+  console_.translatesAutoresizingMaskIntoConstraints = NO;
+  console_.userInteractionEnabled = NO;
+  console_.layer.shouldRasterize = YES;
+  NSError *consoleError = nil;
+  NSString *consoleFile =
+      [[NSBundle mainBundle] pathForResource:@"console"
+                                      ofType:@"html"];
+  
+  NSString *consoleHtml =
+      [NSString stringWithContentsOfFile:consoleFile
+                                encoding:NSUTF8StringEncoding
+                                   error:&consoleError];
+  [console_ loadHTMLString:consoleHtml baseURL:nil];
+  [debugMenuView_ addSubview:console_];
   
   UILabel *camLabel = [[UILabel alloc] init];
   camLabel.backgroundColor = [UIColor clearColor];
@@ -149,7 +169,7 @@
   NSDictionary *views =
       NSDictionaryOfVariableBindings(camLabel, envLabel, rotLabel,
                                      rotSlider, zoomLabel, zoomSlider,
-                                     debugMenuView_, resetCamButton);
+                                     debugMenuView_, resetCamButton, console_);
   NSArray *headers =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[camLabel]-|"
@@ -167,11 +187,31 @@
   [debugMenuView_ addConstraints:headers];
   [debugMenuView_ addConstraint:header];
   
+  NSLayoutConstraint *consoleConstraint =
+      [NSLayoutConstraint constraintWithItem:console_
+                                   attribute:NSLayoutAttributeWidth
+                                   relatedBy:NSLayoutRelationEqual
+                                      toItem:debugMenuView_
+                                   attribute:NSLayoutAttributeWidth
+                                  multiplier:1.0
+                                    constant:0];
+  [debugMenuView_ addConstraint:consoleConstraint];
+  
+  consoleConstraint =
+      [NSLayoutConstraint constraintWithItem:console_
+                                   attribute:NSLayoutAttributeLeft
+                                   relatedBy:NSLayoutRelationEqual
+                                      toItem:debugMenuView_
+                                   attribute:NSLayoutAttributeLeft
+                                  multiplier:1.0
+                                    constant:0];
+  [debugMenuView_ addConstraint:consoleConstraint];
+  
   NSArray *col =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"V:|-[camLabel(20)]-[rotLabel(==camLabel)]-[zoomLabel(==camLabel)]"
-          @"-(40)-[envLabel]"
-          options:NSLayoutFormatAlignAllLeft
+          @"V:|[console_(120)]-(20)-[camLabel(20)]-[rotLabel(==camLabel)]-"
+          @"[zoomLabel(==camLabel)]-(40)-[envLabel]"
+          options:0
           metrics:nil
           views:views];
   [debugMenuView_ addConstraints:col];
@@ -244,6 +284,20 @@
 
 - (void)willEnterForeground {
   if ([engineVC_.view superview]) [engineVC_ willEnterForeground];
+}
+
+- (void)log:(NSString *)fmt arguments:(va_list)arguments {
+  NSString *formatted =
+      [[NSString alloc] initWithFormat:fmt arguments:arguments];
+  NSString *new = [NSString stringWithFormat:@"<br />%@", formatted];
+  NSString *inject = [NSString stringWithFormat:
+                      @"document.body.innerHTML += \"%@\";", new];
+  [console_ stringByEvaluatingJavaScriptFromString:inject];
+  [self showMenu];
+}
+
+- (void)injectMapFromPath:(NSString *)newFilePath {
+  [engineVC_ injectMapFromPath:newFilePath];
 }
 
 #pragma mark Debug controls

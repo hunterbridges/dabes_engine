@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 
     check(Engine_bootstrap(&engine, &screen), "Init SDL and OpenGL");
 
-    scene = NEW(Scene, "The game");
+    scene = Scene_create(engine);
     world = Scene_create_world(scene, engine->physics);
 
     GameEntity_assign_controller(scene->entities->first->value,
@@ -38,13 +38,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    scene->_(destroy)(scene);
+    Scene_destroy(scene);
     engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
 
     return 0;
 error:
-    if (scene) scene->_(destroy)(scene);
+    if (scene) Scene_destroy(scene);
     if (world) world->_(destroy)(world);
     if (engine) engine->_(destroy)(engine);
     SDL_FreeSurface(screen);

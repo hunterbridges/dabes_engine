@@ -9,7 +9,7 @@
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define DEFAULT_PPM 30
+#define DEFAULT_PPM 32
 
 #define NUM_BOXES 10
 

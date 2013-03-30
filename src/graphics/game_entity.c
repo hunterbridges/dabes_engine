@@ -37,7 +37,8 @@ void GameEntity_render(GameEntity *self, void *engine) {
     }
     float degrees = Fixture_rotation_degrees(entity->fixture);
 
-    Graphics_draw_rect(graphics, rect, color, entity->texture, degrees);
+    Graphics_draw_rect(graphics, rect, color, entity->texture, GFX_POINT_ZERO,
+                       entity->texture->size, degrees);
 }
 
 GfxPoint GameEntity_center(GameEntity *entity) {

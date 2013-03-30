@@ -5,6 +5,7 @@ varying vec4 colorVarying;
 varying vec4 textureVarying;
 uniform mat4 projection;
 uniform mat4 modelView;
+uniform int hasTexture;
 
 void main()
 {

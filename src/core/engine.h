@@ -27,6 +27,13 @@ void Engine_destroy(void *self);
 int Engine_bootstrap(Engine **engine, SDL_Surface **screen);
 void Engine_regulate(Engine *engine);
 
+#ifdef DABES_IOS
+#define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)
+void Engine_log_iOS(char *fmt, ...);
+#else
+#define Engine_log(A, ...) debug(A, ##__VA_ARGS__)
+#endif
+
 extern Object EngineProto;
 
 #endif

@@ -47,7 +47,7 @@ int Engine_bootstrap(Engine **engine, SDL_Surface **screen) {
     *screen =
         SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_OPENGL);
 
-    check(init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
+    check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 #endif
 
     *engine = NEW(Engine, "The game engine");

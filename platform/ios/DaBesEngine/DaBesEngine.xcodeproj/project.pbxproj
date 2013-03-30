@@ -23,7 +23,6 @@
 		CA24C75416FC1E7E0045D5DE /* EngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C75316FC1E7E0045D5DE /* EngineViewController.m */; };
 		CA24C79016FC20900045D5DE /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76216FC20900045D5DE /* audio.c */; };
 		CA24C79216FC20900045D5DE /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76516FC20900045D5DE /* engine.c */; };
-		CA24C79516FC20900045D5DE /* gfx_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76B16FC20900045D5DE /* gfx_helpers.c */; };
 		CA24C79616FC20900045D5DE /* game_entity.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76E16FC20900045D5DE /* game_entity.c */; };
 		CA24C79816FC20900045D5DE /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77116FC20900045D5DE /* graphics.c */; };
 		CA24C79A16FC20900045D5DE /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77416FC20900045D5DE /* scene.c */; };
@@ -35,6 +34,13 @@
 		CA24C7A516FC20900045D5DE /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78716FC20900045D5DE /* world.c */; };
 		CA24C7A716FC20900045D5DE /* world_grid.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78A16FC20900045D5DE /* world_grid.c */; };
 		CA24C7A916FC20900045D5DE /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
+		CA306601170422E700629F80 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA306600170422E700629F80 /* libxml2.dylib */; };
+		CA3066061704233200629F80 /* tile_map.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3066051704233200629F80 /* tile_map.c */; };
+		CA3066081705128B00629F80 /* console.html in Resources */ = {isa = PBXBuildFile; fileRef = CA3066071705128B00629F80 /* console.html */; };
+		CA30660A170549D900629F80 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA306609170549D900629F80 /* libz.dylib */; };
+		CA30660D17054B0900629F80 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660C17054B0900629F80 /* base64.c */; };
+		CA30661017054C1E00629F80 /* gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660F17054C1E00629F80 /* gzip.c */; };
+		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
 		CAB3595F16FC4C44004CF684 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3595A16FC4C2F004CF684 /* libSDL2.a */; };
@@ -114,8 +120,6 @@
 		CA24C76616FC20900045D5DE /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
 		CA24C76816FC20900045D5DE /* dbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dbg.h; path = ../../../../src/dbg.h; sourceTree = "<group>"; };
 		CA24C76A16FC20900045D5DE /* gameobjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameobjects.h; path = ../../../../src/gameobjects.h; sourceTree = "<group>"; };
-		CA24C76B16FC20900045D5DE /* gfx_helpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gfx_helpers.c; path = ../../../../src/gfx_helpers.c; sourceTree = "<group>"; };
-		CA24C76C16FC20900045D5DE /* gfx_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gfx_helpers.h; path = ../../../../src/gfx_helpers.h; sourceTree = "<group>"; };
 		CA24C76E16FC20900045D5DE /* game_entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = game_entity.c; sourceTree = "<group>"; };
 		CA24C76F16FC20900045D5DE /* game_entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game_entity.h; sourceTree = "<group>"; };
 		CA24C77116FC20900045D5DE /* graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = graphics.c; sourceTree = "<group>"; };
@@ -139,6 +143,17 @@
 		CA24C78D16FC20900045D5DE /* prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = prefix.h; path = ../../../../src/prefix.h; sourceTree = "<group>"; };
 		CA24C78E16FC20900045D5DE /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = util.c; path = ../../../../src/util.c; sourceTree = "<group>"; };
 		CA24C78F16FC20900045D5DE /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = ../../../../src/util.h; sourceTree = "<group>"; };
+		CA306600170422E700629F80 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		CA3066041704231700629F80 /* tile_map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map.h; sourceTree = "<group>"; };
+		CA3066051704233200629F80 /* tile_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tile_map.c; sourceTree = "<group>"; };
+		CA3066071705128B00629F80 /* console.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = console.html; sourceTree = "<group>"; };
+		CA306609170549D900629F80 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		CA30660B17054AFE00629F80 /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		CA30660C17054B0900629F80 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		CA30660E17054C0900629F80 /* gzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gzip.h; sourceTree = "<group>"; };
+		CA30660F17054C1E00629F80 /* gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzip.c; sourceTree = "<group>"; };
+		CA30661217062E5D00629F80 /* tile_map_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tile_map_parse.c; sourceTree = "<group>"; };
+		CA30661317062E5D00629F80 /* tile_map_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map_parse.h; sourceTree = "<group>"; };
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
@@ -160,6 +175,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA30660A170549D900629F80 /* libz.dylib in Frameworks */,
+				CA306601170422E700629F80 /* libxml2.dylib in Frameworks */,
 				CAB359BF16FE6AF5004CF684 /* AVFoundation.framework in Frameworks */,
 				CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */,
 				CAB3595F16FC4C44004CF684 /* libSDL2.a in Frameworks */,
@@ -188,7 +205,6 @@
 		CA24C72616FC1E7E0045D5DE = {
 			isa = PBXGroup;
 			children = (
-				CAB359BE16FE6AF5004CF684 /* AVFoundation.framework */,
 				CAB3597A16FC4EBC004CF684 /* media */,
 				CA24C73C16FC1E7E0045D5DE /* DaBesEngine */,
 				CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */,
@@ -209,6 +225,9 @@
 		CA24C73116FC1E7E0045D5DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA306609170549D900629F80 /* libz.dylib */,
+				CA306600170422E700629F80 /* libxml2.dylib */,
+				CAB359BE16FE6AF5004CF684 /* AVFoundation.framework */,
 				CAB3596516FC4D76004CF684 /* AudioToolbox.framework */,
 				CA00424F16FC3DEB00508FB3 /* CoreAudio.framework */,
 				CA00424D16FC3DCD00508FB3 /* QuartzCore.framework */,
@@ -228,8 +247,6 @@
 				CA24C76116FC20900045D5DE /* core */,
 				CA24C76816FC20900045D5DE /* dbg.h */,
 				CA24C76A16FC20900045D5DE /* gameobjects.h */,
-				CA24C76B16FC20900045D5DE /* gfx_helpers.c */,
-				CA24C76C16FC20900045D5DE /* gfx_helpers.h */,
 				CA24C76D16FC20900045D5DE /* graphics */,
 				CA24C77716FC20900045D5DE /* input */,
 				CA24C77E16FC20900045D5DE /* object.c */,
@@ -258,6 +275,7 @@
 				CA24C74816FC1E7E0045D5DE /* Default.png */,
 				CA24C74A16FC1E7E0045D5DE /* Default@2x.png */,
 				CA24C74C16FC1E7E0045D5DE /* Default-568h@2x.png */,
+				CA3066071705128B00629F80 /* console.html */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -269,6 +287,10 @@
 				CA24C76316FC20900045D5DE /* audio.h */,
 				CA24C76516FC20900045D5DE /* engine.c */,
 				CA24C76616FC20900045D5DE /* engine.h */,
+				CA30660B17054AFE00629F80 /* base64.h */,
+				CA30660C17054B0900629F80 /* base64.c */,
+				CA30660E17054C0900629F80 /* gzip.h */,
+				CA30660F17054C1E00629F80 /* gzip.c */,
 			);
 			name = core;
 			path = ../../../../src/core;
@@ -285,6 +307,10 @@
 				CA24C77216FC20900045D5DE /* graphics.h */,
 				CA24C77416FC20900045D5DE /* scene.c */,
 				CA24C77516FC20900045D5DE /* scene.h */,
+				CA3066041704231700629F80 /* tile_map.h */,
+				CA3066051704233200629F80 /* tile_map.c */,
+				CA30661317062E5D00629F80 /* tile_map_parse.h */,
+				CA30661217062E5D00629F80 /* tile_map_parse.c */,
 			);
 			name = graphics;
 			path = ../../../../src/graphics;
@@ -453,6 +479,7 @@
 				CAB359B816FE242F004CF684 /* Icon.png in Resources */,
 				CAB359B916FE242F004CF684 /* Icon@2x.png in Resources */,
 				CAB359C716FED230004CF684 /* blueprint.jpg in Resources */,
+				CA3066081705128B00629F80 /* console.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,7 +494,6 @@
 				CA24C75416FC1E7E0045D5DE /* EngineViewController.m in Sources */,
 				CA24C79016FC20900045D5DE /* audio.c in Sources */,
 				CA24C79216FC20900045D5DE /* engine.c in Sources */,
-				CA24C79516FC20900045D5DE /* gfx_helpers.c in Sources */,
 				CA24C79616FC20900045D5DE /* game_entity.c in Sources */,
 				CA24C79816FC20900045D5DE /* graphics.c in Sources */,
 				CA24C79A16FC20900045D5DE /* scene.c in Sources */,
@@ -483,6 +509,10 @@
 				CAB359BC16FE690D004CF684 /* AudioBridge.m in Sources */,
 				CAB359C316FE96E9004CF684 /* InterfaceViewController.m in Sources */,
 				CA92BF1B16FFBEF000252D27 /* camera.c in Sources */,
+				CA3066061704233200629F80 /* tile_map.c in Sources */,
+				CA30660D17054B0900629F80 /* base64.c in Sources */,
+				CA30661017054C1E00629F80 /* gzip.c in Sources */,
+				CA30661417062E6100629F80 /* tile_map_parse.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +570,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "247FE47C-1A4E-46B3-BF07-9D30A7A7009C";
@@ -568,6 +599,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PROVISIONING_PROFILE = "247FE47C-1A4E-46B3-BF07-9D30A7A7009C";
@@ -590,6 +622,7 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include/SDL,
 					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = "DaBesEngine/DaBesEngine-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -619,6 +652,7 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include/SDL,
 					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = "DaBesEngine/DaBesEngine-Info.plist";
 				LIBRARY_SEARCH_PATHS = (

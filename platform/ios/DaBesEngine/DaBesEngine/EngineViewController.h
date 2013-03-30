@@ -8,6 +8,7 @@
 
 - (id)initWithTouchInput:(Input *)input;
 - (void)willEnterForeground;
-
+- (void)injectMapFromPath:(NSString *)newFilePath;
+  
 @property (nonatomic, readonly) Scene *scene;
 @end

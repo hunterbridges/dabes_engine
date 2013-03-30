@@ -1,12 +1,15 @@
 #include "audio.h"
 
-Music *Music_load(char *filename) {
+Music *Music_load(char *filename, char *loop) {
   Music *music = malloc(sizeof(Music));
   music->volume = 1;
 
 #ifdef DABES_IOS
     music->bridge = calloc(1, sizeof(struct AudioBridge));
     AudioBridge_load(music->bridge, filename);
+    if (loop != NULL) {
+      AudioBridge_loop(music->bridge, loop);
+    }
 #else
     music->mix_music = Mix_LoadMUS(filename);
 

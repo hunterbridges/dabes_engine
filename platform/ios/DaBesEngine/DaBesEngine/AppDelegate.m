@@ -3,14 +3,68 @@
 #import "EngineViewController.h"
 #import "InterfaceViewController.h"
 
+#import "tile_map_parse.h"
+
+static const NSString *kOpenMapOptionKey = @"OpenMap";
+
+const char *resource_path(char *filename) {
+  NSString *nsFilename = [NSString stringWithCString:filename
+                                            encoding:NSUTF8StringEncoding];
+  NSString *fullpath = [[[NSBundle mainBundle] bundlePath]
+                            stringByAppendingPathComponent:nsFilename];
+  const char *cFullpath =
+      [fullpath cStringUsingEncoding:NSUTF8StringEncoding];
+  
+  return cFullpath;
+}
+
+FILE *load_resource(char *filename) {
+    const char *cFullpath = resource_path(filename);
+    FILE *file = fopen(cFullpath, "r");
+    return file;
+}
+
+void Engine_log_iOS(char *fmt, ...) {
+  AppDelegate *appDelegete = [[UIApplication sharedApplication] delegate];
+  InterfaceViewController *ivc = appDelegete.viewController;
+  
+  va_list args;
+  NSString *nsFmt = [[NSString alloc] initWithCString:fmt
+                                             encoding:NSUTF8StringEncoding];
+  va_start(args, fmt);
+  [ivc log:nsFmt arguments:args];
+  va_end(args);
+}
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  NSURL *url = [launchOptions valueForKey:UIApplicationLaunchOptionsURLKey];
+  NSString *sourceApp =
+      [launchOptions valueForKey:
+          UIApplicationLaunchOptionsSourceApplicationKey];
+    
+  if (url) {
+    return [self application:application
+                     openURL:url
+           sourceApplication:sourceApp
+                  annotation:nil];
+  }
+  
+  if (sourceApp) {
+    return YES;
+  }
+  
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.viewController = [[InterfaceViewController alloc] init];
+  self.viewController = [[InterfaceViewController alloc] init];
   self.window.rootViewController = self.viewController;
   [self.window makeKeyAndVisible];
+  
+  NSString *openMapPath = [launchOptions objectForKey:kOpenMapOptionKey];
+  if (openMapPath) {
+    [self.viewController injectMapFromPath:openMapPath];
+  }
   return YES;
 }
 
@@ -35,6 +89,40 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
   // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+  NSArray *paths =
+      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                          NSUserDomainMask,
+                                          YES);
+  NSString *documentsDirectory = [paths objectAtIndex:0];
+  
+  NSString *newFilePath =
+      [documentsDirectory stringByAppendingPathComponent:
+          [url lastPathComponent]];
+  
+  if ([[NSFileManager defaultManager] fileExistsAtPath:newFilePath]) {
+    [[NSFileManager defaultManager] removeItemAtPath:newFilePath
+                                               error:nil];
+  }
+  [[NSFileManager defaultManager] copyItemAtURL:url
+      toURL:[NSURL fileURLWithPath:newFilePath]
+      error:nil];
+  
+  if (!self.window) {
+    NSDictionary *dict =
+        [NSDictionary dictionaryWithObject:newFilePath
+                                    forKey:kOpenMapOptionKey];
+    [self application:application didFinishLaunchingWithOptions:dict];
+  } else {
+    [self.viewController injectMapFromPath:newFilePath];
+  }
+  
+  return YES;
 }
 
 @end

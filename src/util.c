@@ -1,17 +1,15 @@
 #include "util.h"
 
+#ifndef DABES_IOS
+const char *resource_path(char *filename) {
+  return filename;
+}
+
 FILE *load_resource(char *filename) {
-#ifdef DABES_IOS
-    // TODO: Make This Better
-    char abs_path[512];
-    strcpy(abs_path, bundlePath__);
-    strcat(abs_path, filename);
-#else
-    char *abs_path = filename;
-#endif
-    FILE *file = fopen(abs_path, "r");
+    FILE *file = fopen(filename, "r");
     return file;
 }
+#endif
 
 int read_text_file(char *filename, GLchar **out, GLint *size) {
     FILE *file = load_resource(filename);

@@ -8,6 +8,7 @@
 #define MAX(A, B) (A > B ? A : B)
 #endif
 
+const char *resource_path(char *filename);
 FILE *load_resource(char *filename);
 int read_text_file(char *filename, GLchar **out, GLint *size);
 #ifdef DABES_IOS
