@@ -280,7 +280,8 @@ void Fixture_step_apply_environment(Physics *physics, Fixture *fixture) {
     PhysBox bounding = PhysBox_bounding_box(Fixture_real_box(fixture));
     PhysPoint ground_sensor = {
       .x = fixture->center.x,
-      .y = fixture->center.y + (bounding.bl.y - bounding.tr.y)
+      .y = fixture->center.y + 5.0 / world->pixels_per_meter +
+               (bounding.bl.y - bounding.tr.y)
     };
     if (fixture->walls) {
       LIST_FOREACH(fixture->walls, first, next, current) {

@@ -4,7 +4,7 @@
 #include "physics.h"
 #include "fixture.h"
 #include "world_grid.h"
-#include "tile_map.h"
+#include "../graphics/tile_map.h"
 
 struct World {
     double height;

@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     Scene *scene = NULL;
     World *world = NULL;
 
-    check(Engine_bootstrap(&engine, &screen), "Init SDL and OpenGL");
+    check(Engine_bootstrap(&engine, (void *)&screen), "Init SDL and OpenGL");
 
     scene = Scene_create(engine);
     world = Scene_create_world(scene, engine->physics);
@@ -25,7 +25,8 @@ int main(int argc, char *argv[]) {
         if (engine->frame_now) {
             Scene_control(scene, engine->input);
 
-            World_solve(engine->physics, world, engine->frame_ticks);
+            World_solve(engine->physics, world, scene->tile_map,
+                    engine->frame_ticks);
             Scene_update(scene, engine);
             Scene_render(scene, engine);
 #ifdef DEBUG
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]) {
     return 0;
 error:
     if (scene) Scene_destroy(scene);
-    if (world) world->_(destroy)(world);
+    if (world) World_destroy(world);
     if (engine) engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
     return 1;
