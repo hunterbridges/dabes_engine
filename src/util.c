@@ -12,6 +12,7 @@ FILE *load_resource(char *filename) {
 #endif
 
 int read_text_file(char *filename, GLchar **out, GLint *size) {
+    GLchar *output = NULL;
     FILE *file = load_resource(filename);
     check(file != NULL, "Failed to open %s", filename);
 
@@ -19,7 +20,7 @@ int read_text_file(char *filename, GLchar **out, GLint *size) {
     unsigned int sz = ftell(file);
     rewind(file);
 
-    GLchar *output = malloc(sz * sizeof(char));
+    output = malloc(sz * sizeof(char));
     check_mem(output);
 
     fread(output, 1, sz, file);
@@ -32,7 +33,7 @@ int read_text_file(char *filename, GLchar **out, GLint *size) {
     return 1;
 error:
     if (file != NULL) fclose(file);
-    if (out != NULL) free(output);
+    if (output != NULL) free(output);
     return 0;
 }
 

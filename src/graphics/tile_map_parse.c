@@ -149,6 +149,7 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           FILE *fileexists = load_resource(cpath);
           if (fileexists == NULL) {
             free(cpath);
+            Tileset_destroy(tileset);
             Engine_log("Cannot open map. Missing tileset &lt;%s&gt;", attrVal);
             return TILEMAP_PARSE_MISSING_IMAGE;
           }

@@ -62,5 +62,6 @@ int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
 WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, PhysPoint point);
 List *WorldGrid_cells_for_box(WorldGrid *grid, PhysBox box);
 List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture);
+PhysBox WorldGrid_box_for_cell(WorldGrid *grid, int col, int row);
 
 #endif

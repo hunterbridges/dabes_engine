@@ -282,6 +282,10 @@
   showingMenu_ = NO;
 }
 
+- (void)didEnterBackground {
+  if ([engineVC_.view superview]) [engineVC_ didEnterBackground];
+}
+
 - (void)willEnterForeground {
   if ([engineVC_.view superview]) [engineVC_ willEnterForeground];
 }

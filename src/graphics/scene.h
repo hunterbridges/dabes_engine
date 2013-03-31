@@ -19,16 +19,19 @@ typedef struct Scene {
     World *world;
     TileMap *tile_map;
     List *entities;
+  
+    int started;
 } Scene;
 
 Scene *Scene_create(Engine *engine);
 void Scene_destroy(Scene *scene);
+void Scene_restart(Scene *scene, Engine *engine);
 void Scene_update(Scene *scene, void *engine);
 void Scene_render(Scene *scene, void *engine);
 void Scene_control(Scene *scene, Input *input);
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path);
-void Scene_set_tile_map(Scene *scene, TileMap *tile_map);
+void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
 World *Scene_create_world(Scene *scene, Physics *physics);
 void Scene_reset_camera(Scene *scene);
   

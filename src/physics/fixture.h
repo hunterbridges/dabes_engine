@@ -46,6 +46,7 @@ typedef struct Fixture {
 
     PhysBox history[FIXTURE_HISTORY_LENGTH];
     List *collisions;
+    List *walls;
 } Fixture;
 
 int Fixture_init(void *self);

@@ -9,8 +9,7 @@ typedef struct GameEntity {
     Object proto;
     Fixture *fixture;
     Controller *controller;
-    Uint32 color;
-    SDL_Rect (*rect)(void *self);
+    uint32_t color;
     GLfloat alpha;
     GfxTexture *texture;
 } GameEntity;

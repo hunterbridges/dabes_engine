@@ -7,6 +7,7 @@
                                               GLKViewDelegate>
 
 - (id)initWithTouchInput:(Input *)input;
+- (void)didEnterBackground;
 - (void)willEnterForeground;
 - (void)injectMapFromPath:(NSString *)newFilePath;
   

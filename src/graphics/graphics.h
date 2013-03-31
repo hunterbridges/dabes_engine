@@ -40,7 +40,10 @@ static const GfxRect GFX_RECT_ZERO = {{0,0},{0,0},{0,0},{0,0}};
 
 GfxRect GfxRect_from_xywh(double x, double y, double w, double h);
 GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size);
+
+#ifdef DABES_SDL
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect);
+#endif
 
 typedef struct GfxTransform3D {
     float m11, m12, m13, m14;
@@ -79,7 +82,9 @@ GfxTexture *GfxTexture_from_image(char *image_name);
 #ifdef DABES_IOS
 GfxTexture *GfxTexture_from_CGImage(CGImageRef image);
 #endif
+#ifdef DABES_SDL
 GfxTexture *GfxTexture_from_surface(SDL_Surface *surface);
+#endif
 void GfxTexture_destroy(GfxTexture *texture);
 
 ///////////

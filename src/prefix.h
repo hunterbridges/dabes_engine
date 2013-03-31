@@ -3,9 +3,7 @@
 
 #include <math.h>
 
-#ifdef DABES_IOS
-  #include <SDL.h>
-#else
+#ifndef DABES_IOS
   #include <assert.h>
   #include <stdio.h>
   #include <stdlib.h>
@@ -16,6 +14,7 @@
   #include <SDL/SDL_opengl.h>
   #include <SDL/SDL_mixer.h>
   #include <SDL/SDL_ttf.h>
+  #define DABES_SDL
 #endif
 
 #include "constants.h"

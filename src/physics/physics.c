@@ -270,7 +270,7 @@ PhysPoint PhysBox_cnormal_from_mtv(PhysBox normal_for, PhysBox against,
 
     PhysPoint direction = PhysPoint_subtract(other_center, center);
     double dot = PhysPoint_dot(mtv, direction);
-    PhysPoint collision_normal = {};
+    PhysPoint collision_normal;
     if (dot >= 0) {
         collision_normal = PhysPoint_normalize(
                 PhysPoint_scale(mtv, -1));

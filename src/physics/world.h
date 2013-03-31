@@ -4,9 +4,9 @@
 #include "physics.h"
 #include "fixture.h"
 #include "world_grid.h"
+#include "tile_map.h"
 
-typedef struct World {
-    Object proto;
+struct World {
     double height;
     double width;
     double grid_size;
@@ -17,17 +17,17 @@ typedef struct World {
     uint num_fixtures;
     List *fixtures;
     WorldGrid *grid;
-} World;
+};
+typedef struct World World;
 
-int World_init(void *self);
-void World_destroy(void *self);
-void World_solve(Physics *physics, World *world, double advance_ms);
+World *World_create(int cols, int rows);
+void World_destroy(World *world);
+void World_solve(Physics *physics, World *world, TileMap *tile_map,
+                 double advance_ms);
 Fixture *World_create_fixture(World *world);
 PhysBox World_floor_box(World *world);
 PhysBox World_ceil_box(World *world);
 PhysBox World_left_wall_box(World *world);
 PhysBox World_right_wall_box(World *world);
-
-extern Object WorldProto;
 
 #endif

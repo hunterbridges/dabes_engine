@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <lcthw/dbg.h>
 #include "tile_map.h"
+#include "../physics/world.h"
+#include "../physics/world_grid.h"
 
 const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
@@ -20,8 +22,12 @@ error:
 }
 
 void TileMapLayer_destroy(TileMapLayer *layer) {
+  check(layer != NULL, "No layer to destroy");
   if (layer->tile_gids != NULL) free(layer->tile_gids);
   free(layer);
+  return;
+error:
+  return;
 }
 
 void Tileset_destroy(Tileset *tileset) {
@@ -97,4 +103,36 @@ TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid) {
   return tile;
 error:
   return NULL;
+}
+
+void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
+    if (map == NULL) return;
+    GLfloat tileColor[4] = {0, 0, 0, 0};
+    Graphics_reset_modelview_matrix(graphics);
+    int layer_idx = 0;
+    double scale = pixels_per_cell / map->tile_size.w;
+    for (layer_idx = 0; layer_idx < map->layers->end;
+         layer_idx++) {
+      TileMapLayer *layer = DArray_get(map->layers, layer_idx);
+      int gid_idx = 0;
+      for (gid_idx = 0; gid_idx < layer->gid_count; gid_idx++) {
+        uint32_t gid = layer->tile_gids[gid_idx];
+        if (gid != 0) {
+          TilesetTile *tile = TileMap_resolve_tile_gid(map, gid);
+          if (tile == NULL) continue;
+          
+          int gid_col = gid_idx % (int)map->cols;
+          int gid_row = gid_idx / (int)map->cols;
+          GfxRect tile_rect =
+              GfxRect_from_xywh(gid_col * tile->size.w * scale,
+                                gid_row * tile->size.h * scale,
+                                tile->size.w * scale,
+                                tile->size.h * scale);
+          Graphics_draw_rect(graphics, tile_rect, tileColor,
+                             tile->tileset->texture, tile->tl,
+                             tile->size, 0);
+          free(tile);
+        }
+      }
+    }
 }

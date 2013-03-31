@@ -6,25 +6,29 @@ _"I'm da besssss"_
 What is done:
 * Base layer of SDL/OpenGL
 * Framework for decoupled graphics, physics, input, and audio engines
+* Build for desktop (with SDL) or iOS
 * Graphics engine:
     * Can load shaders and draw with them
     * Can load SDL surfaces into OpenGL textures
     * Independent camera
+    * Can render TMX tile maps
 * Physics engine:
     * Physics model that supports angular impulse collisions
     * Time scaling
     * Grid-based collision detection
+    * Can glitchingly collide with tile maps
 * Audio engine:
     * Can play music and control the volume of it
-* iOS build
 
 What is not yet done:
-* Tile maps
-* Remove SDL dependency on iOS
+* Graphics engine:
+    * Parallax layers
+    * Sprite animations
+* Audio engine:
+    * Sound effects
 * Physics engine:
     * Raycasting
-    * Raycast to build an accumulated opposing pressure
-* Parallax layers
+    * Raycast to build an accumulated opposing force
 * Scene management
 * Object scripting
 

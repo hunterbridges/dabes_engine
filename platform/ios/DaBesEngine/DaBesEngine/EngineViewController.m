@@ -16,7 +16,6 @@ char *bundlePath__;
   
   Engine *engine_;
   Scene *scene_;
-  World *world_;
   
   GLKView *glkView_;
   
@@ -156,10 +155,6 @@ char *bundlePath__;
   Engine_bootstrap(&engine_, NULL);
   
   scene_ = Scene_create(engine_);
-  world_ = Scene_create_world(scene_, engine_->physics);
-  
-  GameEntity_assign_controller(scene_->entities->first->value,
-          engine_->input->controllers[0]);
   
   self.effect = [[GLKBaseEffect alloc] init];
 }
@@ -182,7 +177,8 @@ char *bundlePath__;
   if (engine_->frame_now) {
     Scene_control(scene_, engine_->input);
 
-    World_solve(engine_->physics, world_, engine_->frame_ticks);
+    World_solve(engine_->physics, scene_->world, scene_->tile_map,
+                engine_->frame_ticks);
     Scene_update(scene_, engine_);
     Input_reset(engine_->input);
   }
@@ -198,8 +194,12 @@ char *bundlePath__;
 #endif
 }
 
+- (void)didEnterBackground {
+  Engine_pause_time(engine_);
+}
+
 - (void)willEnterForeground {
-  engine_->last_frame_at = SDL_GetTicks();
+  Engine_resume_time(engine_);
 }
 
 - (void)injectMapFromPath:(NSString *)newFilePath {

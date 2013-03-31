@@ -1,44 +1,63 @@
 #include "world.h"
 
-int World_init(void *self) {
-    check_mem(self);
 
-    World *world = self;
+World *World_create(int cols, int rows) {
+    World *world = calloc(1, sizeof(World));
+    check(world != NULL, "Couldn't create world");
+  
     world->num_fixtures = 0;
     world->time_scale = 1;
-    world->width = SCREEN_WIDTH / DEFAULT_PPM;
-    world->height = SCREEN_HEIGHT / DEFAULT_PPM;
     world->grid_size = PHYS_DEFAULT_GRID_SIZE;
     world->pixels_per_meter = DEFAULT_PPM;
+    world->width = cols * world->grid_size;
+    world->height = rows * world->grid_size;
 
     world->gravity = 9.81; // Da earff
     world->air_density = 1.2;
 
     world->fixtures = List_create();
-    world->grid = WorldGrid_create(world->height / world->grid_size,
-            world->width / world->grid_size,
-            world->grid_size);
+    world->grid = WorldGrid_create(rows, cols, world->grid_size);
     check(world->grid != NULL, "Couldn't create WorldGrid");
 
-    return 1;
+    return world;
 error:
-    return 0;
+    if (world) free(world);
+    return NULL;
 }
 
-void World_destroy(void *self) {
-    check_mem(self);
-    World *world = self;
-
+void World_destroy(World *world) {
+    check(world != NULL, "No world to destroy");
+  
     LIST_FOREACH(world->fixtures, first, next, current) {
         Fixture *fixture = current->value;
         fixture->_(destroy)(fixture);
     }
 
     List_destroy(world->fixtures);
-    free(self);
+    free(world);
     return;
 error:
-    free(self);
+    return;
+}
+
+void World_collide_tiles(World *world, Fixture *fixture, TileMap *tile_map) {
+    List *cells = WorldGrid_cells_for_box(world->grid,
+                                          Fixture_real_box(fixture));
+    if (!cells) return;
+    LIST_FOREACH(cells, first, next, current) {
+        WorldGridCell *cell = current->value;
+        int gid_idx = cell->row * tile_map->cols + cell->col;
+        if (gid_idx > tile_map->cols * tile_map->rows - 1) continue;
+        TileMapLayer *base_layer = DArray_get(tile_map->layers, 0);
+        uint32_t gid = base_layer->tile_gids[gid_idx];
+        if (gid == 0) continue;
+        if (fixture->walls == NULL) {
+            fixture->walls = List_create();
+        }
+        PhysBox *wall = calloc(1, sizeof(PhysBox));
+        *wall = WorldGrid_box_for_cell(world->grid, cell->col, cell->row);
+        List_push(fixture->walls, wall);
+    }
 }
 
 void World_collide_fixture(World *world, Fixture *fixture) {
@@ -53,7 +72,8 @@ void World_collide_fixture(World *world, Fixture *fixture) {
             this_box = PhysBox_move(this_box, fixture->step_displacement);
             //PhysBox other_box = member->fixture->history[0];
             PhysBox other_box = Fixture_real_box(member->fixture);
-            other_box = PhysBox_move(other_box, member->fixture->step_displacement);
+            other_box = PhysBox_move(other_box,
+                                     member->fixture->step_displacement);
             if (!PhysBox_collision(this_box, other_box, &mtv)) continue;
             if (fixture->collisions == NULL) {
                 fixture->collisions = List_create();
@@ -74,7 +94,8 @@ void World_collide_fixture(World *world, Fixture *fixture) {
     List_destroy(near);
 }
 
-void World_solve(Physics *physics, World *world, double advance_ms) {
+void World_solve(Physics *physics, World *world, TileMap *tile_map,
+                 double advance_ms) {
     advance_ms *= world->time_scale;
 
     int fixtures_updated = 0;
@@ -89,6 +110,7 @@ void World_solve(Physics *physics, World *world, double advance_ms) {
             fixtures_updated++;
         }
 
+        World_collide_tiles(world, fixture, tile_map);
         Fixture_step_apply_environment(physics, fixture);
     }
     }
@@ -158,7 +180,3 @@ PhysBox World_right_wall_box(World *world) {
     return floor;
 }
 
-Object WorldProto = {
-    .init = World_init,
-    .destroy = World_destroy
-};

@@ -43,7 +43,6 @@
 		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
-		CAB3595F16FC4C44004CF684 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3595A16FC4C2F004CF684 /* libSDL2.a */; };
 		CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3596516FC4D76004CF684 /* AudioToolbox.framework */; };
 		CAB3597B16FC4EBC004CF684 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CAB3597A16FC4EBC004CF684 /* media */; };
 		CAB359B816FE242F004CF684 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CAB359B616FE242F004CF684 /* Icon.png */; };
@@ -68,27 +67,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CABF2BD316FC2ECF0012C3C7;
 			remoteInfo = lcthw;
-		};
-		CAB3595916FC4C2F004CF684 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FD6526630DE8FCCB002AD96B;
-			remoteInfo = libSDL;
-		};
-		CAB3595B16FC4C2F004CF684 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 006E982211955059001DE610;
-			remoteInfo = testsdl;
-		};
-		CAB3595D16FC4C3F004CF684 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = FD6526620DE8FCCB002AD96B;
-			remoteInfo = libSDL;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -157,7 +135,6 @@
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
-		CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = "../../../../sdl-ios-framework/src/SDL/Xcode-iOS/SDL/SDL.xcodeproj"; sourceTree = "<group>"; };
 		CAB3596516FC4D76004CF684 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		CAB3597A16FC4EBC004CF684 /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../../media; sourceTree = "<group>"; };
 		CAB359B616FE242F004CF684 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -179,7 +156,6 @@
 				CA306601170422E700629F80 /* libxml2.dylib in Frameworks */,
 				CAB359BF16FE6AF5004CF684 /* AVFoundation.framework in Frameworks */,
 				CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */,
-				CAB3595F16FC4C44004CF684 /* libSDL2.a in Frameworks */,
 				CA00425016FC3DEB00508FB3 /* CoreAudio.framework in Frameworks */,
 				CA00424E16FC3DCD00508FB3 /* QuartzCore.framework in Frameworks */,
 				CA24C73716FC1E7E0045D5DE /* CoreGraphics.framework in Frameworks */,
@@ -207,7 +183,6 @@
 			children = (
 				CAB3597A16FC4EBC004CF684 /* media */,
 				CA24C73C16FC1E7E0045D5DE /* DaBesEngine */,
-				CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */,
 				CA00424116FC370900508FB3 /* lcthw.xcodeproj */,
 				CA24C73116FC1E7E0045D5DE /* Frameworks */,
 				CA24C73016FC1E7E0045D5DE /* Products */,
@@ -243,15 +218,15 @@
 		CA24C73C16FC1E7E0045D5DE /* DaBesEngine */ = {
 			isa = PBXGroup;
 			children = (
-				CA24C76016FC20900045D5DE /* constants.h */,
 				CA24C76116FC20900045D5DE /* core */,
-				CA24C76816FC20900045D5DE /* dbg.h */,
-				CA24C76A16FC20900045D5DE /* gameobjects.h */,
 				CA24C76D16FC20900045D5DE /* graphics */,
 				CA24C77716FC20900045D5DE /* input */,
+				CA24C78016FC20900045D5DE /* physics */,
+				CA24C76016FC20900045D5DE /* constants.h */,
+				CA24C76816FC20900045D5DE /* dbg.h */,
+				CA24C76A16FC20900045D5DE /* gameobjects.h */,
 				CA24C77E16FC20900045D5DE /* object.c */,
 				CA24C77F16FC20900045D5DE /* object.h */,
-				CA24C78016FC20900045D5DE /* physics */,
 				CA24C78D16FC20900045D5DE /* prefix.h */,
 				CA24C78E16FC20900045D5DE /* util.c */,
 				CA24C78F16FC20900045D5DE /* util.h */,
@@ -359,15 +334,6 @@
 			name = Platform;
 			sourceTree = "<group>";
 		};
-		CAB3595416FC4C2F004CF684 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CAB3595A16FC4C2F004CF684 /* libSDL2.a */,
-				CAB3595C16FC4C2F004CF684 /* testsdl.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CAB359BD16FE6AAE004CF684 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -398,7 +364,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CAB3595E16FC4C3F004CF684 /* PBXTargetDependency */,
 				CA00424916FC39A000508FB3 /* PBXTargetDependency */,
 			);
 			name = DaBesEngine;
@@ -430,10 +395,6 @@
 					ProductGroup = CA00424216FC370900508FB3 /* Products */;
 					ProjectRef = CA00424116FC370900508FB3 /* lcthw.xcodeproj */;
 				},
-				{
-					ProductGroup = CAB3595416FC4C2F004CF684 /* Products */;
-					ProjectRef = CAB3595316FC4C2F004CF684 /* SDL.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -448,20 +409,6 @@
 			fileType = archive.ar;
 			path = liblcthw.a;
 			remoteRef = CA00424516FC370900508FB3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CAB3595A16FC4C2F004CF684 /* libSDL2.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL2.a;
-			remoteRef = CAB3595916FC4C2F004CF684 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CAB3595C16FC4C2F004CF684 /* testsdl.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = testsdl.app;
-			remoteRef = CAB3595B16FC4C2F004CF684 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -523,11 +470,6 @@
 			isa = PBXTargetDependency;
 			name = lcthw;
 			targetProxy = CA00424816FC39A000508FB3 /* PBXContainerItemProxy */;
-		};
-		CAB3595E16FC4C3F004CF684 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libSDL;
-			targetProxy = CAB3595D16FC4C3F004CF684 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

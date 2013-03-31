@@ -184,7 +184,6 @@ int WorldGrid_remove_box(WorldGrid *grid, PhysBox box, WorldGridMember owner) {
     for (i = 0; i < 4; i++) {
         PhysPoint point = PhysBox_vertex(box, i);
         int this_rc = WorldGrid_remove_point(grid, point, owner);
-        check(this_rc == 1, "Failed to remove vertex %d from grid", i);
         rc = rc && this_rc;
     }
 
@@ -198,7 +197,7 @@ int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
     check(grid != NULL, "No grid to remove from.");
 
     WorldGridCell *cell = WorldGrid_cell_for_point(grid, point);
-    check(cell != NULL, "Tried to remove from nonexistant cell.");
+    if (cell == NULL) return 0;
 
     check(cell->points != NULL, "No points found in cell %p <%d, %d>",
             cell, cell->col, cell->row);
@@ -231,10 +230,10 @@ WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, PhysPoint point) {
     check(grid != NULL, "No grid to search.");
     int row = point.y / grid->grid_size;
     int col = point.x / grid->grid_size;
-    if (col < 0) col = 0;
-    if (col >= grid->cols) col = grid->cols - 1;
-    if (row < 0) row = 0;
-    if (row >= grid->rows) row = grid->rows - 1;
+    if (col < 0) return NULL;
+    if (col >= grid->cols) return NULL;
+    if (row < 0) return NULL;
+    if (row >= grid->rows) return NULL;
 
 
     int idx = row * grid->cols + col;
@@ -246,14 +245,17 @@ error:
 List *WorldGrid_cells_for_box(WorldGrid *grid, PhysBox box) {
     check(grid != NULL, "No grid to search.");
 
-    List *cells = List_create();
-    check(cells != NULL, "Couldn't create cells list");
+    List *cells = NULL;
 
     int i = 0;
     for (i = 0; i < 4; i++) {
         PhysPoint point = PhysBox_vertex(box, i);
         WorldGridCell *cell = WorldGrid_cell_for_point(grid, point);
         if (cell == NULL) continue;
+        if (cells == NULL) {
+          cells = List_create();
+          check(cells != NULL, "Couldn't create cells list");
+        }
 
         if (!List_contains(cells, cell, NULL)) List_push(cells, cell);
     }
@@ -295,5 +297,27 @@ List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture) {
 error:
     if (cells) List_destroy(cells);
     return NULL;
+}
+
+PhysBox WorldGrid_box_for_cell(WorldGrid *grid, int col, int row) {
+  PhysBox box = {
+    .tl = {
+      grid->grid_size * col,
+      grid->grid_size * row
+    },
+    .tr = {
+      grid->grid_size * col + grid->grid_size,
+      grid->grid_size * row
+    },
+    .br = {
+      grid->grid_size * col + grid->grid_size,
+      grid->grid_size * row + grid->grid_size
+    },
+    .bl = {
+      grid->grid_size * col,
+      grid->grid_size * row + grid->grid_size
+    }
+  };
+  return box;
 }
 

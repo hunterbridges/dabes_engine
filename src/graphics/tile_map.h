@@ -54,6 +54,7 @@ typedef struct TileMap {
 
 TileMap *TileMap_create();
 void TileMap_destroy(TileMap *map);
+void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell);
 TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid);
 
 #endif

@@ -79,7 +79,7 @@ GfxSize load_image_dimensions_from_image(char *image_name) {
   unsigned long int *data = NULL;
   GLint size = 0;
   read_file_data(image_name, &data, &size);
-  CFDataRef cf_data = CFDataCreate(NULL, (Uint8 *)data, size);
+  CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
   free(data);
   CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
   CGImageRef cg_image =
@@ -132,9 +132,11 @@ GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     return GfxRect_from_xywh(x, y, w, h);
 }
 
+#ifdef DABES_SDL
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
     return GfxRect_from_xywh(rect.x, rect.y, rect.w, rect.h);
 }
+#endif
 
 #ifdef DABES_IOS
 GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
@@ -180,6 +182,7 @@ error:
 }
 #endif
 
+#ifdef DABES_SDL
 GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
     check(surface != NULL, "No surface to load");
 
@@ -206,13 +209,14 @@ GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
 error:
     return 0;
 }
+#endif
 
 GfxTexture *GfxTexture_from_image(char *image_name) {
 #ifdef DABES_IOS
     unsigned long int *data = NULL;
     GLint size = 0;
     read_file_data(image_name, &data, &size);
-    CFDataRef cf_data = CFDataCreate(NULL, (Uint8 *)data, size);
+    CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
     free(data);
     CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
     CGImageRef cg_image =
@@ -508,7 +512,10 @@ int Graphics_init(void *self) {
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+  
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  
     Graphics_load_shader(graphics, shader_path("decal.vert"),
         shader_path("decal.frag"));
 
@@ -539,7 +546,6 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     check(vertex_shader != 0, "Couldn't create vertex shader");
     check(fragment_shader != 0, "Couldn't create fragment shader");
 
-    GLuint *last_shader = NULL;
     GLchar *v_src, *f_src;
     GLint v_size, f_size;
     read_text_file(vert_name, &v_src, &v_size);
@@ -551,19 +557,16 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     free(f_src);
 
     GLint compiled = 0;
-    last_shader = &vertex_shader;
 
     glCompileShader(vertex_shader);
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &compiled);
     Graphics_log_shader(vertex_shader);
     check(compiled == GL_TRUE, "Vertex shader failed to compile");
 
-    last_shader = &fragment_shader;
     glCompileShader(fragment_shader);
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &compiled);
     Graphics_log_shader(fragment_shader);
     check(compiled == GL_TRUE, "Fragment shader failed to compile");
-    last_shader = NULL;
 
     GLuint program = glCreateProgram();
     glAttachShader(program, vertex_shader);

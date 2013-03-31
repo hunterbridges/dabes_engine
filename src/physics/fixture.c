@@ -227,6 +227,12 @@ void Fixture_step_reset(Physics *physics, Fixture *fixture, double advance_ms) {
         else List_destroy(fixture->collisions);
         fixture->collisions = NULL;
     }
+  
+    if (fixture->walls != NULL) {
+        if (fixture->walls->first) List_clear_destroy(fixture->walls);
+        else List_destroy(fixture->walls);
+        fixture->walls = NULL;
+    }
 
     int i = 0;
     for (i = FIXTURE_HISTORY_LENGTH - 2; i >= 0; i--) {
@@ -269,17 +275,25 @@ void Fixture_step_apply_environment(Physics *physics, Fixture *fixture) {
     PhysPoint gravity = {0, world->gravity * fixture->mass};
     fixture->step_force = PhysPoint_add(fixture->step_force, gravity);
 
-    PhysBox floor_box = World_floor_box(world);
-    fixture->on_ground = Fixture_hit_box(fixture, floor_box, NULL);
+    //TODO: Figure out "On ground" status again
+    fixture->on_ground = 0;
+    PhysBox bounding = PhysBox_bounding_box(Fixture_real_box(fixture));
+    PhysPoint ground_sensor = {
+      .x = fixture->center.x,
+      .y = fixture->center.y + (bounding.bl.y - bounding.tr.y)
+    };
+    if (fixture->walls) {
+      LIST_FOREACH(fixture->walls, first, next, current) {
+          PhysBox *wall = current->value;
+          Fixture_hit_box(fixture, *wall, NULL);
+          fixture->on_ground = PhysBox_contains_point(*wall, ground_sensor);
+      }
+    }
+  
     if (fixture->on_ground) {
         PhysPoint gravity = {0, world->gravity * fixture->mass};
         fixture->step_force = PhysPoint_subtract(fixture->step_force, gravity);
     }
-  
-    // Wall hax
-    Fixture_hit_box(fixture, World_ceil_box(world), NULL);
-    Fixture_hit_box(fixture, World_left_wall_box(world), NULL);
-    Fixture_hit_box(fixture, World_right_wall_box(world), NULL);
   
     return;
 error:
