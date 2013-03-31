@@ -36,11 +36,11 @@
 		CA24C7A916FC20900045D5DE /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
 		CA306601170422E700629F80 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA306600170422E700629F80 /* libxml2.dylib */; };
 		CA3066061704233200629F80 /* tile_map.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3066051704233200629F80 /* tile_map.c */; };
-		CA3066081705128B00629F80 /* console.html in Resources */ = {isa = PBXBuildFile; fileRef = CA3066071705128B00629F80 /* console.html */; };
 		CA30660A170549D900629F80 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA306609170549D900629F80 /* libz.dylib */; };
 		CA30660D17054B0900629F80 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660C17054B0900629F80 /* base64.c */; };
 		CA30661017054C1E00629F80 /* gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660F17054C1E00629F80 /* gzip.c */; };
 		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
+		CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA63D7A41708094C00EE59CA /* ConsoleView.m */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
 		CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3596516FC4D76004CF684 /* AudioToolbox.framework */; };
@@ -124,7 +124,6 @@
 		CA306600170422E700629F80 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		CA3066041704231700629F80 /* tile_map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map.h; sourceTree = "<group>"; };
 		CA3066051704233200629F80 /* tile_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tile_map.c; sourceTree = "<group>"; };
-		CA3066071705128B00629F80 /* console.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = console.html; sourceTree = "<group>"; };
 		CA306609170549D900629F80 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		CA30660B17054AFE00629F80 /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		CA30660C17054B0900629F80 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -132,6 +131,8 @@
 		CA30660F17054C1E00629F80 /* gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzip.c; sourceTree = "<group>"; };
 		CA30661217062E5D00629F80 /* tile_map_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tile_map_parse.c; sourceTree = "<group>"; };
 		CA30661317062E5D00629F80 /* tile_map_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map_parse.h; sourceTree = "<group>"; };
+		CA63D7A31708094C00EE59CA /* ConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleView.h; sourceTree = "<group>"; };
+		CA63D7A41708094C00EE59CA /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleView.m; sourceTree = "<group>"; };
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
@@ -250,7 +251,6 @@
 				CA24C74816FC1E7E0045D5DE /* Default.png */,
 				CA24C74A16FC1E7E0045D5DE /* Default@2x.png */,
 				CA24C74C16FC1E7E0045D5DE /* Default-568h@2x.png */,
-				CA3066071705128B00629F80 /* console.html */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -322,6 +322,7 @@
 		CA24C7BB16FC22C10045D5DE /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				CA63D7A21708093800EE59CA /* Views */,
 				CAB359C016FE7BB2004CF684 /* Input */,
 				CAB359BD16FE6AAE004CF684 /* Audio */,
 				CA24C74516FC1E7E0045D5DE /* AppDelegate.h */,
@@ -332,6 +333,15 @@
 				CAB359C216FE96E9004CF684 /* InterfaceViewController.m */,
 			);
 			name = Platform;
+			sourceTree = "<group>";
+		};
+		CA63D7A21708093800EE59CA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CA63D7A31708094C00EE59CA /* ConsoleView.h */,
+				CA63D7A41708094C00EE59CA /* ConsoleView.m */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		CAB359BD16FE6AAE004CF684 /* Audio */ = {
@@ -426,7 +436,6 @@
 				CAB359B816FE242F004CF684 /* Icon.png in Resources */,
 				CAB359B916FE242F004CF684 /* Icon@2x.png in Resources */,
 				CAB359C716FED230004CF684 /* blueprint.jpg in Resources */,
-				CA3066081705128B00629F80 /* console.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,6 +469,7 @@
 				CA30660D17054B0900629F80 /* base64.c in Sources */,
 				CA30661017054C1E00629F80 /* gzip.c in Sources */,
 				CA30661417062E6100629F80 /* tile_map_parse.c in Sources */,
+				CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

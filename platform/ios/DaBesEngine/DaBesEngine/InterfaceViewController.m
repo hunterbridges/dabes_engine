@@ -1,4 +1,5 @@
 #import <QuartzCore/QuartzCore.h>
+#import "ConsoleView.h"
 #import "InterfaceViewController.h"
 #import "EngineViewController.h"
 
@@ -9,7 +10,7 @@
   UIScrollView *debugMenuView_;
   float menuHeight_;
   int pages_;
-  UIWebView *console_;
+  ConsoleView *console_;
 }
 
 @end
@@ -47,22 +48,8 @@
   debugMenuView_.delaysContentTouches = NO;
   [self.view addSubview:debugMenuView_];
   
-  console_ = [[UIWebView alloc] init];
-  console_.backgroundColor = [UIColor clearColor];
-  console_.opaque = NO;
+  console_ = [[ConsoleView alloc] init];
   console_.translatesAutoresizingMaskIntoConstraints = NO;
-  console_.userInteractionEnabled = NO;
-  console_.layer.shouldRasterize = YES;
-  NSError *consoleError = nil;
-  NSString *consoleFile =
-      [[NSBundle mainBundle] pathForResource:@"console"
-                                      ofType:@"html"];
-  
-  NSString *consoleHtml =
-      [NSString stringWithContentsOfFile:consoleFile
-                                encoding:NSUTF8StringEncoding
-                                   error:&consoleError];
-  [console_ loadHTMLString:consoleHtml baseURL:nil];
   [debugMenuView_ addSubview:console_];
   
   UILabel *camLabel = [[UILabel alloc] init];
@@ -293,10 +280,7 @@
 - (void)log:(NSString *)fmt arguments:(va_list)arguments {
   NSString *formatted =
       [[NSString alloc] initWithFormat:fmt arguments:arguments];
-  NSString *new = [NSString stringWithFormat:@"<br />%@", formatted];
-  NSString *inject = [NSString stringWithFormat:
-                      @"document.body.innerHTML += \"%@\";", new];
-  [console_ stringByEvaluatingJavaScriptFromString:inject];
+  [console_ logText:formatted];
   [self showMenu];
 }
 

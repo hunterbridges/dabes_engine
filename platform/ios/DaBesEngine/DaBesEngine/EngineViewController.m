@@ -176,9 +176,9 @@ char *bundlePath__;
   
   if (engine_->frame_now) {
     Scene_control(scene_, engine_->input);
-
     World_solve(engine_->physics, scene_->world, scene_->tile_map,
                 engine_->frame_ticks);
+    
     Scene_update(scene_, engine_);
     Input_reset(engine_->input);
   }
@@ -211,7 +211,7 @@ char *bundlePath__;
   CFStringGetCString(cfNewFilePath, cNewFilePath, maxSize,
                      kCFStringEncodingUTF8);
   printf("%s\n", cNewFilePath);
-  Engine_log("Injecting map &lt;%@&gt;", [newFilePath lastPathComponent]);
+  Engine_log("Injecting map <%@>", [newFilePath lastPathComponent]);
   Scene_load_tile_map(scene_, engine_, cNewFilePath, 1);
 }
 

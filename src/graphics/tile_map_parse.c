@@ -150,7 +150,7 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           if (fileexists == NULL) {
             free(cpath);
             Tileset_destroy(tileset);
-            Engine_log("Cannot open map. Missing tileset &lt;%s&gt;", attrVal);
+            Engine_log("Cannot open map. Missing tileset <%s>", attrVal);
             return TILEMAP_PARSE_MISSING_IMAGE;
           }
           fclose(fileexists);
