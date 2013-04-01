@@ -10,10 +10,24 @@ static const NSString *kOpenMapOptionKey = @"OpenMap";
 const char *resource_path(char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
-  NSString *fullpath = [[[NSBundle mainBundle] bundlePath]
+  
+  NSFileManager *manager = [NSFileManager defaultManager];
+  NSString *bundlePath = [[[NSBundle mainBundle] bundlePath]
                             stringByAppendingPathComponent:nsFilename];
-  const char *cFullpath =
-      [fullpath cStringUsingEncoding:NSUTF8StringEncoding];
+  NSArray *docsPath =
+      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                          NSUserDomainMask, YES);
+  NSString *docsFile = [[docsPath objectAtIndex:0]
+                       stringByAppendingPathComponent:nsFilename];
+  
+  const char *cFullpath;
+  if ([manager fileExistsAtPath:bundlePath]) {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+  } else if ([manager fileExistsAtPath:docsFile]) {
+    cFullpath = [docsFile cStringUsingEncoding:NSUTF8StringEncoding];
+  } else {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+  }
   
   return cFullpath;
 }

@@ -1,3 +1,4 @@
+#import <AssetsLibrary/AssetsLibrary.h>
 #import <QuartzCore/QuartzCore.h>
 #import "ConsoleView.h"
 #import "InterfaceViewController.h"
@@ -11,6 +12,11 @@
   float menuHeight_;
   int pages_;
   ConsoleView *console_;
+  UIPopoverController *popover_;
+  
+  GraphicalResourceKind importKind_;
+  UIImage *importImage_;
+  UIAlertView *importAlert_;
 }
 
 @end
@@ -46,7 +52,12 @@
   debugMenuView_.userInteractionEnabled = YES;
   debugMenuView_.delegate = self;
   debugMenuView_.delaysContentTouches = NO;
+  debugMenuView_.clipsToBounds = NO;
   [self.view addSubview:debugMenuView_];
+  
+  engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
+  [self addChildViewController:engineVC_];
+  [self.view addSubview:engineVC_.view];
   
   console_ = [[ConsoleView alloc] init];
   console_.translatesAutoresizingMaskIntoConstraints = NO;
@@ -69,6 +80,15 @@
   envLabel.font = [UIFont boldSystemFontOfSize:20];
   envLabel.translatesAutoresizingMaskIntoConstraints = NO;
   [debugMenuView_ addSubview:envLabel];
+  
+  UILabel *resLabel = [[UILabel alloc] init];
+  resLabel.backgroundColor = [UIColor clearColor];
+  resLabel.textColor = [UIColor whiteColor];
+  resLabel.textAlignment = NSTextAlignmentLeft;
+  resLabel.text = @"Resources";
+  resLabel.font = [UIFont boldSystemFontOfSize:20];
+  resLabel.translatesAutoresizingMaskIntoConstraints = NO;
+  [debugMenuView_ addSubview:resLabel];
   
   UILabel *rotLabel = [[UILabel alloc] init];
   rotLabel.backgroundColor = [UIColor clearColor];
@@ -134,9 +154,32 @@
            forControlEvents:(UIControlEventTouchUpOutside)];
   [debugMenuView_ addSubview:resetCamButton];
   
-  engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
-  [self addChildViewController:engineVC_];
-  [self.view addSubview:engineVC_.view];
+  UIButton *restartSceneButton =
+      [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [restartSceneButton setTitle:@"Restart Scene" forState:UIControlStateNormal];
+  restartSceneButton.translatesAutoresizingMaskIntoConstraints = NO;
+  [restartSceneButton addTarget:self
+                         action:@selector(restartScene:)
+               forControlEvents:UIControlEventTouchUpInside];
+  [debugMenuView_ addSubview:restartSceneButton];
+  
+  UIButton *importSpriteButton =
+      [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [importSpriteButton setTitle:@"Import Sprite" forState:UIControlStateNormal];
+  importSpriteButton.translatesAutoresizingMaskIntoConstraints = NO;
+  [importSpriteButton addTarget:self
+                         action:@selector(importSprite:)
+               forControlEvents:UIControlEventTouchUpInside];
+  [debugMenuView_ addSubview:importSpriteButton];
+  
+  UIButton *importTilesetButton =
+      [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [importTilesetButton setTitle:@"Import Tileset" forState:UIControlStateNormal];
+  importTilesetButton.translatesAutoresizingMaskIntoConstraints = NO;
+  [importTilesetButton addTarget:self
+                         action:@selector(importTileset:)
+               forControlEvents:UIControlEventTouchUpInside];
+  [debugMenuView_ addSubview:importTilesetButton];
   
   UISwipeGestureRecognizer *downSwipe =
       [[UISwipeGestureRecognizer alloc] initWithTarget:self
@@ -156,7 +199,9 @@
   NSDictionary *views =
       NSDictionaryOfVariableBindings(camLabel, envLabel, rotLabel,
                                      rotSlider, zoomLabel, zoomSlider,
-                                     debugMenuView_, resetCamButton, console_);
+                                     debugMenuView_, resetCamButton, console_,
+                                     restartSceneButton, resLabel,
+                                     importSpriteButton, importTilesetButton);
   NSArray *headers =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[camLabel]-|"
@@ -203,6 +248,15 @@
           views:views];
   [debugMenuView_ addConstraints:col];
   
+  col =
+      [NSLayoutConstraint constraintsWithVisualFormat:
+          @"V:[envLabel]-[restartSceneButton(==resetCamButton)]-(40)-[resLabel]"
+          @"-[importSpriteButton]"
+          options:NSLayoutFormatAlignAllLeft
+          metrics:nil
+          views:views];
+  [debugMenuView_ addConstraints:col];
+  
   NSArray *row =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[rotLabel(50)]-[rotSlider(<=camLabel)]-[resetCamButton(60)]-|"
@@ -215,6 +269,22 @@
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[zoomLabel(50)]-[zoomSlider(==rotSlider)]-[resetCamButton(60)]-|"
           options:NSLayoutFormatAlignAllBottom
+          metrics:nil
+          views:views];
+  [debugMenuView_ addConstraints:row];
+  
+  row =
+      [NSLayoutConstraint constraintsWithVisualFormat:
+          @"|-[restartSceneButton(180)]"
+          options:NSLayoutFormatAlignAllTop
+          metrics:nil
+          views:views];
+  [debugMenuView_ addConstraints:row];
+  
+  row =
+      [NSLayoutConstraint constraintsWithVisualFormat:
+          @"|-[importSpriteButton(180)]-[importTilesetButton(180)]"
+          options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
   [debugMenuView_ addConstraints:row];
@@ -317,6 +387,111 @@
 
 - (void)handleCamResetUp:(UIButton *)sender {
   touchInput_->cam_reset = 0;
+}
+
+- (void)restartScene:(UIButton *)sender {
+  [engineVC_ restartScene];
+}
+
+- (void)importGraphicalResourceOfKind:(GraphicalResourceKind)resourceKind
+                               sender:(UIView *)sender {
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+  picker.delegate = self;
+  importKind_ = resourceKind;
+  
+  if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+    UIPopoverController *popover =
+        [[UIPopoverController alloc] initWithContentViewController:picker];
+    [popover presentPopoverFromRect:sender.frame
+                             inView:debugMenuView_
+           permittedArrowDirections:UIPopoverArrowDirectionAny
+                           animated:YES];
+    popover_ = popover;
+  } else {
+      [self presentViewController:picker
+                         animated:YES
+                       completion:^{
+                         
+                       }];
+  }
+}
+
+- (void)importSprite:(UIButton *)sender {
+  [self importGraphicalResourceOfKind:GraphicalResourceKindSprite
+                               sender:sender];
+}
+
+- (void)importTileset:(UIButton *)sender {
+  [self importGraphicalResourceOfKind:GraphicalResourceKindTileset
+                               sender:sender];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker
+didFinishPickingMediaWithInfo:(NSDictionary *)info {
+  importImage_ = [info objectForKey:UIImagePickerControllerOriginalImage];
+  
+  importAlert_ = [[UIAlertView alloc] initWithTitle:@"Name this file"
+                             message:@".png will be appended"
+                            delegate:self
+                   cancelButtonTitle:@"Cancel"
+                   otherButtonTitles:@"Save", nil];
+  importAlert_.alertViewStyle = UIAlertViewStylePlainTextInput;
+  [importAlert_ show];
+}
+
+- (void)alertView:(UIAlertView *)alertView
+    didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  if (alertView == importAlert_) {
+    if (buttonIndex == 1) {
+      NSArray *bundlePath =
+          NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                              NSUserDomainMask, YES);
+      NSString *subdir;
+      switch (importKind_) {
+        case GraphicalResourceKindSprite:
+          subdir = @"media/sprites/";
+          break;
+          
+        case GraphicalResourceKindTileset:
+          subdir = @"media/tilesets/";
+          break;
+      }
+      
+      NSString *filename = [alertView textFieldAtIndex:0].text;
+      NSString *dir = [[bundlePath objectAtIndex:0]
+                           stringByAppendingPathComponent:subdir];
+      NSString *resourceName =
+          [[dir stringByAppendingPathComponent:filename]
+              stringByAppendingPathExtension:@"png"];
+      NSFileManager *manager = [NSFileManager defaultManager];
+      NSError *error = nil;
+      [manager createDirectoryAtPath:dir withIntermediateDirectories:YES
+                          attributes:nil
+                               error:&error];
+      if (error) {
+        NSLog(@"%@", error);
+      } else {
+        if ([manager isWritableFileAtPath:dir]) {
+          [UIImagePNGRepresentation(importImage_) writeToFile:resourceName
+                                                   atomically:NO];
+          Engine_log_iOS("Imported <%@>",
+                         [[subdir stringByAppendingPathComponent:filename]
+                          stringByAppendingPathExtension:@"png"]);
+        } else {
+          Engine_log_iOS("Failed to import <%@>",
+                         [[subdir stringByAppendingPathComponent:filename]
+                          stringByAppendingPathExtension:@"png"]);
+        }
+        
+      }
+      [popover_ dismissPopoverAnimated:YES];
+      popover_ = nil;
+    }
+    
+    importAlert_ = nil;
+    importImage_ = nil;
+  }
 }
 
 @end

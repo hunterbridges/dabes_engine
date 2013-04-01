@@ -271,6 +271,7 @@ void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path) {
   const char *map_path = abs_path ? map_file : resource_path(map_file);
   TileMap *map = TileMap_parse((char *)map_path, engine);
+  if (map == NULL) return;
   Scene_set_tile_map(scene, engine, map);
 }
 

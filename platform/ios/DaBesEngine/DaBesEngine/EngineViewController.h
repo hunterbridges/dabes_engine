@@ -10,6 +10,7 @@
 - (void)didEnterBackground;
 - (void)willEnterForeground;
 - (void)injectMapFromPath:(NSString *)newFilePath;
+- (void)restartScene;
   
 @property (nonatomic, readonly) Scene *scene;
 @end

@@ -41,6 +41,7 @@
 		CA30661017054C1E00629F80 /* gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660F17054C1E00629F80 /* gzip.c */; };
 		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
 		CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA63D7A41708094C00EE59CA /* ConsoleView.m */; };
+		CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
 		CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3596516FC4D76004CF684 /* AudioToolbox.framework */; };
@@ -133,6 +134,7 @@
 		CA30661317062E5D00629F80 /* tile_map_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map_parse.h; sourceTree = "<group>"; };
 		CA63D7A31708094C00EE59CA /* ConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleView.h; sourceTree = "<group>"; };
 		CA63D7A41708094C00EE59CA /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleView.m; sourceTree = "<group>"; };
+		CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */,
 				CA30660A170549D900629F80 /* libz.dylib in Frameworks */,
 				CA306601170422E700629F80 /* libxml2.dylib in Frameworks */,
 				CAB359BF16FE6AF5004CF684 /* AVFoundation.framework in Frameworks */,
@@ -203,6 +206,7 @@
 			children = (
 				CA306609170549D900629F80 /* libz.dylib */,
 				CA306600170422E700629F80 /* libxml2.dylib */,
+				CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */,
 				CAB359BE16FE6AF5004CF684 /* AVFoundation.framework */,
 				CAB3596516FC4D76004CF684 /* AudioToolbox.framework */,
 				CA00424F16FC3DEB00508FB3 /* CoreAudio.framework */,

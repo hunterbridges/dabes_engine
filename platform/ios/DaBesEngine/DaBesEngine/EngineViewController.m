@@ -215,4 +215,8 @@ char *bundlePath__;
   Scene_load_tile_map(scene_, engine_, cNewFilePath, 1);
 }
 
+- (void)restartScene {
+  Scene_restart(scene_, engine_);
+}
+
 @end
