@@ -53,6 +53,7 @@
   debugMenuView_.delegate = self;
   debugMenuView_.delaysContentTouches = NO;
   debugMenuView_.clipsToBounds = NO;
+  debugMenuView_.delegate = self;
   [self.view addSubview:debugMenuView_];
   
   engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
@@ -313,7 +314,10 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-  
+  GLKView *view = (GLKView *)engineVC_.view;
+  [engineVC_ performSelector:@selector(update)];
+  [engineVC_ glkView:view drawInRect:view.bounds];
+  [view display];
 }
 
 - (void)showMenu {

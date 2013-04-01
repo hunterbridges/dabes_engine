@@ -8,7 +8,8 @@ typedef enum {
 } GraphicalResourceKind;
 
 @interface InterfaceViewController : UIViewController <UIScrollViewDelegate,
-  UITextFieldDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate> {
+  UITextFieldDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate,
+  UIScrollViewDelegate> {
     Input *touchInput_;
 }
 
