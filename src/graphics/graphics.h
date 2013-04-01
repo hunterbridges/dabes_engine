@@ -40,6 +40,8 @@ static const GfxRect GFX_RECT_ZERO = {{0,0},{0,0},{0,0},{0,0}};
 
 GfxRect GfxRect_from_xywh(double x, double y, double w, double h);
 GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size);
+GfxRect GfxRect_inset(GfxRect rect, double inset);
+GfxRect GfxRect_round_out(GfxRect rect);
 
 #ifdef DABES_SDL
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect);

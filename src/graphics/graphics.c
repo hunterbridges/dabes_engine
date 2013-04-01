@@ -132,6 +132,38 @@ GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     return GfxRect_from_xywh(x, y, w, h);
 }
 
+GfxRect GfxRect_inset(GfxRect rect, double inset) {
+  rect.tl.x += inset;
+  rect.tl.y += inset;
+  
+  rect.tr.x -= inset;
+  rect.tr.y += inset;
+  
+  rect.bl.x += inset;
+  rect.bl.y -= inset;
+  
+  rect.br.x -= inset;
+  rect.br.y -= inset;
+  
+  return rect;
+}
+
+GfxRect GfxRect_round_out(GfxRect rect) {
+  rect.tl.x = floor(rect.tl.x);
+  rect.tl.y = floor(rect.tl.y);
+  
+  rect.tr.x = ceil(rect.tr.x);
+  rect.tr.y = floor(rect.tl.y);
+  
+  rect.bl.x = floor(rect.bl.x);
+  rect.bl.y = ceil(rect.bl.y);
+  
+  rect.br.x = ceil(rect.br.x);
+  rect.br.y = ceil(rect.br.y);
+  
+  return rect;
+}
+
 #ifdef DABES_SDL
 GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
     return GfxRect_from_xywh(rect.x, rect.y, rect.w, rect.h);

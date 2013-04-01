@@ -129,6 +129,8 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
                                 tile->size.w * scale,
                                 tile->size.h * scale);
           
+          tile_rect = GfxRect_inset(GfxRect_round_out(tile_rect), -0.5);
+          
           Graphics_draw_rect(graphics, tile_rect, tileColor,
                              tile->tileset->texture, tile->tl,
                              tile->size, 0);
