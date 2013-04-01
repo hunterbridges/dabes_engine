@@ -153,6 +153,7 @@ char *bundlePath__;
    INIT GAME ENGINE
    */
   Engine_bootstrap(&engine_, NULL);
+  self.preferredFramesPerSecond = FPS;
   
   scene_ = Scene_create(engine_);
   
