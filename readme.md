@@ -43,3 +43,8 @@ brew install --HEAD sdl sdl_image sdl_ttf sdl_mixer
 make game
 ./game
 ```
+
+If you are trying to build the XCode project, you need to build the submodule
+```
+make submodules
+```
