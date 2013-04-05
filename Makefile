@@ -18,7 +18,7 @@ submodules:
 	git submodule update --init
 	rm -rf lib/* include/*
 	mkdir -p include lib
-	cd submodules/liblcthw && $(MAKE)
+	cd submodules/liblcthw && $(MAKE) static
 	cp submodules/liblcthw/build/liblcthw.a lib/
 	mkdir include/lcthw
 	cp submodules/liblcthw/build/include/*.h include/lcthw/
