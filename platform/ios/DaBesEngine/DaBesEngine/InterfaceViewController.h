@@ -9,7 +9,7 @@ typedef enum {
 
 @interface InterfaceViewController : UIViewController <UIScrollViewDelegate,
   UITextFieldDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate,
-  UIScrollViewDelegate> {
+  UIScrollViewDelegate, UINavigationControllerDelegate> {
     Input *touchInput_;
 }
 
