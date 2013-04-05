@@ -17,7 +17,7 @@ SO_TARGET=$(pathsubst %.a,%.so,$(TARGET))
 submodules:
 	git submodule update --init
 	rm -rf lib/* include/*
-	mkdir include lib
+	mkdir -p include lib
 	cd submodules/liblcthw && $(MAKE)
 	cp submodules/liblcthw/build/liblcthw.a lib/
 	mkdir include/lcthw
