@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CA00424716FC371600508FB3 /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA00424616FC370900508FB3 /* liblcthw.a */; };
 		CA00424E16FC3DCD00508FB3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA00424D16FC3DCD00508FB3 /* QuartzCore.framework */; };
 		CA00425016FC3DEB00508FB3 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA00424F16FC3DEB00508FB3 /* CoreAudio.framework */; };
 		CA24C73316FC1E7E0045D5DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA24C73216FC1E7E0045D5DE /* UIKit.framework */; };
@@ -42,6 +41,7 @@
 		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
 		CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA63D7A41708094C00EE59CA /* ConsoleView.m */; };
 		CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */; };
+		CA63D7C9170F60C800EE59CA /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7C6170F60B400EE59CA /* liblcthw.a */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
 		CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3596516FC4D76004CF684 /* AudioToolbox.framework */; };
@@ -55,16 +55,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CA00424516FC370900508FB3 /* PBXContainerItemProxy */ = {
+		CA63D7C5170F60B400EE59CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CA00424116FC370900508FB3 /* lcthw.xcodeproj */;
+			containerPortal = CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CABF2BD416FC2ECF0012C3C7;
 			remoteInfo = lcthw;
 		};
-		CA00424816FC39A000508FB3 /* PBXContainerItemProxy */ = {
+		CA63D7C7170F60C100EE59CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CA00424116FC370900508FB3 /* lcthw.xcodeproj */;
+			containerPortal = CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = CABF2BD316FC2ECF0012C3C7;
 			remoteInfo = lcthw;
@@ -72,7 +72,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CA00424116FC370900508FB3 /* lcthw.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lcthw.xcodeproj; path = ../../../../lcthw/liblcthw/liblcthw/lcthw.xcodeproj; sourceTree = "<group>"; };
 		CA00424D16FC3DCD00508FB3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CA00424F16FC3DEB00508FB3 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		CA24C72F16FC1E7E0045D5DE /* DaBesEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DaBesEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,6 +134,7 @@
 		CA63D7A31708094C00EE59CA /* ConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleView.h; sourceTree = "<group>"; };
 		CA63D7A41708094C00EE59CA /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleView.m; sourceTree = "<group>"; };
 		CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lcthw.xcodeproj; path = ../../../submodules/liblcthw/xcode/lcthw.xcodeproj; sourceTree = "<group>"; };
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
@@ -155,6 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA63D7C9170F60C800EE59CA /* liblcthw.a in Frameworks */,
 				CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */,
 				CA30660A170549D900629F80 /* libz.dylib in Frameworks */,
 				CA306601170422E700629F80 /* libxml2.dylib in Frameworks */,
@@ -163,7 +164,6 @@
 				CA00425016FC3DEB00508FB3 /* CoreAudio.framework in Frameworks */,
 				CA00424E16FC3DCD00508FB3 /* QuartzCore.framework in Frameworks */,
 				CA24C73716FC1E7E0045D5DE /* CoreGraphics.framework in Frameworks */,
-				CA00424716FC371600508FB3 /* liblcthw.a in Frameworks */,
 				CA24C73316FC1E7E0045D5DE /* UIKit.framework in Frameworks */,
 				CA24C73516FC1E7E0045D5DE /* Foundation.framework in Frameworks */,
 				CA24C73916FC1E7E0045D5DE /* GLKit.framework in Frameworks */,
@@ -174,20 +174,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CA00424216FC370900508FB3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CA00424616FC370900508FB3 /* liblcthw.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CA24C72616FC1E7E0045D5DE = {
 			isa = PBXGroup;
 			children = (
 				CAB3597A16FC4EBC004CF684 /* media */,
 				CA24C73C16FC1E7E0045D5DE /* DaBesEngine */,
-				CA00424116FC370900508FB3 /* lcthw.xcodeproj */,
+				CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */,
 				CA24C73116FC1E7E0045D5DE /* Frameworks */,
 				CA24C73016FC1E7E0045D5DE /* Products */,
 			);
@@ -348,6 +340,14 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		CA63D7C2170F60B300EE59CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA63D7C6170F60B400EE59CA /* liblcthw.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CAB359BD16FE6AAE004CF684 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -378,7 +378,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				CA00424916FC39A000508FB3 /* PBXTargetDependency */,
+				CA63D7C8170F60C100EE59CA /* PBXTargetDependency */,
 			);
 			name = DaBesEngine;
 			productName = DaBesEngine;
@@ -406,8 +406,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CA00424216FC370900508FB3 /* Products */;
-					ProjectRef = CA00424116FC370900508FB3 /* lcthw.xcodeproj */;
+					ProductGroup = CA63D7C2170F60B300EE59CA /* Products */;
+					ProjectRef = CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -418,11 +418,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		CA00424616FC370900508FB3 /* liblcthw.a */ = {
+		CA63D7C6170F60B400EE59CA /* liblcthw.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = liblcthw.a;
-			remoteRef = CA00424516FC370900508FB3 /* PBXContainerItemProxy */;
+			remoteRef = CA63D7C5170F60B400EE59CA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -480,10 +480,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		CA00424916FC39A000508FB3 /* PBXTargetDependency */ = {
+		CA63D7C8170F60C100EE59CA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = lcthw;
-			targetProxy = CA00424816FC39A000508FB3 /* PBXContainerItemProxy */;
+			targetProxy = CA63D7C7170F60C100EE59CA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

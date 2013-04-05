@@ -13,8 +13,17 @@ TESTS=$(patsubst %.c,%,$(TEST_SRC))
 TARGET=game
 SO_TARGET=$(pathsubst %.a,%.so,$(TARGET))
 
+.PHONY: submodules
+submodules:
+	git submodule update --init
+	rm -rf lib/* include/*
+	cd submodules/liblcthw && $(MAKE)
+	cp submodules/liblcthw/build/liblcthw.a lib/
+	mkdir include/lcthw
+	cp submodules/liblcthw/build/include/*.h include/lcthw/
+
 # The target build
-all: $(TARGET) tests
+all: submodules $(TARGET) tests
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all

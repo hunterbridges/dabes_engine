@@ -4,6 +4,9 @@ game
 *.wav
 *.aif
 
+lib/*
+include/*
+
 build/*
 *.pbxuser
 !default.pbxuser
