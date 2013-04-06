@@ -4,6 +4,7 @@
 #import "world.h"
 #import "game_entity.h"
 #import "tile_map_parse.h"
+#import "ortho_physics_scene.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -155,7 +156,7 @@ char *bundlePath__;
   Engine_bootstrap(&engine_, NULL);
   self.preferredFramesPerSecond = FPS;
   
-  scene_ = Scene_create(engine_);
+  scene_ = Scene_create(engine_, OrthoPhysicsSceneProto);
   
   self.effect = [[GLKBaseEffect alloc] init];
 }
@@ -164,7 +165,7 @@ char *bundlePath__;
   [EAGLContext setCurrentContext:self.context];
   
   // TODO: CLEANUP
-  Scene_destroy(scene_);
+  scene_->_(destroy)(scene_, engine_);
   engine_->_(destroy)(engine_);
   self.effect = nil;
 }
@@ -176,11 +177,8 @@ char *bundlePath__;
   Input_touch(engine_->input, touchInput_);
   
   if (engine_->frame_now) {
-    Scene_control(scene_, engine_->input);
-    World_solve(engine_->physics, scene_->world, scene_->tile_map,
-                engine_->frame_ticks);
-    
-    Scene_update(scene_, engine_);
+    scene_->_(control)(scene_, engine_);
+    scene_->_(update)(scene_, engine_);
     Input_reset(engine_->input);
   }
 }
@@ -189,7 +187,7 @@ char *bundlePath__;
   scene_->camera->screen_size.w = self.view.bounds.size.width;
   scene_->camera->screen_size.h = self.view.bounds.size.height;
   
-  Scene_render(scene_, engine_);
+  scene_->_(render)(scene_, engine_);
 #ifdef DEBUG
   Graphics_draw_debug_text(engine_->graphics, engine_->frame_ticks);
 #endif

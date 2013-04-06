@@ -29,12 +29,15 @@ What is not yet done:
 * Physics engine:
     * Raycasting
     * Raycast to build an accumulated opposing force
-* Scene management
 * Object scripting
 
 Bugs:
 * Debug grid not working on desktop
 * Debug text currently dead
+* Edge collisions not calculating properly
+* Camera jitter
+* Tiles overlap (or space in between)
+* Tile maps should cull when rendering
 
 ```
 # Ya gonna need dis stuf!

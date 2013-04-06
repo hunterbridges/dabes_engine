@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "../graphics/scene.h"
+#include "../scenes/scene.h"
 
 int Engine_init(void *self) {
     check_mem(self);

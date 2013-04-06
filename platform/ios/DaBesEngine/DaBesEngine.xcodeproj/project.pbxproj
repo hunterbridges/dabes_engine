@@ -24,7 +24,6 @@
 		CA24C79216FC20900045D5DE /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76516FC20900045D5DE /* engine.c */; };
 		CA24C79616FC20900045D5DE /* game_entity.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76E16FC20900045D5DE /* game_entity.c */; };
 		CA24C79816FC20900045D5DE /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77116FC20900045D5DE /* graphics.c */; };
-		CA24C79A16FC20900045D5DE /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77416FC20900045D5DE /* scene.c */; };
 		CA24C79C16FC20900045D5DE /* controller.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77816FC20900045D5DE /* controller.c */; };
 		CA24C79E16FC20900045D5DE /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77B16FC20900045D5DE /* input.c */; };
 		CA24C7A016FC20900045D5DE /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77E16FC20900045D5DE /* object.c */; };
@@ -39,6 +38,8 @@
 		CA30660D17054B0900629F80 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660C17054B0900629F80 /* base64.c */; };
 		CA30661017054C1E00629F80 /* gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660F17054C1E00629F80 /* gzip.c */; };
 		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
+		CA61B612170FB3A600F1CC1A /* ortho_physics_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA61B60C170FB3A600F1CC1A /* ortho_physics_scene.c */; };
+		CA61B614170FB3A600F1CC1A /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA61B60F170FB3A600F1CC1A /* scene.c */; };
 		CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA63D7A41708094C00EE59CA /* ConsoleView.m */; };
 		CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */; };
 		CA63D7C9170F60C800EE59CA /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7C6170F60B400EE59CA /* liblcthw.a */; };
@@ -102,8 +103,6 @@
 		CA24C76F16FC20900045D5DE /* game_entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game_entity.h; sourceTree = "<group>"; };
 		CA24C77116FC20900045D5DE /* graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = graphics.c; sourceTree = "<group>"; };
 		CA24C77216FC20900045D5DE /* graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graphics.h; sourceTree = "<group>"; };
-		CA24C77416FC20900045D5DE /* scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scene.c; sourceTree = "<group>"; };
-		CA24C77516FC20900045D5DE /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		CA24C77816FC20900045D5DE /* controller.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = controller.c; sourceTree = "<group>"; };
 		CA24C77916FC20900045D5DE /* controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = controller.h; sourceTree = "<group>"; };
 		CA24C77B16FC20900045D5DE /* input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = input.c; sourceTree = "<group>"; };
@@ -131,6 +130,10 @@
 		CA30660F17054C1E00629F80 /* gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzip.c; sourceTree = "<group>"; };
 		CA30661217062E5D00629F80 /* tile_map_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tile_map_parse.c; sourceTree = "<group>"; };
 		CA30661317062E5D00629F80 /* tile_map_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map_parse.h; sourceTree = "<group>"; };
+		CA61B60C170FB3A600F1CC1A /* ortho_physics_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ortho_physics_scene.c; sourceTree = "<group>"; };
+		CA61B60D170FB3A600F1CC1A /* ortho_physics_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_physics_scene.h; sourceTree = "<group>"; };
+		CA61B60F170FB3A600F1CC1A /* scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scene.c; sourceTree = "<group>"; };
+		CA61B610170FB3A600F1CC1A /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
 		CA63D7A31708094C00EE59CA /* ConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleView.h; sourceTree = "<group>"; };
 		CA63D7A41708094C00EE59CA /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleView.m; sourceTree = "<group>"; };
 		CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -219,6 +222,7 @@
 				CA24C76D16FC20900045D5DE /* graphics */,
 				CA24C77716FC20900045D5DE /* input */,
 				CA24C78016FC20900045D5DE /* physics */,
+				CA61B60B170FB3A600F1CC1A /* scenes */,
 				CA24C76016FC20900045D5DE /* constants.h */,
 				CA24C76816FC20900045D5DE /* dbg.h */,
 				CA24C76A16FC20900045D5DE /* gameobjects.h */,
@@ -276,8 +280,6 @@
 				CA24C76F16FC20900045D5DE /* game_entity.h */,
 				CA24C77116FC20900045D5DE /* graphics.c */,
 				CA24C77216FC20900045D5DE /* graphics.h */,
-				CA24C77416FC20900045D5DE /* scene.c */,
-				CA24C77516FC20900045D5DE /* scene.h */,
 				CA3066041704231700629F80 /* tile_map.h */,
 				CA3066051704233200629F80 /* tile_map.c */,
 				CA30661317062E5D00629F80 /* tile_map_parse.h */,
@@ -329,6 +331,18 @@
 				CAB359C216FE96E9004CF684 /* InterfaceViewController.m */,
 			);
 			name = Platform;
+			sourceTree = "<group>";
+		};
+		CA61B60B170FB3A600F1CC1A /* scenes */ = {
+			isa = PBXGroup;
+			children = (
+				CA61B60C170FB3A600F1CC1A /* ortho_physics_scene.c */,
+				CA61B60D170FB3A600F1CC1A /* ortho_physics_scene.h */,
+				CA61B60F170FB3A600F1CC1A /* scene.c */,
+				CA61B610170FB3A600F1CC1A /* scene.h */,
+			);
+			name = scenes;
+			path = ../../../../src/scenes;
 			sourceTree = "<group>";
 		};
 		CA63D7A21708093800EE59CA /* Views */ = {
@@ -456,7 +470,6 @@
 				CA24C79216FC20900045D5DE /* engine.c in Sources */,
 				CA24C79616FC20900045D5DE /* game_entity.c in Sources */,
 				CA24C79816FC20900045D5DE /* graphics.c in Sources */,
-				CA24C79A16FC20900045D5DE /* scene.c in Sources */,
 				CA24C79C16FC20900045D5DE /* controller.c in Sources */,
 				CA24C79E16FC20900045D5DE /* input.c in Sources */,
 				CA24C7A016FC20900045D5DE /* object.c in Sources */,
@@ -474,6 +487,8 @@
 				CA30661017054C1E00629F80 /* gzip.c in Sources */,
 				CA30661417062E6100629F80 /* tile_map_parse.c in Sources */,
 				CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */,
+				CA61B612170FB3A600F1CC1A /* ortho_physics_scene.c in Sources */,
+				CA61B614170FB3A600F1CC1A /* scene.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

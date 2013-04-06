@@ -6,7 +6,7 @@
 #include "core/engine.h"
 #include "graphics/game_entity.h"
 #include "graphics/graphics.h"
-#include "graphics/scene.h"
+#include "scenes/scene.h"
 #include "input/input.h"
 #include "physics/fixture.h"
 #include "physics/physics.h"
