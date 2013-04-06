@@ -32,35 +32,39 @@ VRect VRect_from_xywh(double x, double y, double w, double h) {
     return rect;
 }
 
-VRect VRect_inset(VRect rect, double inset) {
-  rect.tl.x += inset;
-  rect.tl.y += inset;
+VRect VRect_inset(VRect rect, VRectInset inset) {
+  double rot = VPoint_angle(rect.tl, rect.tr);
+  VRect new = VRect_rotate(rect, VRect_center(rect), -rot);
   
-  rect.tr.x -= inset;
-  rect.tr.y += inset;
+  new.tl.x += inset.left;
+  new.tl.y += inset.top;
+
+  new.tr.x -= inset.right;
+  new.tr.y += inset.top;
+
+  new.bl.x += inset.left;
+  new.bl.y -= inset.bottom;
+
+  new.br.x -= inset.right;
+  new.br.y -= inset.bottom;
   
-  rect.bl.x += inset;
-  rect.bl.y -= inset;
-  
-  rect.br.x -= inset;
-  rect.br.y -= inset;
-  
-  return rect;
+  new = VRect_rotate(new, VRect_center(new), rot);
+  return new;
 }
 
 VRect VRect_round_out(VRect rect) {
   rect.tl.x = floor(rect.tl.x);
   rect.tl.y = floor(rect.tl.y);
-  
+
   rect.tr.x = ceil(rect.tr.x);
   rect.tr.y = floor(rect.tl.y);
-  
+
   rect.bl.x = floor(rect.bl.x);
   rect.bl.y = ceil(rect.bl.y);
-  
+
   rect.br.x = ceil(rect.br.x);
   rect.br.y = ceil(rect.br.y);
-  
+
   return rect;
 }
 
@@ -97,6 +101,18 @@ VRect VRect_move(VRect box, VPoint move) {
     moved.br = VPoint_add(moved.br, move);
     moved.bl = VPoint_add(moved.bl, move);
     return moved;
+}
+
+VRect VRect_scale(VRect box, double scale) {
+    VRect scaled = box;
+    VPoint center = VRect_center(scaled);
+    scaled = VRect_move(scaled, VPoint_scale(center, -1));
+    scaled.tl = VPoint_scale(scaled.tl, scale);
+    scaled.tr = VPoint_scale(scaled.tr, scale);
+    scaled.bl = VPoint_scale(scaled.bl, scale);
+    scaled.br = VPoint_scale(scaled.br, scale);
+    scaled = VRect_move(scaled, VPoint_scale(center, scale));
+    return scaled;
 }
 
 void VRect_find_axes(VRect box, VPoint *axes) {
@@ -222,6 +238,17 @@ int VRect_contains_point(VRect box, VPoint point) {
         point.y >= bounding.tl.y && point.y <= bounding.bl.y;
 }
 
+int VRect_contains_rect(VRect outer, VRect inner) {
+  int i = 0;
+  int contains = 1;
+  for (i = 0; i < 4; i++) {
+    VPoint test = VRect_vertex(inner, i);
+    contains = contains && VRect_contains_point(outer, test);
+    if (!contains) break;
+  }
+  return contains;
+}
+
 int VRect_is_equal(VRect *a, VRect *b) {
     if (a->tl.x == b->tl.x && a->tl.y == b->tl.y &&
             a->tr.x == b->tr.x && a->tr.y == b->tr.y &&
@@ -249,7 +276,15 @@ VPoint VRect_cnormal_from_mtv(VRect normal_for, VRect against,
 }
 
 VPointRel VPoint_rect_rel(VPoint point, VRect rect) {
-    return 0;
+    int i = 0;
+    unsigned short int all = 15;
+    VPointRel rel = all;
+    for (i = 0; i < 4; i++) {
+      VPoint vertex = VRect_vertex(rect, i);
+      rel &= VPoint_rel(point, vertex);
+    }
+
+    return rel;
 }
 
 #ifdef DABES_SDL

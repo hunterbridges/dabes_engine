@@ -20,11 +20,15 @@ void Scene_restart(Scene *scene, Engine *engine) {
 }
 
 void Scene_reset_camera(Scene *scene) {
-    scene->camera->scale = 1;
+    scene->camera->scale = 1.2;
     scene->camera->rotation_radians = 0;
     scene->camera->track_entity = scene->entities->first->value;
     scene->camera->translation.x = 0;
     scene->camera->translation.y = 0;
+    scene->camera->scene_size.w =
+        scene->tile_map->cols * scene->tile_map->tile_size.w;
+    scene->camera->scene_size.h =
+        scene->tile_map->rows * scene->tile_map->tile_size.h;
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {

@@ -1,5 +1,6 @@
 #include "../core/engine.h"
 #include "game_entity.h"
+#include "../physics/world.h"
 
 int GameEntity_init(void *self) {
     check_mem(self);
@@ -67,6 +68,17 @@ void GameEntity_control(GameEntity *entity, Input *input) {
     return;
 error:
     return;
+}
+
+VRect GameEntity_real_rect(GameEntity *entity) {
+  World *world = entity->fixture->world;
+  VRect freal = Fixture_real_box(entity->fixture);
+  return VRect_scale(freal, world->pixels_per_meter);
+}
+
+VRect GameEntity_bounding_rect(GameEntity *entity) {
+  VRect real = GameEntity_real_rect(entity);
+  return VRect_bounding_box(real);
 }
 
 Object GameEntityProto = {

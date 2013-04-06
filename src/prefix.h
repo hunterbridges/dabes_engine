@@ -2,6 +2,7 @@
 #define __prefix_h
 
 #include <math.h>
+#include <float.h>
 
 #ifndef DABES_IOS
   #include <assert.h>

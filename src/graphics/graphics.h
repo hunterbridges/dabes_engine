@@ -24,13 +24,6 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
 GfxSize load_image_dimensions_from_image(char *filename);
 
-typedef struct GfxEdgeInset {
-  double top;
-  double right;
-  double bottom;
-  double left;
-} GfxEdgeInset;
-
 typedef struct GfxTransform3D {
     float m11, m12, m13, m14;
     float m21, m22, m23, m24;

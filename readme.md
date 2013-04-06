@@ -10,7 +10,7 @@ What is done:
 * Graphics engine:
     * Can load shaders and draw with them
     * Can load SDL surfaces into OpenGL textures
-    * Independent camera
+    * Camera tracking
     * Can render TMX tile maps
 * Physics engine:
     * Physics model that supports angular impulse collisions
@@ -35,7 +35,6 @@ Bugs:
 * Debug grid not working on desktop
 * Debug text currently dead
 * Edge collisions not calculating properly
-* Camera jitter
 * Tiles overlap (or space in between)
 * Tile maps should cull when rendering
 
