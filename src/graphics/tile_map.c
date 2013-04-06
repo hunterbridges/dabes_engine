@@ -123,13 +123,13 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
           
           int gid_col = gid_idx % (int)map->cols;
           int gid_row = gid_idx / (int)map->cols;
-          GfxRect tile_rect =
-              GfxRect_from_xywh(gid_col * tile->size.w * scale,
+          VRect tile_rect =
+              VRect_from_xywh(gid_col * tile->size.w * scale,
                                 gid_row * tile->size.h * scale,
                                 tile->size.w * scale,
                                 tile->size.h * scale);
           
-          tile_rect = GfxRect_inset(GfxRect_round_out(tile_rect), -0.5);
+          tile_rect = VRect_inset(VRect_round_out(tile_rect), -0.5);
           
           Graphics_draw_rect(graphics, tile_rect, tileColor,
                              tile->tileset->texture, tile->tl,

@@ -28,7 +28,7 @@ void Tileset_destroy(Tileset *tileset);
 typedef struct TilesetTile {
   uint32_t gid;
   Tileset *tileset;
-  GfxPoint tl;
+  VPoint tl;
   GfxSize size;
 } TilesetTile;
 

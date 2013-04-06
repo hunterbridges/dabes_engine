@@ -54,7 +54,7 @@ void World_collide_tiles(World *world, Fixture *fixture, TileMap *tile_map) {
         if (fixture->walls == NULL) {
             fixture->walls = List_create();
         }
-        PhysBox *wall = calloc(1, sizeof(PhysBox));
+        VRect *wall = calloc(1, sizeof(VRect));
         *wall = WorldGrid_box_for_cell(world->grid, cell->col, cell->row);
         List_push(fixture->walls, wall);
     }
@@ -66,15 +66,15 @@ void World_collide_fixture(World *world, Fixture *fixture) {
     LIST_FOREACH(near, first, next, current) {
         WorldGridMember *member = current->value;
         if (member->member_type == WORLDGRIDMEMBER_FIXTURE) {
-            PhysPoint mtv = {0,0};
-            //PhysBox this_box = fixture->history[0];
-            PhysBox this_box = Fixture_real_box(fixture);
-            this_box = PhysBox_move(this_box, fixture->step_displacement);
-            //PhysBox other_box = member->fixture->history[0];
-            PhysBox other_box = Fixture_real_box(member->fixture);
-            other_box = PhysBox_move(other_box,
+            VPoint mtv = {0,0};
+            //VRect this_box = fixture->history[0];
+            VRect this_box = Fixture_real_box(fixture);
+            this_box = VRect_move(this_box, fixture->step_displacement);
+            //VRect other_box = member->fixture->history[0];
+            VRect other_box = Fixture_real_box(member->fixture);
+            other_box = VRect_move(other_box,
                                      member->fixture->step_displacement);
-            if (!PhysBox_collision(this_box, other_box, &mtv)) continue;
+            if (!VRect_collision(this_box, other_box, &mtv)) continue;
             if (fixture->collisions == NULL) {
                 fixture->collisions = List_create();
             }
@@ -83,7 +83,7 @@ void World_collide_fixture(World *world, Fixture *fixture) {
             assert(collision != NULL);
             collision->collider = member->fixture;
             collision->mtv = mtv;
-            collision->collision_normal = PhysBox_cnormal_from_mtv(
+            collision->collision_normal = VRect_cnormal_from_mtv(
                     this_box,
                     other_box,
                     mtv);
@@ -140,8 +140,8 @@ error:
     return NULL;
 }
 
-PhysBox World_floor_box(World *world) {
-    PhysBox floor = {
+VRect World_floor_box(World *world) {
+    VRect floor = {
         {0, world->height},
         {world->width, world->height},
         {world->width, world->height * 2},
@@ -150,8 +150,8 @@ PhysBox World_floor_box(World *world) {
     return floor;
 }
 
-PhysBox World_ceil_box(World *world) {
-    PhysBox floor = {
+VRect World_ceil_box(World *world) {
+    VRect floor = {
         {0, -world->height},
         {world->width, -world->height},
         {world->width, 0},
@@ -160,8 +160,8 @@ PhysBox World_ceil_box(World *world) {
     return floor;
 }
 
-PhysBox World_left_wall_box(World *world) {
-    PhysBox floor = {
+VRect World_left_wall_box(World *world) {
+    VRect floor = {
         {-world->width, 0},
         {0, 0},
         {0, world->height},
@@ -170,8 +170,8 @@ PhysBox World_left_wall_box(World *world) {
     return floor;
 }
 
-PhysBox World_right_wall_box(World *world) {
-    PhysBox floor = {
+VRect World_right_wall_box(World *world) {
+    VRect floor = {
         {world->width, 0},
         {world->width * 2, 0},
         {world->width * 2, world->height},

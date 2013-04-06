@@ -7,10 +7,6 @@ int OrthoPhysicsScene_create(struct Scene *scene, Engine *engine) {
                               "media/music/Climb_Loop.aif");
     Music_play(scene->music);
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
-    scene->tile_map = NULL;
-    scene->world = NULL;
-    scene->entities = NULL;
-    scene->started = 0;
     Scene_load_tile_map(scene, engine, "media/tilemaps/reasonable.tmx", 0);
     scene->_(start)(scene, engine);
 
@@ -94,7 +90,7 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
 
     // TODO: Parallax bg camera
     double bgScale = (scene->camera->scale + 2) / 2;
-    GfxPoint screen_center = {
+    VPoint screen_center = {
       .x = scene->camera->screen_size.w / 2.0,
       .y = scene->camera->screen_size.h / 2.0
     };
@@ -108,9 +104,9 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
 
     GLfloat color[4] = {0, 0, 1, 1};
     GfxSize bg_size = {.w = 512, .h = 384};
-    GfxRect gfx_rect = GfxRect_fill_size(bg_size, scene->camera->screen_size);
+    VRect gfx_rect = VRect_fill_size(bg_size, scene->camera->screen_size);
     Graphics_draw_rect(graphics, gfx_rect, color, scene->bg_texture,
-                       GFX_POINT_ZERO, scene->bg_texture->size,0);
+                       VPointZero, scene->bg_texture->size,0);
     Graphics_project_camera(graphics, scene->camera);
 
     TileMap_render(scene->tile_map, graphics,
@@ -173,7 +169,7 @@ int OrthoPhysicsScene_create_world(Scene *scene, Engine *engine) {
 
         entity->fixture = fixture;
         /*
-        PhysBox real_box = Fixture_real_box(fixture);
+        VRect real_box = Fixture_real_box(fixture);
         fixture->history[0] = real_box;
         fixture->history[1] = real_box;
         */

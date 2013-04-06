@@ -2,6 +2,7 @@
 #define __graphics_h
 #include <lcthw/hashmap.h>
 #include "../prefix.h"
+#include "../math/vrect.h"
 
 #ifdef DABES_IOS
 #include <GLKit/GLKMath.h>
@@ -13,39 +14,22 @@
 
 int Graphics_init_GL(int swidth, int sheight);
 
-typedef struct GfxPoint {
-    double x;
-    double y;
-} GfxPoint;
-
-static const GfxPoint GFX_POINT_ZERO = {0,0};
-
 typedef struct GfxSize {
     double w;
     double h;
 } GfxSize;
 
 static const GfxSize GFX_SIZE_ZERO = {0,0};
+VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
 GfxSize load_image_dimensions_from_image(char *filename);
 
-typedef struct GfxRect {
-    GfxPoint tl;
-    GfxPoint tr;
-    GfxPoint bl; //NOTICE bl AND br ARE FLIPPED FROM PhysBox!
-    GfxPoint br;
-} GfxRect;
-
-static const GfxRect GFX_RECT_ZERO = {{0,0},{0,0},{0,0},{0,0}};
-
-GfxRect GfxRect_from_xywh(double x, double y, double w, double h);
-GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size);
-GfxRect GfxRect_inset(GfxRect rect, double inset);
-GfxRect GfxRect_round_out(GfxRect rect);
-
-#ifdef DABES_SDL
-GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect);
-#endif
+typedef struct GfxEdgeInset {
+  double top;
+  double right;
+  double bottom;
+  double left;
+} GfxEdgeInset;
 
 typedef struct GfxTransform3D {
     float m11, m12, m13, m14;
@@ -108,10 +92,10 @@ typedef struct Graphics {
 } Graphics;
 
 // Rendering
-void Graphics_stroke_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
+void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width);
-void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
-        GfxTexture *texture, GfxPoint textureOffset, GfxSize textureSize,
+void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
+        GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
         double rotation);
 void Graphics_draw_debug_text(Graphics *graphics,
         int ticks_since_last);

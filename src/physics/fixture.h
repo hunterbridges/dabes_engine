@@ -10,7 +10,7 @@ typedef struct Fixture {
     void *world;
     double time_scale;
 
-    PhysPoint center;
+    VPoint center;
     double width;
     double height;
 
@@ -24,27 +24,27 @@ typedef struct Fixture {
     double angular_acceleration;
     double moment_of_inertia;
 
-    PhysPoint velocity;
-    PhysPoint acceleration;
+    VPoint velocity;
+    VPoint acceleration;
 
     double step_dt;
-    PhysPoint step_force;
+    VPoint step_force;
     double step_torque;
-    PhysPoint step_displacement;
-    PhysPoint step_velocity;
-    PhysPoint step_acceleration;
+    VPoint step_displacement;
+    VPoint step_velocity;
+    VPoint step_acceleration;
     double step_rotation;
     double step_angular_velocity;
     double step_angular_acceleration;
 
     Controller *controller;
-    PhysPoint input_acceleration;
+    VPoint input_acceleration;
 
     int on_ground;
     int moving;
     int colliding;
 
-    PhysBox history[FIXTURE_HISTORY_LENGTH];
+    VRect history[FIXTURE_HISTORY_LENGTH];
     List *collisions;
     List *walls;
 } Fixture;
@@ -55,10 +55,10 @@ void Fixture_set_rotation_degrees(Fixture *fixture, double degrees);
 void Fixture_set_wh(Fixture *fixture, double w, double h);
 void Fixture_set_mass(Fixture *fixture, double m);
 double Fixture_rotation_degrees(Fixture *fixture);
-PhysBox Fixture_base_box(Fixture *fixture);
-PhysBox Fixture_real_box(Fixture *fixture);
-GfxRect Fixture_display_rect(Fixture *fixture);
-GfxPoint Fixture_display_center(Fixture *fixture);
+VRect Fixture_base_box(Fixture *fixture);
+VRect Fixture_real_box(Fixture *fixture);
+VRect Fixture_display_rect(Fixture *fixture);
+VPoint Fixture_display_center(Fixture *fixture);
 
 void Fixture_step_reset(Physics *physics, Fixture *fixture, double advance_ms);
 void Fixture_step_displace(Physics *physics, Fixture *fixture);
@@ -70,9 +70,9 @@ void Fixture_step_commit(Physics *physics, Fixture *fixture);
 extern Object FixtureProto;
 
 typedef struct FixtureCollision {
-    PhysPoint poc;
-    PhysPoint collision_normal;
-    PhysPoint mtv;
+    VPoint poc;
+    VPoint collision_normal;
+    VPoint mtv;
     Fixture *collider;
 } FixtureCollision;
 

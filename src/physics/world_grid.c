@@ -14,7 +14,7 @@ int WorldGridMember_is_equal(WorldGridMember *a, WorldGridMember *b) {
     return 1;
 }
 
-WorldGridPoint *WorldGridPoint_create(PhysPoint point, WorldGridMember owner) {
+WorldGridPoint *WorldGridPoint_create(VPoint point, WorldGridMember owner) {
     WorldGridPoint *wgpoint = malloc(sizeof(WorldGridPoint));
     check(wgpoint != NULL, "Couldn't make world grid point");
     wgpoint->point = point;
@@ -32,7 +32,7 @@ error:
     return;
 }
 
-int WorldGridPoint_is(WorldGridPoint *wgpoint, PhysPoint point,
+int WorldGridPoint_is(WorldGridPoint *wgpoint, VPoint point,
         WorldGridMember owner) {
     if (wgpoint->point.x != point.x) return 0;
     if (wgpoint->point.y != point.y) return 0;
@@ -95,8 +95,8 @@ error:
 
 int WorldGrid_update_fixture(WorldGrid *grid, Fixture *fixture) {
     check(grid != NULL, "No grid to update.");
-    PhysBox old = fixture->history[1];
-    PhysBox new = fixture->history[0];
+    VRect old = fixture->history[1];
+    VRect new = fixture->history[0];
     WorldGridMember owner = {
         .member_type = WORLDGRIDMEMBER_FIXTURE
     };
@@ -110,7 +110,7 @@ error:
 
 int WorldGrid_add_fixture(WorldGrid *grid, Fixture *fixture) {
     check(grid != NULL, "No grid to add to.");
-    PhysBox box = Fixture_real_box(fixture);
+    VRect box = Fixture_real_box(fixture);
     WorldGridMember owner = {
         .member_type = WORLDGRIDMEMBER_FIXTURE
     };
@@ -121,13 +121,13 @@ error:
     return 0;
 }
 
-int WorldGrid_add_box(WorldGrid *grid, PhysBox box, WorldGridMember owner) {
+int WorldGrid_add_box(WorldGrid *grid, VRect box, WorldGridMember owner) {
     check(grid != NULL, "No grid to add to.");
     unsigned int i = 0;
 
     int rc = 1;
     for (i = 0; i < 4; i++) {
-        PhysPoint point = PhysBox_vertex(box, i);
+        VPoint point = VRect_vertex(box, i);
         int this_rc = WorldGrid_add_point(grid, point, owner);
         check(this_rc == 1, "Failed to add vertex %d to grid", i);
         rc = rc && this_rc;
@@ -138,7 +138,7 @@ error:
     return 0;
 }
 
-int WorldGrid_add_point(WorldGrid *grid, PhysPoint point,
+int WorldGrid_add_point(WorldGrid *grid, VPoint point,
         WorldGridMember owner) {
     check(grid != NULL, "No grid to add to.");
     int row = point.y / grid->grid_size;
@@ -165,7 +165,7 @@ error:
 
 int WorldGrid_remove_fixture(WorldGrid *grid, Fixture *fixture) {
     check(grid != NULL, "No grid to remove from.");
-    PhysBox box = Fixture_real_box(fixture);
+    VRect box = Fixture_real_box(fixture);
     WorldGridMember owner = {
         .member_type = WORLDGRIDMEMBER_FIXTURE
     };
@@ -176,13 +176,13 @@ error:
     return 0;
 }
 
-int WorldGrid_remove_box(WorldGrid *grid, PhysBox box, WorldGridMember owner) {
+int WorldGrid_remove_box(WorldGrid *grid, VRect box, WorldGridMember owner) {
     check(grid != NULL, "No grid to remove from.");
     int i = 0;
 
     int rc = 1;
     for (i = 0; i < 4; i++) {
-        PhysPoint point = PhysBox_vertex(box, i);
+        VPoint point = VRect_vertex(box, i);
         int this_rc = WorldGrid_remove_point(grid, point, owner);
         rc = rc && this_rc;
     }
@@ -192,7 +192,7 @@ error:
     return 0;
 }
 
-int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
+int WorldGrid_remove_point(WorldGrid *grid, VPoint point,
         WorldGridMember owner) {
     check(grid != NULL, "No grid to remove from.");
 
@@ -226,7 +226,7 @@ error:
     return 0;
 }
 
-WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, PhysPoint point) {
+WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, VPoint point) {
     check(grid != NULL, "No grid to search.");
     int row = point.y / grid->grid_size;
     int col = point.x / grid->grid_size;
@@ -242,14 +242,14 @@ error:
     return NULL;
 }
 
-List *WorldGrid_cells_for_box(WorldGrid *grid, PhysBox box) {
+List *WorldGrid_cells_for_box(WorldGrid *grid, VRect box) {
     check(grid != NULL, "No grid to search.");
 
     List *cells = NULL;
 
     int i = 0;
     for (i = 0; i < 4; i++) {
-        PhysPoint point = PhysBox_vertex(box, i);
+        VPoint point = VRect_vertex(box, i);
         WorldGridCell *cell = WorldGrid_cell_for_point(grid, point);
         if (cell == NULL) continue;
         if (cells == NULL) {
@@ -268,7 +268,7 @@ error:
 List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture) {
     List *cells = NULL;
     check(grid != NULL, "No grid to search.");
-    PhysBox box = Fixture_real_box(fixture);
+    VRect box = Fixture_real_box(fixture);
     cells = WorldGrid_cells_for_box(grid, box);
     if (cells == NULL) return NULL;
 
@@ -299,8 +299,8 @@ error:
     return NULL;
 }
 
-PhysBox WorldGrid_box_for_cell(WorldGrid *grid, int col, int row) {
-  PhysBox box = {
+VRect WorldGrid_box_for_cell(WorldGrid *grid, int col, int row) {
+  VRect box = {
     .tl = {
       grid->grid_size * col,
       grid->grid_size * row

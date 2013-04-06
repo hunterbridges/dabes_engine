@@ -29,7 +29,7 @@ void GameEntity_render(GameEntity *self, void *engine) {
     GameEntity *entity = self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
-    GfxRect rect = Fixture_display_rect(entity->fixture);
+    VRect rect = Fixture_display_rect(entity->fixture);
     GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
     if (entity->fixture->colliding) {
         color[1] = 1.f;
@@ -37,15 +37,15 @@ void GameEntity_render(GameEntity *self, void *engine) {
     }
     float degrees = Fixture_rotation_degrees(entity->fixture);
 
-    Graphics_draw_rect(graphics, rect, color, entity->texture, GFX_POINT_ZERO,
+    Graphics_draw_rect(graphics, rect, color, entity->texture, VPointZero,
                        entity->texture->size, degrees);
 }
 
-GfxPoint GameEntity_center(GameEntity *entity) {
+VPoint GameEntity_center(GameEntity *entity) {
     if (entity->fixture) {
         return Fixture_display_center(entity->fixture);
     } else {
-        GfxPoint zero = {0, 0};
+        VPoint zero = {0, 0};
         return zero;
     }
 }

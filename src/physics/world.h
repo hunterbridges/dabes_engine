@@ -25,9 +25,9 @@ void World_destroy(World *world);
 void World_solve(Physics *physics, World *world, TileMap *tile_map,
                  double advance_ms);
 Fixture *World_create_fixture(World *world);
-PhysBox World_floor_box(World *world);
-PhysBox World_ceil_box(World *world);
-PhysBox World_left_wall_box(World *world);
-PhysBox World_right_wall_box(World *world);
+VRect World_floor_box(World *world);
+VRect World_ceil_box(World *world);
+VRect World_left_wall_box(World *world);
+VRect World_right_wall_box(World *world);
 
 #endif

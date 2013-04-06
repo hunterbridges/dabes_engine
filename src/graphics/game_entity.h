@@ -19,7 +19,7 @@ void GameEntity_destroy(void *self);
 void GameEntity_render(GameEntity *self, void *engine);
 void GameEntity_assign_controller(GameEntity *entity, Controller *controller);
 void GameEntity_control(GameEntity *entity, Input *input);
-GfxPoint GameEntity_center(GameEntity *entity);
+VPoint GameEntity_center(GameEntity *entity);
 
 extern Object GameEntityProto;
 

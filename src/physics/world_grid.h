@@ -20,12 +20,12 @@ int WorldGridMember_is_equal(WorldGridMember *a, WorldGridMember *b);
 
 typedef struct WorldGridPoint {
     WorldGridMember owner;
-    PhysPoint point;
+    VPoint point;
 } WorldGridPoint;
 
-WorldGridPoint *WorldGridPoint_create(PhysPoint point, WorldGridMember owner);
+WorldGridPoint *WorldGridPoint_create(VPoint point, WorldGridMember owner);
 void WorldGridPoint_destroy(WorldGridPoint *wgpoint);
-int WorldGridPoint_is(WorldGridPoint *wgpoint, PhysPoint point,
+int WorldGridPoint_is(WorldGridPoint *wgpoint, VPoint point,
         WorldGridMember owner);
 
 typedef struct WorldGridCell {
@@ -50,18 +50,18 @@ void WorldGrid_destroy(WorldGrid *grid);
 int WorldGrid_update_fixture(WorldGrid *grid, Fixture *fixture);
 
 int WorldGrid_add_fixture(WorldGrid *grid, Fixture *fixture);
-int WorldGrid_add_box(WorldGrid *grid, PhysBox box, WorldGridMember owner);
-int WorldGrid_add_point(WorldGrid *grid, PhysPoint point,
+int WorldGrid_add_box(WorldGrid *grid, VRect box, WorldGridMember owner);
+int WorldGrid_add_point(WorldGrid *grid, VPoint point,
         WorldGridMember owner);
 
 int WorldGrid_remove_fixture(WorldGrid *grid, Fixture *fixture);
-int WorldGrid_remove_box(WorldGrid *grid, PhysBox box, WorldGridMember owner);
-int WorldGrid_remove_point(WorldGrid *grid, PhysPoint point,
+int WorldGrid_remove_box(WorldGrid *grid, VRect box, WorldGridMember owner);
+int WorldGrid_remove_point(WorldGrid *grid, VPoint point,
         WorldGridMember owner);
 
-WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, PhysPoint point);
-List *WorldGrid_cells_for_box(WorldGrid *grid, PhysBox box);
+WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, VPoint point);
+List *WorldGrid_cells_for_box(WorldGrid *grid, VRect box);
 List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture);
-PhysBox WorldGrid_box_for_cell(WorldGrid *grid, int col, int row);
+VRect WorldGrid_box_for_cell(WorldGrid *grid, int col, int row);
 
 #endif

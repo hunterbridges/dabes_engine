@@ -4,7 +4,7 @@
 #include "scene.h"
 
 Scene *Scene_create(Engine *engine, SceneProto proto) {
-    Scene *scene = malloc(sizeof(Scene));
+    Scene *scene = calloc(1, sizeof(Scene));
     check(scene != NULL, "Couldn't create scene");
 
     scene->proto = proto;

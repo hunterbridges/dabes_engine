@@ -3,13 +3,14 @@
 #include "graphics.h"
 
 typedef struct Camera {
-    struct GfxPoint focal;
+    struct VPoint focal;
     struct GfxSize screen_size;
     void *track_entity;
 
+    GfxEdgeInset margin;
     double scale;
     double rotation_radians;
-    struct GfxPoint translation;
+    struct VPoint translation;
 } Camera;
 
 Camera *Camera_create(int width, int height);

@@ -100,21 +100,7 @@ GfxSize load_image_dimensions_from_image(char *image_name) {
 }
 
 // GFX
-GfxRect GfxRect_from_xywh(double x, double y, double w, double h) {
-    GfxPoint tl = { x, y };
-    GfxPoint tr = { x + w, y };
-    GfxPoint bl = { x, y + h };
-    GfxPoint br = { x + w, y + h };
-    GfxRect rect = {
-        .tl = tl,
-        .tr = tr,
-        .bl = bl,
-        .br = br
-    };
-    return rect;
-}
-
-GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size) {
+VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     double x, y, w, h;
     double source_ratio = source_size.w / source_size.h;
     double dest_ratio = dest_size.w / dest_size.h;
@@ -129,46 +115,8 @@ GfxRect GfxRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     h = source_size.h / scale;
     x = (w - dest_size.w) / -2;
     y = (h - dest_size.h) / -2;
-    return GfxRect_from_xywh(x, y, w, h);
+    return VRect_from_xywh(x, y, w, h);
 }
-
-GfxRect GfxRect_inset(GfxRect rect, double inset) {
-  rect.tl.x += inset;
-  rect.tl.y += inset;
-  
-  rect.tr.x -= inset;
-  rect.tr.y += inset;
-  
-  rect.bl.x += inset;
-  rect.bl.y -= inset;
-  
-  rect.br.x -= inset;
-  rect.br.y -= inset;
-  
-  return rect;
-}
-
-GfxRect GfxRect_round_out(GfxRect rect) {
-  rect.tl.x = floor(rect.tl.x);
-  rect.tl.y = floor(rect.tl.y);
-  
-  rect.tr.x = ceil(rect.tr.x);
-  rect.tr.y = floor(rect.tl.y);
-  
-  rect.bl.x = floor(rect.bl.x);
-  rect.bl.y = ceil(rect.bl.y);
-  
-  rect.br.x = ceil(rect.br.x);
-  rect.br.y = ceil(rect.br.y);
-  
-  return rect;
-}
-
-#ifdef DABES_SDL
-GfxRect GfxRect_from_SDL_Rect(SDL_Rect rect) {
-    return GfxRect_from_xywh(rect.x, rect.y, rect.w, rect.h);
-}
-#endif
 
 #ifdef DABES_IOS
 GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
@@ -273,15 +221,15 @@ void GfxTexture_destroy(GfxTexture *texture) {
   free(texture);
 }
 
-void Graphics_draw_rect(Graphics *graphics, GfxRect rect, GLfloat color[4],
-        GfxTexture *texture, GfxPoint textureOffset, GfxSize textureSize,
+void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
+        GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
         double rotation) {
     check_mem(graphics);
     Graphics_reset_modelview_matrix(graphics);
     double w = rect.tr.x - rect.tl.x;
     double h = rect.bl.y - rect.tl.y;
 
-    GfxPoint center = {
+    VPoint center = {
         rect.tl.x + w / 2,
         rect.tl.y + h / 2
     };
@@ -385,7 +333,7 @@ void Graphics_draw_debug_text(Graphics *graphics,
     SDL_FreeSurface(debugText);
     graphics->debug_text_texture = load_surface_as_texture(surface);
 
-    GfxRect rect = GfxRect_from_SDL_Rect(debugRect);
+    VRect rect = VRect_from_SDL_Rect(debugRect);
     GLfloat glBlack[4] = {0,0,0,255};
     Graphics_draw_rect(graphics, rect, glBlack, graphics->debug_text_texture, 0);
 #endif
