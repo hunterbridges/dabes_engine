@@ -129,9 +129,6 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
                                 tile->size.w * scale,
                                 tile->size.h * scale);
           
-          VRectInset inset = {-0.5, -0.5, -0.5, -0.5};
-          tile_rect = VRect_inset(VRect_round_out(tile_rect), inset);
-          
           Graphics_draw_rect(graphics, tile_rect, tileColor,
                              tile->tileset->texture, tile->tl,
                              tile->size, 0);
