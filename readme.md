@@ -32,7 +32,6 @@ What is not yet done:
 * Object scripting
 
 Bugs:
-* Debug grid not working on desktop
 * Debug text currently dead
 * Edge collisions not calculating properly
 * Tiles overlap (or space in between)

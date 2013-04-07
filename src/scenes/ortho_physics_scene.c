@@ -118,6 +118,9 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
         GameEntity_render(thing, engine);
     }
 
+    // Camera debug
+    Camera_debug(scene->camera, engine->graphics);
+  
     // Draw the grid
     if (!scene->draw_grid || !scene->world) return;
     Scene_draw_debug_grid(scene, graphics);
@@ -131,7 +134,7 @@ void OrthoPhysicsScene_control(struct Scene *scene, Engine *engine) {
     scene->camera->scale += 0.02 * input->cam_zoom;
     if (scene->camera->scale < 0) scene->camera->scale = 0;
 
-    scene->camera->rotation_radians += 2 * input->cam_rotate;
+    scene->camera->rotation_radians += 2 * input->cam_rotate * M_PI / 180;
 
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 

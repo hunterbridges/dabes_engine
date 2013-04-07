@@ -32,22 +32,16 @@ void Scene_reset_camera(Scene *scene) {
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
-#ifndef DABES_IOS
-    glUseProgram(0);
     Graphics_reset_projection_matrix(graphics);
     Graphics_reset_modelview_matrix(graphics);
 
-    glDisable(GL_MULTISAMPLE);
     Graphics_translate_modelview_matrix(graphics,
             -SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 0.f);
 
     Graphics_reset_projection_matrix(graphics);
-    Graphics_scale_projection_matrix(graphics, scene->camera->scale,
-            scene->camera->scale, 1);
-    Graphics_rotate_projection_matrix(graphics, scene->camera->rotation_radians,
-            0, 0, -1);
+    Graphics_project_camera(graphics, scene->camera);
     glLineWidth(0);
-    glColor4f(1.0, 0.0, 0.0, 1.0);
+    GLfloat color[4] = {0.5, 0.5, 0.5, 0.5};
     double grid = scene->world->grid_size;
     double ppm = scene->world->pixels_per_meter;
     int rows = ceil(scene->world->height / scene->world->grid_size);
@@ -56,30 +50,13 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
     int col = 0;
     for (row = 0; row < rows; row++) {
         for (col = 0; col < cols; col++) {
-            glBegin(GL_LINES);
-            glVertex2f((col * grid) * ppm, (row * grid) * ppm);
-            glVertex2f((col * grid + grid) * ppm, (row * grid) * ppm);
-            glEnd();
-
-            glBegin(GL_LINES);
-            glVertex2f((col * grid + grid) * ppm, (row * grid) * ppm);
-            glVertex2f((col * grid + grid) * ppm, (row * grid + grid) * ppm);
-            glEnd();
-
-            glBegin(GL_LINES);
-            glVertex2f((col * grid + grid) * ppm, (row * grid + grid) * ppm);
-            glVertex2f((col * grid) * ppm, (row * grid + grid) * ppm);
-            glEnd();
-
-            glBegin(GL_LINES);
-            glVertex2f((col * grid) * ppm, (row * grid + grid) * ppm);
-            glVertex2f((col * grid) * ppm, (row * grid) * ppm);
-            glEnd();
+            VRect rect = VRect_from_xywh(col * grid * ppm,
+                                         row * grid * ppm,
+                                         grid * ppm,
+                                         grid * ppm);
+            Graphics_stroke_rect(graphics, rect, color, 0, 0);
         }
     }
-    glEnable(GL_MULTISAMPLE);
-    glUseProgram(graphics->shader);
-#endif
 }
 
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {

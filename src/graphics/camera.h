@@ -22,5 +22,6 @@ VRect Camera_screen_rect(Camera *camera);
 VRect Camera_tracking_rect(Camera *camera);
 VPoint Camera_project_point(Camera *camera, VPoint point);
 VRect Camera_project_rect(Camera *camera, VRect rect);
+void Camera_debug(Camera *camera, Graphics *graphics);
 
 #endif

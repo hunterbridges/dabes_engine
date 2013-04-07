@@ -115,9 +115,6 @@ void World_solve(Physics *physics, World *world, TileMap *tile_map,
     }
     }
 
-    // debug("%d fixtures updated", fixtures_updated);
-    // TODO: Broad phase collisions
-
     LIST_FOREACH(world->fixtures, first, next, current) {
         Fixture *fixture = current->value;
         World_collide_fixture(world, fixture);

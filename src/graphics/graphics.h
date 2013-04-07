@@ -86,7 +86,7 @@ typedef struct Graphics {
 
 // Rendering
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-        double line_width);
+        double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
         double rotation);

@@ -221,6 +221,68 @@ void GfxTexture_destroy(GfxTexture *texture) {
   free(texture);
 }
 
+void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
+                          double line_width, double rotation) {
+    check_mem(graphics);
+    Graphics_reset_modelview_matrix(graphics);
+    double w = rect.tr.x - rect.tl.x;
+    double h = rect.bl.y - rect.tl.y;
+
+    VPoint center = {
+        rect.tl.x + w / 2,
+        rect.tl.y + h / 2
+    };
+    Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
+    Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
+
+    GfxUVertex tex = {0,0,0,0};
+
+    glUniform1i(uniforms[UNIFORM_HAS_TEXTURE], 0);
+#ifdef DABES_IOS
+    glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1,
+                       GL_FALSE, graphics->projection_matrix.gl);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1,
+                       GL_FALSE, graphics->modelview_matrix.gl);
+
+    GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
+
+    GfxUVertex vertices[12] = {
+      // Vertex
+      {-w / 2.0, -h / 2.0, 0, 1},
+      {w / 2.0, -h / 2.0, 0, 1},
+      {w / 2.0, h / 2.0, 0, 1},
+      {-w / 2.0, h / 2.0, 0, 1},
+
+      // Color
+      cVertex, cVertex, cVertex, cVertex,
+
+      // Texture
+      tex, tex, tex, tex
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glLineWidth(line_width);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+#else
+    glDisable(GL_MULTISAMPLE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glColor4fv(color);
+    glLineWidth(line_width);
+    glBegin(GL_LINE_LOOP);
+        glVertex2f(-w / 2.0, -h / 2.0);
+        glVertex2f(w / 2.0, -h / 2.0);
+        glVertex2f(w / 2.0, h / 2.0);
+        glVertex2f(-w / 2.0, h / 2.0);
+    glEnd();
+    glEnable(GL_MULTISAMPLE);
+#endif
+  return;
+error:
+  return;
+}
+                          
 void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
         double rotation) {
@@ -253,14 +315,13 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         tex_br.packed.x = (textureOffset.x + textureSize.w) / texture->size.w;
         tex_br.packed.y = (textureOffset.y + textureSize.h) / texture->size.h;
     }
-
+  
+    glUniform1i(uniforms[UNIFORM_HAS_TEXTURE], texture ? texture->gl_tex : 0);
 #ifdef DABES_IOS
     glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
-    glUniform1i(uniforms[UNIFORM_HAS_TEXTURE],
-                texture ? texture->gl_tex : 0);
 
     GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
 
@@ -562,13 +623,13 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
     check(linked == 1, "Linking shader program");
 
+    uniforms[UNIFORM_HAS_TEXTURE] =
+        glGetUniformLocation(program, "hasTexture");
 #ifdef DABES_IOS
     uniforms[UNIFORM_MODELVIEW_MATRIX] =
         glGetUniformLocation(program, "modelView");
     uniforms[UNIFORM_PROJECTION_MATRIX] =
         glGetUniformLocation(program, "projection");
-    uniforms[UNIFORM_HAS_TEXTURE] =
-        glGetUniformLocation(program, "hasTexture");
     glEnableVertexAttribArray(ATTRIB_VERTEX);
     glEnableVertexAttribArray(ATTRIB_COLOR);
     glEnableVertexAttribArray(ATTRIB_TEXTURE);

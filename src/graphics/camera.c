@@ -68,8 +68,9 @@ void Camera_track(Camera *camera) {
                (close_rel & VPointRelXMore)) {
             diff.x = e_closest.x - t_closest.x;
         }
-        camera->focal = VPoint_add(camera->focal,
-                                   VPoint_scale(diff, 1 / (2 * camera->scale)));
+        diff = VPoint_scale(diff, 1 / (2 * camera->scale));
+        diff = VPoint_rotate(diff, VPointZero, camera->rotation_radians);
+        camera->focal = VPoint_add(camera->focal, diff);
     } else {
         camera->focal.x += camera->translation.x;
         camera->focal.y += camera->translation.y;
@@ -95,8 +96,9 @@ void Graphics_project_camera(Graphics *graphics, Camera *camera) {
             1.0, -1.0);
     Graphics_scale_projection_matrix(graphics, camera->scale,
             camera->scale, 1);
-    Graphics_rotate_projection_matrix(graphics, camera->rotation_radians,
-            0, 0, -1);
+    Graphics_rotate_projection_matrix(graphics,
+                                      camera->rotation_radians * 180 / M_PI,
+                                      0, 0, -1);
     Graphics_translate_projection_matrix(graphics,
                                          -camera->focal.x,
                                          -camera->focal.y,
@@ -137,7 +139,7 @@ VPoint Camera_project_point(Camera *camera, VPoint point) {
   VPoint cam_center = camera->focal;
   VPoint new = VPoint_subtract(point, cam_center);
   
-  new = VPoint_rotate(new, VPointZero, camera->rotation_radians);
+  new = VPoint_rotate(new, VPointZero, -camera->rotation_radians);
   new = VPoint_scale(new, camera->scale);
   new = VPoint_subtract(new, camera->translation);
   
@@ -151,4 +153,29 @@ VRect Camera_project_rect(Camera *camera, VRect rect) {
   new.br = Camera_project_point(camera, rect.br);
   new.bl = Camera_project_point(camera, rect.bl);
   return new;
+}
+
+void Camera_debug(Camera *camera, Graphics *graphics) {
+    Camera screen_cam = {
+      .focal = {0, 0},
+      .screen_size = camera->screen_size,
+      .scale = 1,
+      .rotation_radians = 0,
+      .margin = camera->margin
+    };
+    Graphics_reset_modelview_matrix(graphics);
+    Graphics_reset_projection_matrix(graphics);
+    Graphics_project_camera(graphics, &screen_cam);
+    GLfloat cam_color[4] = {1, 0, 0, 1};
+    VRect track_rect = Camera_tracking_rect(&screen_cam);
+    Graphics_stroke_rect(graphics, track_rect, cam_color, 0, 0);
+  
+    if (camera->track_entity) {
+        GLfloat e_color[4] = {0, 1, 0, 1};
+        GameEntity *entity = camera->track_entity;
+        VRect e_rect = GameEntity_real_rect(entity);
+        VRect e_bound = Camera_project_rect(camera, e_rect);
+        e_bound = VRect_bounding_box(e_bound);
+        Graphics_stroke_rect(graphics, e_bound, e_color, 0, 0);
+    }
 }
