@@ -13,6 +13,8 @@
   int pages_;
   ConsoleView *console_;
   UIPopoverController *popover_;
+  UISwitch *camDebugSwitch_;
+  UISwitch *gridSwitch_;
   
   GraphicalResourceKind importKind_;
   UIImage *importImage_;
@@ -149,14 +151,14 @@
   camDebugLabel.translatesAutoresizingMaskIntoConstraints = NO;
   [debugMenuView_ addSubview:camDebugLabel];
   
-  UISwitch *camDebugSwitch = [[UISwitch alloc] init];
-  camDebugSwitch.translatesAutoresizingMaskIntoConstraints = NO;
-  camDebugSwitch.contentHorizontalAlignment =
+  camDebugSwitch_ = [[UISwitch alloc] init];
+  camDebugSwitch_.translatesAutoresizingMaskIntoConstraints = NO;
+  camDebugSwitch_.contentHorizontalAlignment =
       UIControlContentHorizontalAlignmentCenter;
-  [camDebugSwitch addTarget:self
+  [camDebugSwitch_ addTarget:self
                      action:@selector(camDebugChanged:)
            forControlEvents:UIControlEventValueChanged];
-  [debugMenuView_ addSubview:camDebugSwitch];
+  [debugMenuView_ addSubview:camDebugSwitch_];
   
   UIButton *resetCamButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [resetCamButton setTitle:@"Reset" forState:UIControlStateNormal];
@@ -189,12 +191,12 @@
   gridLabel.translatesAutoresizingMaskIntoConstraints = NO;
   [debugMenuView_ addSubview:gridLabel];
   
-  UISwitch *gridSwitch = [[UISwitch alloc] init];
-  gridSwitch.translatesAutoresizingMaskIntoConstraints = NO;
-  [gridSwitch addTarget:self
+  gridSwitch_ = [[UISwitch alloc] init];
+  gridSwitch_.translatesAutoresizingMaskIntoConstraints = NO;
+  [gridSwitch_ addTarget:self
                  action:@selector(debugGridChanged:)
        forControlEvents:UIControlEventValueChanged];
-  [debugMenuView_ addSubview:gridSwitch];
+  [debugMenuView_ addSubview:gridSwitch_];
   
   UIButton *importSpriteButton =
       [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -233,8 +235,8 @@
       NSDictionaryOfVariableBindings(camLabel, envLabel, rotLabel,
                                      rotSlider, zoomLabel, zoomSlider,
                                      debugMenuView_, resetCamButton,
-                                     camDebugLabel, camDebugSwitch, console_,
-                                     restartSceneButton, gridLabel, gridSwitch,
+                                     camDebugLabel, camDebugSwitch_, console_,
+                                     restartSceneButton, gridLabel, gridSwitch_,
                                      resLabel, importSpriteButton,
                                      importTilesetButton);
   NSArray *headers =
@@ -304,7 +306,7 @@
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[zoomLabel(50)]-[zoomSlider(==rotSlider)]-"
-          @"[camDebugSwitch(==camDebugLabel)]-[resetCamButton(60)]-|"
+          @"[camDebugSwitch_(==camDebugLabel)]-[resetCamButton(60)]-|"
           options:NSLayoutFormatAlignAllBottom
           metrics:nil
           views:views];
@@ -312,7 +314,7 @@
   
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[restartSceneButton(180)]-(40)-[gridLabel]-[gridSwitch(==79)]"
+          @"|-[restartSceneButton(180)]-(40)-[gridLabel]-[gridSwitch_(==79)]"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];

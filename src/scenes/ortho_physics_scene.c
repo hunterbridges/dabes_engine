@@ -32,7 +32,6 @@ void OrthoPhysicsScene_start(struct Scene *scene, Engine *engine) {
     Scene_reset_camera(scene);
     scene->bg_texture = Graphics_texture_from_image(engine->graphics,
                                                     "media/sprites/clouds.png");
-    scene->draw_grid = 0;
 
     OrthoPhysicsScene_create_world(scene, engine);
 
