@@ -126,10 +126,6 @@ VRect Camera_visible_rect(Camera *camera) {
   return cam_rect;
 }
 
-VRect Camera_screen_rect(Camera *camera) {
-  
-};
-
 VRect Camera_tracking_rect(Camera *camera) {
   VRect new = VRect_inset(Camera_base_rect(camera), camera->margin);
   return new;

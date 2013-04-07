@@ -51,7 +51,7 @@
   debugMenuView_.translatesAutoresizingMaskIntoConstraints = YES;
   debugMenuView_.userInteractionEnabled = YES;
   debugMenuView_.delegate = self;
-  debugMenuView_.delaysContentTouches = NO;
+  debugMenuView_.delaysContentTouches = YES;
   debugMenuView_.clipsToBounds = NO;
   debugMenuView_.delegate = self;
   [self.view addSubview:debugMenuView_];
@@ -141,6 +141,23 @@
   zoomSlider.translatesAutoresizingMaskIntoConstraints = NO;
   [debugMenuView_ addSubview:zoomSlider];
   
+  UILabel *camDebugLabel = [[UILabel alloc] init];
+  camDebugLabel.backgroundColor = [UIColor clearColor];
+  camDebugLabel.textColor = [UIColor whiteColor];
+  camDebugLabel.textAlignment = NSTextAlignmentCenter;
+  camDebugLabel.text = @"Debug";
+  camDebugLabel.translatesAutoresizingMaskIntoConstraints = NO;
+  [debugMenuView_ addSubview:camDebugLabel];
+  
+  UISwitch *camDebugSwitch = [[UISwitch alloc] init];
+  camDebugSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+  camDebugSwitch.contentHorizontalAlignment =
+      UIControlContentHorizontalAlignmentCenter;
+  [camDebugSwitch addTarget:self
+                     action:@selector(camDebugChanged:)
+           forControlEvents:UIControlEventValueChanged];
+  [debugMenuView_ addSubview:camDebugSwitch];
+  
   UIButton *resetCamButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [resetCamButton setTitle:@"Reset" forState:UIControlStateNormal];
   resetCamButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -163,6 +180,21 @@
                          action:@selector(restartScene:)
                forControlEvents:UIControlEventTouchUpInside];
   [debugMenuView_ addSubview:restartSceneButton];
+  
+  UILabel *gridLabel = [[UILabel alloc] init];
+  gridLabel.backgroundColor = [UIColor clearColor];
+  gridLabel.textColor = [UIColor whiteColor];
+  gridLabel.textAlignment = NSTextAlignmentCenter;
+  gridLabel.text = @"Draw World Grid";
+  gridLabel.translatesAutoresizingMaskIntoConstraints = NO;
+  [debugMenuView_ addSubview:gridLabel];
+  
+  UISwitch *gridSwitch = [[UISwitch alloc] init];
+  gridSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+  [gridSwitch addTarget:self
+                 action:@selector(debugGridChanged:)
+       forControlEvents:UIControlEventValueChanged];
+  [debugMenuView_ addSubview:gridSwitch];
   
   UIButton *importSpriteButton =
       [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -200,9 +232,11 @@
   NSDictionary *views =
       NSDictionaryOfVariableBindings(camLabel, envLabel, rotLabel,
                                      rotSlider, zoomLabel, zoomSlider,
-                                     debugMenuView_, resetCamButton, console_,
-                                     restartSceneButton, resLabel,
-                                     importSpriteButton, importTilesetButton);
+                                     debugMenuView_, resetCamButton,
+                                     camDebugLabel, camDebugSwitch, console_,
+                                     restartSceneButton, gridLabel, gridSwitch,
+                                     resLabel, importSpriteButton,
+                                     importTilesetButton);
   NSArray *headers =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[camLabel]-|"
@@ -260,7 +294,8 @@
   
   NSArray *row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[rotLabel(50)]-[rotSlider(<=camLabel)]-[resetCamButton(60)]-|"
+          @"|-[rotLabel(50)]-[rotSlider(<=camLabel)]-[camDebugLabel(==79)]-"
+          @"[resetCamButton(60)]-|"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
@@ -268,7 +303,8 @@
   
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[zoomLabel(50)]-[zoomSlider(==rotSlider)]-[resetCamButton(60)]-|"
+          @"|-[zoomLabel(50)]-[zoomSlider(==rotSlider)]-"
+          @"[camDebugSwitch(==camDebugLabel)]-[resetCamButton(60)]-|"
           options:NSLayoutFormatAlignAllBottom
           metrics:nil
           views:views];
@@ -276,7 +312,7 @@
   
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[restartSceneButton(180)]"
+          @"|-[restartSceneButton(180)]-(40)-[gridLabel]-[gridSwitch(==79)]"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
@@ -496,6 +532,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     importAlert_ = nil;
     importImage_ = nil;
   }
+}
+
+- (void)camDebugChanged:(UISwitch *)sender {
+  engineVC_.scene->debug_camera = sender.on;
+}
+
+- (void)debugGridChanged:(UISwitch *)sender {
+  engineVC_.scene->draw_grid = sender.on;
 }
 
 @end

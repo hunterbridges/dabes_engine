@@ -11,6 +11,7 @@ typedef struct Input {
     int cam_reset;
     int cam_zoom;
     int cam_rotate;
+    int cam_debug;
 } Input;
 
 extern Object InputProto;

@@ -30,6 +30,7 @@ typedef struct Scene {
     List *entities;
 
     short int draw_grid;
+    short int debug_camera;
     int started;
 } Scene;
 
