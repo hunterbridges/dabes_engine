@@ -24,3 +24,8 @@ profile
 .DS_Store
 test-reports/
 */.DS_Store
+
+platform/ios/DaBesEngine/build
+platform/ios/DaBesEngine/build/*
+submodules/liblcthw/xcode/build
+submodules/liblcthw/xcode/build/*
