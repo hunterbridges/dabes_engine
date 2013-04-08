@@ -46,7 +46,7 @@ int read_file_data(char *filename, unsigned long int **data, GLint *size) {
     unsigned int sz = ftell(file);
     rewind(file);
 
-    output = malloc(sz * sizeof(unsigned long int));
+    output = malloc(sz * sizeof(unsigned long int) + 1);
     check_mem(output);
 
     fread(output, 1, sz, file);

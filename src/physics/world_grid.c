@@ -129,7 +129,6 @@ int WorldGrid_add_box(WorldGrid *grid, VRect box, WorldGridMember owner) {
     for (i = 0; i < 4; i++) {
         VPoint point = VRect_vertex(box, i);
         int this_rc = WorldGrid_add_point(grid, point, owner);
-        check(this_rc == 1, "Failed to add vertex %d to grid", i);
         rc = rc && this_rc;
     }
 
@@ -143,10 +142,10 @@ int WorldGrid_add_point(WorldGrid *grid, VPoint point,
     check(grid != NULL, "No grid to add to.");
     int row = point.y / grid->grid_size;
     int col = point.x / grid->grid_size;
-    if (col < 0) col = 0;
-    if (col >= grid->cols) col = grid->cols - 1;
-    if (row < 0) row = 0;
-    if (row >= grid->rows) row = grid->rows - 1;
+    if (col < 0) return 0;
+    if (col >= grid->cols) return 0;
+    if (row < 0) return 0;
+    if (row >= grid->rows) return 0;
 
     int idx = row * grid->cols + col;
     WorldGridCell *cell = DArray_get(grid->cells, idx);
@@ -155,8 +154,10 @@ int WorldGrid_add_point(WorldGrid *grid, VPoint point,
         DArray_set(grid->cells, idx, cell);
     }
 
-    WorldGridPoint *wgpoint = WorldGridPoint_create(point, owner);
-    List_push(cell->points, wgpoint);
+    if (cell) {
+      WorldGridPoint *wgpoint = WorldGridPoint_create(point, owner);
+      List_push(cell->points, wgpoint);
+    }
 
     return 1;
 error:

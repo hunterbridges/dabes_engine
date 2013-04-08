@@ -35,6 +35,7 @@ error:
 
 void TileMapLayer_destroy(TileMapLayer *layer) {
   check(layer != NULL, "No layer to destroy");
+  if (layer->texture) GfxTexture_destroy(layer->texture);
   if (layer->tile_gids != NULL) free(layer->tile_gids);
   free(layer);
   return;
@@ -114,19 +115,8 @@ void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics) {
   
 #ifdef DABES_IOS
     CGContextRelease(context);
-    CGDataProviderRef dataProvider =
-        CGDataProviderCreateWithData(NULL, rawData, bytesPerRow * height, NULL);
-    CGImageRef cgImage = CGImageCreate(width, height, bitsPerComponent,
-                                       bitsPerComponent * 4, bytesPerRow,
-                                       colorSpace,
-                                       kCGImageAlphaPremultipliedLast |
-                                           kCGBitmapByteOrder32Big,
-                                       dataProvider, NULL, false,
-                                       kCGRenderingIntentDefault);
-    layer->texture = GfxTexture_from_CGImage(cgImage);
-    if (tileset_img) CGImageRelease(tileset_img);
-    CGDataProviderRelease(dataProvider);
     CGColorSpaceRelease(colorSpace);
+    layer->texture = GfxTexture_from_data(rawData, width, height);
     free(rawData);
 #else
     layer->texture = GfxTexture_from_surface(surface);

@@ -58,6 +58,7 @@ void World_collide_tiles(World *world, Fixture *fixture, TileMap *tile_map) {
         *wall = WorldGrid_box_for_cell(world->grid, cell->col, cell->row);
         List_push(fixture->walls, wall);
     }
+    List_destroy(cells);
 }
 
 void World_collide_fixture(World *world, Fixture *fixture) {

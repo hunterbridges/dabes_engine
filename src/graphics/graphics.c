@@ -118,11 +118,12 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     return VRect_from_xywh(x, y, w, h);
 }
 
-#ifdef DABES_IOS
-GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
-    check(image != NULL, "No CGImage to load");
-
+GfxTexture *GfxTexture_from_data(unsigned char *data, int width, int height) {
     GfxTexture *texture = calloc(1, sizeof(GfxTexture));
+    check(texture != NULL, "Couldn't not allocate texture");
+    texture->size.w = width;
+    texture->size.h = height;
+  
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -133,12 +134,23 @@ GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
 #if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
     color_format = GL_BGRA;
 #endif
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width,
+                 height, 0, color_format,
+                 GL_UNSIGNED_BYTE, data);
+    return texture;
+error:
+    return NULL;
+}
+
+#ifdef DABES_IOS
+GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
+    check(image != NULL, "No CGImage to load");
+
     int width = CGImageGetWidth(image);
     int height = CGImageGetHeight(image);
-    texture->size.w = width;
-    texture->size.h = height;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     unsigned char *rawData = calloc(1, height * width * 4);
+    check(rawData != NULL, "Couldn't not allocate context buffer");
     int bytesPerPixel = 4;
     int bytesPerRow = bytesPerPixel * width;
     int bitsPerComponent = 8;
@@ -150,14 +162,13 @@ GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
     CGColorSpaceRelease(colorSpace);
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width,
-                 height, 0, color_format,
-                 GL_UNSIGNED_BYTE, rawData);
+    GfxTexture *texture = GfxTexture_from_data(rawData, width, height);
     CGContextRelease(context);
     free(rawData);
     CGImageRelease(image);
     return texture;
 error:
+    CGImageRelease(image);
     return 0;
 }
 #endif
@@ -166,24 +177,8 @@ error:
 GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
     check(surface != NULL, "No surface to load");
 
-    GfxTexture *texture = calloc(1, sizeof(GfxTexture));
-    glGenTextures(1, &(texture->gl_tex));
-    glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GLenum color_format = GL_RGBA;
-#if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
-    color_format = GL_BGRA;
-#endif
-#ifndef DABES_IOS
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-#endif
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0,
-        color_format, GL_UNSIGNED_BYTE, surface->pixels);
-    texture->size.w = surface->w;
-    texture->size.h = surface->h;
+    GfxTexture *texture =
+        GfxTexture_from_data(surface->pixels, surface->w, surface->h);
     SDL_FreeSurface(surface);
     return texture;
 error:

@@ -43,20 +43,26 @@ TileMapParseStatus TileMapLayer_parse_data(xmlTextReaderPtr reader,
     } else if (streq(attrName, "compression")) {
       check(streq(attrVal, "gzip"), "Incorrect layer data compression");
     }
+    xmlFree(attrName);
+    xmlFree(attrVal);
   }
   
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
         streq(childName, "data")) {
+      xmlFree(childName);
       break;
     } else if (xmlTextReaderNodeType(reader) == XML_TEXT_NODE) {
       int tile_count = 0;
-      extract_gids_from_encoded_data(xmlTextReaderValue(reader),
+      xmlChar *data = xmlTextReaderValue(reader);
+      extract_gids_from_encoded_data(data,
                                      &(layer->tile_gids), &tile_count);
+      xmlFree(data);
       check(tile_count == map->rows * map->cols, "Inconsistent layer size");
       layer->gid_count = tile_count;
     }
+    xmlFree(childName);
   }
   
   return status;
@@ -82,17 +88,22 @@ TileMapParseStatus TileMap_parse_layer(xmlTextReaderPtr reader, TileMap *map,
     } else if (streq(attrName, "visible")) {
       layer->visible = atoi((const char *)attrVal);
     }
+    
+    xmlFree(attrName);
+    xmlFree(attrVal);
   }
   
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
         streq(childName, "layer")) {
+      xmlFree(childName);
       break;
     } else if (streq(childName, "data")) {
       status = TileMapLayer_parse_data(reader, map, layer);
       check(status == TILEMAP_PARSE_OK, "Failed to parse layer data");
     }
+    xmlFree(childName);
   }
   
   if (status == TILEMAP_PARSE_OK) {
@@ -126,11 +137,15 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
       tileset->name = calloc(1, strlen((const char *)attrVal) + 1);
       strcpy(tileset->name, (const char *)attrVal);
     }
+    
+    xmlFree(attrName);
+    xmlFree(attrVal);
   }
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
         streq(childName, "tileset")) {
+      xmlFree(childName);
       break;
     } else if (streq(childName, "image")) {
       while (xmlTextReaderMoveToNextAttribute(reader)) {
@@ -151,6 +166,9 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
             free(cpath);
             Tileset_destroy(tileset);
             Engine_log("Cannot open map. Missing tileset <%s>", attrVal);
+            xmlFree(attrName);
+            xmlFree(attrVal);
+            xmlFree(childName);
             return TILEMAP_PARSE_MISSING_IMAGE;
           }
           fclose(fileexists);
@@ -159,7 +177,11 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
                                                          cpath);
           tileset->img_src = cpath;
         }
+        
+        xmlFree(attrName);
+        xmlFree(attrVal);
       }
+      xmlFree(childName);
     }
   }
   
@@ -179,8 +201,10 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
   xmlChar *name = xmlTextReaderName(reader);
   if (!(streq(name, "map") &&
         xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE)) {
+    xmlFree(name);
     return TILEMAP_PARSE_INVALID_FORMAT;
   }
+  xmlFree(name);
   
   while (xmlTextReaderMoveToNextAttribute(reader)) {
     xmlChar *attrName = xmlTextReaderName(reader);
@@ -188,6 +212,8 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
     
     if (streq(attrName, "orientation")) {
       if (!streq(attrVal, "orthogonal")) {
+        xmlFree(attrName);
+        xmlFree(attrVal);
         return TILEMAP_PARSE_INVALID_ORIENTATION;
       }
     } else if (streq(attrName, "width")) {
@@ -199,12 +225,15 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
     } else if (streq(attrName, "tileheight")) {
       map->tile_size.h = atoi((const char *)attrVal);
     }
+    xmlFree(attrName);
+    xmlFree(attrVal);
   }
   
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
         streq(childName, "map")) {
+      xmlFree(childName);
       break;
     } else if (streq(childName, "tileset")) {
       Tileset *tileset = NULL;
@@ -214,9 +243,13 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
     } else if (streq(childName, "layer")) {
       TileMapLayer *layer = NULL;
       status = TileMap_parse_layer(reader, map, &layer);
-      if (status != TILEMAP_PARSE_OK) return status;
+      if (status != TILEMAP_PARSE_OK) {
+          xmlFree(childName);
+          return status;
+      }
       DArray_push(map->layers, layer);
     }
+    xmlFree(childName);
   }
   
   return status;

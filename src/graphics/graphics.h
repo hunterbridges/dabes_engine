@@ -57,6 +57,7 @@ typedef struct GfxTexture {
   GLuint gl_tex;
 } GfxTexture;
 
+GfxTexture *GfxTexture_from_data(unsigned char *data, int width, int height);
 GfxTexture *GfxTexture_from_image(char *image_name);
 #ifdef DABES_IOS
 GfxTexture *GfxTexture_from_CGImage(CGImageRef image);

@@ -45,6 +45,6 @@ int decompress_data(unsigned char* abSrc, int nLenSrc, unsigned char **abDst,
     nRet = zInfo.total_out;
   }
   //*abDst = realloc(*abDst, zInfo.total_out);
-  deflateEnd(&zInfo);
+  inflateEnd(&zInfo);
   return(nRet);
 }

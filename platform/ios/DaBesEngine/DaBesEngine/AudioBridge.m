@@ -36,6 +36,7 @@
     NSString *absPath = [[[NSBundle mainBundle] bundlePath]
                          stringByAppendingPathComponent:str];
     NSURL *url = [NSURL fileURLWithPath:absPath];
+    volume_ = 1;
     [self loadURL:url];
 }
 
