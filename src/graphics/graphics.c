@@ -189,10 +189,15 @@ GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
 error:
     return 0;
 }
+
+SDL_Surface *Graphics_load_SDLImage(char *image_name) {
+    SDL_Surface *image = IMG_Load(image_name);
+    return image;
+}
 #endif
 
-GfxTexture *GfxTexture_from_image(char *image_name) {
 #ifdef DABES_IOS
+CGImageRef Graphics_load_CGImage(char *image_name) {
     unsigned long int *data = NULL;
     GLint size = 0;
     read_file_data(image_name, &data, &size);
@@ -204,9 +209,16 @@ GfxTexture *GfxTexture_from_image(char *image_name) {
                                           kCGRenderingIntentDefault);
     CGDataProviderRelease(provider);
     CFRelease(cf_data);
+    return cg_image;
+}
+#endif
+
+GfxTexture *GfxTexture_from_image(char *image_name) {
+#ifdef DABES_IOS
+    CGImageRef cg_image = Graphics_load_CGImage(image_name);
     return GfxTexture_from_CGImage(cg_image);
 #else
-    SDL_Surface *image = IMG_Load(image_name);
+    SDL_Surface *image = Graphics_load_SDLImage(image_name);
     return GfxTexture_from_surface(image);
 #endif
     return NULL;
@@ -554,7 +566,7 @@ int Graphics_init(void *self) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   
     Graphics_load_shader(graphics, shader_path("decal.vert"),

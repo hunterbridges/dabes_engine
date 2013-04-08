@@ -38,6 +38,7 @@ typedef struct TileMapLayer {
     int visible;
     int gid_count;
     uint32_t *tile_gids;
+    GfxTexture *texture;
 } TileMapLayer;
 
 TileMapLayer *TileMapLayer_create();
@@ -56,5 +57,7 @@ TileMap *TileMap_create();
 void TileMap_destroy(TileMap *map);
 void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell);
 TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid);
+
+void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics);
 
 #endif

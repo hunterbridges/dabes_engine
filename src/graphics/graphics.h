@@ -19,7 +19,7 @@ typedef struct GfxSize {
     double h;
 } GfxSize;
 
-static const GfxSize GFX_SIZE_ZERO = {0,0};
+static const GfxSize GfxSizeZero = {0,0};
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
 GfxSize load_image_dimensions_from_image(char *filename);
@@ -85,6 +85,13 @@ typedef struct Graphics {
 } Graphics;
 
 // Rendering
+#ifdef DABES_IOS
+CGImageRef Graphics_load_CGImage(char *image_name);
+#endif
+#ifdef DABES_SDL
+SDL_Surface *Graphics_load_SDLImage(char *image_name);
+#endif
+
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],

@@ -34,8 +34,6 @@ What is not yet done:
 Bugs:
 * Debug text currently dead
 * Edge collisions not calculating properly
-* Tiles overlap (or space in between)
-* Tile maps should cull when rendering
 
 ```
 # Ya gonna need dis stuf!
