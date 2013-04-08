@@ -34,6 +34,8 @@ What is not yet done:
 Bugs:
 * Debug text currently dead
 * Edge collisions not calculating properly
+* Tile maps should be disposed of more thoroughly (destroy is leaking)
+* Drawing very large tilemaps returns a black texture
 
 ```
 # Ya gonna need dis stuf!
