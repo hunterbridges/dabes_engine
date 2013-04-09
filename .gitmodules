@@ -1,3 +1,4 @@
 [submodule "submodules/liblcthw"]
 	path = submodules/liblcthw
     url = git://github.com/hunterbridges/liblcthw.git
+    ignore = dirty
