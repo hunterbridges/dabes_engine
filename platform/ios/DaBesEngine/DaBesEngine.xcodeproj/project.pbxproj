@@ -55,6 +55,7 @@
 		CAB359BF16FE6AF5004CF684 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB359BE16FE6AF5004CF684 /* AVFoundation.framework */; };
 		CAB359C316FE96E9004CF684 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB359C216FE96E9004CF684 /* InterfaceViewController.m */; };
 		CAB359C716FED230004CF684 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CAB359C616FED230004CF684 /* blueprint.jpg */; };
+		CAE3234E171CFB2500E7F7FB /* vmatrix.c in Sources */ = {isa = PBXBuildFile; fileRef = CAE3234D171CFB2400E7F7FB /* vmatrix.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +158,8 @@
 		CAB359C116FE96E9004CF684 /* InterfaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterfaceViewController.h; sourceTree = "<group>"; };
 		CAB359C216FE96E9004CF684 /* InterfaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InterfaceViewController.m; sourceTree = "<group>"; };
 		CAB359C616FED230004CF684 /* blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blueprint.jpg; sourceTree = "<group>"; };
+		CAE3234C171CFB0B00E7F7FB /* vmatrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vmatrix.h; path = ../../../../src/math/vmatrix.h; sourceTree = "<group>"; };
+		CAE3234D171CFB2400E7F7FB /* vmatrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vmatrix.c; path = ../../../../src/math/vmatrix.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,6 +379,8 @@
 				CA694525170FC52A0021E89B /* vpoint.c */,
 				CA694527170FC6E30021E89B /* vrect.c */,
 				CA694528170FC6E30021E89B /* vrect.h */,
+				CAE3234C171CFB0B00E7F7FB /* vmatrix.h */,
+				CAE3234D171CFB2400E7F7FB /* vmatrix.c */,
 			);
 			name = math;
 			sourceTree = "<group>";
@@ -509,6 +514,7 @@
 				CA61B614170FB3A600F1CC1A /* scene.c in Sources */,
 				CA694526170FC52A0021E89B /* vpoint.c in Sources */,
 				CA694529170FC6E80021E89B /* vrect.c in Sources */,
+				CAE3234E171CFB2500E7F7FB /* vmatrix.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

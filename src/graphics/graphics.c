@@ -15,46 +15,8 @@
 #endif
 #endif
 
-// uniform index
-enum {
-	UNIFORM_PROJECTION_MATRIX,
-	UNIFORM_MODELVIEW_MATRIX,
-  UNIFORM_HAS_TEXTURE,
-	NUM_UNIFORMS
-} UNIFORMS;
-GLint uniforms[NUM_UNIFORMS];
-
-// attribute index
-enum {
-	ATTRIB_VERTEX,
-	ATTRIB_COLOR,
-  ATTRIB_TEXTURE,
-	NUM_ATTRIBUTES
-} ATTRIBS;
-GLint attributes[NUM_ATTRIBUTES];
-
-void mat4f_MultiplyMat4f(const float* a, const float* b, float* mout)
-{
-  mout[0]  = a[0] * b[0]  + a[4] * b[1]  + a[8] * b[2]   + a[12] * b[3];
-  mout[1]  = a[1] * b[0]  + a[5] * b[1]  + a[9] * b[2]   + a[13] * b[3];
-  mout[2]  = a[2] * b[0]  + a[6] * b[1]  + a[10] * b[2]  + a[14] * b[3];
-  mout[3]  = a[3] * b[0]  + a[7] * b[1]  + a[11] * b[2]  + a[15] * b[3];
-
-  mout[4]  = a[0] * b[4]  + a[4] * b[5]  + a[8] * b[6]   + a[12] * b[7];
-  mout[5]  = a[1] * b[4]  + a[5] * b[5]  + a[9] * b[6]   + a[13] * b[7];
-  mout[6]  = a[2] * b[4]  + a[6] * b[5]  + a[10] * b[6]  + a[14] * b[7];
-  mout[7]  = a[3] * b[4]  + a[7] * b[5]  + a[11] * b[6]  + a[15] * b[7];
-
-  mout[8]  = a[0] * b[8]  + a[4] * b[9]  + a[8] * b[10]  + a[12] * b[11];
-  mout[9]  = a[1] * b[8]  + a[5] * b[9]  + a[9] * b[10]  + a[13] * b[11];
-  mout[10] = a[2] * b[8]  + a[6] * b[9]  + a[10] * b[10] + a[14] * b[11];
-  mout[11] = a[3] * b[8]  + a[7] * b[9]  + a[11] * b[10] + a[15] * b[11];
-
-  mout[12] = a[0] * b[12] + a[4] * b[13] + a[8] * b[14]  + a[12] * b[15];
-  mout[13] = a[1] * b[12] + a[5] * b[13] + a[9] * b[14]  + a[13] * b[15];
-  mout[14] = a[2] * b[12] + a[6] * b[13] + a[10] * b[14] + a[14] * b[15];
-  mout[15] = a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15];
-}
+GLint GfxShader_uniforms[NUM_UNIFORMS];
+GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
 int Graphics_init_GL(int swidth, int sheight) {
     glEnable(GL_TEXTURE_2D);
@@ -118,25 +80,60 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     return VRect_from_xywh(x, y, w, h);
 }
 
-GfxTexture *GfxTexture_from_data(unsigned char *data, int width, int height) {
+static inline int data_potize(unsigned char **data, int width, int height,
+                              int *pot_width, int *pot_height) {
+  int pot_w = 2;
+  int pot_h = 2;
+  while (pot_w < width) pot_w <<= 1;
+  while (pot_h < height) pot_h <<= 1;
+
+  *data = realloc(*data, pot_w * pot_h * sizeof(unsigned char) * 4);
+  check(data != NULL, "Couldn't realloc texture for potize");
+  uint32_t **new_data = (uint32_t **)data;
+
+  *pot_width = pot_w;
+  *pot_height = pot_h;
+
+  int last_orig_index = width * height - 1;
+  int i = 0;
+  for (i = last_orig_index; i >= 0; i--) {
+    int old_col = i % width;
+    int old_row = i / width;
+    int new_index = old_row * pot_w + old_col;
+    (*new_data)[new_index] = (*new_data)[i];
+  }
+
+  return 1;
+error:
+  return 0;
+}
+
+GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height) {
     GfxTexture *texture = calloc(1, sizeof(GfxTexture));
     check(texture != NULL, "Couldn't not allocate texture");
     texture->size.w = width;
     texture->size.h = height;
-  
+
+    int pot_width, pot_height;
+    int rc = data_potize(data, width, height, &pot_width, &pot_height);
+    check(rc == 1, "Could not potize data");
+
+    texture->pot_size.w = pot_width;
+    texture->pot_size.h = pot_height;
+
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     GLenum color_format = GL_RGBA;
 #if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
     color_format = GL_BGRA;
 #endif
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width,
-                 height, 0, color_format,
-                 GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pot_width,
+                 pot_height, 0, color_format,
+                 GL_UNSIGNED_BYTE, *data);
     return texture;
 error:
     return NULL;
@@ -144,11 +141,12 @@ error:
 
 #ifdef DABES_IOS
 GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
+    CGColorSpaceRef colorSpace = NULL;
     check(image != NULL, "No CGImage to load");
 
     int width = CGImageGetWidth(image);
     int height = CGImageGetHeight(image);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    colorSpace = CGColorSpaceCreateDeviceRGB();
     unsigned char *rawData = calloc(1, height * width * 4);
     check(rawData != NULL, "Couldn't not allocate context buffer");
     int bytesPerPixel = 4;
@@ -162,12 +160,12 @@ GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
     CGColorSpaceRelease(colorSpace);
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
 
-    GfxTexture *texture = GfxTexture_from_data(rawData, width, height);
+    GfxTexture *texture = GfxTexture_from_data(&rawData, width, height);
     CGContextRelease(context);
-    free(rawData);
     CGImageRelease(image);
     return texture;
 error:
+    if (colorSpace) CGColorSpaceRelease(colorSpace);
     CGImageRelease(image);
     return 0;
 }
@@ -178,7 +176,8 @@ GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
     check(surface != NULL, "No surface to load");
 
     GfxTexture *texture =
-        GfxTexture_from_data(surface->pixels, surface->w, surface->h);
+        GfxTexture_from_data((unsigned char **)&surface->pixels,
+                surface->w, surface->h);
     SDL_FreeSurface(surface);
     return texture;
 error:
@@ -244,11 +243,10 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 
     GfxUVertex tex = {0,0,0,0};
 
-    glUniform1i(uniforms[UNIFORM_HAS_TEXTURE], 0);
-#ifdef DABES_IOS
-    glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1,
+    glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE], 0);
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1,
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
 
     GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
@@ -269,27 +267,20 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Texture
+#ifdef DABES_SDL
+    glDisable(GL_MULTISAMPLE);
+#endif
     glBindTexture(GL_TEXTURE_2D, 0);
     glLineWidth(line_width);
     glDrawArrays(GL_LINE_LOOP, 0, 4);
-#else
-    glDisable(GL_MULTISAMPLE);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glColor4fv(color);
-    glLineWidth(line_width);
-    glBegin(GL_LINE_LOOP);
-        glVertex2f(-w / 2.0, -h / 2.0);
-        glVertex2f(w / 2.0, -h / 2.0);
-        glVertex2f(w / 2.0, h / 2.0);
-        glVertex2f(-w / 2.0, h / 2.0);
-    glEnd();
+    return;
+#ifdef DABES_SDL
     glEnable(GL_MULTISAMPLE);
 #endif
-  return;
 error:
   return;
 }
-                          
+
 void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
         double rotation) {
@@ -322,12 +313,26 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         tex_br.packed.x = (textureOffset.x + textureSize.w) / texture->size.w;
         tex_br.packed.y = (textureOffset.y + textureSize.h) / texture->size.h;
     }
-  
-    glUniform1i(uniforms[UNIFORM_HAS_TEXTURE], texture ? texture->gl_tex : 0);
-#ifdef DABES_IOS
-    glUniformMatrix4fv(uniforms[UNIFORM_PROJECTION_MATRIX], 1,
+
+    // Remap the texture coords to the power-of-two compatible ones.
+    VPoint pot_scale = {
+        texture->size.w / texture->pot_size.w,
+        texture->size.h / texture->pot_size.h
+    };
+    tex_tl.packed.x *= pot_scale.x;
+    tex_tr.packed.x *= pot_scale.x;
+    tex_bl.packed.x *= pot_scale.x;
+    tex_br.packed.x *= pot_scale.x;
+    tex_tl.packed.y *= pot_scale.y;
+    tex_tr.packed.y *= pot_scale.y;
+    tex_bl.packed.y *= pot_scale.y;
+    tex_br.packed.y *= pot_scale.y;
+
+    glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
+                texture ? texture->gl_tex : 0);
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_MATRIX], 1,
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
 
     GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
@@ -348,26 +353,11 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Texture
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindTexture(GL_TEXTURE_2D, 0);
-#else
-    glColor4fv(color);
-    glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
-    if (texture) glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(tex_tl.packed.x, tex_tl.packed.y);
-        glVertex2f(-w / 2.0, -h / 2.0);
-        glTexCoord2f(tex_tr.packed.x, tex_tr.packed.y);
-        glVertex2f(w / 2.0, -h / 2.0);
-        glTexCoord2f(tex_bl.packed.x, tex_bl.packed.y);
-        glVertex2f(-w / 2.0, h / 2.0);
-        glTexCoord2f(tex_br.packed.x, tex_br.packed.y);
-        glVertex2f(w / 2.0, h / 2.0);
-    glEnd();
-    glBindTexture(GL_TEXTURE_2D, 0);
-#endif
-  return;
+    return;
 error:
     return;
 }
@@ -407,144 +397,161 @@ void Graphics_draw_debug_text(Graphics *graphics,
 #endif
 }
 
-static inline GfxUMatrix GFXUMatrix_scale(GfxUMatrix matrix,
-                                           double x, double y, double z) {
-#ifdef DABES_IOS
-    GfxUMatrix scaled;
-    scaled.glk =
-        GLKMatrix4Scale(matrix.glk, x, y, z);
-    return scaled;
-#else
-    glScalef(x, y, z);
-    return matrix;
-#endif
-}
-
-static inline GfxUMatrix GFXUMatrix_rotate(GfxUMatrix matrix,
-                                           double rot_degs,
-                                           double x, double y, double z) {
-#ifdef DABES_IOS
-    GfxUMatrix rotated;
-    rotated.glk =
-        GLKMatrix4Rotate(matrix.glk, rot_degs * M_PI / 180.0, x, y, z);
-    return rotated;
-#else
-    glRotatef(rot_degs, x, y, z);
-    return matrix;
-#endif
-}
-
-static inline GfxUMatrix GFXUMatrix_translate(GfxUMatrix matrix, double x,
-                                              double y, double z) {
-#ifdef DABES_IOS
-    GfxUMatrix xformed;
-    xformed.ca = CATransform3DTranslate(matrix.ca, x, y, z);
-    return xformed;
-#else
-    glTranslatef(x, y, z);
-    return matrix;
-#endif
-}
-
-GfxTransform3D GfxTransform3D_ortho(float left, float right, float top,
-                                    float bottom, float near, float far) {
-  GfxTransform3D ortho = {
-    2 / (right - left), 0, 0, -1 * (right + left) / (right - left),
-    0, 2 / (top - bottom), 0, -1 * (top + bottom) / (top - bottom),
-    0, 0, -2 / (far - near), far * near / (far - near),
-    0, 0, 0, 1
-  };
-#ifndef DABES_IOS
-  glOrtho(left, right, bottom, top, near, far);
-#endif
-  return ortho;
-}
-
 void Graphics_reset_projection_matrix(Graphics *graphics) {
-#ifdef DABES_IOS
-    GfxUMatrix identity;
-    identity.ca = CATransform3DIdentity;
-    graphics->projection_matrix = identity;
-#else
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#endif
+    graphics->projection_matrix = VMatrixIdentity;
 }
 
 void Graphics_ortho_projection_matrix(Graphics *graphics, double left,
         double right, double top, double bottom, double near, double far) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_PROJECTION);
-#endif
-    graphics->projection_matrix.gfx =
-        GfxTransform3D_ortho(left, right, top, bottom, near, far);
+    graphics->projection_matrix =
+        VMatrix_make_ortho(left, right, top, bottom, near, far);
 }
 
 void Graphics_scale_projection_matrix(Graphics *graphics, double x,
         double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_PROJECTION);
-#endif
     graphics->projection_matrix =
-        GFXUMatrix_scale(graphics->projection_matrix, x, y, z);
+        VMatrix_scale(graphics->projection_matrix, x, y, z);
 }
 
 void Graphics_rotate_projection_matrix(Graphics *graphics, double rot_degs,
                                        double x, double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_PROJECTION);
-#endif
     graphics->projection_matrix =
-        GFXUMatrix_rotate(graphics->projection_matrix, rot_degs, x, y, z);
+        VMatrix_rotate(graphics->projection_matrix, rot_degs, x, y, z);
 }
 
 void Graphics_translate_projection_matrix(Graphics *graphics, double x,
         double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_PROJECTION);
-#endif
     graphics->projection_matrix =
-        GFXUMatrix_translate(graphics->projection_matrix, x, y, z);
+        VMatrix_translate(graphics->projection_matrix, x, y, z);
 }
 
 void Graphics_reset_modelview_matrix(Graphics *graphics) {
-#ifdef DABES_IOS
-    GfxUMatrix identity;
-    identity.ca = CATransform3DIdentity;
-    graphics->modelview_matrix = identity;
-#else
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-#endif
+    graphics->modelview_matrix = VMatrixIdentity;
 }
 
 void Graphics_scale_modelview_matrix(Graphics *graphics,
                                      double x, double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_MODELVIEW);
-#endif
     graphics->modelview_matrix =
-        GFXUMatrix_scale(graphics->modelview_matrix, x, y, z);
+        VMatrix_scale(graphics->modelview_matrix, x, y, z);
 }
 
 void Graphics_rotate_modelview_matrix(Graphics *graphics, double rot_degs,
                                       double x, double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_MODELVIEW);
-#endif
     graphics->modelview_matrix =
-        GFXUMatrix_rotate(graphics->modelview_matrix, rot_degs, x, y, z);
+        VMatrix_rotate(graphics->modelview_matrix, rot_degs, x, y, z);
 }
 
 void Graphics_translate_modelview_matrix(Graphics *graphics,
                                          double x, double y, double z) {
-#ifndef DABES_IOS
-    glMatrixMode(GL_MODELVIEW);
-#endif
     graphics->modelview_matrix =
-        GFXUMatrix_translate(graphics->modelview_matrix, x, y, z);
+        VMatrix_translate(graphics->modelview_matrix, x, y, z);
 }
 
+void set_up_decal_shader(GfxShader *shader) {
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
+                          GL_FLOAT, GL_FALSE, 0, 0);
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_COLOR], 4,
+                          GL_FLOAT, GL_FALSE, 0,
+                          (GLvoid *)(sizeof(GfxUVertex) * 4));
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
+                          GL_FLOAT, GL_FALSE,
+                          0, (GLvoid *)(sizeof(GfxUVertex) * 8));
+}
+
+void tear_down_decal_shader(GfxShader *shader) {
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
+}
+
+void Graphics_build_decal_shader(Graphics *graphics) {
+    GfxShader *shader = malloc(sizeof(GLuint));
+    check(shader != NULL, "Could not alloc decal shader");
+
+    int rc = Graphics_load_shader(graphics, shader_path("decal.vert"),
+        shader_path("decal.frag"), &shader->gl_program);
+    check(rc == 1, "Could not build decal shader");
+    Hashmap_set(graphics->shaders, bfromcstr("decal"), shader);
+
+    GLuint program = shader->gl_program;
+    GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE] =
+        glGetUniformLocation(program, "hasTexture");
+    GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX] =
+        glGetUniformLocation(program, "modelView");
+    GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX] =
+        glGetUniformLocation(program, "projection");
+    GfxShader_attributes[ATTRIB_DECAL_VERTEX] =
+        glGetAttribLocation(program, "position");
+    GfxShader_attributes[ATTRIB_DECAL_COLOR] =
+        glGetAttribLocation(program, "color");
+
+    shader->set_up = &set_up_decal_shader;
+    shader->tear_down = &tear_down_decal_shader;
+    return;
+error:
+    if (shader) free(shader);
+    return;
+}
+
+void set_up_tilemap_shader(GfxShader *shader) {
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE]);
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX], 4,
+                          GL_FLOAT, GL_FALSE, 0, 0);
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE], 4,
+                          GL_FLOAT, GL_FALSE, 0,
+                          (GLvoid *)(sizeof(GfxUVertex) * 4));
+}
+
+void tear_down_tilemap_shader (GfxShader *shader) {
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE]);
+}
+
+void Graphics_build_tilemap_shader(Graphics *graphics) {
+    GfxShader *shader = calloc(1, sizeof(GLuint));
+    check(shader != NULL, "Could not alloc tilemap shader");
+
+    int rc = Graphics_load_shader(graphics, shader_path("tilemap.vert"),
+        shader_path("tilemap.frag"), &shader->gl_program);
+    check(rc == 1, "Could not build tilemap shader");
+    Hashmap_set(graphics->shaders, bfromcstr("tilemap"), shader);
+
+    GLuint program = shader->gl_program;
+    GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX] =
+        glGetUniformLocation(program, "modelView");
+    GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX] =
+        glGetUniformLocation(program, "projection");
+    GfxShader_uniforms[UNIFORM_TILEMAP_TILE_SIZE] =
+        glGetUniformLocation(program, "tileSize");
+    GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_ROWS_COLS] =
+        glGetUniformLocation(program, "sheetRowsCols");
+    GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_POT_SIZE] =
+        glGetUniformLocation(program, "sheetPotSize");
+    GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS] =
+        glGetUniformLocation(program, "mapRowsCols");
+    GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS] =
+        glGetUniformLocation(program, "atlas");
+    GfxShader_uniforms[UNIFORM_TILEMAP_TILESET] =
+        glGetUniformLocation(program, "tileset");
+    GfxShader_attributes[ATTRIB_TILEMAP_VERTEX] =
+        glGetAttribLocation(program, "position");
+    GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE] =
+        glGetAttribLocation(program, "texture");
+
+    shader->set_up = &set_up_tilemap_shader;
+    shader->tear_down = &tear_down_tilemap_shader;
+    return;
+error:
+    if (shader) free(shader);
+    return;
+}
 
 int Graphics_init(void *self) {
     Graphics *graphics = self;
@@ -554,18 +561,20 @@ int Graphics_init(void *self) {
     graphics->debug_text_texture = 0;
     graphics->screen_size.w = SCREEN_WIDTH;
     graphics->screen_size.h = SCREEN_HEIGHT;
-    graphics->shader = 0;
     glGenBuffers(1, &graphics->array_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  
-    Graphics_load_shader(graphics, shader_path("decal.vert"),
-        shader_path("decal.frag"));
+
+    graphics->current_shader = NULL;
+    graphics->shaders = Hashmap_create(NULL, NULL);
+
+    Graphics_build_decal_shader(graphics);
+    Graphics_build_tilemap_shader(graphics);
 
     graphics->textures = Hashmap_create(NULL, NULL);
 
@@ -586,7 +595,7 @@ void Graphics_destroy(void *self) {
 }
 
 GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
-        char *frag_name) {
+        char *frag_name, GLuint *compiled_program) {
     GLuint vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -619,10 +628,6 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     GLuint program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
-#ifdef DABES_IOS
-    glBindAttribLocation(program, ATTRIB_VERTEX, "position");
-    glBindAttribLocation(program, ATTRIB_COLOR, "color");
-#endif
     glLinkProgram(program);
     Graphics_log_program(program);
 
@@ -630,32 +635,34 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
     check(linked == 1, "Linking shader program");
 
-    uniforms[UNIFORM_HAS_TEXTURE] =
-        glGetUniformLocation(program, "hasTexture");
-#ifdef DABES_IOS
-    uniforms[UNIFORM_MODELVIEW_MATRIX] =
-        glGetUniformLocation(program, "modelView");
-    uniforms[UNIFORM_PROJECTION_MATRIX] =
-        glGetUniformLocation(program, "projection");
-    glEnableVertexAttribArray(ATTRIB_VERTEX);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
-    glEnableVertexAttribArray(ATTRIB_TEXTURE);
-    glVertexAttribPointer(ATTRIB_VERTEX, 4, GL_FLOAT, GL_FALSE, 0,
-                          0);
-
-    glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE,
-                          0, (GLvoid *)(sizeof(GfxUVertex) * 4));
-
-    glVertexAttribPointer(ATTRIB_TEXTURE, 4, GL_FLOAT, GL_FALSE,
-                          0, (GLvoid *)(sizeof(GfxUVertex) * 8));
-#endif
-
-  // TODO: Hashmap
-    graphics->shader = program;
-    glUseProgram(program);
+    //if(strcmp(vert_name, shader_path("decal.vert")) == 0) return 1;
+    *compiled_program = program;
     return 1;
 error:
     return 0;
+}
+
+GfxShader *Graphics_get_shader(Graphics *graphics, char *name) {
+  bstring key = bfromcstr(name);
+  GfxShader *val = Hashmap_get(graphics->shaders, key);
+  if (val) return val;
+  return NULL;
+}
+
+void Graphics_use_shader(Graphics *graphics, GfxShader *shader) {
+  if (graphics->current_shader) {
+    graphics->current_shader->tear_down(graphics->current_shader);
+  }
+
+  graphics->current_shader = NULL;
+
+  if (shader != NULL) {
+    glUseProgram(shader->gl_program);
+    shader->set_up(shader);
+    graphics->current_shader = shader;
+  } else {
+    glUseProgram(0);
+  }
 }
 
 void Graphics_log_shader(GLuint shader) {

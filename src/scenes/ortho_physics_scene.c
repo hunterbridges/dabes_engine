@@ -85,7 +85,11 @@ void OrthoPhysicsScene_update(struct Scene *scene, Engine *engine) {
 void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
     Graphics *graphics = ((Engine *)engine)->graphics;
 
+    GfxShader *dshader = Graphics_get_shader(graphics, "decal");
+    GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Graphics_use_shader(graphics, dshader);
 
     // TODO: Parallax bg camera
     double bgScale = (scene->camera->scale + 2) / 2;
@@ -108,9 +112,11 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
                        VPointZero, scene->bg_texture->size,0);
     Graphics_project_camera(graphics, scene->camera);
 
+    Graphics_use_shader(graphics, tshader);
     TileMap_render(scene->tile_map, graphics,
                    scene->world->pixels_per_meter * scene->world->grid_size);
 
+    Graphics_use_shader(graphics, dshader);
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;
         if (thing == NULL) break;
@@ -120,7 +126,7 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
     // Camera debug
     if (scene->debug_camera)
         Camera_debug(scene->camera, engine->graphics);
-  
+
     // Draw the grid
     if (scene->draw_grid && scene->world)
         Scene_draw_debug_grid(scene, graphics);
@@ -138,7 +144,7 @@ void OrthoPhysicsScene_control(struct Scene *scene, Engine *engine) {
 
     if (input->cam_debug) scene->debug_camera = !(scene->debug_camera);
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
-  
+
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;
         GameEntity_control(entity, input);

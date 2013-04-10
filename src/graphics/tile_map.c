@@ -15,7 +15,7 @@
     static const uint32_t bmask = 0x00ff0000;
     static const uint32_t amask = 0xff000000;
 #endif
-  
+
 const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
 const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
@@ -23,105 +23,62 @@ const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 TileMapLayer *TileMapLayer_create() {
   TileMapLayer *layer = calloc(1, sizeof(TileMapLayer));
   check(layer != NULL, "Couldn't create layer");
-  
+
   layer->opacity = 1;
   layer->visible = 1;
-  
+
   return layer;
 error:
   if (layer) TileMapLayer_destroy(layer);
   return NULL;
 }
 
+GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
+  int i = 0;
+  layer->raw_atlas = malloc(sizeof(uint8_t) * layer->gid_count * 4);
+  for (i = 0; i < layer->gid_count * 4; i += 4) {
+    int tile_idx = i / 4;
+    TilesetTile *tile = TileMap_resolve_tile_gid(map, layer->tile_gids[tile_idx]);
+    uint32_t first_gid = 0;
+    uint32_t diff_gid = UINT32_MAX;
+    if (tile) {
+      layer->tileset = tile->tileset;
+      first_gid = tile->tileset->first_gid;
+      diff_gid = layer->tile_gids[tile_idx] - first_gid;
+      printf("abs %u, rel %u >> ", layer->tile_gids[tile_idx], diff_gid);
+    } else {
+      printf("NULL tile >> ");
+    }
+
+    layer->raw_atlas[i]   = (diff_gid & 0x000000ff);
+    layer->raw_atlas[i+1] = (diff_gid & 0x0000ff00) >> 8;
+    layer->raw_atlas[i+2] = (diff_gid & 0x00ff0000) >> 16;
+    layer->raw_atlas[i+3] = (diff_gid & 0xff000000) >> 24;
+    printf("%d %d %d %d\n", layer->raw_atlas[i], layer->raw_atlas[i+1],
+           layer->raw_atlas[i+2], layer->raw_atlas[i+3]);
+  }
+  return GfxTexture_from_data((unsigned char **)&layer->raw_atlas,
+                              map->cols, map->rows);
+}
+
+void TileMapLayer_dump_raw_atlas(TileMapLayer *layer) {
+  if (layer == NULL) return;
+  if (layer->raw_atlas == NULL) return;
+  int i = 0;
+  for (i = 0; i < layer->gid_count * 4; i += 4) {
+    printf("%d %d %d %d\n", layer->raw_atlas[i], layer->raw_atlas[i+1],
+           layer->raw_atlas[i+2], layer->raw_atlas[i+3]);
+  }
+}
+
 void TileMapLayer_destroy(TileMapLayer *layer) {
   check(layer != NULL, "No layer to destroy");
-  if (layer->texture) GfxTexture_destroy(layer->texture);
+  if (layer->atlas) GfxTexture_destroy(layer->atlas);
   if (layer->tile_gids != NULL) free(layer->tile_gids);
   free(layer);
   return;
 error:
   return;
-}
-
-void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics) {
-    int gid_idx = 0;
-    int width = map->cols * map->tile_size.w;
-    int height = map->rows * map->tile_size.h;
-#ifdef DABES_IOS
-    CGImageRef tileset_img = NULL;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    unsigned char *rawData = calloc(1, height * width * 4);
-    int bytesPerPixel = 4;
-    int bytesPerRow = bytesPerPixel * width;
-    int bitsPerComponent = 8;
-    CGContextRef context =
-        CGBitmapContextCreate(rawData, width, height, bitsPerComponent,
-                              bytesPerRow, colorSpace,
-                              kCGImageAlphaPremultipliedLast |
-                              kCGBitmapByteOrder32Big);
-    CGContextTranslateCTM(context, 0, height);
-    CGContextScaleCTM(context, 1.0, -1.0);
-#else
-    SDL_Surface *tileset_img = NULL;
-    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_HWSURFACE, width,
-        height, 32, rmask, gmask, bmask, amask);
-#endif
-  
-    for (gid_idx = 0; gid_idx < layer->gid_count; gid_idx++) {
-      uint32_t gid = layer->tile_gids[gid_idx];
-      if (gid != 0) {
-        TilesetTile *tile = TileMap_resolve_tile_gid(map, gid);
-        if (tile == NULL) continue;
-        int gid_col = gid_idx % (int)map->cols;
-        int gid_row = gid_idx / (int)map->cols;
-#ifdef DABES_IOS
-        if (tileset_img == NULL) {
-          tileset_img = Graphics_load_CGImage(tile->tileset->img_src);
-        }
-        
-        CGContextSaveGState(context);
-        CGRect clipRect = CGRectMake(gid_col * tile->size.w,
-                                     gid_row * tile->size.h,
-                                     tile->size.w,
-                                     tile->size.h);
-        
-        CGRect imgRect = CGRectMake(clipRect.origin.x - tile->tl.x,
-                                    clipRect.origin.y - tile->tl.y,
-                                    CGImageGetWidth(tileset_img),
-                                    CGImageGetHeight(tileset_img));
-        
-        // WOW annoying
-        CGContextClipToRect(context, clipRect);
-        CGContextTranslateCTM(context, 0, tile->tileset->texture->size.h);
-        CGContextScaleCTM(context, 1.0, -1.0);
-        imgRect.origin.y *= -1;
-        CGContextDrawImage(context, imgRect, tileset_img);
-        CGContextRestoreGState(context);
-#else
-        if (tileset_img == NULL) {
-          tileset_img = Graphics_load_SDLImage(tile->tileset->img_src);
-          SDL_SetAlpha(tileset_img, 0, 255);
-          SDL_SetColorKey(tileset_img, 0, 0);
-        }
-        
-        SDL_Rect srcRect = {tile->tl.x, tile->tl.y, tile->size.w, tile->size.h};
-        SDL_Rect dstRect = {gid_col * tile->size.w, gid_row * tile->size.h,
-            tile->size.w, tile->size.h};
-        SDL_BlitSurface(tileset_img, &srcRect, surface, &dstRect);
-#endif
-        free(tile);
-      }
-    }
-  
-#ifdef DABES_IOS
-    CGContextRelease(context);
-    CGColorSpaceRelease(colorSpace);
-    layer->texture = GfxTexture_from_data(rawData, width, height);
-    free(rawData);
-#else
-    layer->texture = GfxTexture_from_surface(surface);
-    if (tileset_img) SDL_FreeSurface(tileset_img);
-#endif
 }
 
 void Tileset_destroy(Tileset *tileset) {
@@ -135,10 +92,10 @@ TileMap *TileMap_create() {
 
   map->tilesets = DArray_create(sizeof(Tileset), 8);
   map->tilesets->expand_rate = 8;
-  
+
   map->layers = DArray_create(sizeof(TileMapLayer), 8);
   map->layers->expand_rate = 8;
-  
+
   return map;
 
 error:
@@ -152,7 +109,7 @@ void TileMap_destroy(TileMap *map) {
     Tileset_destroy(DArray_get(map->tilesets, i));
   }
   DArray_destroy(map->tilesets);
-  
+
   for (i = 0; i < map->layers->end; i++) {
     TileMapLayer_destroy(DArray_get(map->layers, i));
   }
@@ -166,11 +123,12 @@ TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid) {
   int ts_cols, ts_rows;
   for (i = 0; i < map->tilesets->end; i++) {
     Tileset *tileset = DArray_get(map->tilesets, i);
+    if (tileset->texture == NULL) continue;
     ts_cols = (tileset->texture->size.w - 2 * tileset->margin) /
                   (tileset->tile_size.w + tileset->spacing);
     ts_rows = (tileset->texture->size.h - 2 * tileset->margin) /
                   (tileset->tile_size.h + tileset->spacing);
-    
+
     int min_gid = tileset->first_gid;
     int max_gid = tileset->first_gid + ts_cols * ts_rows - 1;
     if (gid >= min_gid && gid <= max_gid) {
@@ -178,12 +136,12 @@ TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid) {
       break;
     }
   }
-  check(matched != NULL, "No matching tileset found for gid %u", gid);
-  
+  if (matched == NULL) return NULL;
+
   int gid_idx = gid - matched->first_gid;
   int gid_col = gid_idx % ts_cols;
   int gid_row = gid_idx / ts_cols;
-  
+
   TilesetTile *tile = malloc(sizeof(TilesetTile));
   check(tile != NULL, "Couldn't create tile");
   tile->tileset = matched;
@@ -193,7 +151,7 @@ TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid) {
   tile->tl.y = (gid_row * (matched->tile_size.h + matched->spacing)
                    + matched->margin);
   tile->size = matched->tile_size;
-  
+
   return tile;
 error:
   return NULL;
@@ -201,19 +159,101 @@ error:
 
 void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
     if (map == NULL) return;
+
     Graphics_reset_modelview_matrix(graphics);
     int layer_idx = 0;
     for (layer_idx = 0; layer_idx < map->layers->end;
          layer_idx++) {
       TileMapLayer *layer = DArray_get(map->layers, layer_idx);
-      if (layer->texture == NULL) {
-          TileMapLayer_draw(layer, map, graphics);
+      if (!layer->atlas) {
+        layer->atlas = TileMapLayer_create_atlas(layer, map);
       }
-      VRect layer_rect = VRect_from_xywh(0, 0,
-                                         map->cols * pixels_per_cell,
-                                         map->rows * pixels_per_cell);
-      GLfloat color[4] = {0,0,1,0};
-      Graphics_draw_rect(graphics, layer_rect, color, layer->texture,
-                         VPointZero, GfxSizeZero, 0);
+
+      VRect rect = VRect_from_xywh(0, 0,
+                                   map->cols * pixels_per_cell,
+                                   map->rows * pixels_per_cell);
+      Graphics_reset_modelview_matrix(graphics);
+      double w = rect.tr.x - rect.tl.x;
+      double h = rect.bl.y - rect.tl.y;
+      VPoint center = {
+          rect.tl.x + w / 2,
+          rect.tl.y + h / 2
+      };
+      Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
+
+      GfxUVertex tex_tl = {0,0,0,0};
+      GfxUVertex tex_tr = {1,0,0,0};
+      GfxUVertex tex_bl = {0,1,0,0};
+      GfxUVertex tex_br = {1,1,0,0};
+      VPoint pot_scale = {
+          layer->atlas->size.w / layer->atlas->pot_size.w,
+          layer->atlas->size.h / layer->atlas->pot_size.h
+      };
+      tex_tl.packed.x *= pot_scale.x;
+      tex_tr.packed.x *= pot_scale.x;
+      tex_bl.packed.x *= pot_scale.x;
+      tex_br.packed.x *= pot_scale.x;
+      tex_tl.packed.y *= pot_scale.y;
+      tex_tr.packed.y *= pot_scale.y;
+      tex_bl.packed.y *= pot_scale.y;
+      tex_br.packed.y *= pot_scale.y;
+
+      glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX],
+                         1, GL_FALSE, graphics->projection_matrix.gl);
+      glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX],
+                         1, GL_FALSE, graphics->modelview_matrix.gl);
+
+      GfxUVertex vertices[12] = {
+        // Vertex
+        {-w / 2.0, -h / 2.0, 0, 1},
+        {w / 2.0, -h / 2.0, 0, 1},
+        {-w / 2.0, h / 2.0, 0, 1},
+        {w / 2.0, h / 2.0, 0, 1},
+
+        // Texture
+        tex_tl, tex_tr, tex_bl, tex_br
+      };
+      glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+      // tile size
+      if (layer->tileset) {
+          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_TILE_SIZE],
+                      layer->tileset->tile_size.w, layer->tileset->tile_size.h);
+          // sheet rows cols
+          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_ROWS_COLS],
+                      layer->tileset->texture->size.w / layer->tileset->tile_size.w,
+                      layer->tileset->texture->size.h / layer->tileset->tile_size.h
+                      );
+
+          // sheet pot size
+          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_POT_SIZE],
+                      layer->tileset->texture->pot_size.w / layer->tileset->tile_size.w,
+                      layer->tileset->texture->pot_size.h / layer->tileset->tile_size.h
+                      );
+      }
+      glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS],
+                  layer->atlas->pot_size.w, layer->atlas->pot_size.h);
+      int dump = 0;
+      if (dump) {
+        TileMapLayer_dump_raw_atlas(layer);
+      }
+
+      // load atlas texture
+      glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS], 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, layer->atlas->gl_tex);
+
+      // load tileset texture
+      glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_TILESET], 1);
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, layer->tileset->texture->gl_tex);
+
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+      glFlush();
+
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

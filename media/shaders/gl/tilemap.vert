@@ -1,16 +1,14 @@
 #version 110
 attribute vec4 position;
-attribute vec4 color;
 attribute vec4 texture;
-varying vec4 colorVarying;
 varying vec4 textureVarying;
 uniform mat4 projection;
 uniform mat4 modelView;
-uniform int hasTexture;
+uniform vec2 tileSize;
+uniform vec2 mapSize;
 
 void main()
 {
   gl_Position = projection * modelView * position;
-  colorVarying = color;
   textureVarying = texture;
 }

@@ -154,7 +154,7 @@ char *bundlePath__;
    INIT GAME ENGINE
    */
   Engine_bootstrap(&engine_, NULL);
-  self.preferredFramesPerSecond = FPS;
+  self.preferredFramesPerSecond = 30;
   
   scene_ = Scene_create(engine_, OrthoPhysicsSceneProto);
   
