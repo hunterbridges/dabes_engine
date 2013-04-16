@@ -163,6 +163,7 @@ GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
     GfxTexture *texture = GfxTexture_from_data(&rawData, width, height);
     CGContextRelease(context);
     CGImageRelease(image);
+    free(rawData);
     return texture;
 error:
     if (colorSpace) CGColorSpaceRelease(colorSpace);
@@ -565,6 +566,7 @@ int Graphics_init(void *self) {
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
     glEnable(GL_BLEND);
+    glEnable(GL_STENCIL_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -35,7 +35,10 @@ Bugs:
 * Debug text currently dead
 * Edge collisions not calculating properly
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
-* Drawing very large tilemaps returns a black texture
+* Tiles are sliiiiiightly offset
+* Game entity movement jumpy when at high coordinate values (Far right, for example)
+* Desktop/SDL build is kinda unstable about textures
+* Why is desktop tile val stored in .b? (gs/tilemap.frag)
 
 ```
 # Ya gonna need dis stuf!
