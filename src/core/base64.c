@@ -168,7 +168,7 @@ size_t base64_decode(char *source, unsigned char **target, size_t targetlen)
   char *src, *tmpptr;
   unsigned char *target_walk = *target;
   char quadruple[4], tmpresult[3];
-  int i, tmplen = 3;
+  unsigned int i, tmplen = 3;
   size_t converted = 0;
 
   /* concatinate '===' to the source to handle unpadded base64 data */
@@ -196,8 +196,7 @@ size_t base64_decode(char *source, unsigned char **target, size_t targetlen)
     tmplen = _base64_decode_triple(quadruple, (unsigned char *)tmpresult);
 
     /* check if the fit in the result buffer */
-    if (targetlen < tmplen)
-    {
+    if (targetlen < tmplen) {
       free(src);
       return -1;
     }

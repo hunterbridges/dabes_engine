@@ -7,7 +7,7 @@
 
 int decompress_data(unsigned char* abSrc, int nLenSrc, unsigned char **abDst,
                     int nLenDst) {
-  z_stream zInfo = {0};
+  z_stream zInfo = {.avail_in = 0};
   int prevSize = nLenDst;
   unsigned char *src_start = abSrc;
   unsigned char *dst_start = *abDst;

@@ -120,7 +120,7 @@ void TileMap_destroy(TileMap *map) {
 TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid) {
   int i = 0;
   Tileset *matched = NULL;
-  int ts_cols, ts_rows;
+  unsigned int ts_cols, ts_rows;
   for (i = 0; i < map->tilesets->end; i++) {
     Tileset *tileset = DArray_get(map->tilesets, i);
     if (tileset->texture == NULL) continue;
@@ -129,8 +129,8 @@ TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid) {
     ts_rows = (tileset->texture->size.h - 2 * tileset->margin) /
                   (tileset->tile_size.h + tileset->spacing);
 
-    int min_gid = tileset->first_gid;
-    int max_gid = tileset->first_gid + ts_cols * ts_rows - 1;
+    unsigned int min_gid = tileset->first_gid;
+    unsigned int max_gid = tileset->first_gid + ts_cols * ts_rows - 1;
     if (gid >= min_gid && gid <= max_gid) {
       matched = tileset;
       break;
@@ -181,10 +181,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
       };
       Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
 
-      GfxUVertex tex_tl = {0,0,0,0};
-      GfxUVertex tex_tr = {1,0,0,0};
-      GfxUVertex tex_bl = {0,1,0,0};
-      GfxUVertex tex_br = {1,1,0,0};
+      GfxUVertex tex_tl = {.raw = {0,0,0,0}};
+      GfxUVertex tex_tr = {.raw = {1,0,0,0}};
+      GfxUVertex tex_bl = {.raw = {0,1,0,0}};
+      GfxUVertex tex_br = {.raw = {1,1,0,0}};
       VPoint pot_scale = {
           layer->atlas->size.w / layer->atlas->pot_size.w,
           layer->atlas->size.h / layer->atlas->pot_size.h
@@ -205,10 +205,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
 
       GfxUVertex vertices[12] = {
         // Vertex
-        {-w / 2.0, -h / 2.0, 0, 1},
-        {w / 2.0, -h / 2.0, 0, 1},
-        {-w / 2.0, h / 2.0, 0, 1},
-        {w / 2.0, h / 2.0, 0, 1},
+        {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+        {.raw = {w / 2.0, -h / 2.0, 0, 1}},
+        {.raw = {-w / 2.0, h / 2.0, 0, 1}},
+        {.raw = {w / 2.0, h / 2.0, 0, 1}},
 
         // Texture
         tex_tl, tex_tr, tex_bl, tex_br

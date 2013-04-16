@@ -1,24 +1,10 @@
 #include <lcthw/bstrlib.h>
 #include "graphics.h"
 
-#ifndef DABES_IOS
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    static Uint32 rmask = 0xff000000;
-    static Uint32 gmask = 0x00ff0000;
-    static Uint32 bmask = 0x0000ff00;
-    static Uint32 amask = 0x000000ff;
-#else
-    static Uint32 rmask = 0x000000ff;
-    static Uint32 gmask = 0x0000ff00;
-    static Uint32 bmask = 0x00ff0000;
-    static Uint32 amask = 0xff000000;
-#endif
-#endif
-
 GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
-int Graphics_init_GL(int swidth, int sheight) {
+int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
 #ifndef DABES_IOS
@@ -242,7 +228,7 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
-    GfxUVertex tex = {0,0,0,0};
+    GfxUVertex tex = {.raw = {0,0,0,0}};
 
     glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE], 0);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
@@ -250,14 +236,14 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
 
-    GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
+    GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
 
     GfxUVertex vertices[12] = {
       // Vertex
-      {-w / 2.0, -h / 2.0, 0, 1},
-      {w / 2.0, -h / 2.0, 0, 1},
-      {w / 2.0, h / 2.0, 0, 1},
-      {-w / 2.0, h / 2.0, 0, 1},
+      {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+      {.raw = {w / 2.0, -h / 2.0, 0, 1}},
+      {.raw = {w / 2.0, h / 2.0, 0, 1}},
+      {.raw = {-w / 2.0, h / 2.0, 0, 1}},
 
       // Color
       cVertex, cVertex, cVertex, cVertex,
@@ -297,10 +283,10 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
-    GfxUVertex tex_tl = {0,0,0,0};
-    GfxUVertex tex_tr = {1,0,0,0};
-    GfxUVertex tex_bl = {0,1,0,0};
-    GfxUVertex tex_br = {1,1,0,0};
+    GfxUVertex tex_tl = {.raw = {0,0,0,0}};
+    GfxUVertex tex_tr = {.raw = {1,0,0,0}};
+    GfxUVertex tex_bl = {.raw = {0,1,0,0}};
+    GfxUVertex tex_br = {.raw = {1,1,0,0}};
     if (texture && textureSize.w > 0 && textureSize.h > 0) {
         tex_tl.packed.x = textureOffset.x / texture->size.w;
         tex_tl.packed.y = textureOffset.y / texture->size.h;
@@ -336,14 +322,14 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
 
-    GfxUVertex cVertex = {color[0], color[1], color[2], color[3]};
+    GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
 
     GfxUVertex vertices[12] = {
       // Vertex
-      {-w / 2.0, -h / 2.0, 0, 1},
-      {w / 2.0, -h / 2.0, 0, 1},
-      {-w / 2.0, h / 2.0, 0, 1},
-      {w / 2.0, h / 2.0, 0, 1},
+      {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+      {.raw = {w / 2.0, -h / 2.0, 0, 1}},
+      {.raw = {-w / 2.0, h / 2.0, 0, 1}},
+      {.raw = {w / 2.0, h / 2.0, 0, 1}},
 
       // Color
       cVertex, cVertex, cVertex, cVertex,
@@ -363,8 +349,8 @@ error:
     return;
 }
 
-void Graphics_draw_debug_text(Graphics *graphics,
-        int ticks_since_last) {
+void Graphics_draw_debug_text(Graphics *UNUSED(graphics),
+        int UNUSED(ticks_since_last)) {
     return;
 #if 0
     Graphics_reset_projection_matrix(graphics);
@@ -448,7 +434,7 @@ void Graphics_translate_modelview_matrix(Graphics *graphics,
         VMatrix_translate(graphics->modelview_matrix, x, y, z);
 }
 
-void set_up_decal_shader(GfxShader *shader) {
+void set_up_decal_shader(GfxShader *UNUSED(shader)) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
@@ -464,7 +450,7 @@ void set_up_decal_shader(GfxShader *shader) {
                           0, (GLvoid *)(sizeof(GfxUVertex) * 8));
 }
 
-void tear_down_decal_shader(GfxShader *shader) {
+void tear_down_decal_shader(GfxShader *UNUSED(shader)) {
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
@@ -499,7 +485,7 @@ error:
     return;
 }
 
-void set_up_tilemap_shader(GfxShader *shader) {
+void set_up_tilemap_shader(GfxShader *UNUSED(shader)) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE]);
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX], 4,
@@ -510,7 +496,7 @@ void set_up_tilemap_shader(GfxShader *shader) {
                           (GLvoid *)(sizeof(GfxUVertex) * 4));
 }
 
-void tear_down_tilemap_shader (GfxShader *shader) {
+void tear_down_tilemap_shader (GfxShader *UNUSED(shader)) {
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE]);
 }
@@ -596,7 +582,7 @@ void Graphics_destroy(void *self) {
     free(graphics);
 }
 
-GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
+GLuint Graphics_load_shader(Graphics *UNUSED(graphics), char *vert_name,
         char *frag_name, GLuint *compiled_program) {
     GLuint vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);

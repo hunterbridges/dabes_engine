@@ -42,6 +42,7 @@ void Music_pause(Music *music) {
 #ifdef DABES_IOS
     AudioBridge_pause(music->bridge);
 #else
+    (void)(music);
     Mix_HaltMusic();
 #endif
 }

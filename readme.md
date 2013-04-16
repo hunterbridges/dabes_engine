@@ -29,6 +29,7 @@ What is not yet done:
 * Physics engine:
     * Raycasting
     * Raycast to build an accumulated opposing force
+* Object inspector
 * Object scripting
 
 Bugs:
@@ -39,6 +40,11 @@ Bugs:
 * Game entity movement jumpy when at high coordinate values (Far right, for example)
 * Desktop/SDL build is kinda unstable about textures
 * Why is desktop tile val stored in .b? (gs/tilemap.frag)
+* Gap in audio loop
+* Gotta use smaller format audio files...
+
+Code Gripes:
+* Too many cpp directives, not enough platform specific modules
 
 ```
 # Ya gonna need dis stuf!

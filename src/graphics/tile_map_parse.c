@@ -33,11 +33,11 @@ void extract_gids_from_encoded_data(xmlChar *value, uint32_t **gids,
 TileMapParseStatus TileMapLayer_parse_data(xmlTextReaderPtr reader,
                                            TileMap *map, TileMapLayer *layer) {
   TileMapParseStatus status = TILEMAP_PARSE_OK;
-  
+
   while (xmlTextReaderMoveToNextAttribute(reader)) {
     xmlChar *attrName = xmlTextReaderName(reader);
     xmlChar *attrVal = xmlTextReaderValue(reader);
-    
+
     if (streq(attrName, "encoding")) {
       check(streq(attrVal, "base64"), "Incorrect layer data encoding");
     } else if (streq(attrName, "compression")) {
@@ -46,7 +46,7 @@ TileMapParseStatus TileMapLayer_parse_data(xmlTextReaderPtr reader,
     xmlFree(attrName);
     xmlFree(attrVal);
   }
-  
+
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
@@ -64,7 +64,7 @@ TileMapParseStatus TileMapLayer_parse_data(xmlTextReaderPtr reader,
     }
     xmlFree(childName);
   }
-  
+
   return status;
 error:
   return TILEMAP_PARSE_INVALID_FORMAT;
@@ -75,11 +75,11 @@ TileMapParseStatus TileMap_parse_layer(xmlTextReaderPtr reader, TileMap *map,
   TileMapParseStatus status = TILEMAP_PARSE_OK;
   TileMapLayer *layer = TileMapLayer_create();
   check(layer != NULL, "Couldn't create layer");
-  
+
   while (xmlTextReaderMoveToNextAttribute(reader)) {
     xmlChar *attrName = xmlTextReaderName(reader);
     xmlChar *attrVal = xmlTextReaderValue(reader);
-    
+
     if (streq(attrName, "name")) {
       layer->name = calloc(1, strlen((const char *)attrVal) + 1);
       strcpy(layer->name, (const char *)attrVal);
@@ -88,11 +88,11 @@ TileMapParseStatus TileMap_parse_layer(xmlTextReaderPtr reader, TileMap *map,
     } else if (streq(attrName, "visible")) {
       layer->visible = atoi((const char *)attrVal);
     }
-    
+
     xmlFree(attrName);
     xmlFree(attrVal);
   }
-  
+
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
@@ -105,7 +105,7 @@ TileMapParseStatus TileMap_parse_layer(xmlTextReaderPtr reader, TileMap *map,
     }
     xmlFree(childName);
   }
-  
+
   if (status == TILEMAP_PARSE_OK) {
     *out_layer = layer;
     return status;
@@ -117,16 +117,16 @@ error:
 }
 
 TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
-                                         Engine *engine, TileMap *map,
+                                         Engine *engine, TileMap *UNUSED(map),
                                          Tileset **out_tileset) {
   TileMapParseStatus status = TILEMAP_PARSE_OK;
   Tileset *tileset = calloc(1, sizeof(Tileset));
   check(tileset != NULL, "Couldn't create tileset");
-  
+
   while (xmlTextReaderMoveToNextAttribute(reader)) {
     xmlChar *attrName = xmlTextReaderName(reader);
     xmlChar *attrVal = xmlTextReaderValue(reader);
-    
+
     if (streq(attrName, "firstgid")) {
       tileset->first_gid = atoi((const char *)attrVal);
     } else if (streq(attrName, "tilewidth")) {
@@ -137,7 +137,7 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
       tileset->name = calloc(1, strlen((const char *)attrVal) + 1);
       strcpy(tileset->name, (const char *)attrVal);
     }
-    
+
     xmlFree(attrName);
     xmlFree(attrVal);
   }
@@ -151,7 +151,7 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
       while (xmlTextReaderMoveToNextAttribute(reader)) {
         xmlChar *attrName = xmlTextReaderName(reader);
         xmlChar *attrVal = xmlTextReaderValue(reader);
-        
+
         if (streq(attrName, "source")) {
           // Check for existence of image
           bstring imgpath = bfromcstr("media/tilesets/");
@@ -160,7 +160,7 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           char *cpath = bstr2cstr(imgpath, '\0');
           bdestroy(imgpath);
           bdestroy(src);
-          
+
           FILE *fileexists = load_resource(cpath);
           if (fileexists == NULL) {
             free(cpath);
@@ -172,21 +172,21 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
             return TILEMAP_PARSE_MISSING_IMAGE;
           }
           fclose(fileexists);
-          
+
           tileset->texture = Graphics_texture_from_image(engine->graphics,
                                                          cpath);
           tileset->img_src = cpath;
         }
-        
+
         xmlFree(attrName);
         xmlFree(attrVal);
       }
       xmlFree(childName);
     }
   }
-  
+
   *out_tileset = tileset;
-  
+
   return status;
 error:
   if (tileset) Tileset_destroy(tileset);
@@ -197,7 +197,7 @@ error:
 TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
                                      TileMap *map) {
   TileMapParseStatus status = TILEMAP_PARSE_OK;
-  
+
   xmlChar *name = xmlTextReaderName(reader);
   if (!(streq(name, "map") &&
         xmlTextReaderNodeType(reader) == XML_ELEMENT_NODE)) {
@@ -205,11 +205,11 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
     return TILEMAP_PARSE_INVALID_FORMAT;
   }
   xmlFree(name);
-  
+
   while (xmlTextReaderMoveToNextAttribute(reader)) {
     xmlChar *attrName = xmlTextReaderName(reader);
     xmlChar *attrVal = xmlTextReaderValue(reader);
-    
+
     if (streq(attrName, "orientation")) {
       if (!streq(attrVal, "orthogonal")) {
         xmlFree(attrName);
@@ -228,7 +228,7 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
     xmlFree(attrName);
     xmlFree(attrVal);
   }
-  
+
   while (xmlTextReaderRead(reader)) {
     xmlChar *childName = xmlTextReaderName(reader);
     if (xmlTextReaderNodeType(reader) == XML_ELEMENT_DECL &&
@@ -251,7 +251,7 @@ TileMapParseStatus TileMap_parse_map(xmlTextReaderPtr reader, Engine *engine,
     }
     xmlFree(childName);
   }
-  
+
   return status;
 }
 
@@ -276,7 +276,7 @@ TileMap *TileMap_parse(char *filename, Engine *engine) {
   } else {
     printf("Unable to open %s", filename);
   }
-  
+
   check(status == TILEMAP_PARSE_OK, "Error parsing tile map");
   return map;
 error:

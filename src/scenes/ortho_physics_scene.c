@@ -41,7 +41,7 @@ void OrthoPhysicsScene_start(struct Scene *scene, Engine *engine) {
     scene->started = 1;
 }
 
-void OrthoPhysicsScene_stop(struct Scene *scene, Engine *engine) {
+void OrthoPhysicsScene_stop(struct Scene *scene, Engine *UNUSED(engine)) {
     if (!scene->started) return;
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;

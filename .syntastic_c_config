@@ -1,0 +1,6 @@
+-Wall
+-Wextra
+-Iinclude
+-I/usr/include/libxml2
+-Llib
+
