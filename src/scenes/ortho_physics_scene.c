@@ -7,7 +7,7 @@ int OrthoPhysicsScene_create(struct Scene *scene, Engine *engine) {
                               "media/music/Climb_Loop.aif");
     Music_play(scene->music);
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
-    Scene_load_tile_map(scene, engine, "media/tilemaps/reasonable.tmx", 0);
+    Scene_load_tile_map(scene, engine, "media/tilemaps/fat.tmx", 0);
     scene->_(start)(scene, engine);
 
     return 1;

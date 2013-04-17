@@ -94,7 +94,8 @@ error:
   return 0;
 }
 
-GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height) {
+GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
+        GLenum source_format) {
     GfxTexture *texture = calloc(1, sizeof(GfxTexture));
     check(texture != NULL, "Couldn't not allocate texture");
     texture->size.w = width;
@@ -112,14 +113,16 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     GLenum color_format = GL_RGBA;
 #if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
     color_format = GL_BGRA;
 #endif
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pot_width,
+    glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
+    GLenum er = glGetError();
+    check(er == GL_NO_ERROR, "Error loading texture: %d", er);
     return texture;
 error:
     return NULL;
@@ -146,7 +149,8 @@ GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
     CGColorSpaceRelease(colorSpace);
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
 
-    GfxTexture *texture = GfxTexture_from_data(&rawData, width, height);
+    GfxTexture *texture = GfxTexture_from_data(&rawData, width, height,
+            GL_RGBA);
     CGContextRelease(context);
     CGImageRelease(image);
     free(rawData);
@@ -164,7 +168,7 @@ GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
 
     GfxTexture *texture =
         GfxTexture_from_data((unsigned char **)&surface->pixels,
-                surface->w, surface->h);
+                surface->w, surface->h, GL_RGBA);
     SDL_FreeSurface(surface);
     return texture;
 error:

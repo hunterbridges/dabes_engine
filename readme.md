@@ -36,12 +36,8 @@ Bugs:
 * Debug text currently dead
 * Edge collisions not calculating properly
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
-* Tiles are sliiiiiightly offset
-* Game entity movement jumpy when at high coordinate values (Far right, for example)
 * Desktop/SDL build is kinda unstable about textures
-* Why is desktop tile val stored in .b? (gs/tilemap.frag)
-* Gap in audio loop
-* Gotta use smaller format audio files...
+* Gap in audio loop, gotta use smaller format audio files...
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules

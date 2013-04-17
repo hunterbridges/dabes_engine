@@ -9,7 +9,7 @@ uniform sampler2D tileset;
 
 void main()
 {
-  vec2 tilePos = (floor(textureVarying.xy * mapRowsCols) + 0.5) / mapRowsCols;
+  vec2 tilePos = floor(textureVarying.xy * mapRowsCols) / mapRowsCols;
   vec4 tileVal = texture2D(atlas, tilePos);
   float cell = tileVal.b;
 
