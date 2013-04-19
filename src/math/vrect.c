@@ -205,7 +205,7 @@ VPoint VRect_poc(VRect a, VRect b) {
 }
 
 VRect VRect_bounding_box(VRect rect) {
-    double min_x, max_x, min_y, max_y;
+    float min_x, max_x, min_y, max_y;
 
     int i = 0;
     for (i = 0; i < 4; i++) {

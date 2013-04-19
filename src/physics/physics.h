@@ -5,6 +5,8 @@
 
 typedef struct Physics {
     Object proto;
+    long unsigned int max_dt;
+    long unsigned int accumulator;
 } Physics;
 
 int Physics_init(void *self);

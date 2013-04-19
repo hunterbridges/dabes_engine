@@ -31,7 +31,7 @@ void Camera_track(Camera *camera) {
         VRect e_bound = Camera_project_rect(camera, e_rect);
         e_bound = VRect_bounding_box(e_bound);
         if (VRect_contains_rect(t_bound, e_bound)) return;
-      
+
         int closest = 0;
         double min_mag = FLT_MAX;
         VPoint t_closest, e_closest;
@@ -48,8 +48,8 @@ void Camera_track(Camera *camera) {
               closest = i;
           }
         }
-      
-        VPoint diff = {0,0};
+
+        VPoint diff = {.x=0,.y=0};
         VPointRel close_rel = VPoint_rel(e_closest, t_closest);
         if ((closest == 0 || closest == 1) &&
                (close_rel & VPointRelYLess)) {
@@ -59,7 +59,7 @@ void Camera_track(Camera *camera) {
                (close_rel & VPointRelYMore)) {
             diff.y += e_closest.y - t_closest.y;
         }
-      
+
         if ((closest == 0 || closest == 3) &&
                (close_rel & VPointRelXLess)) {
             diff.x += e_closest.x - t_closest.x;
@@ -110,7 +110,7 @@ VRect Camera_base_rect(Camera *camera) {
     camera->screen_size.w / 2.0,
     camera->screen_size.h / 2.0
   };
-  
+
   VRect cam_rect = VRect_from_xywh(-delta.x, -delta.y,
                                    camera->screen_size.w,
                                    camera->screen_size.h);
@@ -134,11 +134,11 @@ VRect Camera_tracking_rect(Camera *camera) {
 VPoint Camera_project_point(Camera *camera, VPoint point) {
   VPoint cam_center = camera->focal;
   VPoint new = VPoint_subtract(point, cam_center);
-  
+
   new = VPoint_rotate(new, VPointZero, -camera->rotation_radians);
   new = VPoint_scale(new, camera->scale);
   new = VPoint_subtract(new, camera->translation);
-  
+
   return new;
 }
 
@@ -165,7 +165,7 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
     GLfloat cam_color[4] = {1, 0, 0, 1};
     VRect track_rect = Camera_tracking_rect(&screen_cam);
     Graphics_stroke_rect(graphics, track_rect, cam_color, 0, 0);
-  
+
     if (camera->track_entity) {
         GLfloat e_color[4] = {0, 1, 0, 1};
         GameEntity *entity = camera->track_entity;

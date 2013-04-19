@@ -1,9 +1,10 @@
 #ifndef __camera_h
 #define __camera_h
+#include "../math/vpoint.h"
 #include "graphics.h"
 
 typedef struct Camera {
-    struct VPoint focal;
+    VPoint focal;
     struct GfxSize screen_size;
     struct GfxSize scene_size;
     void *track_entity;
@@ -11,7 +12,7 @@ typedef struct Camera {
     VRectInset margin;
     double scale;
     double rotation_radians;
-    struct VPoint translation;
+    VPoint translation;
 } Camera;
 
 Camera *Camera_create(int width, int height);

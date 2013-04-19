@@ -6,4 +6,4 @@ xcodebuild -target "DaBesEngine" -configuration "Release" BUILD_RELEASE_DEPENDEN
     -v "$WORKSPACE/build/Release-iphoneos/DaBesEngine.app" \
     -o "$WORKSPACE/build/DaBesEngine.ipa" \
     --sign "${PARAM_SIGNING_IDENTITY}" \
-    --embed "/Users/hbridges/Library/MobileDevice/Provisioning Profiles/632DDDC1-F9FC-42AB-85AE-CB17AE4582D7.mobileprovision"
+    --embed "/Users/hbridges/Library/MobileDevice/Provisioning Profiles/9B8A201D-84E6-4AFE-BFB4-600A053B92B2.mobileprovision"

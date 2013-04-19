@@ -4,6 +4,7 @@
 #import "world.h"
 #import "game_entity.h"
 #import "tile_map_parse.h"
+#import "ortho_chipmunk_scene.h"
 #import "ortho_physics_scene.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -156,7 +157,7 @@ char *bundlePath__;
   Engine_bootstrap(&engine_, NULL);
   self.preferredFramesPerSecond = 30;
   
-  scene_ = Scene_create(engine_, OrthoPhysicsSceneProto);
+  scene_ = Scene_create(engine_, OrthoChipmunkSceneProto);
   
   self.effect = [[GLKBaseEffect alloc] init];
 }

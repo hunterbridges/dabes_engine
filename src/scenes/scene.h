@@ -1,5 +1,6 @@
 #ifndef __scene_h
 #define __scene_h
+#include <chipmunk/chipmunk.h>
 #include "../prefix.h"
 #include "../core/audio.h"
 #include "../core/engine.h"
@@ -25,7 +26,10 @@ typedef struct Scene {
 
     Music *music;
     Camera *camera;
-    World *world;
+    union {
+      World *world;
+      cpSpace *space;
+    };
     TileMap *tile_map;
     List *entities;
 

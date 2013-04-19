@@ -13,10 +13,7 @@ What is done:
     * Camera tracking
     * Can render TMX tile maps
 * Physics engine:
-    * Physics model that supports angular impulse collisions
-    * Time scaling
-    * Grid-based collision detection
-    * Can glitchingly collide with tile maps
+    * Can use Chipmunk because writing a Physics engine is hard
 * Audio engine:
     * Can play music and control the volume of it
 
@@ -26,15 +23,11 @@ What is not yet done:
     * Sprite animations
 * Audio engine:
     * Sound effects
-* Physics engine:
-    * Raycasting
-    * Raycast to build an accumulated opposing force
 * Object inspector
 * Object scripting
 
 Bugs:
 * Debug text currently dead
-* Edge collisions not calculating properly
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Desktop/SDL build is kinda unstable about textures
 * Gap in audio loop, gotta use smaller format audio files...
@@ -54,3 +47,7 @@ If you are trying to build the XCode project, you need to build the submodule
 ```
 make submodules
 ```
+
+Acknowledgements:
+[Learn C the Hard Way](http://c.learncodethehardway.org/book/) by Zed Shaw
+[Chipmunk Physics](http://chipmunk-physics.net/) by Howling Moon Software

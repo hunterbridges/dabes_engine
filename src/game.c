@@ -1,5 +1,6 @@
 #include "prefix.h"
 #include "gameobjects.h"
+#include "scenes/ortho_chipmunk_scene.h"
 #include "scenes/ortho_physics_scene.h"
 
 int main(int argc, char *argv[]) {
@@ -12,7 +13,7 @@ int main(int argc, char *argv[]) {
 
     check(Engine_bootstrap(&engine, (void *)&screen), "Init SDL and OpenGL");
 
-    scene = Scene_create(engine, OrthoPhysicsSceneProto);
+    scene = Scene_create(engine, OrthoChipmunkSceneProto);
 
     GameEntity_assign_controller(scene->entities->first->value,
             engine->input->controllers[0]);

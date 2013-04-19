@@ -174,7 +174,8 @@ int OrthoPhysicsScene_create_world(Scene *scene, Engine *engine) {
         fixture->rotation_radians = M_PI / 16 * (i % 8);
         Fixture_set_mass(fixture, 100);
 
-        entity->fixture = fixture;
+        entity->physics_shape.fixture = fixture;
+        entity->physics_shape.shape_type = GameEntityPhysicsShapeTypeFixture;
         /*
         VRect real_box = Fixture_real_box(fixture);
         fixture->history[0] = real_box;

@@ -1,5 +1,6 @@
 #ifndef __vpoint_h
 #define __vpoint_h
+#include <chipmunk/chipmunk.h>
 #include "../prefix.h"
 
 typedef enum {
@@ -11,8 +12,8 @@ typedef enum {
 } VPointRel;
 
 typedef struct VPoint {
-  double x;
-  double y;
+    float x;
+    float y;
 } VPoint;
 
 static const VPoint VPointZero = {0,0};
