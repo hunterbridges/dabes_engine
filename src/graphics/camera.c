@@ -68,7 +68,7 @@ void Camera_track(Camera *camera) {
                (close_rel & VPointRelXMore)) {
             diff.x = e_closest.x - t_closest.x;
         }
-        diff = VPoint_scale(diff, 1 / (2 * camera->scale));
+        diff = VPoint_scale(diff, 1 / camera->scale);
         diff = VPoint_rotate(diff, VPointZero, camera->rotation_radians);
         camera->focal = VPoint_add(camera->focal, diff);
     } else {
