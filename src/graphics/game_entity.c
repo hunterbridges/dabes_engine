@@ -30,7 +30,7 @@ void GameEntity_render(GameEntity *self, void *engine) {
     GameEntity *entity = self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
-    VRect rect;
+    VRect rect = VRectZero;
     float degrees;
     GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
     switch (entity->physics_shape.shape_type) {
@@ -190,7 +190,7 @@ VRect GameEntity_real_rect(GameEntity *entity) {
 
         case GameEntityPhysicsShapeTypeCPShape:
             {
-              VRect rect;
+              VRect rect = VRectZero;
               cpShape *shape = entity->physics_shape.shape;
               float rads = cpBodyGetAngle(shape->body);
               cpVect pos = cpBodyGetPos(shape->body);

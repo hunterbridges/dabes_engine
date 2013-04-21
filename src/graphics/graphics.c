@@ -73,9 +73,13 @@ static inline int data_potize(unsigned char **data, int width, int height,
   while (pot_w < width) pot_w <<= 1;
   while (pot_h < height) pot_h <<= 1;
 
-  *data = realloc(*data, pot_w * pot_h * sizeof(unsigned char) * 4);
-  check(data != NULL, "Couldn't realloc texture for potize");
-  uint32_t **new_data = (uint32_t **)data;
+  unsigned char *old_data = *data;
+  unsigned char *resized_data = NULL;
+  resized_data = realloc(old_data, pot_w * pot_h * sizeof(unsigned char) * 4);
+  check(resized_data != NULL, "Couldn't realloc texture for potize");
+
+  *data = resized_data;
+  uint32_t *new_data = (uint32_t *)resized_data;
 
   *pot_width = pot_w;
   *pot_height = pot_h;
@@ -86,7 +90,7 @@ static inline int data_potize(unsigned char **data, int width, int height,
     int old_col = i % width;
     int old_row = i / width;
     int new_index = old_row * pot_w + old_col;
-    (*new_data)[new_index] = (*new_data)[i];
+    new_data[new_index] = new_data[i];
   }
 
   return 1;
@@ -122,9 +126,17 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
     GLenum er = glGetError();
+    if (er != GL_NO_ERROR) {
+        printf("%d\n", GL_MAX_TEXTURE_SIZE);
+        debug("breakpoint here");
+    }
     check(er == GL_NO_ERROR, "Error loading texture: %d", er);
     return texture;
 error:
+    if (texture) {
+        glDeleteTextures(1, &texture->gl_tex);
+        free(texture);
+    }
     return NULL;
 }
 
@@ -303,21 +315,21 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 
         tex_br.packed.x = (textureOffset.x + textureSize.w) / texture->size.w;
         tex_br.packed.y = (textureOffset.y + textureSize.h) / texture->size.h;
-    }
 
-    // Remap the texture coords to the power-of-two compatible ones.
-    VPoint pot_scale = {
-        texture->size.w / texture->pot_size.w,
-        texture->size.h / texture->pot_size.h
-    };
-    tex_tl.packed.x *= pot_scale.x;
-    tex_tr.packed.x *= pot_scale.x;
-    tex_bl.packed.x *= pot_scale.x;
-    tex_br.packed.x *= pot_scale.x;
-    tex_tl.packed.y *= pot_scale.y;
-    tex_tr.packed.y *= pot_scale.y;
-    tex_bl.packed.y *= pot_scale.y;
-    tex_br.packed.y *= pot_scale.y;
+        // Remap the texture coords to the power-of-two compatible ones.
+        VPoint pot_scale = {
+            texture->size.w / texture->pot_size.w,
+            texture->size.h / texture->pot_size.h
+        };
+        tex_tl.packed.x *= pot_scale.x;
+        tex_tr.packed.x *= pot_scale.x;
+        tex_bl.packed.x *= pot_scale.x;
+        tex_br.packed.x *= pot_scale.x;
+        tex_tl.packed.y *= pot_scale.y;
+        tex_tr.packed.y *= pot_scale.y;
+        tex_bl.packed.y *= pot_scale.y;
+        tex_br.packed.y *= pot_scale.y;
+    }
 
     glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
                 texture ? texture->gl_tex : 0);
@@ -461,7 +473,7 @@ void tear_down_decal_shader(GfxShader *UNUSED(shader)) {
 }
 
 void Graphics_build_decal_shader(Graphics *graphics) {
-    GfxShader *shader = malloc(sizeof(GLuint));
+    GfxShader *shader = malloc(sizeof(GfxShader));
     check(shader != NULL, "Could not alloc decal shader");
 
     int rc = Graphics_load_shader(graphics, shader_path("decal.vert"),
@@ -506,7 +518,7 @@ void tear_down_tilemap_shader (GfxShader *UNUSED(shader)) {
 }
 
 void Graphics_build_tilemap_shader(Graphics *graphics) {
-    GfxShader *shader = calloc(1, sizeof(GLuint));
+    GfxShader *shader = calloc(1, sizeof(GfxShader));
     check(shader != NULL, "Could not alloc tilemap shader");
 
     int rc = Graphics_load_shader(graphics, shader_path("tilemap.vert"),

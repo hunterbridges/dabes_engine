@@ -29,7 +29,6 @@ What is not yet done:
 Bugs:
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
-* Desktop/SDL build is kinda unstable about textures
 * Gap in audio loop, gotta use smaller format audio files...
 
 Code Gripes:
