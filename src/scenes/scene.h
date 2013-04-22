@@ -6,6 +6,7 @@
 #include "../core/engine.h"
 #include "../graphics/game_entity.h"
 #include "../graphics/camera.h"
+#include "../graphics/parallax.h"
 #include "../graphics/tile_map.h"
 #include "../physics/world.h"
 
@@ -22,7 +23,7 @@ typedef struct SceneProto {
 
 typedef struct Scene {
     SceneProto proto;
-    GfxTexture *bg_texture;
+    GfxTexture *bg_texture; // deprecated
 
     Music *music;
     Camera *camera;
@@ -30,6 +31,7 @@ typedef struct Scene {
       World *world;
       cpSpace *space;
     };
+    Parallax *parallax;
     TileMap *tile_map;
     List *entities;
 

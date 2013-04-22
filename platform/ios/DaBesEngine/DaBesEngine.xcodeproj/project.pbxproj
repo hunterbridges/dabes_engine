@@ -40,6 +40,7 @@
 		CA30661417062E6100629F80 /* tile_map_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30661217062E5D00629F80 /* tile_map_parse.c */; };
 		CA5E5E901721093A00CAF6A2 /* ortho_chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */; };
 		CA5E5E9F17211C0D00CAF6A2 /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
+		CA5E5EBA1724EDC500CAF6A2 /* parallax.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5EB81724EDC500CAF6A2 /* parallax.c */; };
 		CA61B612170FB3A600F1CC1A /* ortho_physics_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA61B60C170FB3A600F1CC1A /* ortho_physics_scene.c */; };
 		CA61B614170FB3A600F1CC1A /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA61B60F170FB3A600F1CC1A /* scene.c */; };
 		CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA63D7A41708094C00EE59CA /* ConsoleView.m */; };
@@ -166,6 +167,8 @@
 		CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ortho_chipmunk_scene.c; sourceTree = "<group>"; };
 		CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_chipmunk_scene.h; sourceTree = "<group>"; };
 		CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk6.xcodeproj; path = "../../../third_party/Chipmunk-6.1.4/xcode/Chipmunk6.xcodeproj"; sourceTree = "<group>"; };
+		CA5E5EB81724EDC500CAF6A2 /* parallax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parallax.c; sourceTree = "<group>"; };
+		CA5E5EB91724EDC500CAF6A2 /* parallax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parallax.h; sourceTree = "<group>"; };
 		CA61B60C170FB3A600F1CC1A /* ortho_physics_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = ortho_physics_scene.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		CA61B60D170FB3A600F1CC1A /* ortho_physics_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_physics_scene.h; sourceTree = "<group>"; };
 		CA61B60F170FB3A600F1CC1A /* scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scene.c; sourceTree = "<group>"; };
@@ -325,6 +328,8 @@
 				CA24C76F16FC20900045D5DE /* game_entity.h */,
 				CA24C77116FC20900045D5DE /* graphics.c */,
 				CA24C77216FC20900045D5DE /* graphics.h */,
+				CA5E5EB81724EDC500CAF6A2 /* parallax.c */,
+				CA5E5EB91724EDC500CAF6A2 /* parallax.h */,
 				CA3066041704231700629F80 /* tile_map.h */,
 				CA3066051704233200629F80 /* tile_map.c */,
 				CA30661317062E5D00629F80 /* tile_map_parse.h */,
@@ -589,6 +594,7 @@
 				CA694529170FC6E80021E89B /* vrect.c in Sources */,
 				CAE3234E171CFB2500E7F7FB /* vmatrix.c in Sources */,
 				CA5E5E901721093A00CAF6A2 /* ortho_chipmunk_scene.c in Sources */,
+				CA5E5EBA1724EDC500CAF6A2 /* parallax.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,7 +714,6 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/liblcthw-axjihrnjansjqnheivuszpbufqgd/Build/Products/Debug-iphoneos\"",
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/lcthw-axrjvzehauplcydzkbhppmajtfle/Build/Products/Debug-iphoneos\"",
-					"\"$(SRCROOT)/../Chipmunk-iPhone\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -739,7 +744,6 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/liblcthw-axjihrnjansjqnheivuszpbufqgd/Build/Products/Debug-iphoneos\"",
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/lcthw-axrjvzehauplcydzkbhppmajtfle/Build/Products/Debug-iphoneos\"",
-					"\"$(SRCROOT)/../Chipmunk-iPhone\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -267,7 +267,8 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
       // Texture
       tex, tex, tex, tex
     };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GfxUVertex), vertices,
+            GL_STATIC_DRAW);
 
     // Texture
 #ifdef DABES_SDL
@@ -556,6 +557,63 @@ error:
     return;
 }
 
+void set_up_parallax_shader(GfxShader *UNUSED(shader)) {
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX], 4,
+                          GL_FLOAT, GL_FALSE, 0, 0);
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE], 4,
+                          GL_FLOAT, GL_FALSE, 0,
+                          (GLvoid *)(sizeof(GfxUVertex) * 4));
+}
+
+void tear_down_parallax_shader (GfxShader *UNUSED(shader)) {
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
+}
+
+void Graphics_build_parallax_shader(Graphics *graphics) {
+    GfxShader *shader = calloc(1, sizeof(GfxShader));
+    check(shader != NULL, "Could not alloc parallax shader");
+
+    int rc = Graphics_load_shader(graphics, shader_path("parallax.vert"),
+        shader_path("parallax.frag"), &shader->gl_program);
+    check(rc == 1, "Could not build parallax shader");
+    Hashmap_set(graphics->shaders, bfromcstr("parallax"), shader);
+
+    GLuint program = shader->gl_program;
+    GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX] =
+        glGetUniformLocation(program, "modelView");
+    GfxShader_uniforms[UNIFORM_PARALLAX_PROJECTION_MATRIX] =
+        glGetUniformLocation(program, "projection");
+    GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE] =
+        glGetUniformLocation(program, "texture");
+    GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION] =
+        glGetUniformLocation(program, "texPortion");
+    GfxShader_uniforms[UNIFORM_PARALLAX_REPEAT_SIZE] =
+        glGetUniformLocation(program, "repeatSize");
+    GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS] =
+        glGetUniformLocation(program, "repeats");
+    GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS] =
+        glGetUniformLocation(program, "cameraPos");
+    GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR] =
+        glGetUniformLocation(program, "parallaxFactor");
+    GfxShader_uniforms[UNIFORM_PARALLAX_TEX_SCALE] =
+        glGetUniformLocation(program, "texScale");
+    GfxShader_attributes[ATTRIB_PARALLAX_VERTEX] =
+        glGetAttribLocation(program, "position");
+    GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE] =
+        glGetAttribLocation(program, "texture");
+
+    shader->set_up = &set_up_parallax_shader;
+    shader->tear_down = &tear_down_parallax_shader;
+    return;
+error:
+    if (shader) free(shader);
+    return;
+}
+
 int Graphics_init(void *self) {
     Graphics *graphics = self;
 #ifndef DABES_IOS
@@ -579,6 +637,7 @@ int Graphics_init(void *self) {
 
     Graphics_build_decal_shader(graphics);
     Graphics_build_tilemap_shader(graphics);
+    Graphics_build_parallax_shader(graphics);
 
     graphics->textures = Hashmap_create(NULL, NULL);
 

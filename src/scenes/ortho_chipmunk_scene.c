@@ -14,6 +14,49 @@ int OrthoChipmunkScene_create(struct Scene *scene, Engine *engine) {
     return 1;
 }
 
+void build_parallax(Scene *scene, Engine *engine) {
+    GfxSize level_size = {
+        scene->tile_map->cols * scene->tile_map->tile_size.w,
+        scene->tile_map->rows * scene->tile_map->tile_size.h
+    };
+    scene->parallax = Parallax_create(level_size, scene->camera);
+    scene->parallax->sky_color.rgba.r = 0.0;
+    scene->parallax->sky_color.rgba.g = 0.0;
+    scene->parallax->sky_color.rgba.b = 0.698;
+    scene->parallax->earth_color.rgba.r = 0.851;
+    scene->parallax->earth_color.rgba.g = 0.851;
+    scene->parallax->earth_color.rgba.b = 0.851;
+
+    float yo = 80.0;
+    float base_scale = 1.0;
+    GfxTexture *m_far =
+        Graphics_texture_from_image(engine->graphics,
+                "media/bgs/icecap_mountains_far.png");
+    GfxTexture *m_close =
+        Graphics_texture_from_image(engine->graphics,
+                "media/bgs/icecap_mountains_close.png");
+    VPoint m_far_offset = {0, (0 - (m_far->size.h + m_close->size.h) * base_scale) + yo};
+    VPoint m_close_offset = {0, (0 - (m_close->size.h) * base_scale) + yo};
+
+    GfxTexture *c_far =
+        Graphics_texture_from_image(engine->graphics,
+                "media/bgs/icecap_clouds_far.png");
+    GfxTexture *c_mid =
+        Graphics_texture_from_image(engine->graphics,
+                "media/bgs/icecap_clouds_mid.png");
+    GfxTexture *c_close =
+        Graphics_texture_from_image(engine->graphics,
+                "media/bgs/icecap_clouds_close.png");
+    VPoint c_far_offset = {0, yo};
+    VPoint c_mid_offset = {0, (c_far->size.h) * base_scale + yo};
+    VPoint c_close_offset = {0, (c_far->size.h + c_mid->size.h) * base_scale + yo};
+    Parallax_add_layer(scene->parallax, m_far, m_far_offset, base_scale, 0.08);
+    Parallax_add_layer(scene->parallax, m_close, m_close_offset, base_scale, 0.09);
+    Parallax_add_layer(scene->parallax, c_far, c_far_offset, base_scale, 0.15);
+    Parallax_add_layer(scene->parallax, c_mid, c_mid_offset, base_scale, 0.30);
+    Parallax_add_layer(scene->parallax, c_close, c_close_offset, base_scale, 0.45);
+}
+
 void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     if (scene->started) return;
     assert(scene->world == NULL);
@@ -31,9 +74,8 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     }
 
     Scene_reset_camera(scene);
-    scene->bg_texture = Graphics_texture_from_image(engine->graphics,
-                                                    "media/sprites/clouds.png");
 
+    build_parallax(scene, engine);
     OrthoChipmunkScene_create_space(scene, engine);
 
     GameEntity_assign_controller(scene->entities->first->value,
@@ -56,6 +98,8 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
       cpSpaceFree(scene->space);
       scene->space = NULL;
     }
+
+    Parallax_destroy(scene->parallax);
 
     engine->physics->accumulator = 0;
     scene->started = 0;
@@ -80,7 +124,7 @@ error:
 
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     if (engine->frame_ticks > 100) engine->frame_ticks = 100;
-  
+
     unsigned int accumulation = engine->frame_ticks % engine->physics->max_dt;
     engine->physics->accumulator += accumulation;
     int integration = engine->frame_ticks - accumulation;
@@ -104,27 +148,9 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Graphics_use_shader(graphics, dshader);
 
-    // TODO: Parallax bg camera
-    double bgScale = (scene->camera->scale + 2) / 2;
-    VPoint screen_center = {
-      .x = scene->camera->screen_size.w / 2.0,
-      .y = scene->camera->screen_size.h / 2.0
-    };
-    Camera bgCamera = {
-        .focal = screen_center,
-        .screen_size = scene->camera->screen_size,
-        .scale = bgScale,
-        .rotation_radians = 0
-    };
-    Graphics_project_camera(graphics, &bgCamera);
+    if (scene->parallax) Parallax_render(scene->parallax, engine->graphics);
 
-    GLfloat color[4] = {0, 0, 1, 1};
-    GfxSize bg_size = {.w = 512, .h = 384};
-    VRect gfx_rect = VRect_fill_size(bg_size, scene->camera->screen_size);
-    Graphics_draw_rect(graphics, gfx_rect, color, scene->bg_texture,
-                       VPointZero, scene->bg_texture->size,0);
     Graphics_project_camera(graphics, scene->camera);
 
     Graphics_use_shader(graphics, tshader);
@@ -165,7 +191,7 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     }
 }
 
-int collision_begin_cb(cpArbiter *arb, cpSpace *space, void *data) {
+int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data)) {
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
     GameEntityStateData *state_data = cpBodyGetUserData(eBody);
@@ -173,7 +199,7 @@ int collision_begin_cb(cpArbiter *arb, cpSpace *space, void *data) {
     return 1;
 }
 
-void collision_seperate_cb(cpArbiter *arb, cpSpace *space, void *data) {
+void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data)) {
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
     GameEntityStateData *state_data = cpBodyGetUserData(eBody);
@@ -188,7 +214,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     scene->space = cpSpaceNew();
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
-  
+
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
                                OCSCollisionTypeTile, collision_begin_cb, NULL,
                                NULL, collision_seperate_cb, NULL);
@@ -209,7 +235,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
       cpBody *fixture = cpBodyNew(mass, moment);
       GameEntityStateData *state_data = calloc(1, sizeof(GameEntityStateData));
       entity->state = state_data;
-      
+
       cpShape *entity_shape = cpBoxShapeNew(fixture, width, width);
       entity_shape->collision_type = OCSCollisionTypeEntity;
       cpShapeSetFriction(entity_shape, 0.5);
@@ -218,7 +244,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
       cpBodySetPos(fixture, center);
       cpBodySetAngle(fixture, rotation);
       cpBodySetUserData(fixture, state_data);
-      
+
       entity->physics_shape.shape = entity_shape;
       entity->physics_shape.shape_type = GameEntityPhysicsShapeTypeCPShape;
       i++;

@@ -27,6 +27,7 @@ int decompress_data(unsigned char* abSrc, int nLenSrc, unsigned char **abDst,
         case Z_NEED_DICT:
         case Z_STREAM_ERROR:
           nErr = Z_DATA_ERROR;
+          printf("Data error %d", nErr);
         case Z_DATA_ERROR:
         case Z_MEM_ERROR:
           inflateEnd(&zInfo);

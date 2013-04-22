@@ -12,6 +12,7 @@ What is done:
     * Can load SDL surfaces into OpenGL textures
     * Camera tracking
     * Can render TMX tile maps
+    * Parallax layers
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
 * Audio engine:
@@ -19,7 +20,6 @@ What is done:
 
 What is not yet done:
 * Graphics engine:
-    * Parallax layers
     * Sprite animations
 * Audio engine:
     * Sound effects
@@ -30,6 +30,7 @@ Bugs:
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Gap in audio loop, gotta use smaller format audio files...
+* Parallax zoom and rotate
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules

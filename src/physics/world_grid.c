@@ -154,10 +154,8 @@ int WorldGrid_add_point(WorldGrid *grid, VPoint point,
         DArray_set(grid->cells, idx, cell);
     }
 
-    if (cell) {
-      WorldGridPoint *wgpoint = WorldGridPoint_create(point, owner);
-      List_push(cell->points, wgpoint);
-    }
+    WorldGridPoint *wgpoint = WorldGridPoint_create(point, owner);
+    List_push(cell->points, wgpoint);
 
     return 1;
 error:
