@@ -97,8 +97,8 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
                        GL_FALSE, graphics->modelview_matrix.gl);
 
     VPoint cam_pos = {
-        parallax->camera->focal.x / parallax->level_size.w,
-        parallax->camera->focal.y / parallax->level_size.h
+        floorf(parallax->camera->focal.x) / parallax->level_size.w,
+        floorf(parallax->camera->focal.y) / parallax->level_size.h
     };
 
     int i = 0;
