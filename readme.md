@@ -30,7 +30,7 @@ Bugs:
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Gap in audio loop, gotta use smaller format audio files...
-* Parallax zoom and rotate
+* Parallax zoom is weird
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules

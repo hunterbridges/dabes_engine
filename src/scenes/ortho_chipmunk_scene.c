@@ -23,11 +23,15 @@ void build_parallax(Scene *scene, Engine *engine) {
     scene->parallax->sky_color.rgba.r = 0.0;
     scene->parallax->sky_color.rgba.g = 0.0;
     scene->parallax->sky_color.rgba.b = 0.698;
-    scene->parallax->earth_color.rgba.r = 0.851;
-    scene->parallax->earth_color.rgba.g = 0.851;
-    scene->parallax->earth_color.rgba.b = 0.851;
+    scene->parallax->sea_color.rgba.r = 0.851;
+    scene->parallax->sea_color.rgba.g = 0.851;
+    scene->parallax->sea_color.rgba.b = 0.851;
+
 
     float yo = 80.0;
+    scene->parallax->y_wiggle = 40.0;
+    scene->parallax->sea_level = 1.0;
+
     float base_scale = 1.0;
     GfxTexture *m_far =
         Graphics_texture_from_image(engine->graphics,
@@ -35,8 +39,8 @@ void build_parallax(Scene *scene, Engine *engine) {
     GfxTexture *m_close =
         Graphics_texture_from_image(engine->graphics,
                 "media/bgs/icecap_mountains_close.png");
-    VPoint m_far_offset = {0, (0 - (m_far->size.h + m_close->size.h) * base_scale) + yo};
-    VPoint m_close_offset = {0, (0 - (m_close->size.h) * base_scale) + yo};
+    VPoint m_far_offset = {0, yo - (m_far->size.h + m_close->size.h)};
+    VPoint m_close_offset = {0, yo - m_close->size.h};
 
     GfxTexture *c_far =
         Graphics_texture_from_image(engine->graphics,
@@ -48,13 +52,15 @@ void build_parallax(Scene *scene, Engine *engine) {
         Graphics_texture_from_image(engine->graphics,
                 "media/bgs/icecap_clouds_close.png");
     VPoint c_far_offset = {0, yo};
-    VPoint c_mid_offset = {0, (c_far->size.h) * base_scale + yo};
-    VPoint c_close_offset = {0, (c_far->size.h + c_mid->size.h) * base_scale + yo};
-    Parallax_add_layer(scene->parallax, m_far, m_far_offset, base_scale, 0.08);
-    Parallax_add_layer(scene->parallax, m_close, m_close_offset, base_scale, 0.09);
-    Parallax_add_layer(scene->parallax, c_far, c_far_offset, base_scale, 0.15);
-    Parallax_add_layer(scene->parallax, c_mid, c_mid_offset, base_scale, 0.30);
-    Parallax_add_layer(scene->parallax, c_close, c_close_offset, base_scale, 0.45);
+    VPoint c_mid_offset = {0, c_far->size.h + yo};
+    VPoint c_close_offset = {0, c_far->size.h + c_mid->size.h + yo};
+    Parallax_add_layer(scene->parallax, m_far, 0.20, m_far_offset, base_scale, 0);
+    Parallax_add_layer(scene->parallax, m_close, 0.20, m_close_offset, base_scale, 0);
+    Parallax_add_layer(scene->parallax, c_far, 0.30, c_far_offset, base_scale, 0);
+    Parallax_add_layer(scene->parallax, c_mid, 0.45, c_mid_offset, base_scale,
+            c_far->size.h);
+    Parallax_add_layer(scene->parallax, c_close, 0.60, c_close_offset, base_scale,
+            c_far->size.h + c_mid->size.h);
 }
 
 void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {

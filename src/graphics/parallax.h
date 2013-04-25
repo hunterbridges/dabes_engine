@@ -11,6 +11,7 @@ typedef struct ParallaxLayer {
     VPoint offset;
     double scale;
     double p_factor;
+    double y_wiggle;
 } ParallaxLayer;
 
 typedef struct Parallax {
@@ -18,13 +19,15 @@ typedef struct Parallax {
     Camera *camera;
     GfxSize level_size;
     GfxUVertex sky_color;
-    GfxUVertex earth_color;
+    GfxUVertex sea_color;
+    double y_wiggle;
+    double sea_level;
 } Parallax;
 
 Parallax *Parallax_create(GfxSize level_size, Camera *camera);
 void Parallax_destroy(Parallax *parallax);
-int Parallax_add_layer(Parallax *parallax, GfxTexture *texture, VPoint offset,
-        double scale, double p_factor);
+int Parallax_add_layer(Parallax *parallax, GfxTexture *texture, double p_factor,
+        VPoint offset, double scale, double y_wiggle);
 void Parallax_render(Parallax *parallax, Graphics *graphics);
 
 #endif

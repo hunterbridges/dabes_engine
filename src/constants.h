@@ -11,7 +11,7 @@
 #define SCREEN_HEIGHT 480
 #define DEFAULT_PPM 32
 
-#define NUM_BOXES 10
+#define NUM_BOXES 100
 
 #define MVMT_RUN_ACCEL 15
 #define MVMT_AIR_ACCEL 2 * MVMT_RUN_ACCEL

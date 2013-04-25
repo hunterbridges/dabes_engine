@@ -109,13 +109,13 @@ void GameEntity_control(GameEntity *entity, Input *input) {
     check_mem(entity);
     check_mem(input);
     if (entity->controller == NULL) return;
-  
+
     switch (entity->physics_shape.shape_type) {
         case GameEntityPhysicsShapeTypeFixture:
             {
             }
             break;
-        
+
         case GameEntityPhysicsShapeTypeCPShape:
             {
                 cpShape *shape = entity->physics_shape.shape;
@@ -162,9 +162,9 @@ void GameEntity_control(GameEntity *entity, Input *input) {
                             sign(input_acceleration.x)) {
                     input_acceleration.x = 0;
                 }
-              
+
                 cpBodySetVel(shape->body, step_velocity);
-              
+
                 cpVect input_f =
                     cpvmult(input_acceleration, cpBodyGetMass(shape->body));
                 cpBodyApplyForce(shape->body, input_f, cpvzero);

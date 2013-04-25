@@ -13,10 +13,13 @@ Parallax *Parallax_create(GfxSize level_size, Camera *camera) {
     parallax->sky_color.rgba.b = 1.0;
     parallax->sky_color.rgba.a = 1.0;
 
-    parallax->earth_color.rgba.r = 0.0;
-    parallax->earth_color.rgba.g = 0.5;
-    parallax->earth_color.rgba.b = 0.0;
-    parallax->earth_color.rgba.a = 1.0;
+    parallax->sea_color.rgba.r = 0.0;
+    parallax->sea_color.rgba.g = 0.5;
+    parallax->sea_color.rgba.b = 0.0;
+    parallax->sea_color.rgba.a = 1.0;
+
+    parallax->y_wiggle = 0.0;
+    parallax->sea_level = 1.0;
 
     return parallax;
 error:
@@ -35,8 +38,8 @@ error:
     return;
 }
 
-int Parallax_add_layer(Parallax *parallax, GfxTexture *texture, VPoint offset,
-        double scale, double p_factor) {
+int Parallax_add_layer(Parallax *parallax, GfxTexture *texture, double p_factor,
+        VPoint offset, double scale, double y_wiggle) {
     ParallaxLayer *layer = NULL;
     check(parallax != NULL, "No parallax to add to");
 
@@ -47,6 +50,7 @@ int Parallax_add_layer(Parallax *parallax, GfxTexture *texture, VPoint offset,
     layer->offset = offset;
     layer->scale = scale;
     layer->p_factor = p_factor;
+    layer->y_wiggle = y_wiggle;
 
     DArray_push(parallax->layers, layer);
 
@@ -75,17 +79,31 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     };
     Graphics_project_camera(graphics, &bg_camera);
 
-    // render earth color
-    VRect earth_rect = VRect_from_xywh(0, 0,
-            parallax->camera->screen_size.w,
-            parallax->camera->screen_size.h);
-    Graphics_draw_rect(graphics, earth_rect, parallax->earth_color.raw,
+    VPoint cam_pos = {
+        floorf(parallax->camera->focal.x) / parallax->level_size.w,
+        floorf(parallax->camera->focal.y) / parallax->level_size.h
+    };
+
+    GfxSize screen_size = parallax->camera->screen_size;
+    float hyp = sqrtf(powf(parallax->camera->screen_size.w, 2) +
+            powf(parallax->camera->screen_size.h, 2));
+
+    double wiggle_factor = cam_pos.y - parallax->sea_level; // -0.5 to 0.5
+    double y_wiggle = parallax->y_wiggle * bg_scale * wiggle_factor;
+
+    // render sea color
+    VRect sea_rect = VRect_from_xywh(
+            0 - (hyp - screen_size.w) / 2.0,
+            0 - (hyp - screen_size.h) / 2.0,
+            hyp, hyp);
+    Graphics_draw_rect(graphics, sea_rect, parallax->sea_color.raw,
         NULL, VPointZero, GfxSizeZero, 0);
 
     // render sky color
-    VRect sky_rect = VRect_from_xywh(0, 0,
-            parallax->camera->screen_size.w,
-            parallax->camera->screen_size.h / 2.0);
+    VRect sky_rect = VRect_from_xywh(
+            0 - (hyp - screen_size.w) / 2.0,
+            0 - (hyp - screen_size.h) / 2.0,
+            hyp, hyp / 2.0 - y_wiggle);
     Graphics_draw_rect(graphics, sky_rect, parallax->sky_color.raw,
         NULL, VPointZero, GfxSizeZero, 0);
 
@@ -96,10 +114,14 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
 
-    VPoint cam_pos = {
-        floorf(parallax->camera->focal.x) / parallax->level_size.w,
-        floorf(parallax->camera->focal.y) / parallax->level_size.h
+    VPoint stretch = {
+        hyp / screen_size.w,
+        hyp / screen_size.h
     };
+    GfxUVertex tex_tl = {.raw = {0,0,0,0}};
+    GfxUVertex tex_tr = {.raw = {stretch.x,0,0,0}};
+    GfxUVertex tex_bl = {.raw = {0,1.0,0,0}};
+    GfxUVertex tex_br = {.raw = {stretch.x,1.0,0,0}};
 
     int i = 0;
     for (i = 0; i < DArray_count(parallax->layers); i++) {
@@ -107,38 +129,27 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         assert(layer->texture != NULL);
         GfxTexture *texture = layer->texture;
 
-        VRect rect = VRect_from_xywh(
-                layer->offset.x,
-                screen_center.y + layer->offset.y * bg_scale,
-                parallax->camera->screen_size.w,
-                texture->size.h * layer->scale * bg_scale
-        );
-        /*
-        Graphics_use_shader(graphics, dshader);
-        Graphics_draw_rect(graphics, rect, parallax->sky_color.raw,
-                texture, VPointZero, texture->size, 0);
-        continue;
-        */
+        double sx = (layer->scale * bg_scale);
+        double final_scale = sx;
+        // Some other wacko easing functions...
+        // double final_scale = 1 + (sx - 1) * (pow(layer->p_factor + 1, 2) - 1);
+        // double final_scale = 1 + (sx - 1) * layer->p_factor;
+        double layer_wiggle = layer->y_wiggle * bg_scale * wiggle_factor;
 
-        GfxUVertex tex_tl = {.raw = {0,0,0,0}};
-        GfxUVertex tex_tr = {.raw = {1,0,0,0}};
-        GfxUVertex tex_bl = {.raw = {0,1,0,0}};
-        GfxUVertex tex_br = {.raw = {1,1,0,0}};
+        VRect rect = VRect_from_xywh(
+                layer->offset.x - (hyp - parallax->camera->screen_size.w) / 2.0,
+                screen_center.y + layer->offset.y * final_scale
+                    - (y_wiggle + layer_wiggle),
+                hyp,
+                texture->size.h * final_scale
+        );
+        rect = VRect_round_out(rect);
 
         VPoint pot_scale = {
             texture->size.w / texture->pot_size.w,
             texture->size.h / texture->pot_size.h
         };
-        tex_tl.packed.x *= pot_scale.x;
-        tex_tr.packed.x *= pot_scale.x;
-        tex_bl.packed.x *= pot_scale.x;
-        tex_br.packed.x *= pot_scale.x;
-        tex_tl.packed.y *= pot_scale.y;
-        tex_tr.packed.y *= pot_scale.y;
-        tex_bl.packed.y *= pot_scale.y;
-        tex_br.packed.y *= pot_scale.y;
 
-        double final_scale = layer->scale * bg_scale;
         double repeat_width = layer->texture->size.w * final_scale /
             parallax->camera->screen_size.w;
         glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION],
@@ -152,7 +163,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR],
                 layer->p_factor);
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_SCALE],
-                1.0 / bg_scale);
+                final_scale);
         glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
 
         GfxUVertex vertices[8] = {
