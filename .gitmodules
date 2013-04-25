@@ -2,3 +2,6 @@
 	path = submodules/liblcthw
     url = git://github.com/hunterbridges/liblcthw.git
     ignore = dirty
+[submodule "submodules/lua-ios-library"]
+	path = submodules/lua-ios-library
+	url = git@github.com:hunterbridges/lua-ios-library.git

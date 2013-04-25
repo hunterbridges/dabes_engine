@@ -4,8 +4,9 @@ game
 *.wav
 *.aif
 
-lib/*
-include/*
+lib/liblcthw.a
+include/lcthw
+include/lcthw/*
 
 build/*
 *.pbxuser

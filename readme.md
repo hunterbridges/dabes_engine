@@ -29,8 +29,8 @@ What is not yet done:
 Bugs:
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
-* Gap in audio loop, gotta use smaller format audio files...
-* Parallax zoom is weird
+* Gap in audio loop, gotta use OGG files...
+* Parallax zoom is sliiiightly weird
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules
@@ -49,5 +49,6 @@ make submodules
 ```
 
 Acknowledgements:
-[Learn C the Hard Way](http://c.learncodethehardway.org/book/) by Zed Shaw
-[Chipmunk Physics](http://chipmunk-physics.net/) by Howling Moon Software
+[Learn C the Hard Way](http://c.learncodethehardway.org/book/) by Zed Shaw,
+[Chipmunk Physics](http://chipmunk-physics.net/) by Howling Moon Software,
+[Lua 5.2.1](http://www.lua.org/) by PUC-Rio

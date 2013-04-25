@@ -1,5 +1,5 @@
 CFLAGS=-Wall -Wextra -Isrc -DDEBUG $(OPTFLAGS) -g -Iinclude -I/usr/include/libxml2
-LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer -Llib -llcthw -lz -lxml2 -lchipmunk
+LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer -Llib -llcthw -lz -lxml2 -lchipmunk -llua
 
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
@@ -16,7 +16,7 @@ SO_TARGET=$(pathsubst %.a,%.so,$(TARGET))
 .PHONY: submodules
 submodules:
 	git submodule update --init
-	rm -rf lib/* include/*
+	rm -rf lib/liblcthw.a include/lcthw
 	mkdir -p include lib
 	cd submodules/liblcthw && $(MAKE) static
 	cp submodules/liblcthw/build/liblcthw.a lib/

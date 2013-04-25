@@ -46,6 +46,7 @@
 		CA63D7A51708094C00EE59CA /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA63D7A41708094C00EE59CA /* ConsoleView.m */; };
 		CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */; };
 		CA63D7C9170F60C800EE59CA /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7C6170F60B400EE59CA /* liblcthw.a */; };
+		CA65C6F21729B73000A7D4E5 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA65C6EF1729B72800A7D4E5 /* liblua.a */; };
 		CA694526170FC52A0021E89B /* vpoint.c in Sources */ = {isa = PBXBuildFile; fileRef = CA694525170FC52A0021E89B /* vpoint.c */; };
 		CA694529170FC6E80021E89B /* vrect.c in Sources */ = {isa = PBXBuildFile; fileRef = CA694527170FC6E30021E89B /* vrect.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
@@ -103,6 +104,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = CABF2BD316FC2ECF0012C3C7;
 			remoteInfo = lcthw;
+		};
+		CA65C6EE1729B72800A7D4E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03B043C615CA770F0015E7D0;
+			remoteInfo = lua;
+		};
+		CA65C6F01729B72C00A7D4E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 03B043C515CA770F0015E7D0;
+			remoteInfo = lua;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -177,6 +192,7 @@
 		CA63D7A41708094C00EE59CA /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleView.m; sourceTree = "<group>"; };
 		CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lcthw.xcodeproj; path = ../../../submodules/liblcthw/xcode/lcthw.xcodeproj; sourceTree = "<group>"; };
+		CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = "../../../submodules/lua-ios-library/lua.xcodeproj"; sourceTree = "<group>"; };
 		CA694524170FC4B00021E89B /* vpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vpoint.h; path = ../../../../src/math/vpoint.h; sourceTree = "<group>"; };
 		CA694525170FC52A0021E89B /* vpoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vpoint.c; path = ../../../../src/math/vpoint.c; sourceTree = "<group>"; };
 		CA694527170FC6E30021E89B /* vrect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = vrect.c; path = ../../../../src/math/vrect.c; sourceTree = "<group>"; };
@@ -203,11 +219,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA65C6F21729B73000A7D4E5 /* liblua.a in Frameworks */,
 				CA5E5E9F17211C0D00CAF6A2 /* libChipmunk-iPhone.a in Frameworks */,
 				CA63D7C9170F60C800EE59CA /* liblcthw.a in Frameworks */,
-				CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */,
 				CA30660A170549D900629F80 /* libz.dylib in Frameworks */,
 				CA306601170422E700629F80 /* libxml2.dylib in Frameworks */,
+				CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */,
 				CAB359BF16FE6AF5004CF684 /* AVFoundation.framework in Frameworks */,
 				CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */,
 				CA00425016FC3DEB00508FB3 /* CoreAudio.framework in Frameworks */,
@@ -228,6 +245,7 @@
 			children = (
 				CAB3597A16FC4EBC004CF684 /* media */,
 				CA24C73C16FC1E7E0045D5DE /* DaBesEngine */,
+				CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */,
 				CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */,
 				CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */,
 				CA24C73116FC1E7E0045D5DE /* Frameworks */,
@@ -424,6 +442,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CA65C6EB1729B72800A7D4E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA65C6EF1729B72800A7D4E5 /* liblua.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CA694523170FC4850021E89B /* math */ = {
 			isa = PBXGroup;
 			children = (
@@ -467,6 +493,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CA65C6F11729B72C00A7D4E5 /* PBXTargetDependency */,
 				CA5E5E9E17211C0800CAF6A2 /* PBXTargetDependency */,
 				CA63D7C8170F60C100EE59CA /* PBXTargetDependency */,
 			);
@@ -503,6 +530,10 @@
 					ProductGroup = CA63D7C2170F60B300EE59CA /* Products */;
 					ProjectRef = CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */;
 				},
+				{
+					ProductGroup = CA65C6EB1729B72800A7D4E5 /* Products */;
+					ProjectRef = CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -538,6 +569,13 @@
 			fileType = archive.ar;
 			path = liblcthw.a;
 			remoteRef = CA63D7C5170F60B400EE59CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA65C6EF1729B72800A7D4E5 /* liblua.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblua.a;
+			remoteRef = CA65C6EE1729B72800A7D4E5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -610,6 +648,11 @@
 			isa = PBXTargetDependency;
 			name = lcthw;
 			targetProxy = CA63D7C7170F60C100EE59CA /* PBXContainerItemProxy */;
+		};
+		CA65C6F11729B72C00A7D4E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lua;
+			targetProxy = CA65C6F01729B72C00A7D4E5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
