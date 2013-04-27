@@ -154,10 +154,10 @@ char *bundlePath__;
   /*
    INIT GAME ENGINE
    */
-  Engine_bootstrap(&engine_, NULL);
+  engine_ = Engine_create("media/scripts/boxfall.lua", NULL);
   self.preferredFramesPerSecond = 30;
   
-  scene_ = Scene_create(engine_, OrthoChipmunkSceneProto);
+  scene_ = Scene_create(engine_, OrthoChipmunkSceneProto, "fat_map");
   
   self.effect = [[GLKBaseEffect alloc] init];
 }
@@ -166,7 +166,7 @@ char *bundlePath__;
   [EAGLContext setCurrentContext:self.context];
   
   // TODO: CLEANUP
-  scene_->_(destroy)(scene_, engine_);
+  Scene_destroy(scene_, engine_);
   engine_->_(destroy)(engine_);
   self.effect = nil;
 }

@@ -17,6 +17,13 @@ typedef struct {
 
 typedef struct GameEntity {
     Object proto;
+    Controller *controller;
+    uint32_t color;
+    GLfloat alpha;
+    GfxTexture *texture;
+
+    GameEntityStateData *state;
+
     struct {
         union {
             Fixture *fixture;
@@ -24,15 +31,18 @@ typedef struct GameEntity {
         };
         GameEntityPhysicsShapeType shape_type;
     } physics_shape;
-    Controller *controller;
-    uint32_t color;
-    GLfloat alpha;
-    GfxTexture *texture;
-    GameEntityStateData *state;
+
+    struct {
+        GfxSize size;
+        VPoint center;
+        double mass;
+        double rotation; // radians
+        double edge_friction;
+    } config;
 } GameEntity;
 
-int GameEntity_init(void *self);
-void GameEntity_destroy(void *self);
+GameEntity *GameEntity_create();
+void GameEntity_destroy(GameEntity *entity);
 void GameEntity_render(GameEntity *self, void *engine);
 void GameEntity_assign_controller(GameEntity *entity, Controller *controller);
 void GameEntity_control(GameEntity *entity, Input *input);

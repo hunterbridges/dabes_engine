@@ -6,8 +6,6 @@
 #include "../core/gzip.h"
 #include "../core/engine.h"
 
-#define streq(A, B) (strcmp((const char *)A, (const char *)B) == 0)
-
 void extract_gids_from_encoded_data(xmlChar *value, uint32_t **gids,
                                      int *gid_count) {
     unsigned char *decoded = malloc(1024);

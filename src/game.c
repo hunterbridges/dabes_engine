@@ -11,9 +11,10 @@ int main(int argc, char *argv[]) {
     SDL_Surface *screen = NULL;
     Scene *scene = NULL;
 
-    check(Engine_bootstrap(&engine, (void *)&screen), "Init SDL and OpenGL");
+    engine = Engine_create("media/scripts/boxfall.lua", (void *)&screen);
+    check(engine != NULL, "Failed to boot engine");
 
-    scene = Scene_create(engine, OrthoChipmunkSceneProto);
+    scene = Scene_create(engine, OrthoChipmunkSceneProto, "fat_map");
 
     GameEntity_assign_controller(scene->entities->first->value,
             engine->input->controllers[0]);
@@ -36,13 +37,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    scene->_(destroy)(scene, engine);
-    engine->_(destroy)(engine);
+    Scene_destroy(scene, engine);
+    Engine_destroy(engine);
     SDL_FreeSurface(screen);
 
     return 0;
 error:
-    if (scene) scene->_(destroy)(scene, engine);
+    if (scene) Scene_destroy(scene, engine);
     if (engine) engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
     return 1;

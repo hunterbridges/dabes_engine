@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include "../prefix.h"
 #include "audio.h"
+#include "scripting.h"
 #include "../input/input.h"
 #include "../graphics/graphics.h"
 #include "../physics/physics.h"
@@ -21,9 +22,10 @@ typedef struct Engine {
     Input *input;
     Graphics *graphics;
     Physics *physics;
+    Scripting *scripting;
 
     EngineTimer timer;
-  
+
     short int reg_initialized;
     short int frame_now;
     long unsigned int frame_ticks;
@@ -31,15 +33,15 @@ typedef struct Engine {
     long unsigned int last_frame_at;
 } Engine;
 
-int Engine_init(void *self);
-void Engine_destroy(void *self);
+Engine *Engine_create(const char *boot_script, void **sdl_screen);
+void Engine_destroy(Engine *engine);
 int Engine_bootstrap(Engine **engine, void **sdl_screen);
 void Engine_regulate(Engine *engine);
 
 void Engine_pause_time(Engine *engine);
 void Engine_resume_time(Engine *engine);
 uint32_t Engine_get_ticks(Engine *engine);
-  
+
 #ifdef DABES_IOS
 #define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)
 void Engine_log_iOS(char *fmt, ...);

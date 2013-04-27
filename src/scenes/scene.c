@@ -3,15 +3,26 @@
 #include "../core/engine.h"
 #include "scene.h"
 
-Scene *Scene_create(Engine *engine, SceneProto proto) {
+Scene *Scene_create(Engine *engine, SceneProto proto, const char *name) {
     Scene *scene = calloc(1, sizeof(Scene));
     check(scene != NULL, "Couldn't create scene");
 
+    scene->name = malloc(sizeof(char) * strlen(name));
+    strcpy(scene->name, name);
     scene->proto = proto;
-    scene->_(create)(scene, engine);
+    scene->_(init)(scene, engine);
     return scene;
 error:
     return NULL;
+}
+
+void Scene_destroy(Scene *scene, Engine *engine) {
+    check(scene != NULL, "No scene to destroy");
+    free(scene->name);
+    scene->_(destroy)(scene, engine);
+    return;
+error:
+    return;
 }
 
 void Scene_restart(Scene *scene, Engine *engine) {
@@ -60,11 +71,13 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
 }
 
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
+    int needs_restart = scene->started;
+  
     if (scene->tile_map) {
         TileMap_destroy(scene->tile_map);
     }
     scene->tile_map = tile_map;
-    Scene_restart(scene, engine);
+    if(needs_restart) Scene_restart(scene, engine);
 }
 
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,

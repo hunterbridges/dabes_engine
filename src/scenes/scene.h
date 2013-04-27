@@ -12,7 +12,7 @@
 
 struct Scene;
 typedef struct SceneProto {
-    int (*create)(struct Scene *scene, Engine *engine);
+    int (*init)(struct Scene *scene, Engine *engine);
     void (*start)(struct Scene *scene, Engine *engine);
     void (*stop)(struct Scene *scene, Engine *engine);
     void (*destroy)(struct Scene *scene, Engine *engine);
@@ -23,8 +23,10 @@ typedef struct SceneProto {
 
 typedef struct Scene {
     SceneProto proto;
+    char *name;
+  
     GfxTexture *bg_texture; // deprecated
-
+  
     Music *music;
     Camera *camera;
     union {
@@ -40,12 +42,16 @@ typedef struct Scene {
     int started;
 } Scene;
 
-Scene *Scene_create(Engine *engine, SceneProto proto);
+Scene *Scene_create(Engine *engine, SceneProto proto, const char *name);
+void Scene_destroy(Scene *scene, Engine *engine);
 void Scene_restart(Scene *scene, Engine *engine);
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path);
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
 void Scene_reset_camera(Scene *scene);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
+
+#pragma mark Script Bindings
+int Scene_configure(Scene *scene, Engine *engine);
 
 #endif

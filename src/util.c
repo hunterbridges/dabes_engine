@@ -1,7 +1,7 @@
 #include "util.h"
 
 #ifndef DABES_IOS
-const char *resource_path(char *filename) {
+const char *resource_path(const char *filename) {
   return filename;
 }
 

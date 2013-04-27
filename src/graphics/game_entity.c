@@ -2,23 +2,19 @@
 #include "game_entity.h"
 #include "../physics/world.h"
 
-int GameEntity_init(void *self) {
-    check_mem(self);
-    GameEntity *entity = (GameEntity *)self;
-    entity->physics_shape.fixture = NULL;
-    entity->controller = NULL;
+GameEntity *GameEntity_create() {
+    GameEntity *entity = calloc(1, sizeof(GameEntity));
+    check(entity != NULL, "Failed to create entity");
+  
     entity->alpha = 1.f;
-    entity->texture = 0;
 
-    return 1;
-
+    return entity;
 error:
-    return 0;
+    return NULL;
 }
 
-void GameEntity_destroy(void *self) {
-    check_mem(self);
-    GameEntity *entity = (GameEntity *)self;
+void GameEntity_destroy(GameEntity *entity) {
+    check(entity != NULL, "No entity to destroy");
 // TODO: Remove fixture
     free(entity);
     return;
@@ -218,9 +214,3 @@ VRect GameEntity_bounding_rect(GameEntity *entity) {
     VRect real = GameEntity_real_rect(entity);
     return VRect_bounding_box(real);
 }
-
-Object GameEntityProto = {
-    .destroy = GameEntity_destroy,
-    .init = GameEntity_init,
-};
-

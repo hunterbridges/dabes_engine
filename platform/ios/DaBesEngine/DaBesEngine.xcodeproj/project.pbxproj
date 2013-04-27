@@ -47,6 +47,8 @@
 		CA63D7A717090D0A00EE59CA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */; };
 		CA63D7C9170F60C800EE59CA /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7C6170F60B400EE59CA /* liblcthw.a */; };
 		CA65C6F21729B73000A7D4E5 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA65C6EF1729B72800A7D4E5 /* liblua.a */; };
+		CA65C6F51729CE8E00A7D4E5 /* scripting.c in Sources */ = {isa = PBXBuildFile; fileRef = CA65C6F31729CE8E00A7D4E5 /* scripting.c */; };
+		CA65C6F8172B127500A7D4E5 /* scene_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA65C6F7172B127400A7D4E5 /* scene_bindings.c */; };
 		CA694526170FC52A0021E89B /* vpoint.c in Sources */ = {isa = PBXBuildFile; fileRef = CA694525170FC52A0021E89B /* vpoint.c */; };
 		CA694529170FC6E80021E89B /* vrect.c in Sources */ = {isa = PBXBuildFile; fileRef = CA694527170FC6E30021E89B /* vrect.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
@@ -193,6 +195,9 @@
 		CA63D7A617090D0A00EE59CA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lcthw.xcodeproj; path = ../../../submodules/liblcthw/xcode/lcthw.xcodeproj; sourceTree = "<group>"; };
 		CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = "../../../submodules/lua-ios-library/lua.xcodeproj"; sourceTree = "<group>"; };
+		CA65C6F31729CE8E00A7D4E5 /* scripting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scripting.c; sourceTree = "<group>"; };
+		CA65C6F41729CE8E00A7D4E5 /* scripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scripting.h; sourceTree = "<group>"; };
+		CA65C6F7172B127400A7D4E5 /* scene_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scene_bindings.c; sourceTree = "<group>"; };
 		CA694524170FC4B00021E89B /* vpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vpoint.h; path = ../../../../src/math/vpoint.h; sourceTree = "<group>"; };
 		CA694525170FC52A0021E89B /* vpoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vpoint.c; path = ../../../../src/math/vpoint.c; sourceTree = "<group>"; };
 		CA694527170FC6E30021E89B /* vrect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = vrect.c; path = ../../../../src/math/vrect.c; sourceTree = "<group>"; };
@@ -332,6 +337,8 @@
 				CA30660C17054B0900629F80 /* base64.c */,
 				CA30660E17054C0900629F80 /* gzip.h */,
 				CA30660F17054C1E00629F80 /* gzip.c */,
+				CA65C6F31729CE8E00A7D4E5 /* scripting.c */,
+				CA65C6F41729CE8E00A7D4E5 /* scripting.h */,
 			);
 			name = core;
 			path = ../../../../src/core;
@@ -420,6 +427,7 @@
 				CA61B60D170FB3A600F1CC1A /* ortho_physics_scene.h */,
 				CA61B60F170FB3A600F1CC1A /* scene.c */,
 				CA61B610170FB3A600F1CC1A /* scene.h */,
+				CA65C6F7172B127400A7D4E5 /* scene_bindings.c */,
 			);
 			name = scenes;
 			path = ../../../../src/scenes;
@@ -633,6 +641,8 @@
 				CAE3234E171CFB2500E7F7FB /* vmatrix.c in Sources */,
 				CA5E5E901721093A00CAF6A2 /* ortho_chipmunk_scene.c in Sources */,
 				CA5E5EBA1724EDC500CAF6A2 /* parallax.c in Sources */,
+				CA65C6F51729CE8E00A7D4E5 /* scripting.c in Sources */,
+				CA65C6F8172B127500A7D4E5 /* scene_bindings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

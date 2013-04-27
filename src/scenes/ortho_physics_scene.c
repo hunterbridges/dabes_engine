@@ -2,7 +2,7 @@
 
 int OrthoPhysicsScene_create_world(Scene *scene, Engine *engine);
 
-int OrthoPhysicsScene_create(struct Scene *scene, Engine *engine) {
+int OrthoPhysicsScene_init(struct Scene *scene, Engine *engine) {
     scene->music = Music_load("media/music/Climb.aif",
                               "media/music/Climb_Loop.aif");
     Music_play(scene->music);
@@ -21,7 +21,7 @@ void OrthoPhysicsScene_start(struct Scene *scene, Engine *engine) {
 
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
-        GameEntity *entity = NEW(GameEntity, "A thing");
+        GameEntity *entity = GameEntity_create();
         entity->texture =
             Graphics_texture_from_image(engine->graphics,
                                         "media/sprites/dumblock.png");
@@ -44,8 +44,8 @@ void OrthoPhysicsScene_start(struct Scene *scene, Engine *engine) {
 void OrthoPhysicsScene_stop(struct Scene *scene, Engine *UNUSED(engine)) {
     if (!scene->started) return;
     LIST_FOREACH(scene->entities, first, next, current) {
-        GameEntity *thing = current->value;
-        thing->_(destroy)(thing);
+        GameEntity *entity = current->value;
+        GameEntity_destroy(entity);
     }
 
     List_destroy(scene->entities);
@@ -115,7 +115,7 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
     Graphics_use_shader(graphics, tshader);
     TileMap_render(scene->tile_map, graphics,
                    scene->world->pixels_per_meter * scene->world->grid_size);
-
+  
     Graphics_use_shader(graphics, dshader);
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;
@@ -195,7 +195,7 @@ error:
 }
 
 SceneProto OrthoPhysicsSceneProto = {
-    .create = OrthoPhysicsScene_create,
+    .init = OrthoPhysicsScene_init,
     .start = OrthoPhysicsScene_start,
     .stop = OrthoPhysicsScene_stop,
     .destroy = OrthoPhysicsScene_destroy,

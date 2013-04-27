@@ -7,7 +7,7 @@
 
 static const NSString *kOpenMapOptionKey = @"OpenMap";
 
-const char *resource_path(char *filename) {
+const char *resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
   

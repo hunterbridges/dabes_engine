@@ -17,19 +17,26 @@ What is done:
     * Can use Chipmunk because writing a Physics engine is hard
 * Audio engine:
     * Can play music and control the volume of it
+* Scripting engine:
+    * Can configure scenes with Lua scripts
 
 What is not yet done:
 * Graphics engine:
     * Sprite animations
+    * Keyframe animations
 * Audio engine:
+    * OGG support
     * Sound effects
-* Object inspector
-* Object scripting
+* Scripting engine:
+    * Entity control scripts
+    * Interaction scripts
+    * Game state management
+* Debug tools:
+    * Entity inspector
 
 Bugs:
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
-* Gap in audio loop, gotta use OGG files...
 * Parallax zoom is sliiiightly weird
 
 Code Gripes:
