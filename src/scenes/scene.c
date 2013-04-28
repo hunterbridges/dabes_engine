@@ -10,17 +10,34 @@ Scene *Scene_create(Engine *engine, SceneProto proto, const char *name) {
     scene->name = malloc(sizeof(char) * strlen(name));
     strcpy(scene->name, name);
     scene->proto = proto;
-    scene->_(init)(scene, engine);
-    return scene;
+    scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
+  
+    Scene_init(scene, engine);
+    scene->_(start)(scene, engine);
+  return scene;
 error:
     return NULL;
 }
 
 void Scene_destroy(Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to destroy");
+  
+    scene->_(stop)(scene, engine);
+    scene->_(cleanup)(scene, engine);
+  
     free(scene->name);
-    scene->_(destroy)(scene, engine);
-    return;
+  
+    Camera_destroy(scene->camera);
+    if (scene->music) {
+        Music_destroy(scene->music);
+    }
+
+    if (scene->tile_map) {
+        TileMap_destroy(scene->tile_map);
+    }
+
+    free(scene);
+  return;
 error:
     return;
 }

@@ -1,5 +1,6 @@
 #include <lcthw/bstrlib.h>
 #include "graphics.h"
+#include "sprite.h"
 
 GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
@@ -640,6 +641,7 @@ int Graphics_init(void *self) {
     Graphics_build_parallax_shader(graphics);
 
     graphics->textures = Hashmap_create(NULL, NULL);
+    graphics->sprites = Hashmap_create(NULL, NULL);
 
   return 1;
 }
@@ -755,18 +757,42 @@ void Graphics_log_program(GLuint program) {
 }
 
 GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
-  bstring bimage_name = bfromcstr(image_name);
+    bstring bimage_name = bfromcstr(image_name);
 
-  void *val = Hashmap_get(graphics->textures, bimage_name);
-  if (val != NULL) {
+    void *val = Hashmap_get(graphics->textures, bimage_name);
+    if (val != NULL) {
+      bdestroy(bimage_name);
+      return (GfxTexture *)val;
+    }
+
+    GfxTexture *texture = GfxTexture_from_image(image_name);
+    Hashmap_set(graphics->textures, bimage_name, texture);
     bdestroy(bimage_name);
-    return (GfxTexture *)val;
-  }
 
-  GfxTexture *texture = GfxTexture_from_image(image_name);
-  Hashmap_set(graphics->textures, bimage_name, texture);
+    return texture;
+}
 
-  return texture;
+Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
+        GfxSize cell_size) {
+    bstring bkey = bfromcstr(image_name);
+    bcatcstr(bkey, (char *)&cell_size);
+
+    void *val = Hashmap_get(graphics->sprites, bkey);
+    if (val != NULL) {
+      bdestroy(bkey);
+      return (Sprite *)val;
+    }
+
+    GfxTexture *texture = Graphics_texture_from_image(graphics, image_name);
+    Sprite *sprite = Sprite_create(texture, cell_size);
+    check(sprite != NULL, "Couldn't create sprite");
+
+    Hashmap_set(graphics->sprites, bkey, sprite);
+
+    return sprite;
+error:
+    bdestroy(bkey);
+    return NULL;
 }
 
 Object GraphicsProto = {

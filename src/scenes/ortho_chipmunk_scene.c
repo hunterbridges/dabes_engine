@@ -3,17 +3,6 @@
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
 
-int OrthoChipmunkScene_init(struct Scene *scene, Engine *engine) {
-    scene->music = Music_load("media/music/Climb.aif",
-                              "media/music/Climb_Loop.aif");
-    Music_play(scene->music);
-    scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
-    Scene_load_tile_map(scene, engine, "media/tilemaps/fat.tmx", 0);
-    scene->_(start)(scene, engine);
-
-    return 1;
-}
-
 void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     if (scene->started) return;
     assert(scene->world == NULL);
@@ -52,19 +41,8 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     scene->started = 0;
 }
 
-void OrthoChipmunkScene_destroy(struct Scene *scene, Engine *engine) {
+void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to destroy");
-
-    scene->_(stop)(scene, engine);
-
-    Music_destroy(scene->music);
-    Camera_destroy(scene->camera);
-
-    if (scene->tile_map) {
-        TileMap_destroy(scene->tile_map);
-    }
-
-    free(scene);
 error:
     return;
 }
@@ -229,10 +207,9 @@ error:
 
 
 SceneProto OrthoChipmunkSceneProto = {
-    .init = OrthoChipmunkScene_init,
     .start = OrthoChipmunkScene_start,
     .stop = OrthoChipmunkScene_stop,
-    .destroy = OrthoChipmunkScene_destroy,
+    .cleanup = OrthoChipmunkScene_cleanup,
     .update = OrthoChipmunkScene_update,
     .render = OrthoChipmunkScene_render,
     .control = OrthoChipmunkScene_control

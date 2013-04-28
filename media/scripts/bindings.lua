@@ -1,10 +1,18 @@
 EntityConfig = {
-    identifier = "entity_config"
+    identifier = "entity_config",
+
+    sprite = {},
+    current_frame = 0
 }
 EntityConfig.__index = EntityConfig
 
 function EntityConfig.create()
     local entity = {}
+
+    entity.sprite = {
+        texture = "media/sprites/dumblock.png",
+        cell_size = {w = 32, h = 32}
+    }
     setmetatable(entity, EntityConfig)
     return entity
 end

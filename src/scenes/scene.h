@@ -12,10 +12,9 @@
 
 struct Scene;
 typedef struct SceneProto {
-    int (*init)(struct Scene *scene, Engine *engine);
     void (*start)(struct Scene *scene, Engine *engine);
     void (*stop)(struct Scene *scene, Engine *engine);
-    void (*destroy)(struct Scene *scene, Engine *engine);
+    void (*cleanup)(struct Scene *scene, Engine *engine);
     void (*update)(struct Scene *scene, Engine *engine);
     void (*render)(struct Scene *scene, Engine *engine);
     void (*control)(struct Scene *scene, Engine *engine);
@@ -52,6 +51,7 @@ void Scene_reset_camera(Scene *scene);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
 
 #pragma mark Script Bindings
+int Scene_init(Scene *scene, Engine *engine);
 int Scene_configure(Scene *scene, Engine *engine);
 
 #endif

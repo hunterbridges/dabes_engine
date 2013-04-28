@@ -2,6 +2,7 @@
 #define __game_entity_h
 #include <chipmunk/chipmunk.h>
 #include "../prefix.h"
+#include "../graphics/sprite.h"
 #include "../physics/fixture.h"
 #include "../input/input.h"
 #include "../input/controller.h"
@@ -20,9 +21,10 @@ typedef struct GameEntity {
     Controller *controller;
     uint32_t color;
     GLfloat alpha;
-    GfxTexture *texture;
-
     GameEntityStateData *state;
+
+    Sprite *sprite;
+    int current_frame;
 
     struct {
         union {

@@ -2,17 +2,6 @@
 
 int OrthoPhysicsScene_create_world(Scene *scene, Engine *engine);
 
-int OrthoPhysicsScene_init(struct Scene *scene, Engine *engine) {
-    scene->music = Music_load("media/music/Climb.aif",
-                              "media/music/Climb_Loop.aif");
-    Music_play(scene->music);
-    scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
-    Scene_load_tile_map(scene, engine, "media/tilemaps/fat.tmx", 0);
-    scene->_(start)(scene, engine);
-
-    return 1;
-}
-
 void OrthoPhysicsScene_start(struct Scene *scene, Engine *engine) {
     if (scene->started) return;
     assert(scene->world == NULL);
@@ -22,9 +11,11 @@ void OrthoPhysicsScene_start(struct Scene *scene, Engine *engine) {
     int i = 0;
     for (i = 0; i < NUM_BOXES; i++) {
         GameEntity *entity = GameEntity_create();
-        entity->texture =
-            Graphics_texture_from_image(engine->graphics,
-                                        "media/sprites/dumblock.png");
+        GfxSize cell_size = {32, 32};
+        entity->sprite =
+            Graphics_sprite_from_image(engine->graphics,
+                                       "media/sprites/dumblock.png",
+                                       cell_size);
         List_push(scene->entities, entity);
         entity->alpha = (double)i / NUM_BOXES * 1.0;
     }
@@ -59,19 +50,9 @@ void OrthoPhysicsScene_stop(struct Scene *scene, Engine *UNUSED(engine)) {
     scene->started = 0;
 }
 
-void OrthoPhysicsScene_destroy(struct Scene *scene, Engine *engine) {
+void OrthoPhysicsScene_cleanup(struct Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to destroy");
 
-    scene->_(stop)(scene, engine);
-
-    Music_destroy(scene->music);
-    Camera_destroy(scene->camera);
-
-    if (scene->tile_map) {
-        TileMap_destroy(scene->tile_map);
-    }
-
-    free(scene);
 error:
     return;
 }
@@ -115,7 +96,7 @@ void OrthoPhysicsScene_render(struct Scene *scene, Engine *engine) {
     Graphics_use_shader(graphics, tshader);
     TileMap_render(scene->tile_map, graphics,
                    scene->world->pixels_per_meter * scene->world->grid_size);
-  
+
     Graphics_use_shader(graphics, dshader);
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *thing = current->value;
@@ -195,10 +176,9 @@ error:
 }
 
 SceneProto OrthoPhysicsSceneProto = {
-    .init = OrthoPhysicsScene_init,
     .start = OrthoPhysicsScene_start,
     .stop = OrthoPhysicsScene_stop,
-    .destroy = OrthoPhysicsScene_destroy,
+    .cleanup = OrthoPhysicsScene_cleanup,
     .update = OrthoPhysicsScene_update,
     .render = OrthoPhysicsScene_render,
     .control = OrthoPhysicsScene_control

@@ -1,16 +1,57 @@
 require "bindings"
 
-fat_map = {}
-function fat_map.icecap_parallax()
+fat_map = {
+    map = "media/tilemaps/fat.tmx",
+    music = {
+      intro = "media/music/Climb.aif",
+      loop = "media/music/Climb_loop.aif"
+    }
+}
+
+function fat_map.configure(space_width, space_height)
+    entities = {}
+
+    parallax = fat_map._icecap_parallax()
+
+    num_boxes = 100
+    xo = 6.0
+    for i = 1, num_boxes do
+        entity = EntityConfig.create()
+
+        entity.w = i / num_boxes * 4 + 1
+        entity.h = i / num_boxes * 4 + 1
+
+        entity.x = xo
+        xo = xo + entity.w + 1
+
+        entity.y = space_height - 8.0
+        entity.rotation = math.pi / 16.0 * (i % 8)
+        entity.mass = 100.0 + 900.0 * i / num_boxes
+        entity.alpha = i / num_boxes * 1.0
+
+        table.insert(entities, entity)
+    end
+
+    -- Player
+    entities[1].w = 1.0
+    entities[1].h = 1.0
+    entities[1].sprite.texture = "media/sprites/megaman_run.png"
+    entities[1].current_frame = 2;
+
+    return parallax, unpack(entities)
+end
+
+-- Private
+function fat_map._icecap_parallax()
     parallax = Parallax.create()
 
-    parallax.sky_color.r = 0.0;
-    parallax.sky_color.g = 0.0;
-    parallax.sky_color.b = 0.698;
-    parallax.sea_color.r = 0.851;
-    parallax.sea_color.g = 0.851;
-    parallax.sea_color.b = 0.851;
-    parallax.y_wiggle = 40.0
+    parallax.sky_color.r = 0.0
+    parallax.sky_color.g = 0.0
+    parallax.sky_color.b = 0.698
+    parallax.sea_color.r = 0.851
+    parallax.sea_color.g = 0.851
+    parallax.sea_color.b = 0.851
+    parallax.y_wiggle = -20
     parallax.sea_level = 1.0
 
     yo = 80
@@ -50,31 +91,3 @@ function fat_map.icecap_parallax()
     return parallax
 end
 
-function fat_map.configure(space_width, space_height)
-    entities = {}
-
-    parallax = fat_map.icecap_parallax()
-
-    num_boxes = 100
-    xo = 6.0
-    for i = 1, num_boxes do
-        entity = EntityConfig.create()
-
-        entity.w = i / num_boxes * 4 + 1
-        entity.h = i / num_boxes * 4 + 1
-
-        entity.x = xo
-        xo = xo + entity.w + 1
-
-        entity.y = space_height - 8.0
-        entity.rotation = math.pi / 16.0 * (i % 8)
-        entity.mass = 100.0 + 900.0 * i / num_boxes
-        entity.alpha = i / num_boxes * 1.0
-
-        table.insert(entities, entity)
-    end
-    entities[1].w = 1.0
-    entities[1].h = 1.0
-
-    return parallax, unpack(entities)
-end

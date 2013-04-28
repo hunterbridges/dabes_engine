@@ -5,8 +5,9 @@
 GameEntity *GameEntity_create() {
     GameEntity *entity = calloc(1, sizeof(GameEntity));
     check(entity != NULL, "Failed to create entity");
-  
+
     entity->alpha = 1.f;
+    entity->current_frame = 0;
 
     return entity;
 error:
@@ -63,8 +64,9 @@ void GameEntity_render(GameEntity *self, void *engine) {
             break;
     }
 
-    Graphics_draw_rect(graphics, rect, color, entity->texture, VPointZero,
-                       entity->texture->size, degrees);
+    VPoint frame_offset = entity->sprite->frames[entity->current_frame].offset;
+    Graphics_draw_rect(graphics, rect, color, entity->sprite->texture,
+                       frame_offset, entity->sprite->cell_size, degrees);
 }
 
 VPoint GameEntity_center(GameEntity *entity) {

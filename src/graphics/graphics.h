@@ -123,6 +123,7 @@ typedef struct Graphics {
 
     Hashmap *textures;
     Hashmap *shaders;
+    Hashmap *sprites;
 } Graphics;
 
 // Rendering
@@ -172,6 +173,11 @@ void Graphics_log_program(GLuint program);
 
 // Textures
 GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name);
+
+// Sprites
+struct Sprite;
+struct Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
+    GfxSize cell_size);
 
 extern Object GraphicsProto;
 
