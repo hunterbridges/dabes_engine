@@ -128,7 +128,7 @@ void OrthoPhysicsScene_control(struct Scene *scene, Engine *engine) {
 
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;
-        GameEntity_control(entity, input);
+        GameEntity_control(entity, engine);
     }
 }
 

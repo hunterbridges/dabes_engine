@@ -82,6 +82,7 @@ char *bundlePath__;
   [self.view addGestureRecognizer:jumpGesture_];
 
   [self setupGL];
+  if (!engine_) [self initEngine];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
@@ -148,17 +149,15 @@ char *bundlePath__;
   }
 }
 
+- (void)initEngine {
+  engine_ = Engine_create("media/scripts/boxfall.lua", NULL);
+  scene_ = Scene_create(engine_, OrthoChipmunkSceneProto, "fat_map");
+}
+
 - (void)setupGL {
   [EAGLContext setCurrentContext:self.context];
   
-  /*
-   INIT GAME ENGINE
-   */
-  engine_ = Engine_create("media/scripts/boxfall.lua", NULL);
   self.preferredFramesPerSecond = 30;
-  
-  scene_ = Scene_create(engine_, OrthoChipmunkSceneProto, "fat_map");
-  
   self.effect = [[GLKBaseEffect alloc] init];
 }
 
@@ -176,6 +175,7 @@ char *bundlePath__;
 - (void)update {
   Engine_regulate(engine_);
   Input_touch(engine_->input, touchInput_);
+  Audio_stream(engine_->audio);
   
   if (engine_->frame_now) {
     scene_->_(control)(scene_, engine_);
@@ -185,6 +185,7 @@ char *bundlePath__;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
+  if (!scene_) return;
   scene_->camera->screen_size.w = self.view.bounds.size.width;
   scene_->camera->screen_size.h = self.view.bounds.size.height;
   

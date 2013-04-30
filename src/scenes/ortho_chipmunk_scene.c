@@ -1,4 +1,6 @@
 #include "../core/engine.h"
+#include "../audio/audio.h"
+#include "../audio/sfx.h"
 #include "ortho_chipmunk_scene.h"
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
@@ -112,7 +114,7 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
 
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;
-        GameEntity_control(entity, input);
+        GameEntity_control(entity, engine);
     }
 }
 
@@ -121,6 +123,19 @@ int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data
     cpArbiterGetBodies(arb, &eBody, &tBody);
     GameEntityStateData *state_data = cpBodyGetUserData(eBody);
     state_data->on_ground++;
+
+    Engine *engine = (Engine *)state_data->engine;
+    Scene *scene = (Scene *)state_data->scene;
+    GameEntity *entity = (GameEntity *)state_data->entity;
+    if (state_data->on_ground > 1) return 1;
+
+    VRect cam_rect = Camera_visible_rect(scene->camera);
+    VPoint e_center = GameEntity_center(entity);
+    int onscreen = VRect_contains_point(cam_rect, e_center);
+    if (!onscreen) return 1;
+
+    Sfx *clomp = Audio_gen_sfx(engine->audio, "media/sfx/clomp.ogg");
+    Sfx_play(clomp);
     return 1;
 }
 
@@ -128,8 +143,11 @@ void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
     GameEntityStateData *state_data = cpBodyGetUserData(eBody);
+
     state_data->on_ground--;
-    if (state_data->on_ground < 0) state_data->on_ground = 0;
+    if (state_data->on_ground < 0) {
+        state_data->on_ground = 0;
+    }
 }
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
@@ -147,13 +165,17 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     int i = 0;
     LIST_FOREACH(scene->entities, first, next, current) {
       GameEntity *entity = current->value;
-      
+
       GameEntityStateData *state_data = calloc(1, sizeof(GameEntityStateData));
+      // TODO: Make sure I actually want to organize it this way, seems dicey
+      state_data->engine = engine;
+      state_data->entity = entity;
+      state_data->scene = scene;
       entity->state = state_data;
-      
+
       cpVect center = {entity->config.center.x,
                        entity->config.center.y};
-      
+
       float moment = cpMomentForBox(entity->config.mass,
                                     entity->config.size.w,
                                     entity->config.size.h);

@@ -123,6 +123,7 @@ VRect Camera_visible_rect(Camera *camera) {
   cam_rect = VRect_rotate(cam_rect, VRect_center(cam_rect),
                           camera->rotation_radians);
   cam_rect = VRect_move(cam_rect, camera->translation);
+  cam_rect = VRect_move(cam_rect, camera->focal);
   return cam_rect;
 }
 

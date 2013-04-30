@@ -2,7 +2,8 @@
 #define __scene_h
 #include <chipmunk/chipmunk.h>
 #include "../prefix.h"
-#include "../core/audio.h"
+#include "../audio/audio.h"
+#include "../audio/music.h"
 #include "../core/engine.h"
 #include "../graphics/game_entity.h"
 #include "../graphics/camera.h"
@@ -23,9 +24,9 @@ typedef struct SceneProto {
 typedef struct Scene {
     SceneProto proto;
     char *name;
-  
+
     GfxTexture *bg_texture; // deprecated
-  
+
     Music *music;
     Camera *camera;
     union {

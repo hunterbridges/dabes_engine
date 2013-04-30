@@ -14,7 +14,8 @@ Scene *Scene_create(Engine *engine, SceneProto proto, const char *name) {
   
     Scene_init(scene, engine);
     scene->_(start)(scene, engine);
-  return scene;
+    Music_play(scene->music);
+    return scene;
 error:
     return NULL;
 }
@@ -29,7 +30,7 @@ void Scene_destroy(Scene *scene, Engine *engine) {
   
     Camera_destroy(scene->camera);
     if (scene->music) {
-        Music_destroy(scene->music);
+        Audio_destroy_music(engine->audio, scene->music);
     }
 
     if (scene->tile_map) {

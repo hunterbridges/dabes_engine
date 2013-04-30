@@ -16,17 +16,19 @@ What is done:
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
 * Audio engine:
-    * Can play music and control the volume of it
+    * OGG support
+    * Seamless music queueing and looping
+    * Sound effects
 * Scripting engine:
     * Can configure scenes with Lua scripts
 
 What is not yet done:
+* Audio engine:
+    * Spatialization
+    * Source volume
 * Graphics engine:
     * Sprite animations
     * Keyframe animations
-* Audio engine:
-    * OGG support
-    * Sound effects
 * Scripting engine:
     * Entity control scripts
     * Interaction scripts
@@ -35,16 +37,19 @@ What is not yet done:
     * Entity inspector
 
 Bugs:
+* No volume control in OggStreams
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
+* Camera tracking is weird when entity rect is larger than screen rect
+* Weird camera humping as tracked entity is rotating
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules
 
 ```
 # Ya gonna need dis stuf!
-brew install --HEAD sdl sdl_image sdl_ttf sdl_mixer
+brew install --HEAD sdl sdl_image sdl_ttf sdl_mixer libogg libvorbis
 
 make game
 ./game

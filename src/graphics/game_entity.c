@@ -1,5 +1,6 @@
 #include "../core/engine.h"
 #include "game_entity.h"
+#include "../audio/sfx.h"
 #include "../physics/world.h"
 
 GameEntity *GameEntity_create() {
@@ -103,9 +104,11 @@ error:
     return;
 }
 
-void GameEntity_control(GameEntity *entity, Input *input) {
+void GameEntity_control(GameEntity *entity, Engine *engine) {
     check_mem(entity);
-    check_mem(input);
+    check_mem(engine);
+    Input *input = engine->input;
+    (void)(input);
     if (entity->controller == NULL) return;
 
     switch (entity->physics_shape.shape_type) {
@@ -147,6 +150,9 @@ void GameEntity_control(GameEntity *entity, Input *input) {
                 }
                 if (controller->jump) {
                     if (on_ground) {
+                        Sfx *clomp = Audio_gen_sfx(engine->audio,
+                                "media/sfx/jump.ogg");
+                        Sfx_play(clomp);
                         step_velocity.y = MVMT_JUMP_VELO_HI;
                     }
                 } else {

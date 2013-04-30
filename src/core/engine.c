@@ -4,7 +4,7 @@
 Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     Engine *engine = calloc(1, sizeof(Engine));
     check(engine != NULL, "Could not create engine. World explodes.");
-  
+
 #ifdef DABES_SDL
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -16,8 +16,8 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
 
     check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 #endif
-  
-    engine->audio = NEW(Audio, "Audio Engine");
+
+    engine->audio = Audio_create();
     engine->input = NEW(Input, "Input Engine");
     engine->graphics = NEW(Graphics, "Graphics Engine");
     engine->physics = NEW(Physics, "Physics Engine");
@@ -41,10 +41,11 @@ error:
 void Engine_destroy(Engine *engine) {
     check(engine != NULL, "No engine to destroy");
 
-    engine->audio->_(destroy)(engine->audio);
+    Audio_destroy(engine->audio);
     engine->input->_(destroy)(engine->input);
     engine->graphics->_(destroy)(engine->graphics);
     engine->physics->_(destroy)(engine->physics);
+    Scripting_destroy(engine->scripting);
 
     free(engine);
     return;
@@ -61,6 +62,7 @@ uint32_t tick_diff(struct timeval earlier, struct timeval later) {
 }
 
 void Engine_pause_time(Engine *engine) {
+    if (!engine) return;
     if (engine->timer.paused) return;
     struct timeval now;
 
@@ -70,6 +72,7 @@ void Engine_pause_time(Engine *engine) {
 }
 
 void Engine_resume_time(Engine *engine) {
+    if (!engine) return;
     if (!engine->timer.paused) return;
     struct timeval now;
 

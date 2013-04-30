@@ -3,6 +3,7 @@ game
 *.dSYM
 *.wav
 *.aif
+*.ogg
 
 lib/liblcthw.a
 include/lcthw

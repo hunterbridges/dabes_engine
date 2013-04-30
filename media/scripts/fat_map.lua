@@ -3,8 +3,8 @@ require "bindings"
 fat_map = {
     map = "media/tilemaps/fat.tmx",
     music = {
-      intro = "media/music/Climb.aif",
-      loop = "media/music/Climb_loop.aif"
+      intro = "media/music/Climb_Intro.ogg",
+      loop = "media/music/Climb_Loop.ogg"
     }
 }
 
@@ -33,10 +33,10 @@ function fat_map.configure(space_width, space_height)
     end
 
     -- Player
-    entities[1].w = 1.0
-    entities[1].h = 1.0
+    entities[1].w = 3.0
+    entities[1].h = 3.0
     entities[1].sprite.texture = "media/sprites/megaman_run.png"
-    entities[1].current_frame = 2;
+    entities[1].current_frame = 1;
 
     return parallax, unpack(entities)
 end

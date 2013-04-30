@@ -13,6 +13,9 @@ typedef enum {
 } GameEntityPhysicsShapeType;
 
 typedef struct {
+  void *engine;
+  void *entity;
+  void *scene;
   int on_ground;
 } GameEntityStateData;
 
@@ -43,11 +46,12 @@ typedef struct GameEntity {
     } config;
 } GameEntity;
 
+struct Engine;
 GameEntity *GameEntity_create();
 void GameEntity_destroy(GameEntity *entity);
 void GameEntity_render(GameEntity *self, void *engine);
 void GameEntity_assign_controller(GameEntity *entity, Controller *controller);
-void GameEntity_control(GameEntity *entity, Input *input);
+void GameEntity_control(GameEntity *entity, struct Engine *engine);
 VPoint GameEntity_center(GameEntity *entity);
 VRect GameEntity_real_rect(GameEntity *entity);
 VRect GameEntity_bounding_rect(GameEntity *entity);

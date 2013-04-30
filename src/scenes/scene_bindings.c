@@ -20,20 +20,13 @@ int Scene_init(Scene *scene, Engine *engine) {
         if (lua_type(L, -1) == LUA_TSTRING) loop = lua_tostring(L, -1);
         lua_pop(L, 2);
 
-        if (intro && loop) {
-            scene->music = Music_load((char *)intro, (char *)loop);
-        } else if (intro) {
-            scene->music = Music_load((char *)intro, NULL);
-        } else if (loop) {
-            scene->music = Music_load((char *)loop, NULL);
-        }
+        const char *files[2] = {intro, loop};
+        scene->music = Audio_gen_music(engine->audio, 2, files);
     } else if (lua_type(L, -1) == LUA_TSTRING) {
-        scene->music = Music_load((char *)lua_tostring(L, -1), NULL);
+        const char *files[1] = {(char *)lua_tostring(L, -1)};
+        scene->music = Audio_gen_music(engine->audio, 1, files);
     }
 
-    if (scene->music) {
-        Music_play(scene->music);
-    }
     lua_pop(L, 1);
 
     lua_getfield(L, -1, "map");

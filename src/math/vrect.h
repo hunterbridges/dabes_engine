@@ -47,6 +47,15 @@ int VRect_is_equal(VRect *a, VRect *b);
 VPoint VRect_cnormal_from_mtv(VRect normal_for, VRect against,
         VPoint mtv);
 
+static inline void VRect_debug(VRect rect, char *msg) {
+    int i = 0;
+    debug("VRect: %s", msg);
+    for (i = 0; i < 4; i++) {
+        VPoint_debug(VRect_vertex(rect, i), NULL);
+    }
+    debug("---");
+}
+
 #ifdef DABES_SDL
 VRect VRect_from_SDL_Rect(SDL_Rect rect);
 #endif
