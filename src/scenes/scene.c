@@ -11,7 +11,7 @@ Scene *Scene_create(Engine *engine, SceneProto proto, const char *name) {
     strcpy(scene->name, name);
     scene->proto = proto;
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
-  
+
     Scene_init(scene, engine);
     scene->_(start)(scene, engine);
     Music_play(scene->music);
@@ -22,12 +22,12 @@ error:
 
 void Scene_destroy(Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to destroy");
-  
+
     scene->_(stop)(scene, engine);
     scene->_(cleanup)(scene, engine);
-  
+
     free(scene->name);
-  
+
     Camera_destroy(scene->camera);
     if (scene->music) {
         Audio_destroy_music(engine->audio, scene->music);
@@ -90,7 +90,7 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
 
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
     int needs_restart = scene->started;
-  
+
     if (scene->tile_map) {
         TileMap_destroy(scene->tile_map);
     }

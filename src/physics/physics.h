@@ -1,16 +1,14 @@
 #ifndef __physics_h
 #define __physics_h
 #include "../prefix.h"
+#include "../core/stepper.h"
 #include "../math/vpoint.h"
 
 typedef struct Physics {
-    Object proto;
-    long unsigned int max_dt;
-    long unsigned int accumulator;
+    Stepper *stepper;
 } Physics;
 
-int Physics_init(void *self);
-
-extern Object PhysicsProto;
+Physics *Physics_create();
+void Physics_destroy(Physics *physics);
 
 #endif

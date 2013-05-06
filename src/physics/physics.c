@@ -2,17 +2,23 @@
 #include <math.h>
 #include "physics.h"
 
-int Physics_init(void *self) {
-    check_mem(self);
-    Physics *physics = self;
-    physics->max_dt = 16;
-    physics->accumulator = 0;
-    return 1;
+Physics *Physics_create() {
+    Physics *physics = calloc(1, sizeof(Physics));
+    check(physics != NULL, "Couldn't create Physics");
+
+    physics->stepper = Stepper_create();
+    Stepper_set_steps_per_second(physics->stepper, 60);
+
+    return physics;
 error:
-    return 0;
+    return NULL;
 }
 
-Object PhysicsProto = {
-    .init = Physics_init
-};
-
+void Physics_destroy(Physics *physics) {
+    check(physics != NULL, "No Physics to destroy");
+    Stepper_destroy(physics->stepper);
+    free(physics);
+    return;
+error:
+    return;
+}

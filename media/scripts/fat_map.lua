@@ -1,4 +1,5 @@
-require "bindings"
+require "engine_objects"
+require "game_objects"
 
 fat_map = {
     map = "media/tilemaps/fat.tmx",
@@ -15,11 +16,18 @@ function fat_map.configure(space_width, space_height)
 
     num_boxes = 100
     xo = 6.0
+
+    megaman = EntityConfig.create_megaman()
+    megaman.x = 6.0
+    megaman.y = space_height - 4;
+    table.insert(entities, megaman)
+    print(megaman.identifier)
+
     for i = 1, num_boxes do
         entity = EntityConfig.create()
 
-        entity.w = i / num_boxes * 4 + 1
-        entity.h = i / num_boxes * 4 + 1
+        entity.w = 1
+        entity.h = 1
 
         entity.x = xo
         xo = xo + entity.w + 1
@@ -32,11 +40,6 @@ function fat_map.configure(space_width, space_height)
         table.insert(entities, entity)
     end
 
-    -- Player
-    entities[1].w = 3.0
-    entities[1].h = 3.0
-    entities[1].sprite.texture = "media/sprites/megaman_run.png"
-    entities[1].current_frame = 1;
 
     return parallax, unpack(entities)
 end

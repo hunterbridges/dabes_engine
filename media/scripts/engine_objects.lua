@@ -2,7 +2,9 @@ EntityConfig = {
     identifier = "entity_config",
 
     sprite = {},
-    current_frame = 0
+    current_frame = 0,
+    can_rotate = true,
+    edge_friction = 0.5
 }
 EntityConfig.__index = EntityConfig
 
@@ -11,7 +13,8 @@ function EntityConfig.create()
 
     entity.sprite = {
         texture = "media/sprites/dumblock.png",
-        cell_size = {w = 32, h = 32}
+        cell_size = {w = 32, h = 32},
+        num_animations = 0
     }
     setmetatable(entity, EntityConfig)
     return entity

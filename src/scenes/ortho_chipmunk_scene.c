@@ -39,30 +39,28 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
     Parallax_destroy(scene->parallax);
 
-    engine->physics->accumulator = 0;
+    Stepper_reset(engine->physics->stepper);
     scene->started = 0;
 }
 
-void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *engine) {
+void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
     check(scene != NULL, "No scene to destroy");
 error:
     return;
 }
 
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
-    if (engine->frame_ticks > 100) engine->frame_ticks = 100;
-
-    unsigned int accumulation = engine->frame_ticks % engine->physics->max_dt;
-    engine->physics->accumulator += accumulation;
-    int integration = engine->frame_ticks - accumulation;
-    int i = 0;
-    for (i = 0; i < integration; i += engine->physics->max_dt) {
-      cpSpaceStep(scene->space, engine->physics->max_dt / 1000.0);
+    OrthoChipmunkScene_control(scene, engine);
+    LIST_FOREACH(scene->entities, first, next, current) {
+        GameEntity *entity = current->value;
+        GameEntity_update(entity, engine);
     }
 
-    while (engine->physics->accumulator >= engine->physics->max_dt) {
-      cpSpaceStep(scene->space, engine->physics->max_dt / 1000.0);
-      engine->physics->accumulator -= engine->physics->max_dt;
+    int phys_ticks = engine->frame_ticks < 100 ? engine->frame_ticks : 100;
+    Stepper_update(engine->physics->stepper, phys_ticks);
+
+    while (Stepper_pop(engine->physics->stepper)) {
+      cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
     }
 
     Camera_track(scene->camera);
@@ -111,11 +109,6 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
 
     if (input->cam_debug) scene->debug_camera = !(scene->debug_camera);
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
-
-    LIST_FOREACH(scene->entities, first, next, current) {
-        GameEntity *entity = current->value;
-        GameEntity_control(entity, engine);
-    }
 }
 
 int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data)) {
@@ -157,7 +150,10 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     scene->space = cpSpaceNew();
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
-
+    //cpSpaceSetCollisionBias(scene->space, 1.0);
+    scene->space->collisionSlop = 0.0;
+    scene->space->collisionBias = 0.1;
+  
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
                                OCSCollisionTypeTile, collision_begin_cb, NULL,
                                NULL, collision_seperate_cb, NULL);
@@ -176,9 +172,11 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
       cpVect center = {entity->config.center.x,
                        entity->config.center.y};
 
-      float moment = cpMomentForBox(entity->config.mass,
-                                    entity->config.size.w,
-                                    entity->config.size.h);
+      float moment = (entity->config.can_rotate ?
+                        cpMomentForBox(entity->config.mass,
+                                       entity->config.size.w,
+                                       entity->config.size.h) :
+                        INFINITY);
       cpBody *fixture = cpBodyNew(entity->config.mass, moment);
 
       cpShape *entity_shape = cpBoxShapeNew(fixture, entity->config.size.w,

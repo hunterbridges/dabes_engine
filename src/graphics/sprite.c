@@ -15,6 +15,7 @@ Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size) {
     sprite->cols = cols;
     sprite->rows = rows;
     sprite->num_frames = num_frames;
+    sprite->direction = SPRITE_DIR_FACING_RIGHT;
 
     sprite->animations = Hashmap_create(NULL, NULL);
 
@@ -26,6 +27,8 @@ Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size) {
         frame->offset.x = col * cell_size.w;
         frame->offset.y = row * cell_size.h;
     }
+
+    sprite->current_frame = 0;
 
     return sprite;
 error:
@@ -41,17 +44,70 @@ error:
     return;
 }
 
+
+void Sprite_update(Sprite *sprite, Engine *engine) {
+    if (!sprite->current_animation) return;
+    SpriteAnimation *cur_anim = sprite->current_animation;
+
+    int idx = -1;
+    int i = 0;
+    for (i = 0; i < cur_anim->num_frames; i++) {
+        if (cur_anim->frames[i] == sprite->current_frame) {
+            idx = i;
+            break;
+        }
+    }
+
+    if (idx == -1) {
+        sprite->current_frame = cur_anim->frames[0];
+        cur_anim->current_index = 0;
+        return;
+    }
+    if (sprite->current_animation->stepper->step_skip == 0) return;
+
+    int new_idx = cur_anim->current_index;
+    Stepper_update(cur_anim->stepper, engine->frame_ticks);
+    int steps = Stepper_clear(cur_anim->stepper);
+    if (!steps) return;
+    new_idx += steps;
+    if (new_idx >= cur_anim->num_frames) new_idx %= cur_anim->num_frames;
+
+    cur_anim->current_index = new_idx;
+    sprite->current_frame = cur_anim->frames[new_idx];
+}
+
 int Sprite_add_animation(Sprite *sprite, const char *name, int num_frames,
-        int frames[]) {
+        int frames[], int fps) {
     check(sprite != NULL, "No sprite to add animation to");
-    SpriteAnimation *animation = malloc(sizeof(int) +
+    SpriteAnimation *animation = malloc(sizeof(SpriteAnimation) +
                                         num_frames * sizeof(int));
     animation->num_frames = num_frames;
-    memcpy(animation->frames, frames, num_frames * sizeof(int));
+    int i = 0;
+    for (i = 0; i < num_frames; i++) {
+        animation->frames[i] = frames[i];
+        printf("#%d -> %d = %d\n", i, animation->frames[i], frames[i]);
+    }
+    animation->loop_start = frames[0];
+    animation->stepper = Stepper_create();
+    animation->current_index = 0;
+    Stepper_set_steps_per_second(animation->stepper, fps);
 
     bstring bname = bfromcstr(name);
     Hashmap_set(sprite->animations, bname, animation);
-    bdestroy(bname);
 error:
     return 0;
+}
+
+int Sprite_use_animation(Sprite *sprite, const char *name) {
+    bstring bname = bfromcstr(name);
+    SpriteAnimation *animation = Hashmap_get(sprite->animations, bname);
+    bdestroy(bname);
+    if (animation == NULL) return 0;
+    if (animation && sprite->current_animation == animation) return 0;
+
+    Stepper_reset(animation->stepper);
+    sprite->current_animation = animation;
+    sprite->current_animation->current_index = 0;
+
+    return 1;
 }

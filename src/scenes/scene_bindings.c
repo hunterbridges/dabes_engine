@@ -77,6 +77,7 @@ int Scene_configure(Scene *scene, Engine *engine) {
                 GameEntity *entity = GameEntity_create();
                 lua_getfield(L, start, "sprite");
                 int sprite = lua_gettop(L);
+
                 lua_getfield(L, sprite, "cell_size");
                 lua_getfield(L, -1, "w");
                 lua_getfield(L, -2, "h");
@@ -85,13 +86,64 @@ int Scene_configure(Scene *scene, Engine *engine) {
                     lua_tonumber(L, -1)
                 };
                 lua_pop(L, 3); // Pop w, h, cell_size
+
                 lua_getfield(L, sprite, "texture");
                 entity->sprite =
                     Graphics_sprite_from_image(engine->graphics,
                             (char *)lua_tostring(L, -1), cell_size);
-                lua_pop(L, 2); // Pop texture, sprite
+                lua_pop(L, 1); // Pop texture
 
+                lua_getfield(L, sprite, "num_animations");
+                int num_animations = lua_tointeger(L, -1);
+                lua_pop(L, 1);
+
+                lua_getfield(L, sprite, "animations");
+                int animations = lua_gettop(L);
+                if (lua_istable(L, animations) && num_animations > 0) {
+                    int a_idx = 0;
+                    for (a_idx = 0; a_idx < num_animations; a_idx++) {
+                        lua_pushnumber(L, a_idx + 1);
+                        lua_gettable(L, animations);
+                        int animation = lua_gettop(L);
+
+                        lua_getfield(L, animation, "name");
+                        const char *anim_name = lua_tostring(L, -1);
+
+                        lua_getfield(L, animation, "num_frames");
+                        lua_getfield(L, animation, "fps");
+                        int num_frames = lua_tointeger(L, -2);
+                        int fps = lua_tointeger(L, -1);
+                        lua_pop(L, 2);
+
+                        printf("%s -> ", anim_name);
+                        printf("count(%d) ", num_frames);
+                        printf("@ %d fps :: ", fps);
+
+                        lua_getfield(L, animation, "frames");
+                        int frames[num_frames];
+                        int frames_mem = lua_gettop(L);
+                        int f_idx = 0;
+                        for (f_idx = 0; f_idx < num_frames; f_idx++) {
+                            lua_pushnumber(L, f_idx + 1);
+                            lua_gettable(L, frames_mem);
+                            frames[f_idx] = lua_tointeger(L, -1);
+                            lua_pop(L, 1); // Pop frame
+                            printf("%d ", frames[f_idx]);
+                        }
+
+                        printf("\n");
+                        Sprite_add_animation(entity->sprite, anim_name,
+                                num_frames, frames, fps);
+                        lua_pop(L, 3); // Pop frames, name, animation
+                    }
+                }
+                lua_pop(L, 1); // Pop animations
+                lua_pop(L, 1); // Pop sprite
+
+                lua_getfield(L, start, "start_animation");
                 lua_getfield(L, start, "current_frame");
+                lua_getfield(L, start, "can_rotate");
+                lua_getfield(L, start, "edge_friction");
                 lua_getfield(L, start, "x");
                 lua_getfield(L, start, "y");
                 lua_getfield(L, start, "w");
@@ -99,7 +151,10 @@ int Scene_configure(Scene *scene, Engine *engine) {
                 lua_getfield(L, start, "rotation");
                 lua_getfield(L, start, "mass");
                 lua_getfield(L, start, "alpha");
-                entity->current_frame = lua_tointeger(L, -8);
+                Sprite_use_animation(entity->sprite, lua_tostring(L, -11));
+                entity->current_frame = lua_tointeger(L, -10);
+                entity->config.can_rotate = lua_toboolean(L, -9);
+                entity->config.edge_friction = lua_tonumber(L, -8);
                 entity->config.center.x = lua_tonumber(L, -7);
                 entity->config.center.y = lua_tonumber(L, -6);
                 entity->config.size.w = lua_tonumber(L, -5);
@@ -107,7 +162,7 @@ int Scene_configure(Scene *scene, Engine *engine) {
                 entity->config.rotation = lua_tonumber(L, -3);
                 entity->config.mass = lua_tonumber(L, -2);
                 entity->alpha = lua_tonumber(L, -1);
-                lua_pop(L, 7);
+                lua_pop(L, 10);
 
                 List_push(scene->entities, entity);
             } else if (streq(identifier, SCRIPTING_CL_PARALLAX)) {
@@ -175,7 +230,8 @@ int Scene_configure(Scene *scene, Engine *engine) {
                     float base_scale = lua_tonumber(L, -2);
                     float y_wiggle = lua_tonumber(L, -1);
 
-                    GfxTexture *texture = Graphics_texture_from_image(engine->graphics,
+                    GfxTexture *texture =
+                        Graphics_texture_from_image(engine->graphics,
                             (char *)texname);
                     Parallax_add_layer(p, texture, p_factor, offset, base_scale,
                             y_wiggle);

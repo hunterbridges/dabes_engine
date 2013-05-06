@@ -54,7 +54,7 @@ OggStream *OggStream_create(char *file, ALuint source) {
 
     return ogg_stream;
 error:
-    if (ogg_stream->file) fclose(ogg_stream->file);
+    if (ogg_stream && ogg_stream->file) fclose(ogg_stream->file);
     if (ogg_stream) free(ogg_stream);
     return NULL;
 }

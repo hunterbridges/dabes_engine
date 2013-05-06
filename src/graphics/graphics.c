@@ -286,6 +286,20 @@ error:
   return;
 }
 
+void Graphics_draw_sprite(Graphics *graphics, Sprite *sprite, VRect rect,
+        GLfloat color[4], double rot_degs) {
+    SpriteFrame *frame = &sprite->frames[sprite->current_frame];
+    VPoint frame_offset = frame->offset;
+    GfxSize draw_size = sprite->cell_size;
+
+    if (sprite->direction == SPRITE_DIR_FACING_LEFT) {
+        frame_offset.x += sprite->cell_size.w;
+        draw_size.w = -sprite->cell_size.w;
+    }
+    Graphics_draw_rect(graphics, rect, color, sprite->texture, frame_offset,
+            draw_size, rot_degs);
+}
+
 void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
         double rotation) {
@@ -305,7 +319,7 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     GfxUVertex tex_tr = {.raw = {1,0,0,0}};
     GfxUVertex tex_bl = {.raw = {0,1,0,0}};
     GfxUVertex tex_br = {.raw = {1,1,0,0}};
-    if (texture && textureSize.w > 0 && textureSize.h > 0) {
+    if (texture) {
         tex_tl.packed.x = textureOffset.x / texture->size.w;
         tex_tl.packed.y = textureOffset.y / texture->size.h;
 
@@ -767,31 +781,18 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
 
     GfxTexture *texture = GfxTexture_from_image(image_name);
     Hashmap_set(graphics->textures, bimage_name, texture);
-    bdestroy(bimage_name);
 
     return texture;
 }
 
 Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
         GfxSize cell_size) {
-    bstring bkey = bfromcstr(image_name);
-    bcatcstr(bkey, (char *)&cell_size);
-
-    void *val = Hashmap_get(graphics->sprites, bkey);
-    if (val != NULL) {
-      bdestroy(bkey);
-      return (Sprite *)val;
-    }
-
     GfxTexture *texture = Graphics_texture_from_image(graphics, image_name);
     Sprite *sprite = Sprite_create(texture, cell_size);
     check(sprite != NULL, "Couldn't create sprite");
 
-    Hashmap_set(graphics->sprites, bkey, sprite);
-
     return sprite;
 error:
-    bdestroy(bkey);
     return NULL;
 }
 

@@ -20,7 +20,7 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     engine->audio = Audio_create();
     engine->input = NEW(Input, "Input Engine");
     engine->graphics = NEW(Graphics, "Graphics Engine");
-    engine->physics = NEW(Physics, "Physics Engine");
+    engine->physics = Physics_create();
     engine->scripting = Scripting_create(boot_script);
 
     engine->reg_initialized = 0;
@@ -44,7 +44,7 @@ void Engine_destroy(Engine *engine) {
     Audio_destroy(engine->audio);
     engine->input->_(destroy)(engine->input);
     engine->graphics->_(destroy)(engine->graphics);
-    engine->physics->_(destroy)(engine->physics);
+    Physics_destroy(engine->physics);
     Scripting_destroy(engine->scripting);
 
     free(engine);

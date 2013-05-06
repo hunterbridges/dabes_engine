@@ -69,6 +69,7 @@
 		CAB359C716FED230004CF684 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CAB359C616FED230004CF684 /* blueprint.jpg */; };
 		CAE3234E171CFB2500E7F7FB /* vmatrix.c in Sources */ = {isa = PBXBuildFile; fileRef = CAE3234D171CFB2400E7F7FB /* vmatrix.c */; };
 		CAEA954E173475E100C90B8C /* sfx.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA954C173475E100C90B8C /* sfx.c */; };
+		CAEA95621737630D00C90B8C /* stepper.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA95601737630D00C90B8C /* stepper.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -235,6 +236,8 @@
 		CAE3234D171CFB2400E7F7FB /* vmatrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vmatrix.c; path = ../../../../src/math/vmatrix.c; sourceTree = "<group>"; };
 		CAEA954C173475E100C90B8C /* sfx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfx.c; sourceTree = "<group>"; };
 		CAEA954D173475E100C90B8C /* sfx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfx.h; sourceTree = "<group>"; };
+		CAEA95601737630D00C90B8C /* stepper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stepper.c; sourceTree = "<group>"; };
+		CAEA95611737630D00C90B8C /* stepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stepper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -362,6 +365,8 @@
 				CA30660F17054C1E00629F80 /* gzip.c */,
 				CA65C6F31729CE8E00A7D4E5 /* scripting.c */,
 				CA65C6F41729CE8E00A7D4E5 /* scripting.h */,
+				CAEA95601737630D00C90B8C /* stepper.c */,
+				CAEA95611737630D00C90B8C /* stepper.h */,
 			);
 			name = core;
 			path = ../../../../src/core;
@@ -688,6 +693,7 @@
 				CA7241B61730E55300255032 /* music.c in Sources */,
 				CA7241B71730E55300255032 /* ogg_stream.c in Sources */,
 				CAEA954E173475E100C90B8C /* sfx.c in Sources */,
+				CAEA95621737630D00C90B8C /* stepper.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

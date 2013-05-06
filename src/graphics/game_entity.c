@@ -8,7 +8,6 @@ GameEntity *GameEntity_create() {
     check(entity != NULL, "Failed to create entity");
 
     entity->alpha = 1.f;
-    entity->current_frame = 0;
 
     return entity;
 error:
@@ -65,9 +64,7 @@ void GameEntity_render(GameEntity *self, void *engine) {
             break;
     }
 
-    VPoint frame_offset = entity->sprite->frames[entity->current_frame].offset;
-    Graphics_draw_rect(graphics, rect, color, entity->sprite->texture,
-                       frame_offset, entity->sprite->cell_size, degrees);
+    Graphics_draw_sprite(graphics, entity->sprite, rect, color, degrees);
 }
 
 VPoint GameEntity_center(GameEntity *entity) {
@@ -105,8 +102,6 @@ error:
 }
 
 void GameEntity_control(GameEntity *entity, Engine *engine) {
-    check_mem(entity);
-    check_mem(engine);
     Input *input = engine->input;
     (void)(input);
     if (entity->controller == NULL) return;
@@ -171,11 +166,54 @@ void GameEntity_control(GameEntity *entity, Engine *engine) {
 
                 cpVect input_f =
                     cpvmult(input_acceleration, cpBodyGetMass(shape->body));
-                cpBodyApplyForce(shape->body, input_f, cpvzero);
+                cpVect app_point = {0, 0.1};
+                cpBodyApplyForce(shape->body, input_f, app_point);
             }
             break;
     }
     return;
+}
+
+void GameEntity_derive_animation(GameEntity *entity, Engine *UNUSED(engine)) {
+    VPoint velo = {0, 0};
+    switch (entity->physics_shape.shape_type) {
+        case GameEntityPhysicsShapeTypeFixture:
+            {
+                velo.x = entity->physics_shape.fixture->velocity.x;
+                velo.y = entity->physics_shape.fixture->velocity.y;
+            }
+            break;
+
+        case GameEntityPhysicsShapeTypeCPShape:
+            {
+                cpVect cp_velo =
+                    cpBodyGetVel(entity->physics_shape.shape->body);
+                velo.x = cp_velo.x;
+                velo.y = cp_velo.y;
+            }
+            break;
+    }
+
+    float standing_thresh = 0.25;
+    if (velo.x < -standing_thresh) {
+        entity->sprite->direction = SPRITE_DIR_FACING_LEFT;
+    } else if (velo.x > standing_thresh) {
+        entity->sprite->direction = SPRITE_DIR_FACING_RIGHT;
+    }
+
+    if (velo.x > -standing_thresh && velo.x < standing_thresh) {
+        Sprite_use_animation(entity->sprite, "standing");
+    } else {
+        Sprite_use_animation(entity->sprite, "running");
+    }
+}
+
+void GameEntity_update(GameEntity *entity, Engine *engine) {
+    check(entity != NULL, "Need entity to update entity");
+    check(engine != NULL, "Need engine to update entity");
+    GameEntity_control(entity, engine);
+    GameEntity_derive_animation(entity, engine);
+    Sprite_update(entity->sprite, engine);
 error:
     return;
 }

@@ -16,16 +16,12 @@ int main(int argc, char *argv[]) {
 
     scene = Scene_create(engine, OrthoChipmunkSceneProto, "fat_map");
 
-    GameEntity_assign_controller(scene->entities->first->value,
-            engine->input->controllers[0]);
-
     while (engine->input->game_quit == 0) {
         Engine_regulate(engine);
         Input_poll(engine->input);
         Audio_stream(engine->audio);
 
         if (engine->frame_now) {
-            scene->_(control)(scene, engine);
             scene->_(update)(scene, engine);
             scene->_(render)(scene, engine);
 #ifdef DEBUG

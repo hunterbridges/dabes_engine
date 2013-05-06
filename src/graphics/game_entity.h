@@ -43,6 +43,7 @@ typedef struct GameEntity {
         double mass;
         double rotation; // radians
         double edge_friction;
+        int can_rotate;
     } config;
 } GameEntity;
 
@@ -51,7 +52,7 @@ GameEntity *GameEntity_create();
 void GameEntity_destroy(GameEntity *entity);
 void GameEntity_render(GameEntity *self, void *engine);
 void GameEntity_assign_controller(GameEntity *entity, Controller *controller);
-void GameEntity_control(GameEntity *entity, struct Engine *engine);
+void GameEntity_update(GameEntity *entity, struct Engine *engine);
 VPoint GameEntity_center(GameEntity *entity);
 VRect GameEntity_real_rect(GameEntity *entity);
 VRect GameEntity_bounding_rect(GameEntity *entity);

@@ -176,6 +176,8 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name);
 
 // Sprites
 struct Sprite;
+void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite, VRect rect,
+        GLfloat color[4], double rot_degs);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
     GfxSize cell_size);
 

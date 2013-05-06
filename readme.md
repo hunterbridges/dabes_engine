@@ -13,6 +13,7 @@ What is done:
     * Camera tracking
     * Can render TMX tile maps
     * Parallax layers
+    * Sprite animations
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
 * Audio engine:
@@ -27,7 +28,6 @@ What is not yet done:
     * Spatialization
     * Source volume
 * Graphics engine:
-    * Sprite animations
     * Keyframe animations
 * Scripting engine:
     * Entity control scripts
