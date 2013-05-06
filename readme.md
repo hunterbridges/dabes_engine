@@ -29,6 +29,7 @@ What is not yet done:
     * Source volume
 * Graphics engine:
     * Keyframe animations
+* Hitboxes
 * Scripting engine:
     * Entity control scripts
     * Interaction scripts
@@ -43,6 +44,8 @@ Bugs:
 * Parallax zoom is sliiiightly weird
 * Camera tracking is weird when entity rect is larger than screen rect
 * Weird camera humping as tracked entity is rotating
+* Audio buffers getting orphaned somehow?
+* Getting stuck in ground tiles
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules
