@@ -18,6 +18,7 @@ double VProjection_get_overlap(VProjection a, VProjection b) {
 // =================
 // VRect functions
 // =================
+
 VRect VRect_from_xywh(double x, double y, double w, double h) {
     VPoint tl = { x, y };
     VPoint tr = { x + w, y };
@@ -35,7 +36,7 @@ VRect VRect_from_xywh(double x, double y, double w, double h) {
 VRect VRect_inset(VRect rect, VRectInset inset) {
   double rot = VPoint_angle(rect.tl, rect.tr);
   VRect new = VRect_rotate(rect, VRect_center(rect), -rot);
-  
+
   new.tl.x += inset.left;
   new.tl.y += inset.top;
 
@@ -47,7 +48,7 @@ VRect VRect_inset(VRect rect, VRectInset inset) {
 
   new.br.x -= inset.right;
   new.br.y -= inset.bottom;
-  
+
   new = VRect_rotate(new, VRect_center(new), rot);
   return new;
 }
@@ -66,6 +67,14 @@ VRect VRect_round_out(VRect rect) {
   rect.br.y = ceil(rect.br.y);
 
   return rect;
+}
+
+float VRect_width(VRect rect) {
+    return VPoint_magnitude(VPoint_subtract(rect.tr, rect.tl));
+}
+
+float VRect_height(VRect rect) {
+    return VPoint_magnitude(VPoint_subtract(rect.bl, rect.tl));
 }
 
 VPoint VRect_center(VRect box) {

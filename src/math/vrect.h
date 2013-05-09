@@ -31,6 +31,8 @@ VRect VRect_inset(VRect rect, VRectInset inset);
 VRect VRect_round_out(VRect rect);
 
 VPoint VRect_center(VRect box);
+float VRect_width(VRect rect);
+float VRect_height(VRect rect);
 VPoint VRect_vertex(VRect box, unsigned int index);
 VRect VRect_rotate(VRect box, VPoint pivot, double angle_in_rads);
 VRect VRect_move(VRect box, VPoint move);

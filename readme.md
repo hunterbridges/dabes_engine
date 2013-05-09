@@ -42,7 +42,6 @@ Bugs:
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
-* Camera tracking is weird when entity rect is larger than screen rect
 * Weird camera humping as tracked entity is rotating
 * Audio buffers getting orphaned somehow?
 * Getting stuck in ground tiles

@@ -71,6 +71,12 @@ void Camera_track(Camera *camera) {
         diff = VPoint_scale(diff, 1 / camera->scale);
         diff = VPoint_rotate(diff, VPointZero, camera->rotation_radians);
         camera->focal = VPoint_add(camera->focal, diff);
+
+        VPoint e_center = VRect_center(e_rect);
+        if (VRect_width(e_bound) >= VRect_width(t_bound))
+            camera->focal.x = e_center.x;
+        if (VRect_height(e_bound) >= VRect_height(t_bound))
+            camera->focal.y = e_center.y;
     } else {
         camera->focal.x += camera->translation.x;
         camera->focal.y += camera->translation.y;
