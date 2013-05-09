@@ -3,8 +3,10 @@
 #include "prefix.h"
 #define sign(N) (N > 0) - (N < 0)
 
-#ifndef DABES_IOS
+#ifndef MIN
 #define MIN(A, B) (A < B ? A : B)
+#endif
+#ifndef MAX
 #define MAX(A, B) (A > B ? A : B)
 #endif
 

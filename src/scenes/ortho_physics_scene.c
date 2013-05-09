@@ -50,7 +50,7 @@ void OrthoPhysicsScene_stop(struct Scene *scene, Engine *UNUSED(engine)) {
     scene->started = 0;
 }
 
-void OrthoPhysicsScene_cleanup(struct Scene *scene, Engine *engine) {
+void OrthoPhysicsScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
     check(scene != NULL, "No scene to destroy");
 
 error:
@@ -128,7 +128,7 @@ void OrthoPhysicsScene_control(struct Scene *scene, Engine *engine) {
 
     LIST_FOREACH(scene->entities, first, next, current) {
         GameEntity *entity = current->value;
-        GameEntity_control(entity, engine);
+        GameEntity_update(entity, engine);
     }
 }
 
