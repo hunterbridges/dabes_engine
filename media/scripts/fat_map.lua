@@ -2,7 +2,11 @@ require "engine_objects"
 require "game_objects"
 
 fat_map = {
-    map = "media/tilemaps/fat.tmx",
+    pixels_per_meter = 32,
+    map = {
+      file = "media/tilemaps/fat.tmx",
+      meters_per_tile = 2.0
+    },
     music = {
       intro = "media/music/Climb_Intro.ogg",
       loop = "media/music/Climb_Loop.ogg"

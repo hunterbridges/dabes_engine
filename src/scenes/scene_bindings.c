@@ -8,6 +8,12 @@ int Scene_init(Scene *scene, Engine *engine) {
     lua_State *L = engine->scripting->L;
     lua_getglobal(L, scene->name);
 
+    lua_getfield(L, -1, "pixels_per_meter");
+    if (lua_type(L, -1) == LUA_TNUMBER) {
+        scene->pixels_per_meter = lua_tointeger(L, -1);
+    }
+    lua_pop(L, 1);
+
     lua_getfield(L, -1, "music");
     if (lua_type(L, -1) == LUA_TTABLE) {
         const char *intro = NULL;
@@ -26,13 +32,22 @@ int Scene_init(Scene *scene, Engine *engine) {
         const char *files[1] = {(char *)lua_tostring(L, -1)};
         scene->music = Audio_gen_music(engine->audio, 1, files);
     }
-
     lua_pop(L, 1);
 
     lua_getfield(L, -1, "map");
     if (lua_type(L, -1) == LUA_TSTRING) {
         const char *map = lua_tostring(L, -1);
         Scene_load_tile_map(scene, engine, (char *)map, 0);
+    } else if (lua_type(L, -1) == LUA_TTABLE) {
+        int map = lua_gettop(L);
+        lua_getfield(L, map, "file");
+        lua_getfield(L, map, "meters_per_tile");
+        const char *file = lua_tostring(L, -2);
+        float meters_per_tile = lua_tonumber(L, -1);
+
+        Scene_load_tile_map(scene, engine, (char *)file, 0);
+        scene->tile_map->meters_per_tile = meters_per_tile;
+        lua_pop(L, 2);
     }
     lua_pop(L, 1);
 
@@ -54,8 +69,8 @@ int Scene_configure(Scene *scene, Engine *engine) {
     int start = n + 1;
 
     lua_getfield(L, -1, "configure");
-    lua_pushnumber(L, scene->tile_map->cols * PHYS_DEFAULT_GRID_SIZE);
-    lua_pushnumber(L, scene->tile_map->rows * PHYS_DEFAULT_GRID_SIZE);
+    lua_pushnumber(L, scene->tile_map->cols * scene->tile_map->meters_per_tile);
+    lua_pushnumber(L, scene->tile_map->rows * scene->tile_map->meters_per_tile);
 
     result = lua_pcall(L, 2, LUA_MULTRET, 0);
     if (result) Scripting_bail(L, "Failed to run script");
@@ -75,6 +90,7 @@ int Scene_configure(Scene *scene, Engine *engine) {
 
             if (streq(identifier, SCRIPTING_CL_ENTITY_CONFIG)) {
                 GameEntity *entity = GameEntity_create();
+
                 lua_getfield(L, start, "sprite");
                 int sprite = lua_gettop(L);
 
@@ -162,7 +178,8 @@ int Scene_configure(Scene *scene, Engine *engine) {
                 entity->config.rotation = lua_tonumber(L, -3);
                 entity->config.mass = lua_tonumber(L, -2);
                 entity->alpha = lua_tonumber(L, -1);
-                lua_pop(L, 10);
+                entity->pixels_per_meter = scene->pixels_per_meter;
+                lua_pop(L, 11);
 
                 List_push(scene->entities, entity);
             } else if (streq(identifier, SCRIPTING_CL_PARALLAX)) {

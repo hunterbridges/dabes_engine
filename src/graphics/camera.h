@@ -9,6 +9,8 @@ typedef struct Camera {
     struct GfxSize scene_size;
     void *track_entity;
 
+    int snap_to_scene;
+
     VRectInset margin;
     double scale;
     double rotation_radians;

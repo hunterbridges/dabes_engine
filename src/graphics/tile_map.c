@@ -89,6 +89,14 @@ void Tileset_destroy(Tileset *tileset) {
   free(tileset);
 }
 
+GfxSize TileMap_draw_size(TileMap *map, int pixels_per_meter) {
+    GfxSize size = {
+        .w = map->cols * map->meters_per_tile * pixels_per_meter,
+        .h = map->rows * map->meters_per_tile * pixels_per_meter
+    };
+    return size;
+}
+
 TileMap *TileMap_create() {
   TileMap *map = calloc(1, sizeof(TileMap));
   check(map != NULL, "Couldn't create map");
@@ -98,6 +106,8 @@ TileMap *TileMap_create() {
 
   map->layers = DArray_create(sizeof(TileMapLayer), 8);
   map->layers->expand_rate = 8;
+
+  map->meters_per_tile = 1.0;
 
   return map;
 
@@ -160,7 +170,7 @@ error:
   return NULL;
 }
 
-void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
+void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
     if (map == NULL) return;
 
     Graphics_reset_modelview_matrix(graphics);
@@ -172,9 +182,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell) {
         layer->atlas = TileMapLayer_create_atlas(layer, map);
       }
 
+      float pixels_per_tile = map->meters_per_tile * pixels_per_meter;
       VRect rect = VRect_from_xywh(0, 0,
-                                   map->cols * pixels_per_cell,
-                                   map->rows * pixels_per_cell);
+                                   map->cols * pixels_per_tile,
+                                   map->rows * pixels_per_tile);
       Graphics_reset_modelview_matrix(graphics);
       double w = rect.tr.x - rect.tl.x;
       double h = rect.bl.y - rect.tl.y;

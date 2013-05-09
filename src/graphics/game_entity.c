@@ -59,7 +59,7 @@ void GameEntity_render(GameEntity *self, void *engine) {
                 else if (i == 2) rect.br = point;
                 else if (i == 3) rect.tr = point;
               }
-              rect = VRect_scale(rect, DEFAULT_PPM);
+              rect = VRect_scale(rect, self->pixels_per_meter);
             }
             break;
     }
@@ -82,7 +82,7 @@ VPoint GameEntity_center(GameEntity *entity) {
                 cpShape *shape = entity->physics_shape.shape;
                 cpVect pos = cpBodyGetPos(shape->body);
                 VPoint center = {pos.x, pos.y};
-                return VPoint_scale(center, DEFAULT_PPM);
+                return VPoint_scale(center, entity->pixels_per_meter);
             }
             break;
     }
@@ -248,7 +248,7 @@ VRect GameEntity_real_rect(GameEntity *entity) {
                 else if (i == 3) rect.tr = point;
               }
               rect = VRect_rotate(rect, center, rads);
-              rect = VRect_scale(rect, DEFAULT_PPM);
+              rect = VRect_scale(rect, entity->pixels_per_meter);
               return rect;
             }
             break;

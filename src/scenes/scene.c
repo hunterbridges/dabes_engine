@@ -54,10 +54,9 @@ void Scene_reset_camera(Scene *scene) {
     scene->camera->track_entity = scene->entities->first->value;
     scene->camera->translation.x = 0;
     scene->camera->translation.y = 0;
-    scene->camera->scene_size.w =
-        scene->tile_map->cols * scene->tile_map->tile_size.w;
-    scene->camera->scene_size.h =
-        scene->tile_map->rows * scene->tile_map->tile_size.h;
+    scene->camera->scene_size =
+        TileMap_draw_size(scene->tile_map, scene->pixels_per_meter);
+    scene->camera->snap_to_scene = 1;
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {

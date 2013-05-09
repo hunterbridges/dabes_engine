@@ -53,12 +53,14 @@ typedef struct TileMap {
   GfxSize tile_size;
   DArray *tilesets;
   DArray *layers;
+  float meters_per_tile;
 } TileMap;
 
 TileMap *TileMap_create();
 void TileMap_destroy(TileMap *map);
-void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_cell);
+void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter);
 TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid);
+GfxSize TileMap_draw_size(TileMap *map, int pixels_per_meter);
 
 void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics);
 

@@ -4,7 +4,7 @@
 World *World_create(int cols, int rows) {
     World *world = calloc(1, sizeof(World));
     check(world != NULL, "Couldn't create world");
-  
+
     world->num_fixtures = 0;
     world->time_scale = 1;
     world->grid_size = PHYS_DEFAULT_GRID_SIZE;
@@ -27,7 +27,7 @@ error:
 
 void World_destroy(World *world) {
     check(world != NULL, "No world to destroy");
-  
+
     LIST_FOREACH(world->fixtures, first, next, current) {
         Fixture *fixture = current->value;
         fixture->_(destroy)(fixture);

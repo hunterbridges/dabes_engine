@@ -45,6 +45,8 @@ typedef struct GameEntity {
         double edge_friction;
         int can_rotate;
     } config;
+
+    int pixels_per_meter;
 } GameEntity;
 
 struct Engine;

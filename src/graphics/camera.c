@@ -22,6 +22,33 @@ error:
     return NULL;
 }
 
+void Camera_correct(Camera *camera) {
+    if (!camera->snap_to_scene) return;
+    GfxSize raw_scene = camera->scene_size;
+    GfxSize proj_scene = {
+        camera->scene_size.w * camera->scale,
+        camera->scene_size.h * camera->scale
+    };
+    VPoint scene_center = {
+        raw_scene.w / 2.0,
+        raw_scene.h / 2.0
+    };
+    if (proj_scene.w <= camera->screen_size.w) {
+        camera->focal.x = scene_center.x;
+    } else {
+        camera->focal.x =
+            MIN(camera->scene_size.w - camera->screen_size.w / (2.0 * camera->scale),
+                MAX(camera->screen_size.w / (2.0 * camera->scale), camera->focal.x));
+    }
+    if (proj_scene.h <= camera->screen_size.h) {
+        camera->focal.y = scene_center.y;
+    } else {
+        camera->focal.y =
+            MIN(camera->scene_size.h - camera->screen_size.h / (2.0 * camera->scale),
+                MAX(camera->screen_size.h / (2.0 * camera->scale), camera->focal.y));
+    }
+}
+
 void Camera_track(Camera *camera) {
     if (camera->track_entity) {
         GameEntity *entity = camera->track_entity;
@@ -30,7 +57,10 @@ void Camera_track(Camera *camera) {
         VRect t_bound = VRect_bounding_box(t_rect);
         VRect e_bound = Camera_project_rect(camera, e_rect);
         e_bound = VRect_bounding_box(e_bound);
-        if (VRect_contains_rect(t_bound, e_bound)) return;
+        if (VRect_contains_rect(t_bound, e_bound)) {
+            Camera_correct(camera);
+            return;
+        }
 
         int closest = 0;
         double min_mag = FLT_MAX;
@@ -83,6 +113,8 @@ void Camera_track(Camera *camera) {
         camera->translation.x = 0;
         camera->translation.y = 0;
     }
+
+    Camera_correct(camera);
 }
 
 void Camera_destroy(Camera *camera) {

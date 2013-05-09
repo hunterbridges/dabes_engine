@@ -79,7 +79,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     Graphics_project_camera(graphics, scene->camera);
 
     Graphics_use_shader(graphics, tshader);
-    TileMap_render(scene->tile_map, graphics, DEFAULT_PPM * 2.0);
+    TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
 
     Graphics_use_shader(graphics, dshader);
     LIST_FOREACH(scene->entities, first, next, current) {
@@ -153,7 +153,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     //cpSpaceSetCollisionBias(scene->space, 1.0);
     scene->space->collisionSlop = 0.0;
     scene->space->collisionBias = 0.1;
-  
+
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
                                OCSCollisionTypeTile, collision_begin_cb, NULL,
                                NULL, collision_seperate_cb, NULL);
@@ -197,7 +197,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     if (scene->tile_map) {
         TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);
         cpBody *map_body = cpSpaceGetStaticBody(scene->space);
-        float grid_size = PHYS_DEFAULT_GRID_SIZE;
+        float grid_size = scene->tile_map->meters_per_tile;
         int i = 0;
         for (i = 0; i < base_layer->gid_count; i++) {
             uint32_t gid = base_layer->tile_gids[i];

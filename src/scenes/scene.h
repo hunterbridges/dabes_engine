@@ -40,6 +40,8 @@ typedef struct Scene {
     short int draw_grid;
     short int debug_camera;
     int started;
+
+    int pixels_per_meter;
 } Scene;
 
 Scene *Scene_create(Engine *engine, SceneProto proto, const char *name);
