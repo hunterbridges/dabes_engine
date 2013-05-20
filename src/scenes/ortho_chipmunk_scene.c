@@ -11,13 +11,17 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->entities == NULL);
     scene->entities = List_create();
 
-    Scene_configure(scene, engine);
+    // TODO: Call scene start callback
+    //Scene_configure(scene, engine);
     Scene_reset_camera(scene);
 
     OrthoChipmunkScene_create_space(scene, engine);
 
-    GameEntity_assign_controller(scene->entities->first->value,
-          engine->input->controllers[0]);
+    // TODO: Assign controller via script
+    if (scene->entities->first) {
+        GameEntity_assign_controller(scene->entities->first->value,
+              engine->input->controllers[0]);
+    }
 
     scene->started = 1;
 }
@@ -37,7 +41,7 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
       scene->space = NULL;
     }
 
-    Parallax_destroy(scene->parallax);
+    if (scene->parallax) Parallax_destroy(scene->parallax);
 
     Stepper_reset(engine->physics->stepper);
     scene->started = 0;

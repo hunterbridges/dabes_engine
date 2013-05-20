@@ -9,9 +9,13 @@ typedef struct Scripting {
     lua_State *L;
 } Scripting;
 
-Scripting *Scripting_create(const char *boot_script);
+struct Engine;
+Scripting *Scripting_create(struct Engine *engine, const char *boot_script);
 void Scripting_destroy(Scripting *scripting);
 int Scripting_test(Scripting *scripting);
+void Scripting_register_engine(Scripting *scripting, struct Engine *engine);
+
+struct Engine *luaL_get_engine(lua_State *L);
 
 #define Scripting_bail(L, MSG) { \
     fprintf(stderr, "%s: %s\n", MSG, lua_tostring(L, -1)); \
@@ -21,5 +25,6 @@ int Scripting_test(Scripting *scripting);
 extern const char *SCRIPTING_CL_ENTITY_CONFIG;
 extern const char *SCRIPTING_CL_PARALLAX;
 extern const char *SCRIPTING_CL_PARALLAX_LAYER;
+extern const char *SCRIPTING_ENGINE_REGISTRY_KEY;
 
 #endif

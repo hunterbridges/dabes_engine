@@ -1,5 +1,116 @@
+#include "scene_bindings.h"
+
 #include <stdio.h>
+#include "../core/engine.h"
+#include "../core/scripting.h"
 #include "scene.h"
+#include "ortho_chipmunk_scene.h"
+
+static const char *luab_Scene_metatable = "DaBes.scene";
+static const char *luab_Scene_lib = "SceneBinding";
+
+int luab_Scene_new(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+
+    Scene_userdata *scene_ud = lua_newuserdata(L, sizeof(Scene_userdata));
+    check(scene_ud != NULL, "Could not make scene userdata");
+
+    luaL_getmetatable(L, luab_Scene_metatable);
+    lua_setmetatable(L, -2);
+
+    Scene *scene = NULL;
+    const char *proto = NULL;
+
+    int valid_proto = 0;
+    proto = lua_tostring(L, 1);
+    if (streq(proto, "ortho_chipmunk")) {
+        scene = Scene_create(engine, OrthoChipmunkSceneProto);
+        valid_proto = 1;
+    }
+    check(valid_proto, "Invalid scene type: %s", proto);
+
+    float pixels_per_meter = lua_tonumber(L, 2);
+    scene->pixels_per_meter = pixels_per_meter;
+
+    scene_ud->scene = scene;
+
+    return 1;
+error:
+    if (scene) Scene_destroy(scene, engine);
+    return 0;
+}
+
+int luab_Scene_close(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+
+    Scene_userdata *scene_ud = (Scene_userdata *)
+        luaL_checkudata(L, 1, luab_Scene_metatable);
+    if (scene_ud->scene) Scene_destroy(scene_ud->scene, engine);
+    scene_ud->scene = NULL;
+    return 0;
+}
+
+int luab_Scene_load_map(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+    Scene_userdata *scene_ud = (Scene_userdata *)
+        luaL_checkudata(L, 1, luab_Scene_metatable);
+    check(lua_isstring(L, 2),
+            "Please provide a file name of a .tmx map to load.");
+    check(lua_isnumber(L, 3),
+            "Please provide a meters-per-tile conversion factor");
+
+    const char *file = lua_tostring(L, 2);
+    float meters_per_tile = lua_tonumber(L, 3);
+
+    Scene *scene = scene_ud->scene;
+    Scene_load_tile_map(scene, engine, (char *)file, 0);
+    scene->tile_map->meters_per_tile = meters_per_tile;
+
+    return 1;
+error:
+    return 0;
+}
+
+static const struct luaL_Reg luab_Scene_meths[] = {
+    {"__gc", luab_Scene_close},
+    {"load_map", luab_Scene_load_map},
+    {NULL, NULL}
+};
+
+static const struct luaL_Reg luab_Scene_funcs[] = {
+    {"new", luab_Scene_new},
+    {NULL, NULL}
+};
+
+int luaopen_dabes_scene(lua_State *L) {
+    luaL_newmetatable(L, luab_Scene_metatable);
+
+    /* metatable.__index = metatable */
+    lua_pushvalue(L, -1);
+    lua_setfield(L, -2, "__index");
+
+    luaL_setfuncs(L, luab_Scene_meths, 0);
+    luaL_newlib(L, luab_Scene_funcs);
+
+    lua_pushvalue(L, -1);
+    lua_setglobal(L, "dab_scene");
+
+    return 1;
+}
+
+Scene *luaL_get_current_scene(lua_State *L) {
+    lua_getglobal(L, "scene_manager");
+    lua_getfield(L, -1, "get_current_scene");
+    int result = lua_pcall(L, 0, 1, 0);
+    if (result) Scripting_bail(L, "Failed to get current scene");
+
+    Scene_userdata *scene_ud = (Scene_userdata *)lua_touserdata(L, -1);
+    Scene *scene = scene_ud->scene;
+    lua_pop(L, 2);
+    return scene;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 int Scene_init(Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to configure");

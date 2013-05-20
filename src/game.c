@@ -14,7 +14,8 @@ int main(int argc, char *argv[]) {
     engine = Engine_create("media/scripts/boxfall.lua", (void *)&screen);
     check(engine != NULL, "Failed to boot engine");
 
-    scene = Scene_create(engine, OrthoChipmunkSceneProto, "fat_map");
+    // TODO: use script to create scene
+    // scene = Scene_create(engine, OrthoChipmunkSceneProto);
 
     while (engine->input->game_quit == 0) {
         Engine_regulate(engine);
@@ -22,8 +23,11 @@ int main(int argc, char *argv[]) {
         Audio_stream(engine->audio);
 
         if (engine->frame_now) {
-            scene->_(update)(scene, engine);
-            scene->_(render)(scene, engine);
+            scene = Engine_get_current_scene(engine);
+            if (scene) {
+                scene->_(update)(scene, engine);
+                scene->_(render)(scene, engine);
+            }
 #ifdef DEBUG
             Graphics_draw_debug_text(engine->graphics, engine->frame_ticks);
 #endif
@@ -34,13 +38,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    Scene_destroy(scene, engine);
     Engine_destroy(engine);
     SDL_FreeSurface(screen);
 
     return 0;
 error:
-    if (scene) Scene_destroy(scene, engine);
     if (engine) engine->_(destroy)(engine);
     SDL_FreeSurface(screen);
     return 1;

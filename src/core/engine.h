@@ -42,6 +42,9 @@ void Engine_pause_time(Engine *engine);
 void Engine_resume_time(Engine *engine);
 uint32_t Engine_get_ticks(Engine *engine);
 
+struct Scene;
+struct Scene *Engine_get_current_scene(Engine *engine);
+
 #ifdef DABES_IOS
 #define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)
 void Engine_log_iOS(char *fmt, ...);

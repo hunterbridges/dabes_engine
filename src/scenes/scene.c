@@ -3,16 +3,15 @@
 #include "../core/engine.h"
 #include "scene.h"
 
-Scene *Scene_create(Engine *engine, SceneProto proto, const char *name) {
+Scene *Scene_create(Engine *engine, SceneProto proto) {
     Scene *scene = calloc(1, sizeof(Scene));
     check(scene != NULL, "Couldn't create scene");
 
-    scene->name = malloc(sizeof(char) * strlen(name));
-    strcpy(scene->name, name);
+    scene->name = NULL;
     scene->proto = proto;
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    Scene_init(scene, engine);
+    // Scene_init(scene, engine);
     scene->_(start)(scene, engine);
     Music_play(scene->music);
     return scene;
@@ -51,12 +50,22 @@ void Scene_restart(Scene *scene, Engine *engine) {
 void Scene_reset_camera(Scene *scene) {
     scene->camera->scale = 1;
     scene->camera->rotation_radians = 0;
-    scene->camera->track_entity = scene->entities->first->value;
     scene->camera->translation.x = 0;
     scene->camera->translation.y = 0;
-    scene->camera->scene_size =
-        TileMap_draw_size(scene->tile_map, scene->pixels_per_meter);
     scene->camera->snap_to_scene = 1;
+
+    if (scene->entities->first) {
+        scene->camera->track_entity = scene->entities->first->value;
+    } else {
+        scene->camera->track_entity = NULL;
+    }
+
+    if (scene->tile_map) {
+        scene->camera->scene_size =
+            TileMap_draw_size(scene->tile_map, scene->pixels_per_meter);
+    } else {
+        scene->camera->scene_size = scene->camera->screen_size;
+    }
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
