@@ -5,6 +5,8 @@
 require 'dabes.bound_object'
 
 Scene = BoundObject:extend({
+    lib = dab_scene,
+
 -- Default Configuration
 
     kind = "static",
@@ -13,7 +15,7 @@ Scene = BoundObject:extend({
 -- Hook Overloads
 
     realize = function(class)
-        return dab_scene.new(class.kind, class.pixels_per_meter)
+        return class.lib.new(class.kind, class.pixels_per_meter)
     end,
 
 -- Function Bindings
@@ -23,6 +25,16 @@ Scene = BoundObject:extend({
     -- Loads the given `map` .tmx resource, represented in the game world
     -- at the size `meters_per_tile`
     load_map = BoundObject.fwd_func("load_map"),
+
+    _getters = {
+        draw_grid = BoundObject.fwd_func("get_draw_grid"),
+        debug_camera = BoundObject.fwd_func("get_debug_camera")
+    },
+
+    _setters = {
+        draw_grid = BoundObject.fwd_func("set_draw_grid"),
+        debug_camera = BoundObject.fwd_func("set_debug_camera")
+    },
 
 -- Hooks
 

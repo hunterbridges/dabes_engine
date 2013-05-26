@@ -22,6 +22,30 @@ struct Engine *luaL_get_engine(lua_State *L);
     return 0; \
 }
 
+#define Scripting_num_setter(FNAME, MTABLE, UDTYPE, UDPROP, STYPE, SPROP) \
+static inline int FNAME(lua_State *L) { \
+    UDTYPE *ud = (UDTYPE *) luaL_checkudata(L, 1, MTABLE); \
+    check(lua_isnumber(L, 2), \
+            "Please provide a number to set "#STYPE"->"#SPROP); \
+    lua_Number num = lua_tonumber(L, 2); \
+    STYPE *s = ud->UDPROP; \
+    printf("Setting ("#STYPE" %p)->"#SPROP": %f\n", s, num); \
+    s->SPROP = num; \
+    return 1; \
+error: \
+    return 0; \
+}
+
+#define Scripting_num_getter(FNAME, MTABLE, UDTYPE, UDPROP, STYPE, SPROP) \
+static inline int FNAME(lua_State *L) { \
+    UDTYPE *ud = (UDTYPE *) luaL_checkudata(L, 1, MTABLE); \
+    STYPE *s = ud->UDPROP; \
+    lua_Number ret = s->SPROP; \
+    printf("Getting ("#STYPE" %p)->SPROP: %f\n", s, ret); \
+    lua_pushinteger(L, ret); \
+    return 1; \
+}
+
 extern const char *SCRIPTING_CL_ENTITY_CONFIG;
 extern const char *SCRIPTING_CL_PARALLAX;
 extern const char *SCRIPTING_CL_PARALLAX_LAYER;

@@ -8,6 +8,8 @@ FatMap = Scene:extend({
         -- Play music
 
         self:load_map("media/tilemaps/fat.tmx", 2.0)
+
+        self.debug_camera = 1
     end,
 
     configure = function(self)

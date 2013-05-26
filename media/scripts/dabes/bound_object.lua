@@ -2,10 +2,16 @@
 --
 -- Some weird meta stuff that lets us have a nice object oriented interface
 -- around the C bindings.
+local inspect = require 'lib.inspect'
 require 'dabes.object'
 
 BoundObject = Object:extend({
 -- Default Configuration
+
+    -- lib
+    --
+    -- The lib that is provided by the game engine.
+    lib = nil,
 
     -- real
     --
@@ -19,8 +25,9 @@ BoundObject = Object:extend({
     -- This is the external method used to create a bound object.
     -- It calls the realize hook, then the init hook.
     new = function(class)
-        local bound = {}
-        setmetatable(bound, class)
+        local bound = Object:new()
+        local meta = getmetatable(bound)
+        setmetatable(meta, class)
 
         bound.real = bound:realize()
         bound:init()
