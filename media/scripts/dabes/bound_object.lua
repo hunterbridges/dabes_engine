@@ -63,5 +63,4 @@ BoundObject = Object:extend({
     -- Hook called immediately after `realize`. This is only called once
     -- in the bound object's lifecycle.
     init = function(self) end
-
 })

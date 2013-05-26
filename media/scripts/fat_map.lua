@@ -9,7 +9,7 @@ FatMap = Scene:extend({
 
         self:load_map("media/tilemaps/fat.tmx", 2.0)
 
-        self.debug_camera = 1
+        self.debug_camera = true
     end,
 
     configure = function(self)

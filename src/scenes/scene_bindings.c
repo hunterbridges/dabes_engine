@@ -72,14 +72,14 @@ error:
 }
 
 // Property synthesis
-Scripting_num_getter(luab_Scene_get_draw_grid, luab_Scene_metatable,
+Scripting_bool_getter(luab_Scene_get_draw_grid, luab_Scene_metatable,
     Scene_userdata, scene, Scene, draw_grid);
-Scripting_num_setter(luab_Scene_set_draw_grid, luab_Scene_metatable,
+Scripting_bool_setter(luab_Scene_set_draw_grid, luab_Scene_metatable,
     Scene_userdata, scene, Scene, draw_grid);
 
-Scripting_num_getter(luab_Scene_get_debug_camera, luab_Scene_metatable,
+Scripting_bool_getter(luab_Scene_get_debug_camera, luab_Scene_metatable,
     Scene_userdata, scene, Scene, debug_camera);
-Scripting_num_setter(luab_Scene_set_debug_camera, luab_Scene_metatable,
+Scripting_bool_setter(luab_Scene_set_debug_camera, luab_Scene_metatable,
     Scene_userdata, scene, Scene, debug_camera);
 
 static const struct luaL_Reg luab_Scene_meths[] = {

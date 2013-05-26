@@ -5,6 +5,11 @@
 #include <lua/lauxlib.h>
 #include "../prefix.h"
 
+extern const char *SCRIPTING_CL_ENTITY_CONFIG;
+extern const char *SCRIPTING_CL_PARALLAX;
+extern const char *SCRIPTING_CL_PARALLAX_LAYER;
+extern const char *SCRIPTING_ENGINE_REGISTRY_KEY;
+
 typedef struct Scripting {
     lua_State *L;
 } Scripting;
@@ -46,9 +51,28 @@ static inline int FNAME(lua_State *L) { \
     return 1; \
 }
 
-extern const char *SCRIPTING_CL_ENTITY_CONFIG;
-extern const char *SCRIPTING_CL_PARALLAX;
-extern const char *SCRIPTING_CL_PARALLAX_LAYER;
-extern const char *SCRIPTING_ENGINE_REGISTRY_KEY;
+#define Scripting_bool_setter(FNAME, MTABLE, UDTYPE, UDPROP, STYPE, SPROP) \
+static inline int FNAME(lua_State *L) { \
+    UDTYPE *ud = (UDTYPE *) luaL_checkudata(L, 1, MTABLE); \
+    check(lua_isboolean(L, 2), \
+            "Please provide a boolean to set "#STYPE"->"#SPROP); \
+    int num = lua_toboolean(L, 2); \
+    STYPE *s = ud->UDPROP; \
+    printf("Setting ("#STYPE" %p)->"#SPROP": %d\n", s, num); \
+    s->SPROP = num; \
+    return 1; \
+error: \
+    return 0; \
+}
+
+#define Scripting_bool_getter(FNAME, MTABLE, UDTYPE, UDPROP, STYPE, SPROP) \
+static inline int FNAME(lua_State *L) { \
+    UDTYPE *ud = (UDTYPE *) luaL_checkudata(L, 1, MTABLE); \
+    STYPE *s = ud->UDPROP; \
+    int ret = s->SPROP; \
+    printf("Getting ("#STYPE" %p)->SPROP: %d\n", s, ret); \
+    lua_pushboolean(L, ret); \
+    return 1; \
+}
 
 #endif
