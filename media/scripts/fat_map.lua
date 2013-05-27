@@ -5,14 +5,17 @@ FatMap = Scene:extend({
     pixels_per_meter = 32.0,
 
     init = function(self)
-        -- Play music
-
         self:load_map("media/tilemaps/fat.tmx", 2.0)
+        self:start()
+
+        -- Play music
 
         self.debug_camera = true
     end,
 
     configure = function(self)
+        print "Configure hook"
+
         -- Entities
         -- Parallax
     end

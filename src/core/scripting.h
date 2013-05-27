@@ -19,7 +19,14 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script);
 void Scripting_destroy(Scripting *scripting);
 int Scripting_test(Scripting *scripting);
 void Scripting_register_engine(Scripting *scripting, struct Engine *engine);
+void Scripting_boot(Scripting *scripting);
+int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname);
 
+void luaL_register_ud(lua_State *L, int ud_idx, void **ud_prop, void *val);
+int luaL_lookup_ud(lua_State *L, void *val);
+int luaL_lookup_instance(lua_State *L, void *val);
+void luaL_createweaktable(lua_State *L);
+int luab_register_instance(lua_State *L);
 struct Engine *luaL_get_engine(lua_State *L);
 
 #define Scripting_bail(L, MSG) { \

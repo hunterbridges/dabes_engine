@@ -20,6 +20,11 @@ Scene = BoundObject:extend({
 
 -- Function Bindings
 
+    -- start(self)
+    --
+    -- Starts the scene. Make sure you do this in init()
+    start = BoundObject.fwd_func("start"),
+
     -- load_map(self, map, meters_per_tile)
     --
     -- Loads the given `map` .tmx resource, represented in the game world
@@ -43,7 +48,7 @@ Scene = BoundObject:extend({
     -- Hook called by the game engine when the scene starts. Overload this to
     -- do things like add entities and parallax layers.
     --
-    -- Configure can be called multiple times in the Scene's lifecycle.
+    -- Configure may be called multiple times in the Scene's lifecycle.
     -- If you want to do things that persist across restarts,
     -- do them in `init` (inherited from BoundObject)
     configure = function(self) end

@@ -32,7 +32,7 @@ int luab_Scene_new(lua_State *L) {
     float pixels_per_meter = lua_tonumber(L, 2);
     scene->pixels_per_meter = pixels_per_meter;
 
-    scene_ud->scene = scene;
+    luaL_register_ud(L, -1, (void **)&scene_ud->scene, scene);
 
     return 1;
 error:
@@ -71,6 +71,18 @@ error:
     return 0;
 }
 
+int luab_Scene_start(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+    Scene_userdata *scene_ud = (Scene_userdata *)
+        luaL_checkudata(L, 1, luab_Scene_metatable);
+    Scene *scene = scene_ud->scene;
+    if (!scene->started) {
+        scene->_(start)(scene, engine);
+    }
+
+    return 1;
+}
+
 // Property synthesis
 Scripting_bool_getter(luab_Scene_get_draw_grid, luab_Scene_metatable,
     Scene_userdata, scene, Scene, draw_grid);
@@ -84,6 +96,7 @@ Scripting_bool_setter(luab_Scene_set_debug_camera, luab_Scene_metatable,
 
 static const struct luaL_Reg luab_Scene_meths[] = {
     {"__gc", luab_Scene_close},
+    {"start", luab_Scene_start},
     {"load_map", luab_Scene_load_map},
     {"get_draw_grid", luab_Scene_get_draw_grid},
     {"set_draw_grid", luab_Scene_set_draw_grid},

@@ -3,7 +3,7 @@
 #include "../core/engine.h"
 #include "scene.h"
 
-Scene *Scene_create(Engine *engine, SceneProto proto) {
+Scene *Scene_create(Engine *UNUSED(engine), SceneProto proto) {
     Scene *scene = calloc(1, sizeof(Scene));
     check(scene != NULL, "Couldn't create scene");
 
@@ -11,9 +11,6 @@ Scene *Scene_create(Engine *engine, SceneProto proto) {
     scene->proto = proto;
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    // Scene_init(scene, engine);
-    scene->_(start)(scene, engine);
-    Music_play(scene->music);
     return scene;
 error:
     return NULL;

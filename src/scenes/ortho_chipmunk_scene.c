@@ -11,8 +11,8 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->entities == NULL);
     scene->entities = List_create();
 
-    // TODO: Call scene start callback
-    //Scene_configure(scene, engine);
+    Scripting_call_hook(engine->scripting, scene, "configure");
+
     Scene_reset_camera(scene);
 
     OrthoChipmunkScene_create_space(scene, engine);

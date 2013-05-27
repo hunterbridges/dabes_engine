@@ -30,6 +30,7 @@ BoundObject = Object:extend({
         setmetatable(meta, class)
 
         bound.real = bound:realize()
+        dab_registerinstance(bound.real, bound)
         bound:init()
 
         return bound

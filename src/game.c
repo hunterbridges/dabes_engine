@@ -14,8 +14,7 @@ int main(int argc, char *argv[]) {
     engine = Engine_create("media/scripts/boxfall.lua", (void *)&screen);
     check(engine != NULL, "Failed to boot engine");
 
-    // TODO: use script to create scene
-    // scene = Scene_create(engine, OrthoChipmunkSceneProto);
+    Scripting_boot(engine->scripting);
 
     while (engine->input->game_quit == 0) {
         Engine_regulate(engine);
