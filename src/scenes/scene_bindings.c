@@ -2,12 +2,9 @@
 
 #include <stdio.h>
 #include "../core/engine.h"
-#include "../core/scripting.h"
+#include "../audio/music_bindings.h"
 #include "scene.h"
 #include "ortho_chipmunk_scene.h"
-
-static const char *luab_Scene_metatable = "DaBes.scene";
-static const char *luab_Scene_lib = "SceneBinding";
 
 int luab_Scene_new(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
@@ -32,7 +29,7 @@ int luab_Scene_new(lua_State *L) {
     float pixels_per_meter = lua_tonumber(L, 2);
     scene->pixels_per_meter = pixels_per_meter;
 
-    luaL_register_ud(L, -1, (void **)&scene_ud->scene, scene);
+    luaL_register_ud(L, -1, (void **)&scene_ud->p, scene);
 
     return 1;
 error:
@@ -45,15 +42,16 @@ int luab_Scene_close(lua_State *L) {
 
     Scene_userdata *scene_ud = (Scene_userdata *)
         luaL_checkudata(L, 1, luab_Scene_metatable);
-    if (scene_ud->scene) Scene_destroy(scene_ud->scene, engine);
-    scene_ud->scene = NULL;
+    if (scene_ud->p) Scene_destroy(scene_ud->p, engine);
+    scene_ud->p = NULL;
     return 0;
 }
 
 int luab_Scene_load_map(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
-    Scene_userdata *scene_ud = (Scene_userdata *)
-        luaL_checkudata(L, 1, luab_Scene_metatable);
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+
     check(lua_isstring(L, 2),
             "Please provide a file name of a .tmx map to load.");
     check(lua_isnumber(L, 3),
@@ -62,7 +60,6 @@ int luab_Scene_load_map(lua_State *L) {
     const char *file = lua_tostring(L, 2);
     float meters_per_tile = lua_tonumber(L, 3);
 
-    Scene *scene = scene_ud->scene;
     Scene_load_tile_map(scene, engine, (char *)file, 0);
     scene->tile_map->meters_per_tile = meters_per_tile;
 
@@ -73,31 +70,59 @@ error:
 
 int luab_Scene_start(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
-    Scene_userdata *scene_ud = (Scene_userdata *)
-        luaL_checkudata(L, 1, luab_Scene_metatable);
-    Scene *scene = scene_ud->scene;
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
     if (!scene->started) {
         scene->_(start)(scene, engine);
     }
 
     return 1;
+error:
+    return 0;
+}
+
+int luab_Scene_get_music(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    if (scene->music == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    luaL_lookup_instance(L, scene->music);
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Scene_set_music(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+
+    lua_getfield(L, -1, "real");
+    Music *music = luaL_tomusic(L, -1);
+    check(scene != NULL, "Music required");
+
+    lua_pop(L, 3);
+
+    scene->music = music;
+error:
+    return 0;
 }
 
 // Property synthesis
-Scripting_bool_getter(luab_Scene_get_draw_grid, luab_Scene_metatable,
-    Scene_userdata, scene, Scene, draw_grid);
-Scripting_bool_setter(luab_Scene_set_draw_grid, luab_Scene_metatable,
-    Scene_userdata, scene, Scene, draw_grid);
+Scripting_bool_getter(Scene, draw_grid);
+Scripting_bool_setter(Scene, draw_grid);
 
-Scripting_bool_getter(luab_Scene_get_debug_camera, luab_Scene_metatable,
-    Scene_userdata, scene, Scene, debug_camera);
-Scripting_bool_setter(luab_Scene_set_debug_camera, luab_Scene_metatable,
-    Scene_userdata, scene, Scene, debug_camera);
+Scripting_bool_getter(Scene, debug_camera);
+Scripting_bool_setter(Scene, debug_camera);
 
 static const struct luaL_Reg luab_Scene_meths[] = {
     {"__gc", luab_Scene_close},
     {"start", luab_Scene_start},
     {"load_map", luab_Scene_load_map},
+    {"get_music", luab_Scene_get_music},
+    {"set_music", luab_Scene_set_music},
     {"get_draw_grid", luab_Scene_get_draw_grid},
     {"set_draw_grid", luab_Scene_set_draw_grid},
     {"get_debug_camera", luab_Scene_get_debug_camera},
@@ -121,7 +146,7 @@ int luaopen_dabes_scene(lua_State *L) {
     luaL_newlib(L, luab_Scene_funcs);
 
     lua_pushvalue(L, -1);
-    lua_setglobal(L, "dab_scene");
+    lua_setglobal(L, luab_Scene_lib);
 
     return 1;
 }
@@ -133,68 +158,12 @@ Scene *luaL_get_current_scene(lua_State *L) {
     if (result) Scripting_bail(L, "Failed to get current scene");
 
     Scene_userdata *scene_ud = (Scene_userdata *)lua_touserdata(L, -1);
-    Scene *scene = scene_ud->scene;
+    Scene *scene = scene_ud->p;
     lua_pop(L, 2);
     return scene;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-int Scene_init(Scene *scene, Engine *engine) {
-    check(scene != NULL, "No scene to configure");
-    check(engine != NULL, "Need engine to configure scene");
-
-    lua_State *L = engine->scripting->L;
-    lua_getglobal(L, scene->name);
-
-    lua_getfield(L, -1, "pixels_per_meter");
-    if (lua_type(L, -1) == LUA_TNUMBER) {
-        scene->pixels_per_meter = lua_tointeger(L, -1);
-    }
-    lua_pop(L, 1);
-
-    lua_getfield(L, -1, "music");
-    if (lua_type(L, -1) == LUA_TTABLE) {
-        const char *intro = NULL;
-        const char *loop = NULL;
-
-        int music_field = lua_gettop(L);
-        lua_getfield(L, music_field, "intro");
-        lua_getfield(L, music_field, "loop");
-        if (lua_type(L, -2) == LUA_TSTRING) intro = lua_tostring(L, -2);
-        if (lua_type(L, -1) == LUA_TSTRING) loop = lua_tostring(L, -1);
-        lua_pop(L, 2);
-
-        const char *files[2] = {intro, loop};
-        scene->music = Audio_gen_music(engine->audio, 2, files);
-    } else if (lua_type(L, -1) == LUA_TSTRING) {
-        const char *files[1] = {(char *)lua_tostring(L, -1)};
-        scene->music = Audio_gen_music(engine->audio, 1, files);
-    }
-    lua_pop(L, 1);
-
-    lua_getfield(L, -1, "map");
-    if (lua_type(L, -1) == LUA_TSTRING) {
-        const char *map = lua_tostring(L, -1);
-        Scene_load_tile_map(scene, engine, (char *)map, 0);
-    } else if (lua_type(L, -1) == LUA_TTABLE) {
-        int map = lua_gettop(L);
-        lua_getfield(L, map, "file");
-        lua_getfield(L, map, "meters_per_tile");
-        const char *file = lua_tostring(L, -2);
-        float meters_per_tile = lua_tonumber(L, -1);
-
-        Scene_load_tile_map(scene, engine, (char *)file, 0);
-        scene->tile_map->meters_per_tile = meters_per_tile;
-        lua_pop(L, 2);
-    }
-    lua_pop(L, 1);
-
-    lua_pop(L, 1); // Pop the scene global
-    return 1;
-error:
-    return 0;
-}
 
 int Scene_configure(Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to configure");

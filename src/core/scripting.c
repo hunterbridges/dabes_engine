@@ -5,6 +5,7 @@
 
 // Import all the bindings so we can load them into our scripting env.
 #include "../scenes/scene_bindings.h"
+#include "../audio/music_bindings.h"
 
 const char *SCRIPTING_CL_ENTITY_CONFIG = "entity_config";
 const char *SCRIPTING_CL_PARALLAX = "parallax";
@@ -13,9 +14,9 @@ const char *SCRIPTING_ENGINE_REGISTRY_KEY = "dabes_engine";
 const char *SCRIPTING_POINTER_MAP = "pointermap";
 const char *SCRIPTING_INSTANCE_MAP = "instances";
 
-
 void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_scene(scripting->L);
+    luaopen_dabes_music(scripting->L);
 }
 
 
@@ -35,9 +36,13 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     lua_setfield(scripting->L, -2, "path");
     lua_pop(scripting->L, 1);
 
-    // Set up our instance registry.
+    // The pointer map is keyed by C object pointers and contains
+    // userdata objects.
     luaL_createweaktable(L);
     lua_setglobal(L, SCRIPTING_POINTER_MAP);
+
+    // The instance map is keyed by userdata objects and contains
+    // the Lua BoundObject instances.
     luaL_createweaktable(L);
     lua_setglobal(L, SCRIPTING_INSTANCE_MAP);
 
@@ -78,7 +83,7 @@ void Scripting_boot(Scripting *scripting) {
     lua_getglobal(L, "boot");
     int result = lua_pcall(L, 0, 0, 0);
     if (result != 0) {
-        debug("Error running boot()");
+        debug("Error running boot(): %s", lua_tostring(L, -1));
     }
 }
 
@@ -200,29 +205,4 @@ Engine *luaL_get_engine(lua_State *L) {
     Engine *engine = (Engine *)lua_topointer(L, -1);
     lua_pop(L, 1);
     return engine;
-}
-
-int Scripting_test(Scripting *scripting) {
-    int status, result;
-    int n = lua_gettop(scripting->L);
-    status = luaL_dofile(scripting->L,
-                         resource_path("media/scripts/hello.lua"));
-    if (status) Scripting_bail(scripting->L, "Failed to load script");
-
-    lua_getglobal(scripting->L, "test");
-    lua_pushstring(scripting->L, "World");
-
-    result = lua_pcall(scripting->L, 1, LUA_MULTRET, 0);
-    if (result) Scripting_bail(scripting->L, "Failed to run script");
-    int start = n + 1;
-    n = lua_gettop(scripting->L) - n;
-
-    int i = 1;
-    for (i = 1; i <= n; i++) {
-      const char *ret = lua_tostring(scripting->L, 1);
-      printf("Script returned: %s\n", ret);
-      lua_remove(scripting->L, start);
-    }
-
-    return 1;
 }

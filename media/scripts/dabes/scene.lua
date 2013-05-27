@@ -3,6 +3,7 @@
 -- This BoundObject represents a Scene (scene.h)
 
 require 'dabes.bound_object'
+require 'dabes.music'
 
 Scene = BoundObject:extend({
     lib = dab_scene,
@@ -32,11 +33,13 @@ Scene = BoundObject:extend({
     load_map = BoundObject.fwd_func("load_map"),
 
     _getters = {
+        music = BoundObject.fwd_func("get_music"),
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
         debug_camera = BoundObject.fwd_func("get_debug_camera")
     },
 
     _setters = {
+        music = BoundObject.fwd_func("set_music"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
         debug_camera = BoundObject.fwd_func("set_debug_camera")
     },

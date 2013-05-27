@@ -24,12 +24,12 @@ BoundObject = Object:extend({
     --
     -- This is the external method used to create a bound object.
     -- It calls the realize hook, then the init hook.
-    new = function(class)
+    new = function(class, ...)
         local bound = Object:new()
         local meta = getmetatable(bound)
         setmetatable(meta, class)
 
-        bound.real = bound:realize()
+        bound.real = bound:realize(...)
         dab_registerinstance(bound.real, bound)
         bound:init()
 

@@ -6,16 +6,14 @@
 #include "../prefix.h"
 #include "scene.h"
 
-typedef struct Scene_userdata {
-    lua_State *L;
-    Scene *scene;
-} Scene_userdata;
+static const char *luab_Scene_lib = "dab_scene";
+static const char *luab_Scene_metatable = "DaBes.scene";
+
+typedef Scripting_userdata_for(Scene) Scene_userdata;
+
+Scripting_caster_for(Scene, luaL_toscene);
 
 int luaopen_dabes_scene(lua_State *L);
 Scene *luaL_get_current_scene(lua_State *L);
-
-#pragma mark Script Bindings
-int Scene_init(Scene *scene, Engine *engine);
-int Scene_configure(Scene *scene, Engine *engine);
 
 #endif

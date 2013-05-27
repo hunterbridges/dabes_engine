@@ -6,11 +6,15 @@ FatMap = Scene:extend({
 
     init = function(self)
         self:load_map("media/tilemaps/fat.tmx", 2.0)
+
+        music = Music:new(
+            "media/music/Climb_Intro.ogg",
+            "media/music/Climb_Loop.ogg"
+        )
+        self.music = music
+        music:play()
+
         self:start()
-
-        -- Play music
-
-        self.debug_camera = true
     end,
 
     configure = function(self)
