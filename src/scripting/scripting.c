@@ -1,11 +1,12 @@
 #include "scripting.h"
 
-#include "engine.h"
+#include "../core/engine.h"
 #include "../scenes/scene.h"
 
 // Import all the bindings so we can load them into our scripting env.
 #include "../scenes/scene_bindings.h"
 #include "../audio/music_bindings.h"
+#include "../graphics/parallax_bindings.h"
 
 const char *SCRIPTING_CL_ENTITY_CONFIG = "entity_config";
 const char *SCRIPTING_CL_PARALLAX = "parallax";
@@ -15,8 +16,9 @@ const char *SCRIPTING_POINTER_MAP = "pointermap";
 const char *SCRIPTING_INSTANCE_MAP = "instances";
 
 void Scripting_load_engine_libs(Scripting *scripting) {
-    luaopen_dabes_scene(scripting->L);
     luaopen_dabes_music(scripting->L);
+    luaopen_dabes_parallax(scripting->L);
+    luaopen_dabes_scene(scripting->L);
 }
 
 
@@ -83,7 +85,7 @@ void Scripting_boot(Scripting *scripting) {
     lua_getglobal(L, "boot");
     int result = lua_pcall(L, 0, 0, 0);
     if (result != 0) {
-        debug("Error running boot(): %s", lua_tostring(L, -1));
+        debug("Error running boot():\n    %s", lua_tostring(L, -1));
     }
 }
 
@@ -99,7 +101,7 @@ int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname) {
     lua_pushvalue(L, -2);
     result = lua_pcall(L, 1, 0, 0);
     if (result != 0) {
-        debug("Error in %p %s hook", bound, fname);
+        debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
         return 0;
     }
     lua_pop(L, 1);
@@ -206,3 +208,25 @@ Engine *luaL_get_engine(lua_State *L) {
     lua_pop(L, 1);
     return engine;
 }
+
+// This one I literally copied and pasted from Lua and added the count check.
+int luaL_unpack_exact (lua_State *L, int count) {
+  int i, e, n;
+
+  int tablepos = lua_gettop(L);
+  luaL_checktype(L, -1, LUA_TTABLE);
+  i = luaL_optint(L, tablepos + 1, 1);
+  e = luaL_opt(L, luaL_checkint, tablepos + 2, luaL_len(L, tablepos));
+  if (i > e) return 0;  /* empty range */
+  n = e - i + 1;  /* number of elements */
+  if (n <= 0 || !lua_checkstack(L, n))  /* n <= 0 means arith. overflow */
+    return luaL_error(L, "too many results to unpack");
+  if (n != count)
+      return luaL_error(L, "wrong number of results to unpack (%d, expected %d)",
+              n, count);
+  lua_rawgeti(L, tablepos, i);  /* push arg[i] (avoiding overflow problems) */
+  while (i++ < e)  /* push arg[i + 1...e] */
+    lua_rawgeti(L, tablepos, i);
+  return n;
+}
+

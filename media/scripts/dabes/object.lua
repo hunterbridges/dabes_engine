@@ -1,10 +1,9 @@
 -- Object
 --
--- Some API wranging to inherit behavior and allow for getters and setters.
+-- Some API wrangling to inherit behavior and allow for getters and setters.
 
 Object = {
     new = function(class)
-        print "object new"
         local minstance = {
             __index = function(self, key)
                 meta = getmetatable(self)

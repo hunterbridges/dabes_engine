@@ -2,6 +2,9 @@
 
 #include "../core/engine.h"
 
+const char *luab_Music_lib = "dab_music";
+const char *luab_Music_metatable = "DaBes.music";
+
 int luab_Music_new(lua_State *L) {
     Music_userdata *music_ud = NULL;
     Engine *engine = luaL_get_engine(L);

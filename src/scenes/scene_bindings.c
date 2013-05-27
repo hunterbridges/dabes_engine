@@ -3,8 +3,12 @@
 #include <stdio.h>
 #include "../core/engine.h"
 #include "../audio/music_bindings.h"
+#include "../graphics/parallax_bindings.h"
 #include "scene.h"
 #include "ortho_chipmunk_scene.h"
+
+const char *luab_Scene_lib = "dab_scene";
+const char *luab_Scene_metatable = "DaBes.scene";
 
 int luab_Scene_new(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
@@ -110,6 +114,44 @@ error:
     return 0;
 }
 
+int luab_Scene_get_parallax(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    if (scene->parallax == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    luaL_lookup_instance(L, scene->parallax);
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Scene_set_parallax(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+
+    lua_getfield(L, -1, "real");
+    Parallax *parallax = luaL_toparallax(L, -1);
+    check(parallax != NULL, "Parallax required");
+
+    if (scene->tile_map) {
+        GfxSize level_size = {
+            scene->tile_map->cols * scene->tile_map->tile_size.w,
+            scene->tile_map->rows * scene->tile_map->tile_size.h
+        };
+        parallax->level_size = level_size;
+    }
+    parallax->camera = scene->camera;
+
+    lua_pop(L, 3);
+
+    scene->parallax = parallax;
+error:
+    return 0;
+}
+
 // Property synthesis
 Scripting_bool_getter(Scene, draw_grid);
 Scripting_bool_setter(Scene, draw_grid);
@@ -123,6 +165,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"load_map", luab_Scene_load_map},
     {"get_music", luab_Scene_get_music},
     {"set_music", luab_Scene_set_music},
+    {"get_parallax", luab_Scene_get_parallax},
+    {"set_parallax", luab_Scene_set_parallax},
     {"get_draw_grid", luab_Scene_get_draw_grid},
     {"set_draw_grid", luab_Scene_set_draw_grid},
     {"get_debug_camera", luab_Scene_get_debug_camera},
@@ -291,79 +335,6 @@ int Scene_configure(Scene *scene, Engine *engine) {
 
                 List_push(scene->entities, entity);
             } else if (streq(identifier, SCRIPTING_CL_PARALLAX)) {
-                GfxSize level_size = {
-                    scene->tile_map->cols * scene->tile_map->tile_size.w,
-                    scene->tile_map->rows * scene->tile_map->tile_size.h
-                };
-                scene->parallax = Parallax_create(level_size, scene->camera);
-                Parallax *p = scene->parallax;
-
-                lua_getfield(L, start, "y_wiggle");
-                lua_getfield(L, start, "sea_level");
-                p->y_wiggle = lua_tonumber(L, -2);
-                p->sea_level = lua_tonumber(L, -1);
-                lua_pop(L, 2);
-
-                lua_getfield(L, start, "sky_color");
-                int sky_color = lua_gettop(L);
-                lua_getfield(L, sky_color, "r");
-                lua_getfield(L, sky_color, "g");
-                lua_getfield(L, sky_color, "b");
-                lua_getfield(L, sky_color, "a");
-                p->sky_color.rgba.r = lua_tonumber(L, -4);
-                p->sky_color.rgba.g = lua_tonumber(L, -3);
-                p->sky_color.rgba.b = lua_tonumber(L, -2);
-                p->sky_color.rgba.a = lua_tonumber(L, -1);
-                lua_pop(L, 5);
-
-                lua_getfield(L, start, "sea_color");
-                int sea_color = lua_gettop(L);
-                lua_getfield(L, sea_color, "r");
-                lua_getfield(L, sea_color, "g");
-                lua_getfield(L, sea_color, "b");
-                lua_getfield(L, sea_color, "a");
-                p->sea_color.rgba.r = lua_tonumber(L, -4);
-                p->sea_color.rgba.g = lua_tonumber(L, -3);
-                p->sea_color.rgba.b = lua_tonumber(L, -2);
-                p->sea_color.rgba.a = lua_tonumber(L, -1);
-                lua_pop(L, 5);
-
-                lua_getfield(L, start, "num_layers");
-                int num_layers = lua_tointeger(L, -1);
-                lua_pop(L, 1);
-
-                lua_getfield(L, start, "layers");
-                int layers = lua_gettop(L);
-                int l_idx = 1;
-                for (l_idx = 1; l_idx <= num_layers; l_idx++) {
-                    lua_pushnumber(L, l_idx);
-                    lua_gettable(L, layers);
-                    int curlayer = lua_gettop(L);
-
-                    lua_getfield(L, curlayer, "p_factor");
-                    lua_getfield(L, curlayer, "texture");
-                    lua_getfield(L, curlayer, "offset_x");
-                    lua_getfield(L, curlayer, "offset_y");
-                    lua_getfield(L, curlayer, "base_scale");
-                    lua_getfield(L, curlayer, "y_wiggle");
-                    float p_factor = lua_tonumber(L, -6);
-                    const char *texname = lua_tostring(L, -5);
-                    VPoint offset = {
-                        .x = lua_tonumber(L, -4),
-                        .y = lua_tonumber(L, -3)
-                    };
-                    float base_scale = lua_tonumber(L, -2);
-                    float y_wiggle = lua_tonumber(L, -1);
-
-                    GfxTexture *texture =
-                        Graphics_texture_from_image(engine->graphics,
-                            (char *)texname);
-                    Parallax_add_layer(p, texture, p_factor, offset, base_scale,
-                            y_wiggle);
-                    lua_pop(L, 6);
-                    lua_pop(L, 1); // Pop the layer
-                }
-                lua_pop(L, 1); // Pop the layers array
             }
         }
         lua_remove(L, start); // Remove result from bottom

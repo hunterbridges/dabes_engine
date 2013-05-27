@@ -5,6 +5,14 @@
 local inspect = require 'lib.inspect'
 require 'dabes.object'
 
+function map_real(...)
+    uds = {}
+    for i = 1, select("#", ...) do
+        uds[i] = select(i, ...).real
+    end
+    return unpack(uds)
+end
+
 BoundObject = Object:extend({
 -- Default Configuration
 

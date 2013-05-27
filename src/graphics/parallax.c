@@ -1,12 +1,26 @@
 #include "parallax.h"
 
-Parallax *Parallax_create(GfxSize level_size, Camera *camera) {
+ParallaxLayer *ParallaxLayer_create(GfxTexture *tex) {
+    ParallaxLayer *layer = calloc(1, sizeof(ParallaxLayer));
+    check(layer != NULL, "Could not create layer");
+
+    layer->scale = 1;
+    layer->texture = tex;
+
+    return layer;
+error:
+    return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+Parallax *Parallax_create() {
     Parallax *parallax = malloc(sizeof(Parallax));
     check(parallax != NULL, "Could not create parallax");
 
     parallax->layers = DArray_create(sizeof(ParallaxLayer), 8);
-    parallax->camera = camera;
-    parallax->level_size = level_size;
+    parallax->camera = NULL;
+    GfxSize level = {1, 1};
+    parallax->level_size = level;
 
     parallax->sky_color.rgba.r = 0.5;
     parallax->sky_color.rgba.g = 0.5;
@@ -38,25 +52,14 @@ error:
     return;
 }
 
-int Parallax_add_layer(Parallax *parallax, GfxTexture *texture, double p_factor,
-        VPoint offset, double scale, double y_wiggle) {
-    ParallaxLayer *layer = NULL;
+int Parallax_add_layer(Parallax *parallax, ParallaxLayer *layer) {
     check(parallax != NULL, "No parallax to add to");
-
-    layer = malloc(sizeof(ParallaxLayer));
-    check(layer != NULL, "Could not create layer");
-
-    layer->texture = texture;
-    layer->offset = offset;
-    layer->scale = scale;
-    layer->p_factor = p_factor;
-    layer->y_wiggle = y_wiggle;
+    check(layer != NULL, "No parallax layer to add");
 
     DArray_push(parallax->layers, layer);
 
     return 1;
 error:
-    if (layer) free(layer);
     return 0;
 }
 

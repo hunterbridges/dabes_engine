@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include "../prefix.h"
 #include "../audio/audio.h"
-#include "scripting.h"
+#include "../scripting/scripting.h"
 #include "../input/input.h"
 #include "../graphics/graphics.h"
 #include "../physics/physics.h"

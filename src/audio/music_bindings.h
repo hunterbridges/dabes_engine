@@ -4,11 +4,11 @@
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
 #include "../prefix.h"
-#include "../core/scripting.h"
+#include "../scripting/scripting.h"
 #include "music.h"
 
-static const char *luab_Music_lib = "dab_music";
-static const char *luab_Music_metatable = "DaBes.music";
+extern const char *luab_Music_lib;
+extern const char *luab_Music_metatable;
 
 typedef Scripting_userdata_for(Music) Music_userdata;
 

@@ -6,8 +6,8 @@
 #include "../prefix.h"
 #include "scene.h"
 
-static const char *luab_Scene_lib = "dab_scene";
-static const char *luab_Scene_metatable = "DaBes.scene";
+extern const char *luab_Scene_lib;
+extern const char *luab_Scene_metatable;
 
 typedef Scripting_userdata_for(Scene) Scene_userdata;
 

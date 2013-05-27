@@ -4,6 +4,7 @@
 
 require 'dabes.bound_object'
 require 'dabes.music'
+require 'dabes.parallax'
 
 Scene = BoundObject:extend({
     lib = dab_scene,
@@ -34,12 +35,14 @@ Scene = BoundObject:extend({
 
     _getters = {
         music = BoundObject.fwd_func("get_music"),
+        parallax = BoundObject.fwd_func("get_parallax"),
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
         debug_camera = BoundObject.fwd_func("get_debug_camera")
     },
 
     _setters = {
         music = BoundObject.fwd_func("set_music"),
+        parallax = BoundObject.fwd_func("set_parallax"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
         debug_camera = BoundObject.fwd_func("set_debug_camera")
     },
