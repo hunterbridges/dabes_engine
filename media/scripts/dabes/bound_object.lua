@@ -59,6 +59,11 @@ BoundObject = Object:extend({
         end
     end,
 
+    -- readonly
+    readonly = function(self, key, val)
+        print(key.." is a readonly property")
+    end,
+
 -- Hooks
 
     -- realize

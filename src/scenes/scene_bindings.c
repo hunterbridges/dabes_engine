@@ -85,6 +85,11 @@ error:
     return 0;
 }
 
+int luab_Scene_add_entity(lua_State *L) {
+    // entity->pixels_per_meter = scene->pixels_per_meter;
+    // entity spawn hook
+}
+
 int luab_Scene_get_music(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
@@ -162,7 +167,9 @@ Scripting_bool_setter(Scene, debug_camera);
 static const struct luaL_Reg luab_Scene_meths[] = {
     {"__gc", luab_Scene_close},
     {"start", luab_Scene_start},
+    {"add_entity", luab_Scene_add_entity},
     {"load_map", luab_Scene_load_map},
+    {"get_space", luab_Scene_get_space},
     {"get_music", luab_Scene_get_music},
     {"set_music", luab_Scene_set_music},
     {"get_parallax", luab_Scene_get_parallax},
@@ -182,7 +189,6 @@ static const struct luaL_Reg luab_Scene_funcs[] = {
 int luaopen_dabes_scene(lua_State *L) {
     luaL_newmetatable(L, luab_Scene_metatable);
 
-    /* metatable.__index = metatable */
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
 
@@ -241,7 +247,7 @@ int Scene_configure(Scene *scene, Engine *engine) {
             lua_pop(L, 2);
 
             if (streq(identifier, SCRIPTING_CL_ENTITY_CONFIG)) {
-                GameEntity *entity = GameEntity_create();
+                Entity *entity = Entity_create();
 
                 lua_getfield(L, start, "sprite");
                 int sprite = lua_gettop(L);
@@ -320,6 +326,7 @@ int Scene_configure(Scene *scene, Engine *engine) {
                 lua_getfield(L, start, "mass");
                 lua_getfield(L, start, "alpha");
                 Sprite_use_animation(entity->sprite, lua_tostring(L, -11));
+                /*
                 entity->current_frame = lua_tointeger(L, -10);
                 entity->config.can_rotate = lua_toboolean(L, -9);
                 entity->config.edge_friction = lua_tonumber(L, -8);
@@ -330,7 +337,7 @@ int Scene_configure(Scene *scene, Engine *engine) {
                 entity->config.rotation = lua_tonumber(L, -3);
                 entity->config.mass = lua_tonumber(L, -2);
                 entity->alpha = lua_tonumber(L, -1);
-                entity->pixels_per_meter = scene->pixels_per_meter;
+                */
                 lua_pop(L, 11);
 
                 List_push(scene->entities, entity);

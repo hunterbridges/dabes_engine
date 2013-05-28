@@ -20,7 +20,10 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script);
 void Scripting_destroy(Scripting *scripting);
 void Scripting_register_engine(Scripting *scripting, struct Engine *engine);
 void Scripting_boot(Scripting *scripting);
+
 int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname);
+void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
+        const char *fname);
 
 void luaL_register_ud(lua_State *L, int ud_idx, void **ud_prop, void *val);
 int luaL_lookup_ud(lua_State *L, void *val);

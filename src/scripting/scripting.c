@@ -4,9 +4,13 @@
 #include "../scenes/scene.h"
 
 // Import all the bindings so we can load them into our scripting env.
-#include "../scenes/scene_bindings.h"
 #include "../audio/music_bindings.h"
+#include "../input/controller_bindings.h"
+#include "../entities/body_bindings.h"
+#include "../entities/entity_bindings.h"
+#include "../scenes/scene_bindings.h"
 #include "../graphics/parallax_bindings.h"
+#include "../graphics/sprite_bindings.h"
 
 const char *SCRIPTING_CL_ENTITY_CONFIG = "entity_config";
 const char *SCRIPTING_CL_PARALLAX = "parallax";
@@ -17,8 +21,12 @@ const char *SCRIPTING_INSTANCE_MAP = "instances";
 
 void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_music(scripting->L);
-    luaopen_dabes_parallax(scripting->L);
+    luaopen_dabes_controller(scripting->L);
+    luaopen_dabes_body(scripting->L);
+    luaopen_dabes_entity(scripting->L);
     luaopen_dabes_scene(scripting->L);
+    luaopen_dabes_parallax(scripting->L);
+    luaopen_dabes_sprite(scripting->L);
 }
 
 
@@ -109,6 +117,30 @@ int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname) {
     return 1;
 error:
     return 0;
+}
+
+void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
+        const char *fname) {
+    check(scripting != NULL, "No scripting to call hook in");
+    check(bound != NULL, "No bound object to call hook on");
+    lua_State *L = scripting->L;
+
+    int result = luaL_lookup_instance(L, bound);
+    if (!result) return NULL;
+
+    lua_getfield(L, -1, fname);
+    lua_pushvalue(L, -2);
+    result = lua_pcall(L, 1, 0, 1);
+    if (result != 0) {
+        debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
+        return NULL;
+    }
+    void *ret = lua_touserdata(L, -1);
+    lua_pop(L, 2);
+
+    return ret;
+error:
+    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

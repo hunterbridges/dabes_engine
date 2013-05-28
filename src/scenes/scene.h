@@ -5,7 +5,7 @@
 #include "../audio/audio.h"
 #include "../audio/music.h"
 #include "../core/engine.h"
-#include "../graphics/game_entity.h"
+#include "../entities/entity.h"
 #include "../graphics/camera.h"
 #include "../graphics/parallax.h"
 #include "../graphics/tile_map.h"

@@ -1,10 +1,10 @@
 #include "../core/engine.h"
-#include "game_entity.h"
+#include "entity.h"
 #include "../audio/sfx.h"
 #include "../physics/world.h"
 
-GameEntity *GameEntity_create() {
-    GameEntity *entity = calloc(1, sizeof(GameEntity));
+Entity *Entity_create() {
+    Entity *entity = calloc(1, sizeof(Entity));
     check(entity != NULL, "Failed to create entity");
 
     entity->alpha = 1.f;
@@ -14,7 +14,7 @@ error:
     return NULL;
 }
 
-void GameEntity_destroy(GameEntity *entity) {
+void Entity_destroy(Entity *entity) {
     check(entity != NULL, "No entity to destroy");
 // TODO: Remove fixture
     free(entity);
@@ -23,15 +23,15 @@ error:
     return;
 }
 
-void GameEntity_render(GameEntity *self, void *engine) {
-    GameEntity *entity = self;
+void Entity_render(Entity *self, void *engine) {
+    Entity *entity = self;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
     VRect rect = VRectZero;
     float degrees;
     GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
     switch (entity->physics_shape.shape_type) {
-        case GameEntityPhysicsShapeTypeFixture:
+        case EntityPhysicsShapeTypeFixture:
             {
             Fixture *fixture = entity->physics_shape.fixture;
             rect = Fixture_display_rect(entity->physics_shape.fixture);
@@ -43,7 +43,7 @@ void GameEntity_render(GameEntity *self, void *engine) {
             }
             break;
 
-        case GameEntityPhysicsShapeTypeCPShape:
+        case EntityPhysicsShapeTypeCPShape:
             {
               cpShape *shape = entity->physics_shape.shape;
               degrees = cpBodyGetAngle(shape->body) * 180.0 / M_PI;
@@ -67,9 +67,9 @@ void GameEntity_render(GameEntity *self, void *engine) {
     Graphics_draw_sprite(graphics, entity->sprite, rect, color, degrees);
 }
 
-VPoint GameEntity_center(GameEntity *entity) {
+VPoint Entity_center(Entity *entity) {
     switch (entity->physics_shape.shape_type) {
-        case GameEntityPhysicsShapeTypeFixture:
+        case EntityPhysicsShapeTypeFixture:
             {
                 Fixture *fixture = entity->physics_shape.fixture;
                 if (!fixture) return VPointZero;
@@ -77,7 +77,7 @@ VPoint GameEntity_center(GameEntity *entity) {
             }
             break;
 
-        case GameEntityPhysicsShapeTypeCPShape:
+        case EntityPhysicsShapeTypeCPShape:
             {
                 cpShape *shape = entity->physics_shape.shape;
                 cpVect pos = cpBodyGetPos(shape->body);
@@ -89,10 +89,10 @@ VPoint GameEntity_center(GameEntity *entity) {
     return VPointZero;
 }
 
-void GameEntity_assign_controller(GameEntity *entity, Controller *controller) {
+void Entity_assign_controller(Entity *entity, Controller *controller) {
     check_mem(entity);
     entity->controller = controller;
-    if (entity->physics_shape.shape_type ==GameEntityPhysicsShapeTypeFixture) {
+    if (entity->physics_shape.shape_type ==EntityPhysicsShapeTypeFixture) {
         Fixture *fixture = entity->physics_shape.fixture;
         fixture->controller = controller;
     }
@@ -101,18 +101,18 @@ error:
     return;
 }
 
-void GameEntity_control(GameEntity *entity, Engine *engine) {
+void Entity_control(Entity *entity, Engine *engine) {
     Input *input = engine->input;
     (void)(input);
     if (entity->controller == NULL) return;
 
     switch (entity->physics_shape.shape_type) {
-        case GameEntityPhysicsShapeTypeFixture:
+        case EntityPhysicsShapeTypeFixture:
             {
             }
             break;
 
-        case GameEntityPhysicsShapeTypeCPShape:
+        case EntityPhysicsShapeTypeCPShape:
             {
                 cpShape *shape = entity->physics_shape.shape;
                 cpBodyResetForces(shape->body);
@@ -174,17 +174,17 @@ void GameEntity_control(GameEntity *entity, Engine *engine) {
     return;
 }
 
-void GameEntity_derive_animation(GameEntity *entity, Engine *UNUSED(engine)) {
+void Entity_derive_animation(Entity *entity, Engine *UNUSED(engine)) {
     VPoint velo = {0, 0};
     switch (entity->physics_shape.shape_type) {
-        case GameEntityPhysicsShapeTypeFixture:
+        case EntityPhysicsShapeTypeFixture:
             {
                 velo.x = entity->physics_shape.fixture->velocity.x;
                 velo.y = entity->physics_shape.fixture->velocity.y;
             }
             break;
 
-        case GameEntityPhysicsShapeTypeCPShape:
+        case EntityPhysicsShapeTypeCPShape:
             {
                 cpVect cp_velo =
                     cpBodyGetVel(entity->physics_shape.shape->body);
@@ -208,19 +208,19 @@ void GameEntity_derive_animation(GameEntity *entity, Engine *UNUSED(engine)) {
     }
 }
 
-void GameEntity_update(GameEntity *entity, Engine *engine) {
+void Entity_update(Entity *entity, Engine *engine) {
     check(entity != NULL, "Need entity to update entity");
     check(engine != NULL, "Need engine to update entity");
-    GameEntity_control(entity, engine);
-    GameEntity_derive_animation(entity, engine);
+    Entity_control(entity, engine);
+    Entity_derive_animation(entity, engine);
     Sprite_update(entity->sprite, engine);
 error:
     return;
 }
 
-VRect GameEntity_real_rect(GameEntity *entity) {
+VRect Entity_real_rect(Entity *entity) {
     switch (entity->physics_shape.shape_type) {
-        case GameEntityPhysicsShapeTypeFixture:
+        case EntityPhysicsShapeTypeFixture:
             {
                 Fixture *fixture = entity->physics_shape.fixture;
                 if (!fixture) return VRectZero;
@@ -230,7 +230,7 @@ VRect GameEntity_real_rect(GameEntity *entity) {
             }
             break;
 
-        case GameEntityPhysicsShapeTypeCPShape:
+        case EntityPhysicsShapeTypeCPShape:
             {
               VRect rect = VRectZero;
               cpShape *shape = entity->physics_shape.shape;
@@ -256,7 +256,7 @@ VRect GameEntity_real_rect(GameEntity *entity) {
     return VRectZero;
 }
 
-VRect GameEntity_bounding_rect(GameEntity *entity) {
-    VRect real = GameEntity_real_rect(entity);
+VRect Entity_bounding_rect(Entity *entity) {
+    VRect real = Entity_real_rect(entity);
     return VRect_bounding_box(real);
 }

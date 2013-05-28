@@ -7,13 +7,6 @@ typedef enum {
   OCSCollisionTypeTile = 2
 } OCSCollisionType;
 
-void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine);
-void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine);
-void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *engine);
-void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine);
-void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine);
-void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
-
 extern SceneProto OrthoChipmunkSceneProto;
 
 #endif

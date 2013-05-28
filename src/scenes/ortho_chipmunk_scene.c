@@ -1,9 +1,12 @@
 #include "../core/engine.h"
 #include "../audio/audio.h"
 #include "../audio/sfx.h"
+#include "../entities/body.h"
+#include "../entities/body_bindings.h"
 #include "ortho_chipmunk_scene.h"
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
+void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
 
 void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     if (scene->started) return;
@@ -11,15 +14,15 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->entities == NULL);
     scene->entities = List_create();
 
-    Scripting_call_hook(engine->scripting, scene, "configure");
-
     Scene_reset_camera(scene);
+
+    Scripting_call_hook(engine->scripting, scene, "configure");
 
     OrthoChipmunkScene_create_space(scene, engine);
 
     // TODO: Assign controller via script
     if (scene->entities->first) {
-        GameEntity_assign_controller(scene->entities->first->value,
+        Entity_assign_controller(scene->entities->first->value,
               engine->input->controllers[0]);
     }
 
@@ -29,8 +32,8 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
 void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
     LIST_FOREACH(scene->entities, first, next, current) {
-        GameEntity *entity = current->value;
-        GameEntity_destroy(entity);
+        Entity *entity = current->value;
+        Entity_destroy(entity);
     }
 
     List_destroy(scene->entities);
@@ -55,10 +58,12 @@ error:
 
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     OrthoChipmunkScene_control(scene, engine);
-    LIST_FOREACH(scene->entities, first, next, current) {
-        GameEntity *entity = current->value;
-        GameEntity_update(entity, engine);
-    }
+
+    {LIST_FOREACH(scene->entities, first, next, current) {
+        Entity *entity = current->value;
+        Entity_update(entity, engine);
+        Scripting_call_hook(engine->scripting, entity, "presolve");
+    }}
 
     int phys_ticks = engine->frame_ticks < 100 ? engine->frame_ticks : 100;
     Stepper_update(engine->physics->stepper, phys_ticks);
@@ -66,6 +71,12 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     while (Stepper_pop(engine->physics->stepper)) {
       cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
     }
+
+    {LIST_FOREACH(scene->entities, first, next, current) {
+        Entity *entity = current->value;
+        Entity_update(entity, engine);
+        Scripting_call_hook(engine->scripting, entity, "main");
+    }}
 
     Camera_track(scene->camera);
 }
@@ -87,9 +98,9 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
     Graphics_use_shader(graphics, dshader);
     LIST_FOREACH(scene->entities, first, next, current) {
-        GameEntity *thing = current->value;
+        Entity *thing = current->value;
         if (thing == NULL) break;
-        GameEntity_render(thing, engine);
+        Entity_render(thing, engine);
     }
 
     // Camera debug
@@ -115,19 +126,20 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 }
 
-int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data)) {
+int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *UNUSED(data)) {
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
-    GameEntityStateData *state_data = cpBodyGetUserData(eBody);
+    BodyStateData *state_data = cpBodyGetUserData(eBody);
     state_data->on_ground++;
 
     Engine *engine = (Engine *)state_data->engine;
     Scene *scene = (Scene *)state_data->scene;
-    GameEntity *entity = (GameEntity *)state_data->entity;
+    Entity *entity = (Entity *)state_data->entity;
     if (state_data->on_ground > 1) return 1;
 
     VRect cam_rect = Camera_visible_rect(scene->camera);
-    VPoint e_center = GameEntity_center(entity);
+    VPoint e_center = Entity_center(entity);
     int onscreen = VRect_contains_point(cam_rect, e_center);
     if (!onscreen) return 1;
 
@@ -136,10 +148,11 @@ int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data
     return 1;
 }
 
-void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space), void *UNUSED(data)) {
+void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *UNUSED(data)) {
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
-    GameEntityStateData *state_data = cpBodyGetUserData(eBody);
+    BodyStateData *state_data = cpBodyGetUserData(eBody);
 
     state_data->on_ground--;
     if (state_data->on_ground < 0) {
@@ -164,37 +177,20 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
 
     int i = 0;
     LIST_FOREACH(scene->entities, first, next, current) {
-      GameEntity *entity = current->value;
+      Entity *entity = current->value;
 
-      GameEntityStateData *state_data = calloc(1, sizeof(GameEntityStateData));
-      // TODO: Make sure I actually want to organize it this way, seems dicey
-      state_data->engine = engine;
-      state_data->entity = entity;
-      state_data->scene = scene;
-      entity->state = state_data;
+      assert(entity->body != NULL);
+      Body *body = entity->body;
 
-      cpVect center = {entity->config.center.x,
-                       entity->config.center.y};
+      body->cp_space = scene->space;
+      body->state.engine = engine;
+      body->state.entity = entity;
+      body->state.scene = scene;
 
-      float moment = (entity->config.can_rotate ?
-                        cpMomentForBox(entity->config.mass,
-                                       entity->config.size.w,
-                                       entity->config.size.h) :
-                        INFINITY);
-      cpBody *fixture = cpBodyNew(entity->config.mass, moment);
+      cpSpaceAddShape(scene->space, body->cp_shape);
+      cpSpaceAddBody(scene->space, body->cp_body);
 
-      cpShape *entity_shape = cpBoxShapeNew(fixture, entity->config.size.w,
-                                            entity->config.size.h);
-      entity_shape->collision_type = OCSCollisionTypeEntity;
-      cpShapeSetFriction(entity_shape, entity->config.edge_friction);
-      cpSpaceAddShape(scene->space, entity_shape);
-      cpSpaceAddBody(scene->space, fixture);
-      cpBodySetPos(fixture, center);
-      cpBodySetAngle(fixture, entity->config.rotation);
-      cpBodySetUserData(fixture, state_data);
-
-      entity->physics_shape.shape = entity_shape;
-      entity->physics_shape.shape_type = GameEntityPhysicsShapeTypeCPShape;
+      entity->body = body;
       i++;
     }
 

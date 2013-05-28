@@ -33,7 +33,13 @@ Scene = BoundObject:extend({
     -- at the size `meters_per_tile`
     load_map = BoundObject.fwd_func("load_map"),
 
+    -- add_entity(self, entity)
+    --
+    -- Adds an Entity to the Scene.
+    add_entity = BoundObject.fwd_func("add_entity"),
+
     _getters = {
+        space = BoundObject.fwd_func("get_space"),
         music = BoundObject.fwd_func("get_music"),
         parallax = BoundObject.fwd_func("get_parallax"),
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
@@ -41,6 +47,7 @@ Scene = BoundObject:extend({
     },
 
     _setters = {
+        space = BoundObject.readonly,
         music = BoundObject.fwd_func("set_music"),
         parallax = BoundObject.fwd_func("set_parallax"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),

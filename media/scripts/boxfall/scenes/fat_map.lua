@@ -1,4 +1,6 @@
 require 'dabes.scene'
+require 'boxfall.entities.box'
+require 'boxfall.entities.megaman'
 
 FatMap = Scene:extend({
     kind = "ortho_chipmunk",
@@ -19,6 +21,28 @@ FatMap = Scene:extend({
 
     configure = function(self)
         -- Entities
+        num_boxes = 100
+        xo = 6.0
+
+        space_size = self.space.size
+
+        megaman = Megaman:new()
+        megaman.body.pos = {6.0, space_size[2] - 4.0}
+        megaman.controller = get_controller(1)
+        self:add_entity(megaman)
+
+        for i = 1, num_boxes do
+            box = Box:new()
+
+            body = box.body
+            body.pos = {xo, space_height - 8.0}
+            body.angle = math.pi / 16.0 * (i % 8)
+            body.mass = 100.0 + 900.0 * i / num_boxes
+
+            entity.alpha = i / num_boxes * 1.0
+
+            xo = xo + 2
+        end
 
         -- Parallax
         self.parallax = self.gen_parallax()

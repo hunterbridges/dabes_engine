@@ -23,6 +23,7 @@ ParallaxLayer = BoundObject:extend({
     }
 })
 
+--------------------------------------------------------------------------------
 
 Parallax = BoundObject:extend({
     lib = dab_parallax,

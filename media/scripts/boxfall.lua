@@ -1,4 +1,4 @@
-require 'fat_map'
+require 'boxfall.scenes.fat_map'
 
 scene_manager = {}
 

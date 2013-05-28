@@ -4,7 +4,7 @@
 #include "object.h"
 #include "audio/audio.h"
 #include "core/engine.h"
-#include "graphics/game_entity.h"
+#include "entities/entity.h"
 #include "graphics/graphics.h"
 #include "scenes/scene.h"
 #include "input/input.h"
