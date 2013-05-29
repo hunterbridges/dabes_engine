@@ -20,12 +20,6 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
 
     OrthoChipmunkScene_create_space(scene, engine);
 
-    // TODO: Assign controller via script
-    if (scene->entities->first) {
-        Entity_assign_controller(scene->entities->first->value,
-              engine->input->controllers[0]);
-    }
-
     scene->started = 1;
 }
 
@@ -61,7 +55,6 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
 
     {LIST_FOREACH(scene->entities, first, next, current) {
         Entity *entity = current->value;
-        Entity_update(entity, engine);
         Scripting_call_hook(engine->scripting, entity, "presolve");
     }}
 
@@ -75,7 +68,6 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     {LIST_FOREACH(scene->entities, first, next, current) {
         Entity *entity = current->value;
         Entity_update(entity, engine);
-        Scripting_call_hook(engine->scripting, entity, "main");
     }}
 
     Camera_track(scene->camera);

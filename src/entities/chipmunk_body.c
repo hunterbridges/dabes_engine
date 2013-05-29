@@ -11,7 +11,7 @@ VPoint tovp(cpVect cp) {
 }
 
 int ChipmunkBody_init(Body *body, float w, float h, float mass,
-            int can_rotate) {
+                      int can_rotate) {
     float moment = (can_rotate ? cpMomentForBox(mass, w, h) : INFINITY);
     cpBody *fixture = cpBodyNew(mass, moment);
 
@@ -32,6 +32,34 @@ void ChipmunkBody_cleanup(Body *body) {
     cpShapeDestroy(body->cp_shape);
     cpBodyDestroy(body->cp_body);
     free(body);
+}
+
+VRect ChipmunkBody_gfx_rect(Body *body, float pixels_per_meter, int rotate) {
+    VRect rect = VRectZero;
+    cpShape *shape = body->cp_shape;
+    float rads = cpBodyGetAngle(shape->body);
+    cpVect pos = cpBodyGetPos(shape->body);
+    VPoint center = {pos.x, pos.y};
+    int i = 0;
+    for (i = 0; i < cpPolyShapeGetNumVerts(shape); i++) {
+        cpVect vert = cpPolyShapeGetVert(shape, i);
+        VPoint point = {vert.x, vert.y};
+        point = VPoint_add(point, center);
+        if (i == 0) rect.tl = point;
+        else if (i == 1) rect.bl = point;
+        else if (i == 2) rect.br = point;
+        else if (i == 3) rect.tr = point;
+    }
+    if (rotate) rect = VRect_rotate(rect, center, rads);
+    rect = VRect_scale(rect, pixels_per_meter);
+    return rect;
+}
+
+VPoint ChipmunkBody_gfx_center(Body *body, float pixels_per_meter) {
+    cpShape *shape = body->cp_shape;
+    cpVect pos = cpBodyGetPos(shape->body);
+    VPoint center = {pos.x, pos.y};
+    return VPoint_scale(center, pixels_per_meter);
 }
 
 void ChipmunkBody_apply_force(Body *body, VPoint force, VPoint offset) {
@@ -106,6 +134,9 @@ void ChipmunkBody_set_can_rotate(Body *body, int can_rotate) {
 BodyProto ChipmunkBodyProto = {
     .init = ChipmunkBody_init,
     .cleanup = ChipmunkBody_cleanup,
+
+    .gfx_rect = ChipmunkBody_gfx_rect,
+    .gfx_center = ChipmunkBody_gfx_center,
 
     .apply_force = ChipmunkBody_apply_force,
 

@@ -18,6 +18,9 @@ typedef struct BodyProto {
             int can_rotate);
     void (*cleanup)(struct Body *body);
 
+    VRect (*gfx_rect)(struct Body *body, float pixels_per_meter, int rotate);
+    VPoint (*gfx_center)(struct Body *body, float pixels_per_meter);
+
     void (*apply_force)(struct Body *body, VPoint force, VPoint offset);
 
     VPoint (*get_pos)(struct Body *body);
