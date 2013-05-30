@@ -4,7 +4,7 @@
 
 require 'dabes.bound_object'
 
-Body = BoundObject.extend({
+Body = BoundObject:extend({
     lib = dab_body,
 
 -- Default Configuration

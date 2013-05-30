@@ -1,24 +1,29 @@
 require 'dabes.entity'
+require 'dabes.body'
+require 'dabes.sprite'
 
 Megaman = Entity:extend({
+    body_type = "chipmunk",
+
     init = function(self)
-        body = Body::new(2.0, 2.0, 100, false)
+        body = Body:new(self.body_type, 2.0, 2.0, 100, false)
         body.friction = 0.7
         self.body = body
 
         self.sprite = self.build_sprite()
+        self.alpha = 0
     end,
 
     build_sprite = function()
         sprite = Sprite:new("media/sprites/megaman_run.png", {32, 32})
 
-        standing = SpriteAnimation:new("standing", 0)
+        standing = SpriteAnimation:new(0)
         standing.fps = 0
-        sprite:add_animation(standing)
+        sprite:add_animation(standing, "standing")
 
-        running = SpriteAnimation:new("running", 1, 2, 3, 2)
+        running = SpriteAnimation:new(1, 2, 3, 2)
         running.fps = 7
-        sprite:add_animation(running)
+        sprite:add_animation(running, "running")
 
         sprite:use_animation("standing")
 
@@ -40,11 +45,10 @@ Megaman = Entity:extend({
     },
 
     control = function(self)
-        if self.controller == nil then return end
         on_ground = true -- TODO
         velo = self.body.velo
         input_accel = {0, 0}
-        if self.controller.is_right then
+        if self.controller.right then
             if on_ground then
                 if velo[1] < 0 then
                     input_accel[1] = self.motion.turn_accel
@@ -56,7 +60,7 @@ Megaman = Entity:extend({
             end
         end
 
-        if self.controller.is_left then
+        if self.controller.left then
             if on_ground then
                 if velo[1] > 0 then
                     input_accel[1] = -self.motion.turn_accel
@@ -68,14 +72,16 @@ Megaman = Entity:extend({
             end
         end
 
-        if self.controller.is_jumping then
+        if self.controller.a_button then
             if on_ground then
                 -- TODO: Jump sound
                 velo[2] = self.motion.jump_velo_hi
             end
         else
-            if velo[2] < self.motion.jump_velo_low then
-                velo[2] = self.motion.jump_velo_lo
+            if not on_ground then
+                if velo[2] < self.motion.jump_velo_low then
+                    velo[2] = self.motion.jump_velo_lo
+                end
             end
         end
 
@@ -88,7 +94,7 @@ Megaman = Entity:extend({
 
         mass = self.body.mass
         input_force = {input_accel[1] * mass, input_accel[2] * mass}
-        self.body:apply_force(input_force, {0, 0.1})
+        self.body.force = input_force
     end,
 
     derive_animation = function(self)

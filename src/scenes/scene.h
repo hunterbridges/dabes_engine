@@ -19,6 +19,7 @@ typedef struct SceneProto {
     void (*update)(struct Scene *scene, Engine *engine);
     void (*render)(struct Scene *scene, Engine *engine);
     void (*control)(struct Scene *scene, Engine *engine);
+    void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
 } SceneProto;
 
 typedef struct Scene {

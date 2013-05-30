@@ -4,8 +4,8 @@
 
 require 'dabes.bound_object'
 
-SpriteAnimation = BoundObject.extend({
-    lib = dabes_spriteanimation,
+SpriteAnimation = BoundObject:extend({
+    lib = dab_spriteanimation,
 
 -- Hook Overloads
     realize = function(class, ...)
@@ -26,13 +26,14 @@ SpriteAnimation = BoundObject.extend({
 
 --------------------------------------------------------------------------------
 
-Sprite = BoundObject.extend({
-    lib = dabes_sprite,
+Sprite = BoundObject:extend({
+    lib = dab_sprite,
 
 -- Hook Overloads
-    realize = function(class, cell_size)
-        return class.lib.new(cell_size)
-    end
+    realize = function(class, texname, cell_size)
+        ret = class.lib.new(texname, cell_size)
+        return ret
+    end,
 
 -- Bound Functions
     add_animation = BoundObject.fwd_func('add_animation'),
@@ -41,7 +42,7 @@ Sprite = BoundObject.extend({
 
     _getters = {
         current_animation = BoundObject.fwd_func('get_current_animation'),
-        direction = BoundObject.fwd_func('get_direction'),
+        direction = BoundObject.fwd_func('get_direction')
     },
 
     _setters = {

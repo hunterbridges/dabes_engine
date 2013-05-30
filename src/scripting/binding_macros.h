@@ -19,6 +19,23 @@ error: \
     return NULL; \
 }
 
+#define Scripting_null_closer(STYPE) \
+static inline int luab_ ## STYPE ## _close(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    ud->p = NULL; \
+    return 0; \
+}
+
+#define Scripting_destroy_closer(STYPE) \
+static inline int luab_ ## STYPE ## _close(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    if (ud->p) { \
+        STYPE ## _destroy(ud->p); \
+    } \
+    ud->p = NULL; \
+    return 0; \
+}
+
 // Property accessor generation, basic types
 #define Scripting_num_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
@@ -27,7 +44,6 @@ static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
             "Please provide a number to set "#STYPE"->"#SPROP); \
     lua_Number num = lua_tonumber(L, 2); \
     STYPE *s = ud->p; \
-    printf("Setting ("#STYPE" %p)->"#SPROP": %f\n", s, num); \
     s->SPROP = num; \
     return 1; \
 error: \
@@ -39,7 +55,6 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     lua_Number ret = s->SPROP; \
-    printf("Getting ("#STYPE" %p)->SPROP: %f\n", s, ret); \
     lua_pushinteger(L, ret); \
     return 1; \
 }
@@ -51,7 +66,6 @@ static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
             "Please provide a boolean to set "#STYPE"->"#SPROP); \
     int num = lua_toboolean(L, 2); \
     STYPE *s = ud->p; \
-    printf("Setting ("#STYPE" %p)->"#SPROP": %d\n", s, num); \
     s->SPROP = num; \
     return 1; \
 error: \
@@ -63,7 +77,6 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     int ret = s->SPROP; \
-    printf("Getting ("#STYPE" %p)->SPROP: %d\n", s, ret); \
     lua_pushboolean(L, ret); \
     return 1; \
 }
@@ -73,8 +86,6 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
-    printf("Getting (" #STYPE " %p)->" #SPROP ": {%f, %f}\n", s, \
-            s->SPROP.x, s->SPROP.y); \
     lua_newtable(L); \
     lua_pushinteger(L, 1); \
     lua_pushnumber(L, s->SPROP.x); \
@@ -93,8 +104,6 @@ static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
             "Please provide 2 numbers to set " #STYPE "->" #SPROP ); \
     VPoint point = {lua_tonumber(L, -2), lua_tonumber(L, -1)}; \
     lua_pop(L, 2); \
-    printf("Setting (" #STYPE " %p)->" #SPROP ": {%f, %f}\n", s, \
-            point.x, point.y); \
     s->SPROP = point; \
     return 1; \
 error: \
@@ -105,8 +114,6 @@ error: \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
-    printf("Getting (" #STYPE " %p)->" #SPROP ": {%f, %f, %f, %f}\n", s, \
-            s->SPROP.raw[0], s->SPROP.raw[1], s->SPROP.raw[2], s->SPROP.raw[3]); \
     lua_newtable(L); \
     lua_pushinteger(L, 1); \
     lua_pushnumber(L, s->SPROP.raw[0]); \
@@ -132,8 +139,6 @@ static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
     GfxUVertex vertex = {.raw = {lua_tonumber(L, -4), lua_tonumber(L, -3), \
         lua_tonumber(L, -2), lua_tonumber(L, -1)}}; \
     lua_pop(L, 4); \
-    printf("Setting (" #STYPE " %p)->" #SPROP ": {%f, %f, %f, %f}\n", s, \
-            vertex.raw[0], vertex.raw[1], vertex.raw[2], vertex.raw[3]); \
     s->SPROP = vertex; \
     return 1; \
 error: \

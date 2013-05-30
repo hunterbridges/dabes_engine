@@ -11,13 +11,12 @@ typedef enum {
 } Controller_dpad_direction;
 
 typedef struct Controller {
-    Object proto;
     Controller_dpad_direction dpad;
     int jump;
 } Controller;
 
-int Controller_init(void *self);
-void Controller_destroy(void *self);
+Controller *Controller_create();
+void Controller_destroy(Controller *controller);
 void Controller_reset(Controller *controller);
 
 extern Object ControllerProto;

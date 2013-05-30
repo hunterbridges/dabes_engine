@@ -1,7 +1,6 @@
 #include "prefix.h"
 #include "gameobjects.h"
 #include "scenes/ortho_chipmunk_scene.h"
-#include "scenes/ortho_physics_scene.h"
 
 int main(int argc, char *argv[]) {
     argc = (int)argc;

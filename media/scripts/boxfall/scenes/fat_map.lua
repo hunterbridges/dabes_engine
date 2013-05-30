@@ -1,3 +1,4 @@
+require 'dabes.controller'
 require 'dabes.scene'
 require 'boxfall.entities.box'
 require 'boxfall.entities.megaman'
@@ -24,10 +25,8 @@ FatMap = Scene:extend({
         num_boxes = 100
         xo = 6.0
 
-        space_size = self.space.size
-
         megaman = Megaman:new()
-        megaman.body.pos = {6.0, space_size[2] - 4.0}
+        megaman.body.pos = {6.0, 20.0 - 4.0}
         megaman.controller = get_controller(1)
         self:add_entity(megaman)
 
@@ -35,11 +34,12 @@ FatMap = Scene:extend({
             box = Box:new()
 
             body = box.body
-            body.pos = {xo, space_height - 8.0}
+            body.pos = {xo, 20.0 - 8.0}
             body.angle = math.pi / 16.0 * (i % 8)
             body.mass = 100.0 + 900.0 * i / num_boxes
 
-            entity.alpha = i / num_boxes * 1.0
+            box.alpha = i / num_boxes * 1.0
+            self:add_entity(box)
 
             xo = xo + 2
         end

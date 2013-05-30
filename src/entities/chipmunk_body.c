@@ -17,6 +17,7 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
 
     cpShape *shape = cpBoxShapeNew(fixture, w, h);
     cpBodySetUserData(fixture, &body->state);
+    cpShapeSetBody(shape, fixture);
 
     body->cp_shape = shape;
     body->cp_body = fixture;
@@ -149,5 +150,9 @@ BodyProto ChipmunkBodyProto = {
     .get_angle = ChipmunkBody_get_angle,
     .set_angle = ChipmunkBody_set_angle,
     .get_friction = ChipmunkBody_get_friction,
-    .set_friction = ChipmunkBody_set_friction
+    .set_friction = ChipmunkBody_set_friction,
+    .get_mass = ChipmunkBody_get_mass,
+    .set_mass = ChipmunkBody_set_mass,
+    .get_can_rotate = ChipmunkBody_get_can_rotate,
+    .set_can_rotate = ChipmunkBody_set_can_rotate
 };

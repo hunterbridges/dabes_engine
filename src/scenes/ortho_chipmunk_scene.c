@@ -18,6 +18,11 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
 
     Scripting_call_hook(engine->scripting, scene, "configure");
 
+    // TODO: Track in a script
+    if (scene->entities->first) {
+        scene->camera->track_entity = scene->entities->first->value;
+    }
+
     OrthoChipmunkScene_create_space(scene, engine);
 
     scene->started = 1;
@@ -152,6 +157,31 @@ void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     }
 }
 
+void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
+        Entity *entity) {
+    assert(entity->body != NULL);
+    Body *body = entity->body;
+
+    body->cp_space = scene->space;
+    body->state.engine = engine;
+    body->state.entity = entity;
+    body->state.scene = scene;
+
+    entity->pixels_per_meter = scene->pixels_per_meter;
+    cpSpaceAddShape(scene->space, body->cp_shape);
+    cpSpaceAddBody(scene->space, body->cp_body);
+}
+
+void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
+        Entity *entity) {
+    assert(entity != NULL);
+    assert(scene != NULL);
+    List_push(scene->entities, entity);
+    if (scene->space) {
+        OrthoChipmunkScene_add_entity_body(scene, engine, entity);
+    }
+}
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(scene);
     check_mem(engine);
@@ -170,19 +200,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     int i = 0;
     LIST_FOREACH(scene->entities, first, next, current) {
       Entity *entity = current->value;
-
-      assert(entity->body != NULL);
-      Body *body = entity->body;
-
-      body->cp_space = scene->space;
-      body->state.engine = engine;
-      body->state.entity = entity;
-      body->state.scene = scene;
-
-      cpSpaceAddShape(scene->space, body->cp_shape);
-      cpSpaceAddBody(scene->space, body->cp_body);
-
-      entity->body = body;
+      OrthoChipmunkScene_add_entity_body(scene, engine, entity);
       i++;
     }
 
@@ -224,5 +242,6 @@ SceneProto OrthoChipmunkSceneProto = {
     .cleanup = OrthoChipmunkScene_cleanup,
     .update = OrthoChipmunkScene_update,
     .render = OrthoChipmunkScene_render,
-    .control = OrthoChipmunkScene_control
+    .control = OrthoChipmunkScene_control,
+    .add_entity = OrthoChipmunkScene_add_entity
 };

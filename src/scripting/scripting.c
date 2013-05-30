@@ -48,12 +48,12 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
 
     // The pointer map is keyed by C object pointers and contains
     // userdata objects.
-    luaL_createweaktable(L);
+    luaL_createweakstrongtable(L);
     lua_setglobal(L, SCRIPTING_POINTER_MAP);
 
     // The instance map is keyed by userdata objects and contains
     // the Lua BoundObject instances.
-    luaL_createweaktable(L);
+    luaL_createweakstrongtable(L);
     lua_setglobal(L, SCRIPTING_INSTANCE_MAP);
 
     lua_pushcfunction(L, luab_register_instance);
@@ -233,6 +233,16 @@ void luaL_createweaktable(lua_State *L) {
     lua_setmetatable(L, -2);
 }
 
+void luaL_createweakstrongtable(lua_State *L) {
+    lua_newtable(L);
+
+    lua_newtable(L); // metatable
+    lua_pushstring(L, "k");
+    lua_setfield(L, -2, "__mode");
+
+    lua_setmetatable(L, -2);
+}
+
 Engine *luaL_get_engine(lua_State *L) {
     lua_pushlightuserdata(L, (void *)SCRIPTING_ENGINE_REGISTRY_KEY);
     lua_gettable(L, LUA_REGISTRYINDEX);
@@ -262,3 +272,24 @@ int luaL_unpack_exact (lua_State *L, int count) {
   return n;
 }
 
+VPoint luaL_tovpoint(lua_State *L, int idx) {
+    lua_pushvalue(L, idx);
+    check(luaL_unpack_exact(L, 2),
+            "Please provide 2 numbers to get a VPoint. Returning VPointZero.");
+    VPoint point = {lua_tonumber(L, -2), lua_tonumber(L, -1)};
+    lua_pop(L, 3);
+    return point;
+error:
+    return VPointZero;
+}
+
+int luaL_pushvpoint(lua_State *L, VPoint point) {
+    lua_newtable(L);
+    lua_pushinteger(L, 1);
+    lua_pushnumber(L, point.x);
+    lua_settable(L, -3);
+    lua_pushinteger(L, 2);
+    lua_pushnumber(L, point.y);
+    lua_settable(L, -3);
+    return 1;
+}

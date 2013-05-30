@@ -2,7 +2,7 @@ require 'dabes.entity'
 
 Box = Entity:extend({
     init = function(self)
-        body = Body::new(1.0, 1.0, 10, true)
+        body = Body:new("chipmunk", 1.0, 1.0, 10, true)
         body.friction = 0.5
         self.body = body
 

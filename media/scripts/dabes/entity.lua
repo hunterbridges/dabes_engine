@@ -5,7 +5,7 @@
 require 'dabes.bound_object'
 
 Entity = BoundObject:extend({
-    lib = dab_gameentity,
+    lib = dab_entity,
 
 -- Default Configuration
 
@@ -25,7 +25,7 @@ Entity = BoundObject:extend({
 
    _setters = {
        controller = BoundObject.fwd_func('set_controller'),
-       sprite = BoundObject.fwd_func('set_sprite')
+       sprite = BoundObject.fwd_func('set_sprite'),
        body = BoundObject.fwd_func('set_body'),
        alpha = BoundObject.fwd_func('set_alpha')
    },

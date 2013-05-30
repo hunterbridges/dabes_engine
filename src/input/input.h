@@ -4,7 +4,6 @@
 #include "controller.h"
 
 typedef struct Input {
-    Object proto;
     Controller *controllers[4];
     int game_quit;
     int debug_scene_draw_grid;
@@ -16,8 +15,8 @@ typedef struct Input {
 
 extern Object InputProto;
 
-int Input_init(void *self);
-void Input_destroy(void *self);
+Input *Input_create();
+void Input_destroy(Input *input);
 void Input_poll(Input *input);
 void Input_touch(Input *input, Input *touch_input);
 void Input_reset(Input *input);

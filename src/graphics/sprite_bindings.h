@@ -15,7 +15,7 @@ Scripting_caster_for(SpriteAnimation, luaL_tospriteanimation);
 extern const char *luab_Sprite_lib;
 extern const char *luab_Sprite_metatable;
 typedef Scripting_userdata_for(Sprite) Sprite_userdata;
-Scripting_caster_for(Sprite, luaL_toparallax);
+Scripting_caster_for(Sprite, luaL_tosprite);
 
 int luaopen_dabes_sprite(lua_State *L);
 
