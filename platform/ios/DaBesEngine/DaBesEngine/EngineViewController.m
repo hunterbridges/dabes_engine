@@ -2,10 +2,9 @@
 #import "engine.h"
 #import "scene.h"
 #import "world.h"
-#import "game_entity.h"
+#import "entity.h"
 #import "tile_map_parse.h"
 #import "ortho_chipmunk_scene.h"
-#import "ortho_physics_scene.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -151,7 +150,7 @@ char *bundlePath__;
 
 - (void)initEngine {
   engine_ = Engine_create("media/scripts/boxfall.lua", NULL);
-  scene_ = Scene_create(engine_, OrthoChipmunkSceneProto, "fat_map");
+  Scripting_boot(engine_->scripting);
 }
 
 - (void)setupGL {
@@ -178,6 +177,7 @@ char *bundlePath__;
   Audio_stream(engine_->audio);
   
   if (engine_->frame_now) {
+    scene_ = Engine_get_current_scene(engine_);
     scene_->_(control)(scene_, engine_);
     scene_->_(update)(scene_, engine_);
     Input_reset(engine_->input);

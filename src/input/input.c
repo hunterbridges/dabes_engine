@@ -1,21 +1,23 @@
 #include "input.h"
 
-int Input_init(void *self) {
-    Input *input = self;
+Input *Input_create() {
+    Input *input = calloc(1, sizeof(Input));
+    check(input != NULL, "Couldn't create Input");
     int i = 0;
     for (i = 0; i < 4; i++) {
-        input->controllers[i] = NEW(Controller, "A Controller");
+        input->controllers[i] = Controller_create();
     }
     Input_reset(input);
-    return 1;
+    return input;
+error:
+    return NULL;
 }
 
-void Input_destroy(void *self) {
-    Input *input = self;
+void Input_destroy(Input *input) {
     int i = 0;
     for (i = 0; i < 4; i++) {
         Controller *controller = input->controllers[i];
-        controller->_(destroy)(controller);
+        Controller_destroy(controller);
     }
     free(input);
 }
@@ -68,7 +70,7 @@ void Input_touch(Input *input, Input *touch_input) {
     input->cam_reset = touch_input->cam_reset;
     input->cam_zoom = touch_input->cam_zoom;
     input->cam_rotate = touch_input->cam_rotate;
-  
+
     for (i = 0; i < 4; i++) {
         input->controllers[i]->dpad = touch_input->controllers[i]->dpad;
         input->controllers[i]->jump = touch_input->controllers[i]->jump;
@@ -93,7 +95,3 @@ error:
     return;
 }
 
-Object InputProto = {
-    .init = Input_init,
-    .destroy = Input_destroy
-};

@@ -1,14 +1,16 @@
 #include "controller.h"
 
-int Controller_init(void *self) {
-    Controller *controller = self;
+Controller *Controller_create() {
+    Controller *controller = calloc(1, sizeof(controller));
+    check(controller != NULL, "Couldn't create Controller");
     Controller_reset(controller);
-    return 1;
+    return controller;
+error:
+    return NULL;
 }
 
-void Controller_destroy(void *self) {
-    Controller *controller = self;
-    check_mem(controller);
+void Controller_destroy(Controller *controller) {
+    check(controller != NULL, "No Controller to destroy");
     free(controller);
     return;
 error:
@@ -23,8 +25,3 @@ void Controller_reset(Controller *controller) {
 error:
     return;
 }
-
-Object ControllerProto = {
-    .init = Controller_init,
-    .destroy = Controller_destroy
-};

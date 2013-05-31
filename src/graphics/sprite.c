@@ -1,6 +1,34 @@
 #include <lcthw/bstrlib.h>
 #include "sprite.h"
 
+SpriteAnimation *SpriteAnimation_create(int num_frames, int frames[]) {
+    SpriteAnimation *animation = malloc(sizeof(SpriteAnimation) +
+                                        num_frames * sizeof(int));
+    check(animation != NULL, "Couldn't create SpriteAnimation");
+    animation->num_frames = num_frames;
+    int i = 0;
+    for (i = 0; i < num_frames; i++) {
+        animation->frames[i] = frames[i];
+        printf("#%d -> %d = %d\n", i, animation->frames[i], frames[i]);
+    }
+    animation->loop_start = frames[0];
+    animation->stepper = Stepper_create();
+    animation->current_index = 0;
+    return animation;
+error:
+    return NULL;
+}
+
+void SpriteAnimation_destroy(SpriteAnimation *animation) {
+    check(animation != NULL, "No Animation to destroy");
+    Stepper_destroy(animation->stepper);
+    free(animation);
+error:
+    return;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size) {
     check(texture != NULL, "Need texture to build sprite");
     int cols = floor(texture->size.w / cell_size.w);
@@ -35,15 +63,19 @@ error:
     return NULL;
 }
 
+static inline void destroy_anim(void *anim) {
+    SpriteAnimation *animation = (SpriteAnimation *)anim;
+    SpriteAnimation_destroy(animation);
+}
+
 void Sprite_destroy(Sprite *sprite) {
     check(sprite != NULL, "No sprite to destroy");
-    Hashmap_destroy(sprite->animations, NULL);
+    Hashmap_destroy(sprite->animations, destroy_anim);
     free(sprite);
     return;
 error:
     return;
 }
-
 
 void Sprite_update(Sprite *sprite, Engine *engine) {
     if (!sprite->current_animation) return;
@@ -76,21 +108,10 @@ void Sprite_update(Sprite *sprite, Engine *engine) {
     sprite->current_frame = cur_anim->frames[new_idx];
 }
 
-int Sprite_add_animation(Sprite *sprite, const char *name, int num_frames,
-        int frames[], int fps) {
+int Sprite_add_animation(Sprite *sprite, SpriteAnimation *animation,
+        const char *name) {
     check(sprite != NULL, "No sprite to add animation to");
-    SpriteAnimation *animation = malloc(sizeof(SpriteAnimation) +
-                                        num_frames * sizeof(int));
-    animation->num_frames = num_frames;
-    int i = 0;
-    for (i = 0; i < num_frames; i++) {
-        animation->frames[i] = frames[i];
-        printf("#%d -> %d = %d\n", i, animation->frames[i], frames[i]);
-    }
-    animation->loop_start = frames[0];
-    animation->stepper = Stepper_create();
-    animation->current_index = 0;
-    Stepper_set_steps_per_second(animation->stepper, fps);
+    check(animation != NULL, "No animation to add");
 
     bstring bname = bfromcstr(name);
     Hashmap_set(sprite->animations, bname, animation);

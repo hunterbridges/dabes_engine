@@ -5,7 +5,7 @@
 #include "../audio/audio.h"
 #include "../audio/music.h"
 #include "../core/engine.h"
-#include "../graphics/game_entity.h"
+#include "../entities/entity.h"
 #include "../graphics/camera.h"
 #include "../graphics/parallax.h"
 #include "../graphics/tile_map.h"
@@ -19,6 +19,7 @@ typedef struct SceneProto {
     void (*update)(struct Scene *scene, Engine *engine);
     void (*render)(struct Scene *scene, Engine *engine);
     void (*control)(struct Scene *scene, Engine *engine);
+    void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
 } SceneProto;
 
 typedef struct Scene {
@@ -44,7 +45,7 @@ typedef struct Scene {
     int pixels_per_meter;
 } Scene;
 
-Scene *Scene_create(Engine *engine, SceneProto proto, const char *name);
+Scene *Scene_create(Engine *engine, SceneProto proto);
 void Scene_destroy(Scene *scene, Engine *engine);
 void Scene_restart(Scene *scene, Engine *engine);
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
@@ -52,9 +53,5 @@ void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
 void Scene_reset_camera(Scene *scene);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
-
-#pragma mark Script Bindings
-int Scene_init(Scene *scene, Engine *engine);
-int Scene_configure(Scene *scene, Engine *engine);
 
 #endif

@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "../scenes/scene.h"
+#include "../scenes/scene_bindings.h"
 
 Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     Engine *engine = calloc(1, sizeof(Engine));
@@ -18,10 +19,13 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
 #endif
 
     engine->audio = Audio_create();
-    engine->input = NEW(Input, "Input Engine");
+    engine->input = Input_create();
     engine->graphics = NEW(Graphics, "Graphics Engine");
     engine->physics = Physics_create();
-    engine->scripting = Scripting_create(boot_script);
+
+    engine->scripting = Scripting_create(engine, boot_script);
+    check(engine == luaL_get_engine(engine->scripting->L),
+            "Did not properly register engine in scripting subsystem");
 
     engine->reg_initialized = 0;
     engine->frame_now = 0;
@@ -42,7 +46,7 @@ void Engine_destroy(Engine *engine) {
     check(engine != NULL, "No engine to destroy");
 
     Audio_destroy(engine->audio);
-    engine->input->_(destroy)(engine->input);
+    Input_destroy(engine->input);
     engine->graphics->_(destroy)(engine->graphics);
     Physics_destroy(engine->physics);
     Scripting_destroy(engine->scripting);
@@ -116,3 +120,8 @@ void Engine_regulate(Engine *engine) {
 error:
     return;
 }
+
+Scene *Engine_get_current_scene(Engine *engine) {
+    return luaL_get_current_scene(engine->scripting->L);
+}
+
