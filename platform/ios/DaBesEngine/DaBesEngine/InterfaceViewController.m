@@ -28,7 +28,7 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   if (touchInput_ == NULL) {
-    touchInput_ = NEW(Input, "Touch input");
+    touchInput_ = Input_create();
   }
   
   self.view.backgroundColor = [UIColor colorWithWhite:0.65 alpha:1];

@@ -1,5 +1,5 @@
 #include "camera.h"
-#include "game_entity.h"
+#include "../entities/entity.h"
 
 // CAMERA
 Camera *Camera_create(int width, int height) {
@@ -51,9 +51,9 @@ void Camera_correct(Camera *camera) {
 
 void Camera_track(Camera *camera) {
     if (camera->track_entity) {
-        GameEntity *entity = camera->track_entity;
+        Entity *entity = camera->track_entity;
         VRect t_rect = Camera_tracking_rect(camera);
-        VRect e_rect = GameEntity_real_rect(entity);
+        VRect e_rect = Entity_real_rect(entity);
         VRect t_bound = VRect_bounding_box(t_rect);
         VRect e_bound = Camera_project_rect(camera, e_rect);
         e_bound = VRect_bounding_box(e_bound);
@@ -207,8 +207,8 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
 
     if (camera->track_entity) {
         GLfloat e_color[4] = {0, 1, 0, 1};
-        GameEntity *entity = camera->track_entity;
-        VRect e_rect = GameEntity_real_rect(entity);
+        Entity *entity = camera->track_entity;
+        VRect e_rect = Entity_real_rect(entity);
         VRect e_bound = Camera_project_rect(camera, e_rect);
         e_bound = VRect_bounding_box(e_bound);
         Graphics_stroke_rect(graphics, e_bound, e_color, 0, 0);
