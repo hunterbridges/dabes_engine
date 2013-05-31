@@ -8,20 +8,20 @@ const char *luab_Body_metatable = "DaBes.body";
 int luab_Body_new(lua_State *L) {
     Body_userdata *ud = NULL;
 
+    const char *proto = lua_tostring(L, 1);
+    float w = lua_tonumber(L, 2);
+    float h = lua_tonumber(L, 3);
+    float m = lua_tonumber(L, 4);
+    int can_rotate = lua_toboolean(L, 5);
+
     ud = lua_newuserdata(L, sizeof(Body_userdata));
     check(ud != NULL, "Could not make Body userdata");
 
     luaL_getmetatable(L, luab_Body_metatable);
     lua_setmetatable(L, -2);
 
-    float w = lua_tonumber(L, 2);
-    float h = lua_tonumber(L, 3);
-    float m = lua_tonumber(L, 4);
-    int can_rotate = lua_toboolean(L, 5);
-
     Body *body = NULL;
     int valid_proto = 0;
-    const char *proto = lua_tostring(L, 1);
     if (streq(proto, "chipmunk")) {
         body = Body_create(ChipmunkBodyProto, w, h, m, can_rotate);
         valid_proto = 1;

@@ -49,7 +49,6 @@ Bugs:
 * Audio buffers getting orphaned somehow?
 * Getting stuck in ground tiles
 * Lua GC is not playing nice
-* can_rotate in Body_create seems to not work
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules
