@@ -15,12 +15,12 @@ int luab_Scene_new(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
 
     Scene_userdata *scene_ud = lua_newuserdata(L, sizeof(Scene_userdata));
+    Scene *scene = NULL;
     check(scene_ud != NULL, "Could not make scene userdata");
 
     luaL_getmetatable(L, luab_Scene_metatable);
     lua_setmetatable(L, -2);
 
-    Scene *scene = NULL;
     const char *proto = NULL;
 
     int valid_proto = 0;

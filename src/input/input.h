@@ -13,8 +13,6 @@ typedef struct Input {
     int cam_debug;
 } Input;
 
-extern Object InputProto;
-
 Input *Input_create();
 void Input_destroy(Input *input);
 void Input_poll(Input *input);

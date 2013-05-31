@@ -4,9 +4,9 @@ DaBes Engine
 _"I'm da besssss"_
 
 What is done:
-* Base layer of SDL/OpenGL
-* Framework for decoupled graphics, physics, input, and audio engines
-* Build for desktop (with SDL) or iOS
+* Build targets:
+    * Desktop (SDL, tested on OSX)
+    * iOS
 * Graphics engine:
     * Can load shaders and draw with them
     * Can load SDL surfaces into OpenGL textures
@@ -21,7 +21,9 @@ What is done:
     * Seamless music queueing and looping
     * Sound effects
 * Scripting engine:
-    * Can configure scenes with Lua scripts
+    * Entity control scripts
+    * Interaction scripts
+    * Scene scripts
 
 What is not yet done:
 * Audio engine:
@@ -31,20 +33,23 @@ What is not yet done:
     * Keyframe animations
 * Hitboxes
 * Scripting engine:
-    * Entity control scripts
-    * Interaction scripts
-    * Game state management
+    * Camera bindings
+    * Space bindings
+    * Sfx bindings
+    * Tile map bindings
+    * Scene manager
 * Debug tools:
     * Entity inspector
 
 Bugs:
-* No volume control in OggStreams
 * Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
 * Audio buffers getting orphaned somehow?
 * Getting stuck in ground tiles
+* Lua GC is not playing nice
+* can_rotate in Body_create seems to not work
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules

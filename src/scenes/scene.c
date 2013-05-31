@@ -74,7 +74,6 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
 
     Graphics_reset_projection_matrix(graphics);
     Graphics_project_camera(graphics, scene->camera);
-    glLineWidth(0);
     GLfloat color[4] = {0.5, 0.5, 0.5, 0.5};
     double grid = scene->world->grid_size;
     double ppm = scene->world->pixels_per_meter;
