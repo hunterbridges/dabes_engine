@@ -13,7 +13,7 @@ function map_real(...)
     return unpack(uds)
 end
 
-BoundObject = Object:extend({
+_.BoundObject = Object:extend({
 -- Default Configuration
 
     -- lib
@@ -78,3 +78,4 @@ BoundObject = Object:extend({
     -- in the bound object's lifecycle.
     init = function(self) end
 })
+BoundObject = _.BoundObject

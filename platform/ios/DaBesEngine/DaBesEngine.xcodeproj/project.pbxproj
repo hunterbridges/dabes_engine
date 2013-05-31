@@ -41,6 +41,7 @@
 		CA3F99C0172F860400ED1135 /* sprite.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3F99BE172F860400ED1135 /* sprite.c */; };
 		CA3F99C5172F87AC00ED1135 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3F99C2172F87AC00ED1135 /* audio.c */; };
 		CA3F99C8172F9C4F00ED1135 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99C7172F9C4F00ED1135 /* OpenAL.framework */; };
+		CA46A66E175930D000F2311E /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA46A66D175930D000F2311E /* Inconsolata.otf */; };
 		CA5E5E901721093A00CAF6A2 /* ortho_chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */; };
 		CA5E5E9F17211C0D00CAF6A2 /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
 		CA5E5EBA1724EDC500CAF6A2 /* parallax.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5EB81724EDC500CAF6A2 /* parallax.c */; };
@@ -56,6 +57,8 @@
 		CA7241B71730E55300255032 /* ogg_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = CA7241B41730E55300255032 /* ogg_stream.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
+		CAA725331758851A00CAD209 /* ScriptEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA725321758851A00CAD209 /* ScriptEditorViewController.m */; };
+		CAA725381758953800CAD209 /* CodeEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA725371758953800CAD209 /* CodeEditorView.m */; };
 		CAB3596616FC4D76004CF684 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB3596516FC4D76004CF684 /* AudioToolbox.framework */; };
 		CAB3597B16FC4EBC004CF684 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CAB3597A16FC4EBC004CF684 /* media */; };
 		CAB359B816FE242F004CF684 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CAB359B616FE242F004CF684 /* Icon.png */; };
@@ -199,6 +202,7 @@
 		CA3F99C2172F87AC00ED1135 /* audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		CA3F99C3172F87AC00ED1135 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		CA3F99C7172F9C4F00ED1135 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		CA46A66D175930D000F2311E /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inconsolata.otf; sourceTree = "<group>"; };
 		CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ortho_chipmunk_scene.c; sourceTree = "<group>"; };
 		CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_chipmunk_scene.h; sourceTree = "<group>"; };
 		CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk6.xcodeproj; path = "../../../third_party/Chipmunk-6.1.4/xcode/Chipmunk6.xcodeproj"; sourceTree = "<group>"; };
@@ -223,6 +227,10 @@
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = camera.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CAA725311758851A00CAD209 /* ScriptEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptEditorViewController.h; sourceTree = "<group>"; };
+		CAA725321758851A00CAD209 /* ScriptEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptEditorViewController.m; sourceTree = "<group>"; };
+		CAA725361758953800CAD209 /* CodeEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeEditorView.h; sourceTree = "<group>"; };
+		CAA725371758953800CAD209 /* CodeEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeEditorView.m; sourceTree = "<group>"; };
 		CAB3596516FC4D76004CF684 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		CAB3597A16FC4EBC004CF684 /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../../media; sourceTree = "<group>"; };
 		CAB359B616FE242F004CF684 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -363,6 +371,7 @@
 		CA24C73D16FC1E7E0045D5DE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CA46A66D175930D000F2311E /* Inconsolata.otf */,
 				CAB359C616FED230004CF684 /* blueprint.jpg */,
 				CAB359B616FE242F004CF684 /* Icon.png */,
 				CAB359B716FE242F004CF684 /* Icon@2x.png */,
@@ -460,6 +469,8 @@
 				CA24C75316FC1E7E0045D5DE /* EngineViewController.m */,
 				CAB359C116FE96E9004CF684 /* InterfaceViewController.h */,
 				CAB359C216FE96E9004CF684 /* InterfaceViewController.m */,
+				CAA725311758851A00CAD209 /* ScriptEditorViewController.h */,
+				CAA725321758851A00CAD209 /* ScriptEditorViewController.m */,
 			);
 			name = Platform;
 			sourceTree = "<group>";
@@ -510,6 +521,8 @@
 			children = (
 				CA63D7A31708094C00EE59CA /* ConsoleView.h */,
 				CA63D7A41708094C00EE59CA /* ConsoleView.m */,
+				CAA725361758953800CAD209 /* CodeEditorView.h */,
+				CAA725371758953800CAD209 /* CodeEditorView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -702,6 +715,7 @@
 				CAB359B816FE242F004CF684 /* Icon.png in Resources */,
 				CAB359B916FE242F004CF684 /* Icon@2x.png in Resources */,
 				CAB359C716FED230004CF684 /* blueprint.jpg in Resources */,
+				CA46A66E175930D000F2311E /* Inconsolata.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -756,6 +770,8 @@
 				CAC581CC1758604E004A8161 /* sprite_bindings.c in Sources */,
 				CAC581CF17586061004A8161 /* controller_bindings.c in Sources */,
 				CAC581D61758607F004A8161 /* scripting.c in Sources */,
+				CAA725331758851A00CAD209 /* ScriptEditorViewController.m in Sources */,
+				CAA725381758953800CAD209 /* CodeEditorView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

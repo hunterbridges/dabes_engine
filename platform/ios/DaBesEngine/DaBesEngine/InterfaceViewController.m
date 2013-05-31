@@ -3,15 +3,20 @@
 #import "ConsoleView.h"
 #import "InterfaceViewController.h"
 #import "EngineViewController.h"
+#import "ScriptEditorViewController.h"
+#import "CodeEditorView.h"
 
-@interface InterfaceViewController () {
+@interface InterfaceViewController () <UIGestureRecognizerDelegate> {
   EngineViewController *engineVC_;
   BOOL showingMenu_;
+  BOOL showingScriptEditor_;
+  
   UISwipeGestureRecognizer *menuSwipe_;
   UIScrollView *debugMenuView_;
   float menuHeight_;
   int pages_;
   ConsoleView *console_;
+  ScriptEditorViewController *scriptEditor_;
   UIPopoverController *popover_;
   UISwitch *camDebugSwitch_;
   UISwitch *gridSwitch_;
@@ -33,6 +38,168 @@
   
   self.view.backgroundColor = [UIColor colorWithWhite:0.65 alpha:1];
   
+  [self buildDebugMenu];
+  
+  engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
+  [self addChildViewController:engineVC_];
+  [self.view addSubview:engineVC_.view];
+  
+  scriptEditor_ =
+      [[ScriptEditorViewController alloc] initWithEngine:engineVC_.engine];
+  
+  UISwipeGestureRecognizer *downSwipe =
+      [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(handleSwipe:)];
+  downSwipe.numberOfTouchesRequired = 3;
+  downSwipe.direction = UISwipeGestureRecognizerDirectionDown;
+  [self.view addGestureRecognizer:downSwipe];
+  
+  UISwipeGestureRecognizer *upSwipe =
+      [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(handleSwipe:)];
+  upSwipe.numberOfTouchesRequired = 3;
+  upSwipe.direction = UISwipeGestureRecognizerDirectionUp;
+  [self.view addGestureRecognizer:upSwipe];
+  
+  UISwipeGestureRecognizer *leftSwipe =
+      [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(handleSwipe:)];
+  leftSwipe.numberOfTouchesRequired = 3;
+  leftSwipe.direction = UISwipeGestureRecognizerDirectionLeft;
+  [self.view addGestureRecognizer:leftSwipe];
+  
+  UISwipeGestureRecognizer *rightSwipe =
+      [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(handleSwipe:)];
+  rightSwipe.numberOfTouchesRequired = 3;
+  rightSwipe.direction = UISwipeGestureRecognizerDirectionRight;
+  [self.view addGestureRecognizer:rightSwipe];
+  
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)dealloc {
+  Input_destroy(touchInput_);
+}
+
+- (void)didReceiveMemoryWarning {
+  [super didReceiveMemoryWarning];
+}
+
+- (void)viewDidLayoutSubviews {
+  debugMenuView_.contentSize = CGSizeMake(self.view.bounds.size.width,
+                                         menuHeight_ * pages_);
+  if (showingScriptEditor_) {
+     scriptEditor_.view.frame = CGRectMake(self.view.bounds.size.width / 2,
+                                           0,
+                                           self.view.bounds.size.width / 2,
+                                           self.view.bounds.size.height);
+     engineVC_.view.frame = CGRectMake(0, 0,
+                                       self.view.bounds.size.width / 2,
+                                       self.view.bounds.size.height);
+  }
+}
+
+#pragma mark - Public
+
+- (void)didEnterBackground {
+  if ([engineVC_.view superview]) [engineVC_ didEnterBackground];
+}
+
+- (void)willEnterForeground {
+  if ([engineVC_.view superview]) [engineVC_ willEnterForeground];
+}
+
+- (void)injectMapFromPath:(NSString *)newFilePath {
+  [engineVC_ injectMapFromPath:newFilePath];
+}
+
+- (void)log:(NSString *)fmt arguments:(va_list)arguments {
+  NSString *formatted =
+      [[NSString alloc] initWithFormat:fmt arguments:arguments];
+  [console_ logText:formatted];
+  [self showMenu];
+}
+
+#pragma mark - Private
+
+- (void)showMenu {
+  if (showingMenu_) return;
+  if (showingScriptEditor_) return;
+  [UIView animateWithDuration:0.5
+       animations:^{
+         engineVC_.view.frame = CGRectMake(0, menuHeight_,
+                                           self.view.bounds.size.width,
+                                           self.view.bounds.size.height
+                                               - menuHeight_);
+       }];
+  showingMenu_ = YES;
+}
+
+- (void)hideMenu {
+  if (!showingMenu_) return;
+  [UIView animateWithDuration:0.5
+       animations:^{
+         engineVC_.view.frame = CGRectMake(0, 0,
+                                           self.view.bounds.size.width,
+                                           self.view.bounds.size.height);
+       }];
+  showingMenu_ = NO;
+}
+
+- (void)showScriptEditor {
+  if (showingMenu_) return;
+  if (showingScriptEditor_) return;
+  showingScriptEditor_ = YES;
+  scriptEditor_.view.frame = CGRectMake(self.view.bounds.size.width,
+                                        0,
+                                        self.view.bounds.size.width / 2,
+                                        self.view.bounds.size.height);
+  scriptEditor_.editorView.linkTo = engineVC_;
+  [self addChildViewController:scriptEditor_];
+  [self.view addSubview:scriptEditor_.view];
+  [UIView animateWithDuration:0.5
+       animations:^{
+         scriptEditor_.view.frame = CGRectMake(self.view.bounds.size.width / 2,
+                                               0,
+                                               self.view.bounds.size.width / 2,
+                                               self.view.bounds.size.height);
+         engineVC_.view.frame = CGRectMake(0, 0,
+                                           self.view.bounds.size.width / 2,
+                                           self.view.bounds.size.height);
+       }];
+  
+}
+
+- (void)hideScriptEditor {
+  if (!showingScriptEditor_) return;
+
+  [UIView animateWithDuration:0.5
+       animations:^{
+         scriptEditor_.view.frame = CGRectMake(self.view.bounds.size.width,
+                                               0,
+                                               self.view.bounds.size.width / 2,
+                                               self.view.bounds.size.height);
+         engineVC_.view.frame = CGRectMake(0, 0,
+                                           self.view.bounds.size.width,
+                                           self.view.bounds.size.height);
+       }
+       completion:^(BOOL finished) {
+         [scriptEditor_ removeFromParentViewController];
+         [scriptEditor_.view removeFromSuperview];
+         showingScriptEditor_ = NO;
+       }];
+}
+
+- (void)buildDebugMenu {
   UIImageView *blueprint =
       [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"blueprint.jpg"]];
   blueprint.frame = self.view.bounds;
@@ -57,10 +224,6 @@
   debugMenuView_.clipsToBounds = NO;
   debugMenuView_.delegate = self;
   [self.view addSubview:debugMenuView_];
-  
-  engineVC_ = [[EngineViewController alloc] initWithTouchInput:touchInput_];
-  [self addChildViewController:engineVC_];
-  [self.view addSubview:engineVC_.view];
   
   console_ = [[ConsoleView alloc] init];
   console_.translatesAutoresizingMaskIntoConstraints = NO;
@@ -216,20 +379,6 @@
                forControlEvents:UIControlEventTouchUpInside];
   [debugMenuView_ addSubview:importTilesetButton];
   
-  UISwipeGestureRecognizer *downSwipe =
-      [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                action:@selector(handleSwipe:)];
-  downSwipe.numberOfTouchesRequired = 3;
-  downSwipe.direction = UISwipeGestureRecognizerDirectionDown;
-  [self.view addGestureRecognizer:downSwipe];
-  
-  UISwipeGestureRecognizer *upSwipe =
-      [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                action:@selector(handleSwipe:)];
-  upSwipe.numberOfTouchesRequired = 3;
-  upSwipe.direction = UISwipeGestureRecognizerDirectionUp;
-  [self.view addGestureRecognizer:upSwipe];
-  
   /* LAYOUT CONSTRAINT BULLSHIT */
   NSDictionary *views =
       NSDictionaryOfVariableBindings(camLabel, envLabel, rotLabel,
@@ -329,78 +478,7 @@
   [debugMenuView_ addConstraints:row];
 }
 
-- (void)dealloc {
-  Input_destroy(touchInput_);
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-}
-
-- (void)handleSwipe:(UISwipeGestureRecognizer *)gesture {
-  if (gesture.direction == UISwipeGestureRecognizerDirectionDown) {
-    [self showMenu];
-  } else if (gesture.direction == UISwipeGestureRecognizerDirectionUp) {
-    [self hideMenu];
-    
-  }
-}
-
-- (void)viewDidLayoutSubviews {
-  debugMenuView_.contentSize = CGSizeMake(self.view.bounds.size.width,
-                                         menuHeight_ * pages_);
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-  GLKView *view = (GLKView *)engineVC_.view;
-  [engineVC_ performSelector:@selector(update)];
-  [engineVC_ glkView:view drawInRect:view.bounds];
-  [view display];
-}
-
-- (void)showMenu {
-  if (showingMenu_) return;
-  [UIView animateWithDuration:0.5
-       animations:^{
-         engineVC_.view.frame = CGRectMake(0, menuHeight_,
-                                           self.view.bounds.size.width,
-                                           self.view.bounds.size.height
-                                               - menuHeight_);
-       }];
-  showingMenu_ = YES;
-}
-
-- (void)hideMenu {
-  if (!showingMenu_) return;
-  [UIView animateWithDuration:0.5
-       animations:^{
-         engineVC_.view.frame = CGRectMake(0, 0,
-                                           self.view.bounds.size.width,
-                                           self.view.bounds.size.height);
-       }];
-  showingMenu_ = NO;
-}
-
-- (void)didEnterBackground {
-  if ([engineVC_.view superview]) [engineVC_ didEnterBackground];
-}
-
-- (void)willEnterForeground {
-  if ([engineVC_.view superview]) [engineVC_ willEnterForeground];
-}
-
-- (void)log:(NSString *)fmt arguments:(va_list)arguments {
-  NSString *formatted =
-      [[NSString alloc] initWithFormat:fmt arguments:arguments];
-  [console_ logText:formatted];
-  [self showMenu];
-}
-
-- (void)injectMapFromPath:(NSString *)newFilePath {
-  [engineVC_ injectMapFromPath:newFilePath];
-}
-
-#pragma mark Debug controls
+#pragma mark - Debug controls
 - (void)rotChanged:(UISlider *)sender {
   float newStep = roundf((sender.value) / 1.f);
   sender.value = newStep;
@@ -542,6 +620,72 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
 - (void)debugGridChanged:(UISwitch *)sender {
   engineVC_.scene->draw_grid = sender.on;
+}
+
+#pragma mark - Scroll View Delegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+  GLKView *view = (GLKView *)engineVC_.view;
+  [engineVC_ performSelector:@selector(update)];
+  [engineVC_ glkView:view drawInRect:view.bounds];
+  [view display];
+}
+
+
+#pragma mark - Gesture Recognizer
+
+- (void)handleSwipe:(UISwipeGestureRecognizer *)gesture {
+  if (gesture.direction == UISwipeGestureRecognizerDirectionDown) {
+    [self showMenu];
+  } else if (gesture.direction == UISwipeGestureRecognizerDirectionUp) {
+    [self hideMenu];
+  }
+  
+  if (gesture.direction == UISwipeGestureRecognizerDirectionLeft) {
+    [self showScriptEditor];
+  } else if (gesture.direction == UISwipeGestureRecognizerDirectionRight) {
+    [self hideScriptEditor];
+  }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+  return YES;
+}
+
+#pragma mark - Keyboard Handling
+
+- (void)keyboardWillShow:(NSNotification *)notif {
+  [self moveViewsForKeyboard:notif up:YES];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notif {
+  [self moveViewsForKeyboard:notif up:NO];
+}
+
+- (void)moveViewsForKeyboard:(NSNotification*)notification up:(BOOL)up {
+  NSDictionary* userInfo = [notification userInfo];
+  NSTimeInterval animationDuration;
+  UIViewAnimationCurve animationCurve;
+  CGRect keyboardEndFrame;
+  
+  [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&animationCurve];
+  [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+  [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&keyboardEndFrame];
+  
+  [UIView beginAnimations:nil context:nil];
+  [UIView setAnimationDuration:animationDuration];
+  [UIView setAnimationCurve:animationCurve];
+  
+  CGRect newFrame = self.view.bounds;
+  CGRect keyboardFrame = [self.view convertRect:keyboardEndFrame toView:nil];
+  if (up) newFrame.size.height -= keyboardFrame.size.height;
+  engineVC_.view.frame = CGRectMake(0, 0, engineVC_.view.frame.size.width,
+                                    newFrame.size.height);
+  scriptEditor_.view.frame = CGRectMake(scriptEditor_.view.frame.origin.x, 0,
+                                        scriptEditor_.view.frame.size.width,
+                                        newFrame.size.height);
+  
+  [UIView commitAnimations];
 }
 
 @end

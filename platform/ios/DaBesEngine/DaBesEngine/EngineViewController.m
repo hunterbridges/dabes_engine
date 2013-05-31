@@ -1,5 +1,4 @@
 #import "EngineViewController.h"
-#import "engine.h"
 #import "scene.h"
 #import "world.h"
 #import "entity.h"
@@ -18,14 +17,13 @@ char *bundlePath__;
   Engine *engine_;
   Scene *scene_;
   
-  GLKView *glkView_;
-  
   Input *touchInput_;
   UILongPressGestureRecognizer *moveGesture_;
   UILongPressGestureRecognizer *jumpGesture_;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
+@property (nonatomic, strong) GLKView *glkView;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -33,6 +31,7 @@ char *bundlePath__;
 @end
 
 @implementation EngineViewController
+@synthesize engine = engine_;
 @synthesize scene = scene_;
 
 - (id)initWithTouchInput:(Input *)input {
@@ -55,13 +54,13 @@ char *bundlePath__;
       NSLog(@"Failed to create ES context");
   }
   
-  glkView_ = [[GLKView alloc] initWithFrame:self.view.bounds];
-  glkView_.context = self.context;
-  glkView_.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
-                               UIViewAutoresizingFlexibleHeight);
-  glkView_.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-  glkView_.delegate = self;
-  self.view = glkView_;
+  self.glkView = [[GLKView alloc] initWithFrame:self.view.bounds];
+  self.glkView.context = self.context;
+  self.glkView.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
+                                   UIViewAutoresizingFlexibleHeight);
+  self.glkView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+  self.glkView.delegate = self;
+  self.view = self.glkView;
 
   moveGesture_ =
       [[UILongPressGestureRecognizer alloc]
@@ -167,6 +166,11 @@ char *bundlePath__;
   Scene_destroy(scene_, engine_);
   engine_->_(destroy)(engine_);
   self.effect = nil;
+}
+
+- (void)fullUpdate {
+  [self update];
+  [self.glkView display];
 }
 
 #pragma mark - GLKView and GLKViewController delegate methods

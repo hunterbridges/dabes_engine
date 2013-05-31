@@ -4,7 +4,7 @@
 
 require 'dabes.bound_object'
 
-Entity = BoundObject:extend({
+_.Entity = BoundObject:extend({
     lib = dab_entity,
 
 -- Default Configuration
@@ -54,3 +54,4 @@ Entity = BoundObject:extend({
     presolve = function(self) end
 
 })
+Entity = _.Entity

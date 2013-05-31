@@ -6,7 +6,7 @@ require 'dabes.bound_object'
 require 'dabes.music'
 require 'dabes.parallax'
 
-Scene = BoundObject:extend({
+_.Scene = BoundObject:extend({
     lib = dab_scene,
 
 -- Default Configuration
@@ -65,5 +65,6 @@ Scene = BoundObject:extend({
     -- If you want to do things that persist across restarts,
     -- do them in `init` (inherited from BoundObject)
     configure = function(self) end
-
 })
+
+Scene = _.Scene

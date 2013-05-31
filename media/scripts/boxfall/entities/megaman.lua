@@ -2,7 +2,7 @@ require 'dabes.entity'
 require 'dabes.body'
 require 'dabes.sprite'
 
-Megaman = Entity:extend({
+_.Megaman = Entity:extend({
     body_type = "chipmunk",
 
     init = function(self)
@@ -113,3 +113,4 @@ Megaman = Entity:extend({
         end
     end
 })
+Megaman = _.Megaman

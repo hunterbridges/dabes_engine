@@ -3,7 +3,7 @@
 -- This BoundObject represents a Controller (controller.h)
 require 'dabes.bound_object'
 
-Controller = BoundObject:extend({
+_.Controller = BoundObject:extend({
     lib = dab_controller,
 
     realize = function(class, i)
@@ -27,6 +27,7 @@ Controller = BoundObject:extend({
         a_button = BoundObject.readonly
     }
 })
+Controller = _.Controller
 
 _controllers = {}
 function get_controller(i)
@@ -34,4 +35,3 @@ function get_controller(i)
     _controllers[i] = Controller:new(i)
     return _controllers[i]
 end
-

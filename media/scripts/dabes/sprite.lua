@@ -4,7 +4,7 @@
 
 require 'dabes.bound_object'
 
-SpriteAnimation = BoundObject:extend({
+_.SpriteAnimation = BoundObject:extend({
     lib = dab_spriteanimation,
 
 -- Hook Overloads
@@ -23,10 +23,11 @@ SpriteAnimation = BoundObject:extend({
         fps = BoundObject.fwd_func('set_fps')
     }
 })
+SpriteAnimation = _.SpriteAnimation
 
 --------------------------------------------------------------------------------
 
-Sprite = BoundObject:extend({
+_.Sprite = BoundObject:extend({
     lib = dab_sprite,
 
 -- Hook Overloads
@@ -49,5 +50,5 @@ Sprite = BoundObject:extend({
         current_animation = BoundObject.readonly,
         direction = BoundObject.fwd_func('set_direction')
     }
-
 })
+Sprite = _.Sprite

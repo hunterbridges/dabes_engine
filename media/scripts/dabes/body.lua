@@ -4,7 +4,7 @@
 
 require 'dabes.bound_object'
 
-Body = BoundObject:extend({
+_.Body = BoundObject:extend({
     lib = dab_body,
 
 -- Default Configuration
@@ -36,5 +36,5 @@ Body = BoundObject:extend({
         mass = BoundObject.fwd_func("set_mass"),
         can_rotate = BoundObject.fwd_func("set_can_rotate")
     }
-
 })
+Body = _.Body

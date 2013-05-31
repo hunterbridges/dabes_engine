@@ -3,7 +3,7 @@ require 'dabes.scene'
 require 'boxfall.entities.box'
 require 'boxfall.entities.megaman'
 
-FatMap = Scene:extend({
+_.FatMap = Scene:extend({
     kind = "ortho_chipmunk",
     pixels_per_meter = 32.0,
 
@@ -89,4 +89,4 @@ FatMap = Scene:extend({
         return parallax
     end
 })
-
+FatMap = _.FatMap
