@@ -273,10 +273,13 @@
       
     } else if ([scanner scanCharactersFromSet:numbers intoString:&loopStr]) {
       NSMutableString *numberLiteral = [loopStr mutableCopy];
+      BOOL needsDecimal = NO;
       if ([scanner scanString:@"." intoString:nil]) {
         NSString *decimal = nil;
         if ([scanner scanCharactersFromSet:numbers intoString:&decimal]) {
           [numberLiteral appendFormat:@".%@", decimal];
+        } else {
+          needsDecimal = YES;
         }
       }
       
@@ -286,6 +289,14 @@
           [[NSAttributedString alloc] initWithString:numberLiteral
                                           attributes:attrs];
       [highlighted appendAttributedString:toAppend];
+      
+      if (needsDecimal) {
+        NSDictionary *attrs =
+            @{NSForegroundColorAttributeName: [UIColor codeDefaultColor]};
+        NSAttributedString *toAppend =
+            [[NSAttributedString alloc] initWithString:@"." attributes:attrs];
+        [highlighted appendAttributedString:toAppend];
+      }
       
 #pragma mark Comment
       

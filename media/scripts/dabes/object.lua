@@ -36,7 +36,6 @@ Object = {
             end,
 
             _cleancache = function(self)
-                print("cleaning cache for", self)
                 self._cache = {}
             end
         }

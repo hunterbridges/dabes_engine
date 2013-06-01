@@ -71,7 +71,6 @@ BoundObject = Object:extend({
             if self[cachekey] == nil then rawset(self, cachekey, {}) end
             -- Hold on to the member so it isn't collected
             self[cachekey][member] = true
-            print("cached", name, "member", member)
 
             return fwded(self.real, member, ...)
         end

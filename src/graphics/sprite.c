@@ -9,7 +9,6 @@ SpriteAnimation *SpriteAnimation_create(int num_frames, int frames[]) {
     int i = 0;
     for (i = 0; i < num_frames; i++) {
         animation->frames[i] = frames[i];
-        printf("#%d -> %d = %d\n", i, animation->frames[i], frames[i]);
     }
     animation->loop_start = frames[0];
     animation->stepper = Stepper_create();
