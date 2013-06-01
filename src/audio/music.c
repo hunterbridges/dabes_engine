@@ -36,14 +36,19 @@ error:
     return NULL;
 }
 
-void Music_destroy(Music *music) {
+void Music_end(Music *music) {
     music->ended = 1;
     alSourceStop(music->source);
+}
 
+void Music_destroy(Music *music) {
+    Music_end(music);
     int i = 0;
     for (i = 0; i < music->num_files; i++) {
       free(music->ogg_files[i]);
     }
+    Audio_check();
+    alSourcei(music->source, AL_BUFFER, 0);
     Audio_check();
     LIST_FOREACH(music->ogg_streams, first, next, current) {
         OggStream *ogg_stream = current->value;
@@ -52,6 +57,7 @@ void Music_destroy(Music *music) {
     List_destroy(music->ogg_streams);
 
     alDeleteSources(1, &music->source);
+    Audio_check();
     free(music);
 }
 

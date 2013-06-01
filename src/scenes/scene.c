@@ -25,9 +25,6 @@ void Scene_destroy(Scene *scene, Engine *engine) {
     free(scene->name);
 
     Camera_destroy(scene->camera);
-    if (scene->music) {
-        Audio_destroy_music(engine->audio, scene->music);
-    }
 
     if (scene->tile_map) {
         TileMap_destroy(scene->tile_map);

@@ -84,11 +84,13 @@ char *bundlePath__;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+  /*
   [NSTimer scheduledTimerWithTimeInterval:2.0
                                    target:self
                                  selector:@selector(restartScene)
                                  userInfo:nil
                                   repeats:YES];
+   */
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
@@ -230,6 +232,11 @@ char *bundlePath__;
 
 - (void)restartScene {
   Scene_restart(scene_, engine_);
+}
+
+- (void)reboot {
+  Engine_destroy(engine_);
+  [self initEngine];
 }
 
 @end

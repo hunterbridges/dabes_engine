@@ -46,9 +46,7 @@ Bugs:
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
-* Audio buffers getting orphaned somehow?
 * Getting stuck in ground tiles
-* Lua GC is not playing nice
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules

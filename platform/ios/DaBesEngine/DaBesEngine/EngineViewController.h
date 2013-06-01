@@ -13,6 +13,7 @@
 - (void)injectMapFromPath:(NSString *)newFilePath;
 - (void)restartScene;
 - (void)fullUpdate;
+- (void)reboot;
   
 @property (nonatomic, readonly) Engine *engine;
 @property (nonatomic, readonly) Scene *scene;

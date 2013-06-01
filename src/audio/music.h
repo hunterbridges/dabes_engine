@@ -21,6 +21,7 @@ void Music_destroy(Music *music);
 void Music_play(Music *music);
 void Music_update(Music *music);
 void Music_pause(Music *music);
+void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
 
 #endif

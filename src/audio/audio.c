@@ -9,9 +9,6 @@ ALfloat listenerOri[]={0.0,0.0,1.0,0.0,1.0,0.0};
 Audio *Audio_create() {
     Audio *audio = calloc(1, sizeof(Audio));
     check(audio != NULL, "Couldn't create audio");
-    audio->musics = List_create();
-    audio->active_sfx = List_create();
-
 #ifdef DABES_IOS
 #else
    int audio_rate = 44100;
@@ -25,15 +22,17 @@ Audio *Audio_create() {
 #endif
     const ALCchar *defaultDevice =
         alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
-    if (defaultDevice == NULL) return audio;
+    check(defaultDevice != NULL, "Could not get default audio device");
     debug("%s", defaultDevice);
+  
     audio->device = alcOpenDevice(defaultDevice);
-    if (audio->device == NULL) return audio;
+    check(audio->device != NULL, "Could not open audio device");
+  
     audio->context = alcCreateContext(audio->device, NULL);
-    if (audio->context == NULL) return audio;
+    check(audio->context != NULL, "Could not open audio context");
 
-    if (alcMakeContextCurrent(audio->context) == AL_FALSE) return audio;
-    // GHETTO ERROR CHECKING
+    check(alcMakeContextCurrent(audio->context) == AL_TRUE,
+          "Could not make audio context current");
 
     Audio_check();
     alListenerfv(AL_POSITION,listenerPos);
@@ -43,8 +42,12 @@ Audio *Audio_create() {
     alListenerfv(AL_ORIENTATION,listenerOri);
     Audio_check();
 
+    audio->musics = List_create();
+    audio->active_sfx = List_create();
+
     return audio;
 error:
+    if (audio) free(audio);
     return NULL;
 }
 
@@ -57,20 +60,31 @@ error:
 }
 
 void Audio_stream(Audio *audio) {
-    {LIST_FOREACH(audio->musics, first, next, current) {
-        Music *music = current->value;
-        Music_update(music);
-    }}
+    ListNode *node = audio->musics->first;
+    while (node != NULL) {
+        Music *music = node->value;
 
-    ListNode *node = audio->active_sfx->first;
+        if (music->ended) {
+            ListNode *old = node;
+            node = node->next;
+            List_remove(audio->musics, old);
+            Music_destroy(music);
+            continue;
+        }
+
+        Music_update(music);
+        node = node->next;
+    }
+
+    node = audio->active_sfx->first;
     while (node != NULL) {
         Sfx *sfx = node->value;
 
         if (sfx->ended) {
             ListNode *old = node;
             node = node->next;
-            Sfx_destroy(sfx);
             List_remove(audio->active_sfx, old);
+            Sfx_destroy(sfx);
             continue;
         }
 
@@ -93,6 +107,10 @@ void Audio_destroy(Audio *audio) {
     }}
     List_destroy(audio->active_sfx);
 
+#ifdef DABES_IOS
+    alcSuspendContext(audio->context);
+    alcMakeContextCurrent(NULL);
+#endif
     alcDestroyContext(audio->context);
     alcCloseDevice(audio->device);
     free(audio);

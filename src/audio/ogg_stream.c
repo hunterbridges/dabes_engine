@@ -71,7 +71,9 @@ void OggStream_destroy(OggStream *ogg_stream) {
     check(ogg_stream != NULL, "No OGG stream to destroy");
     free(ogg_stream->filename);
     OggStream_empty(ogg_stream);
-    alDeleteBuffers(ogg_stream->buf_count, ogg_stream->buffers);
+    debug("deleting %d buffers", 2);
+  
+    alDeleteBuffers(2, ogg_stream->buffers);
     Audio_check();
 
     OggStream_close_decoder(ogg_stream);

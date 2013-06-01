@@ -33,12 +33,11 @@ error:
 }
 
 int luab_Music_close(lua_State *L) {
-    Engine *engine = luaL_get_engine(L);
-
     Music_userdata *music_ud = (Music_userdata *)
         luaL_checkudata(L, 1, luab_Music_metatable);
     if (music_ud->p) {
-        Audio_destroy_music(engine->audio, music_ud->p);
+        // The Audio engine will clean this up
+        Music_end(music_ud->p);
     }
     music_ud->p = NULL;
     return 0;

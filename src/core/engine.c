@@ -45,11 +45,14 @@ error:
 void Engine_destroy(Engine *engine) {
     check(engine != NULL, "No engine to destroy");
 
+    // Scripting has to go first, as it
+    // manages all the objects that leverage other things.
+    Scripting_destroy(engine->scripting);
+  
     Audio_destroy(engine->audio);
     Input_destroy(engine->input);
     engine->graphics->_(destroy)(engine->graphics);
     Physics_destroy(engine->physics);
-    Scripting_destroy(engine->scripting);
 
     free(engine);
     return;

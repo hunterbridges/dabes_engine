@@ -13,8 +13,6 @@
 #include "ogg_stream.h"
 
 typedef struct Audio {
-    Object proto;
-
     List *musics;
     List *active_sfx;
     ALCdevice *device;

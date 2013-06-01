@@ -350,6 +350,15 @@
                forControlEvents:UIControlEventTouchUpInside];
   [debugMenuView_ addSubview:restartSceneButton];
   
+  UIButton *rebootEngineButton =
+      [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [rebootEngineButton setTitle:@"Reboot Engine" forState:UIControlStateNormal];
+  rebootEngineButton.translatesAutoresizingMaskIntoConstraints = NO;
+  [rebootEngineButton addTarget:self
+                         action:@selector(rebootEngine:)
+               forControlEvents:UIControlEventTouchUpInside];
+  [debugMenuView_ addSubview:rebootEngineButton];
+  
   UILabel *gridLabel = [[UILabel alloc] init];
   gridLabel.backgroundColor = [UIColor clearColor];
   gridLabel.textColor = [UIColor whiteColor];
@@ -389,9 +398,9 @@
                                      rotSlider, zoomLabel, zoomSlider,
                                      debugMenuView_, resetCamButton,
                                      camDebugLabel, camDebugSwitch_, console_,
-                                     restartSceneButton, gridLabel, gridSwitch_,
-                                     resLabel, importSpriteButton,
-                                     importTilesetButton);
+                                     restartSceneButton, rebootEngineButton,
+                                     gridLabel, gridSwitch_, resLabel,
+                                     importSpriteButton, importTilesetButton);
   NSArray *headers =
       [NSLayoutConstraint constraintsWithVisualFormat:
           @"|-[camLabel]-|"
@@ -467,7 +476,7 @@
   
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[restartSceneButton(180)]-(40)-[gridLabel]-[gridSwitch_(==79)]"
+          @"|-[restartSceneButton(180)]-(40)-[rebootEngineButton(180)]-(40)-[gridLabel]-[gridSwitch_(==79)]"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
@@ -515,6 +524,10 @@
 
 - (void)restartScene:(UIButton *)sender {
   [engineVC_ restartScene];
+}
+
+- (void)rebootEngine:(UIButton *)sender {
+  [engineVC_ reboot];
 }
 
 - (void)importGraphicalResourceOfKind:(GraphicalResourceKind)resourceKind

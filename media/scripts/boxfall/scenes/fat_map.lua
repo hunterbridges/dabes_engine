@@ -10,6 +10,11 @@ FatMap = Scene:extend({
     init = function(self)
         self:load_map("media/tilemaps/fat.tmx", 2.0)
 
+        self:start()
+    end,
+
+    configure = function(self)
+        -- Music
         local music = Music:new(
             "media/music/Climb_Intro.ogg",
             "media/music/Climb_Loop.ogg"
@@ -17,10 +22,6 @@ FatMap = Scene:extend({
         self.music = music
         music:play()
 
-        self:start()
-    end,
-
-    configure = function(self)
         -- Entities
         local num_boxes = 100
         local xo = 6.0
