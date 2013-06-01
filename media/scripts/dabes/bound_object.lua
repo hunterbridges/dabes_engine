@@ -6,14 +6,14 @@ local inspect = require 'lib.inspect'
 require 'dabes.object'
 
 function map_real(...)
-    uds = {}
+    local uds = {}
     for i = 1, select("#", ...) do
         uds[i] = select(i, ...).real
     end
     return unpack(uds)
 end
 
-_.BoundObject = Object:extend({
+BoundObject = Object:extend({
 -- Default Configuration
 
     -- lib
@@ -51,11 +51,29 @@ _.BoundObject = Object:extend({
     -- Used to set up convenient forwarding from Lua interface into binding.
     fwd_func = function(name)
         return function(self, ...)
-            if not self.real then
-                return nil
-            end
+            if not self.real then return nil end
 
             return self.real[name](self.real, ...)
+        end
+    end,
+
+    -- fwd_adder
+    --
+    -- Used to set up convenient forwarding from Lua interface into binding
+    -- that adds an element to an array. It will cache the Lua instance of
+    -- the element so it doesn't get collected prematurely.
+    fwd_adder = function(name)
+        return function(self, member, ...)
+            if not self.real then return nil end
+            local fwded = self.real[name]
+
+            local cachekey = '_'..name..'_cache'
+            if self[cachekey] == nil then rawset(self, cachekey, {}) end
+            -- Hold on to the member so it isn't collected
+            self[cachekey][member] = true
+            print("cached", name, "member", member)
+
+            return fwded(self.real, member, ...)
         end
     end,
 
@@ -78,4 +96,3 @@ _.BoundObject = Object:extend({
     -- in the bound object's lifecycle.
     init = function(self) end
 })
-BoundObject = _.BoundObject

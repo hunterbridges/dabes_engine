@@ -30,10 +30,8 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
 
 void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
-    LIST_FOREACH(scene->entities, first, next, current) {
-        Entity *entity = current->value;
-        Entity_destroy(entity);
-    }
+
+    Scripting_call_hook(engine->scripting, scene, "cleanup");
 
     List_destroy(scene->entities);
     scene->entities = NULL;
@@ -42,8 +40,6 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
       cpSpaceFree(scene->space);
       scene->space = NULL;
     }
-
-    if (scene->parallax) Parallax_destroy(scene->parallax);
 
     Stepper_reset(engine->physics->stepper);
     scene->started = 0;

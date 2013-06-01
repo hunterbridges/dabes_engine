@@ -4,7 +4,7 @@
 
 require 'dabes.bound_object'
 
-_.Music = BoundObject:extend({
+Music = BoundObject:extend({
     lib = dab_music,
 
 -- Hook Overloads
@@ -25,4 +25,3 @@ _.Music = BoundObject:extend({
     -- Pauses the music
     pause = BoundObject.fwd_func("pause")
 })
-Music = _.Music

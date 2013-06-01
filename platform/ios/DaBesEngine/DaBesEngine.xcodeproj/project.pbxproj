@@ -42,6 +42,9 @@
 		CA3F99C5172F87AC00ED1135 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3F99C2172F87AC00ED1135 /* audio.c */; };
 		CA3F99C8172F9C4F00ED1135 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99C7172F9C4F00ED1135 /* OpenAL.framework */; };
 		CA46A66E175930D000F2311E /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA46A66D175930D000F2311E /* Inconsolata.otf */; };
+		CA46A67917599E5B00F2311E /* LuaSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */; };
+		CA46A67D1759A02000F2311E /* UIColor+LuaHighlighting.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67C1759A02000F2311E /* UIColor+LuaHighlighting.m */; };
+		CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */; };
 		CA5E5E901721093A00CAF6A2 /* ortho_chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */; };
 		CA5E5E9F17211C0D00CAF6A2 /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
 		CA5E5EBA1724EDC500CAF6A2 /* parallax.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5EB81724EDC500CAF6A2 /* parallax.c */; };
@@ -203,6 +206,13 @@
 		CA3F99C3172F87AC00ED1135 /* audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
 		CA3F99C7172F9C4F00ED1135 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		CA46A66D175930D000F2311E /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inconsolata.otf; sourceTree = "<group>"; };
+		CA46A67717599E5B00F2311E /* LuaSyntaxHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LuaSyntaxHighlighter.h; sourceTree = "<group>"; };
+		CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LuaSyntaxHighlighter.m; sourceTree = "<group>"; };
+		CA46A67B1759A02000F2311E /* UIColor+LuaHighlighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+LuaHighlighting.h"; sourceTree = "<group>"; };
+		CA46A67C1759A02000F2311E /* UIColor+LuaHighlighting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+LuaHighlighting.m"; sourceTree = "<group>"; };
+		CA46A67E1759A1D400F2311E /* UIColor+Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
+		CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		CA46A681175A77F500F2311E /* scene_bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scene_bindings.h; sourceTree = "<group>"; };
 		CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ortho_chipmunk_scene.c; sourceTree = "<group>"; };
 		CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_chipmunk_scene.h; sourceTree = "<group>"; };
 		CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk6.xcodeproj; path = "../../../third_party/Chipmunk-6.1.4/xcode/Chipmunk6.xcodeproj"; sourceTree = "<group>"; };
@@ -460,6 +470,8 @@
 		CA24C7BB16FC22C10045D5DE /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				CA46A67A17599FED00F2311E /* Categories */,
+				CA46A67417599E4100F2311E /* Code */,
 				CA63D7A21708093800EE59CA /* Views */,
 				CAB359C016FE7BB2004CF684 /* Input */,
 				CAB359BD16FE6AAE004CF684 /* Audio */,
@@ -493,6 +505,26 @@
 			path = ../../../../src/audio;
 			sourceTree = "<group>";
 		};
+		CA46A67417599E4100F2311E /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				CA46A67717599E5B00F2311E /* LuaSyntaxHighlighter.h */,
+				CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */,
+			);
+			name = Code;
+			sourceTree = "<group>";
+		};
+		CA46A67A17599FED00F2311E /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				CA46A67E1759A1D400F2311E /* UIColor+Hex.h */,
+				CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */,
+				CA46A67B1759A02000F2311E /* UIColor+LuaHighlighting.h */,
+				CA46A67C1759A02000F2311E /* UIColor+LuaHighlighting.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
 		CA5E5E9217211BF900CAF6A2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -511,6 +543,7 @@
 				CA61B60F170FB3A600F1CC1A /* scene.c */,
 				CA61B610170FB3A600F1CC1A /* scene.h */,
 				CA65C6F7172B127400A7D4E5 /* scene_bindings.c */,
+				CA46A681175A77F500F2311E /* scene_bindings.h */,
 			);
 			name = scenes;
 			path = ../../../../src/scenes;
@@ -772,6 +805,9 @@
 				CAC581D61758607F004A8161 /* scripting.c in Sources */,
 				CAA725331758851A00CAD209 /* ScriptEditorViewController.m in Sources */,
 				CAA725381758953800CAD209 /* CodeEditorView.m in Sources */,
+				CA46A67917599E5B00F2311E /* LuaSyntaxHighlighter.m in Sources */,
+				CA46A67D1759A02000F2311E /* UIColor+LuaHighlighting.m in Sources */,
+				CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

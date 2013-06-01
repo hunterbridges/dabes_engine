@@ -32,7 +32,6 @@ void ChipmunkBody_cleanup(Body *body) {
 
     cpShapeDestroy(body->cp_shape);
     cpBodyDestroy(body->cp_body);
-    free(body);
 }
 
 VRect ChipmunkBody_gfx_rect(Body *body, float pixels_per_meter, int rotate) {

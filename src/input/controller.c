@@ -1,7 +1,7 @@
 #include "controller.h"
 
 Controller *Controller_create() {
-    Controller *controller = calloc(1, sizeof(controller));
+    Controller *controller = calloc(1, sizeof(Controller));
     check(controller != NULL, "Couldn't create Controller");
     Controller_reset(controller);
     return controller;

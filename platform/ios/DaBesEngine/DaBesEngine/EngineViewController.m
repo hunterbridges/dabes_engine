@@ -83,6 +83,14 @@ char *bundlePath__;
   if (!engine_) [self initEngine];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+  [NSTimer scheduledTimerWithTimeInterval:2.0
+                                   target:self
+                                 selector:@selector(restartScene)
+                                 userInfo:nil
+                                  repeats:YES];
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:
         (UIGestureRecognizer *)otherGestureRecognizer {

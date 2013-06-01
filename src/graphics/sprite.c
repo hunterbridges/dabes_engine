@@ -68,9 +68,11 @@ static inline void destroy_anim(void *anim) {
     SpriteAnimation_destroy(animation);
 }
 
+static inline void no_destroy(void *UNUSED(anim)) { }
+
 void Sprite_destroy(Sprite *sprite) {
     check(sprite != NULL, "No sprite to destroy");
-    Hashmap_destroy(sprite->animations, destroy_anim);
+    Hashmap_destroy(sprite->animations, no_destroy);
     free(sprite);
     return;
 error:

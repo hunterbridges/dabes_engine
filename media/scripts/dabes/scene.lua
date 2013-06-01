@@ -6,7 +6,7 @@ require 'dabes.bound_object'
 require 'dabes.music'
 require 'dabes.parallax'
 
-_.Scene = BoundObject:extend({
+Scene = BoundObject:extend({
     lib = dab_scene,
 
 -- Default Configuration
@@ -36,7 +36,7 @@ _.Scene = BoundObject:extend({
     -- add_entity(self, entity)
     --
     -- Adds an Entity to the Scene.
-    add_entity = BoundObject.fwd_func("add_entity"),
+    add_entity = BoundObject.fwd_adder("add_entity"),
 
     _getters = {
         space = BoundObject.fwd_func("get_space"),
@@ -64,7 +64,17 @@ _.Scene = BoundObject:extend({
     -- Configure may be called multiple times in the Scene's lifecycle.
     -- If you want to do things that persist across restarts,
     -- do them in `init` (inherited from BoundObject)
-    configure = function(self) end
-})
+    configure = function(self) end,
 
-Scene = _.Scene
+    -- cleanup
+    --
+    -- Hook called by the game engine when the scene stops. Overload this if you
+    -- need to clean up more things, but don't forget to call back up to this
+    -- method to make sure your entity cache gets cleaned up.
+    cleanup = function(self)
+        self._add_entity_cache = nil
+        self:_cleancache()
+        collectgarbage("collect")
+    end
+
+})

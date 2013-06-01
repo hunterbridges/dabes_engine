@@ -1,6 +1,6 @@
 require 'dabes.bound_object'
 
-_.ParallaxLayer = BoundObject:extend({
+ParallaxLayer = BoundObject:extend({
     lib = dab_parallaxlayer,
 
 -- Hook Overloads
@@ -22,11 +22,10 @@ _.ParallaxLayer = BoundObject:extend({
         y_wiggle = BoundObject.fwd_func("set_y_wiggle")
     }
 })
-ParallaxLayer = _.ParallaxLayer
 
 --------------------------------------------------------------------------------
 
-_.Parallax = BoundObject:extend({
+Parallax = BoundObject:extend({
     lib = dab_parallax,
 
 -- Hook Overloads
@@ -35,7 +34,16 @@ _.Parallax = BoundObject:extend({
         return class.lib.new(map_real(...))
     end,
 
+-- Public
+    add_layers = function(self, ...)
+        for i = 1, select("#", ...) do
+            self:add_layer(select(i, ...))
+        end
+    end,
+
 -- Function Bindings
+    add_layer = BoundObject.fwd_adder("add_layer"),
+
     _getters = {
         sky_color = BoundObject.fwd_func("get_sky_color"),
         sea_color = BoundObject.fwd_func("get_sea_color"),
@@ -50,4 +58,3 @@ _.Parallax = BoundObject:extend({
         sea_level = BoundObject.fwd_func("set_sea_level")
     }
 })
-Parallax = _.Parallax

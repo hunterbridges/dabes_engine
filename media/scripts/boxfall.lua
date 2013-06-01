@@ -1,9 +1,7 @@
 require 'boxfall.scenes.fat_map'
 
-scene_manager = {}
-
 function boot()
-    fat_map = _.FatMap:new()
+    local fat_map = retain(FatMap:new())
 
     scene_manager = {
         get_current_scene = function()

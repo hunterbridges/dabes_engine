@@ -29,8 +29,9 @@ void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
 void luaL_register_ud(lua_State *L, int ud_idx, void **ud_prop, void *val);
 int luaL_lookup_ud(lua_State *L, void *val);
 int luaL_lookup_instance(lua_State *L, void *val);
-void luaL_createweaktable(lua_State *L);
+void luaL_createweakweaktable(lua_State *L);
 void luaL_createweakstrongtable(lua_State *L);
+void luaL_createstrongweaktable(lua_State *L);
 int luab_register_instance(lua_State *L);
 struct Engine *luaL_get_engine(lua_State *L);
 int luaL_unpack_exact (lua_State *L, int count);

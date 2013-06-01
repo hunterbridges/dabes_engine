@@ -94,6 +94,18 @@ error:
     return 0;
 }
 
+int luab_Parallax_add_layer(lua_State *L) {
+    Parallax *parallax = luaL_toparallax(L, 1);
+    check(parallax != NULL, "Parallax required");
+    lua_getfield(L, 2, "real");
+    ParallaxLayer *layer = luaL_toparallaxlayer(L, -1);
+    Parallax_add_layer(parallax, layer);
+
+    return 0;
+error:
+    return 0;
+}
+
 int luab_Parallax_close(lua_State *L) {
     Parallax_userdata *ud = (Parallax_userdata *)
         luaL_checkudata(L, 1, luab_Parallax_metatable);
@@ -118,6 +130,7 @@ Scripting_num_setter(Parallax, sea_level);
 
 static const struct luaL_Reg luab_Parallax_meths[] = {
     {"__gc", luab_Parallax_close},
+    {"add_layer", luab_Parallax_add_layer},
     {"get_sky_color", luab_Parallax_get_sky_color},
     {"set_sky_color", luab_Parallax_set_sky_color},
     {"get_sea_color", luab_Parallax_get_sea_color},

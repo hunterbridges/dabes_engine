@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class CodeEditorView;
+@class CodeEditorTextView;
 @protocol CodeEditorViewDelegate <NSObject>
 
 - (void)codeEditorDidChange:(CodeEditorView *)codeEditor;
@@ -17,9 +18,11 @@
 
 @interface CodeEditorView : UIView <UITextViewDelegate, UIScrollViewDelegate>
 
-@property (nonatomic, assign) BOOL syntaxValid;
+@property (nonatomic, copy) NSNumber *errorLine;
 @property (nonatomic, weak) id<CodeEditorViewDelegate> delegate;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, weak) id linkTo;
+@property (nonatomic, readonly) UITextView *textView;
+@property (nonatomic, readonly) UIScrollView *scrollView;
 
 @end

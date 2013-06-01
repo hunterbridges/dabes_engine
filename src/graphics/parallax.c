@@ -44,7 +44,7 @@ error:
 void Parallax_destroy(Parallax *parallax) {
     check(parallax != NULL, "No parallax to destroy");
 
-    DArray_clear_destroy(parallax->layers);
+    DArray_destroy(parallax->layers);
     free(parallax);
 
     return;

@@ -55,26 +55,53 @@
 }
 
 - (void)codeEditorDidChange:(CodeEditorView *)codeEditor {
+  if (codeEditor.text == nil) return;
   const char *newScript =
       [codeEditor.text cStringUsingEncoding:NSUTF8StringEncoding];
   lua_State *L = _engine->scripting->L;
   int error = luaL_loadstring(_engine->scripting->L, newScript);
   if (error != 0) {
-    self.editorView.syntaxValid = NO;
-    printf("Error loading script:\n    %s\n", lua_tostring(L, -1));
+    NSString *errMsg = nil;
+    self.editorView.errorLine = [self extractErrorLine:lua_tostring(L, -1)
+                                               message:&errMsg];
+    //NSLog(@"Error running script:\n    %@\n", errMsg);
     lua_pop(L, 1);
     return;
   }
   
   int result = lua_pcall(L, 0, 0, 0);
   if (result != 0) {
-    self.editorView.syntaxValid = NO;
-    printf("Error running script:\n    %s\n", lua_tostring(L, -1));
+    NSString *errMsg = nil;
+    self.editorView.errorLine = [self extractErrorLine:lua_tostring(L, -1)
+                                               message:&errMsg];
+    //NSLog(@"Error running script:\n    %@\n", errMsg);
     lua_pop(L, 1);
     return;
   }
   
-  self.editorView.syntaxValid = YES;
+  self.editorView.errorLine = nil;
+}
+
+- (NSNumber *)extractErrorLine:(const char *)luaError
+                       message:(NSString **)message {
+  NSString *string = [[NSString alloc] initWithCString:luaError
+                                              encoding:NSUTF8StringEncoding];
+  NSCharacterSet *numberSet =
+      [NSCharacterSet characterSetWithCharactersInString:@"1234567890"];
+  NSScanner *scanner = [NSScanner scannerWithString:string];
+  [scanner scanUpToString:@"]:" intoString:nil];
+  
+  scanner.scanLocation += 2;
+  NSString *lineNumber = nil;
+  [scanner scanCharactersFromSet:numberSet intoString:&lineNumber];
+  scanner.scanLocation += 2;
+  
+  *message = [string substringFromIndex:scanner.scanLocation];
+  
+  NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+  [f setNumberStyle:NSNumberFormatterDecimalStyle];
+  NSNumber *line = [f numberFromString:lineNumber];
+  return line;
 }
 
 - (void)didReceiveMemoryWarning

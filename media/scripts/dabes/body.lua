@@ -4,14 +4,14 @@
 
 require 'dabes.bound_object'
 
-_.Body = BoundObject:extend({
+Body = BoundObject:extend({
     lib = dab_body,
 
 -- Default Configuration
 
 -- Hook Overloads
-    realize = function(class, w, h, m, can_rotate)
-        return class.lib.new(w, h, m, can_rotate)
+    realize = function(class, proto, w, h, m, can_rotate)
+        return class.lib.new(proto, w, h, m, can_rotate)
     end,
 
 -- Function Bindings
@@ -37,4 +37,3 @@ _.Body = BoundObject:extend({
         can_rotate = BoundObject.fwd_func("set_can_rotate")
     }
 })
-Body = _.Body

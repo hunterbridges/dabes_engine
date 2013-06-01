@@ -48,12 +48,12 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
 
     // The pointer map is keyed by C object pointers and contains
     // userdata objects.
-    luaL_createweakstrongtable(L);
+    luaL_createweakweaktable(L);
     lua_setglobal(L, SCRIPTING_POINTER_MAP);
 
     // The instance map is keyed by userdata objects and contains
     // the Lua BoundObject instances.
-    luaL_createweakstrongtable(L);
+    luaL_createweakweaktable(L);
     lua_setglobal(L, SCRIPTING_INSTANCE_MAP);
 
     lua_pushcfunction(L, luab_register_instance);
@@ -223,7 +223,7 @@ int luab_register_instance(lua_State *L) {
     return 1;
 }
 
-void luaL_createweaktable(lua_State *L) {
+void luaL_createweakweaktable(lua_State *L) {
     lua_newtable(L);
 
     lua_newtable(L); // metatable
@@ -238,6 +238,16 @@ void luaL_createweakstrongtable(lua_State *L) {
 
     lua_newtable(L); // metatable
     lua_pushstring(L, "k");
+    lua_setfield(L, -2, "__mode");
+
+    lua_setmetatable(L, -2);
+}
+
+void luaL_createstrongweaktable(lua_State *L) {
+    lua_newtable(L);
+
+    lua_newtable(L); // metatable
+    lua_pushstring(L, "v");
     lua_setfield(L, -2, "__mode");
 
     lua_setmetatable(L, -2);

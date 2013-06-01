@@ -4,7 +4,7 @@
 
 require 'dabes.bound_object'
 
-_.SpriteAnimation = BoundObject:extend({
+SpriteAnimation = BoundObject:extend({
     lib = dab_spriteanimation,
 
 -- Hook Overloads
@@ -23,21 +23,20 @@ _.SpriteAnimation = BoundObject:extend({
         fps = BoundObject.fwd_func('set_fps')
     }
 })
-SpriteAnimation = _.SpriteAnimation
 
 --------------------------------------------------------------------------------
 
-_.Sprite = BoundObject:extend({
+Sprite = BoundObject:extend({
     lib = dab_sprite,
 
 -- Hook Overloads
     realize = function(class, texname, cell_size)
-        ret = class.lib.new(texname, cell_size)
+        local ret = class.lib.new(texname, cell_size)
         return ret
     end,
 
 -- Bound Functions
-    add_animation = BoundObject.fwd_func('add_animation'),
+    add_animation = BoundObject.fwd_adder("add_animation"),
 
     use_animation = BoundObject.fwd_func('use_animation'),
 
@@ -51,4 +50,3 @@ _.Sprite = BoundObject:extend({
         direction = BoundObject.fwd_func('set_direction')
     }
 })
-Sprite = _.Sprite

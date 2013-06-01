@@ -2,61 +2,49 @@
 --
 -- Some API wrangling to inherit behavior and allow for getters and setters.
 
-_ = {_veil = {}}
-_injector = {
-    __newindex = function(table, key, val)
-        exists = table._veil[key]
-        print "testing"
-        if exists ~= nil then
-            -- If it already exists, soft copy the members so they get
-            -- injected into the existing instance's metatables
-            for k, v in pairs(val) do
-                print("Injecting", k)
-                exists[k] = v
-            end
-        else
-            table._veil[key] = val
-        end
-    end,
-    
-    __index = function(table, key)
-      return table._veil[key]
-    end
-}
-setmetatable(_, _injector)
+require 'dabes.global'
 
-_.Object = {
+Object = {
     new = function(class)
         local minstance = {
             __index = function(self, key)
-                meta = getmetatable(self)
-                raw = meta[key]
+                local meta = getmetatable(self)
+                local raw = meta[key]
                 if raw ~= nil then
                     return raw
                 end
 
-                getters = meta._getters
+                local getters = meta._getters
                 if getters ~= nil and getters[key] ~= nil then
-                    return getters[key](self)
+                    local got = getters[key](self)
+                    self._cache[key] = got
+                    return got
                 else
                     return nil
                 end
             end,
 
             __newindex = function(self, key, value)
-                meta = getmetatable(self)
-                setters = meta._setters
+                local meta = getmetatable(self)
+                local setters = meta._setters
                 if setters ~= nil and setters[key] ~= nil then
+                    self._cache[key] = value
                     setters[key](self, value)
                 else
                     rawset(self, key, value)
                 end
+            end,
+
+            _cleancache = function(self)
+                print("cleaning cache for", self)
+                self._cache = {}
             end
         }
         local instance = {}
 
         setmetatable(minstance, class)
         setmetatable(instance, minstance)
+        instance:_cleancache()
         return instance
     end,
 
@@ -65,7 +53,8 @@ _.Object = {
         sub.__index = sub
 
         return sub
-    end
+    end,
+
+    _isobject = true
 }
-Object = _.Object
 Object.__index = Object
