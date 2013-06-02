@@ -10,6 +10,7 @@
 #import "CodeEditorView.h"
 #import "UIColor+LuaHighlighting.h"
 #import "LuaSyntaxHighlighter.h"
+#import "LuaSyntaxStyler.h"
 
 @interface CodeEditorTextView : UITextView
 
@@ -34,11 +35,13 @@
 @interface CodeEditorView ()
 
 @property (nonatomic, assign) CGSize eightyCols;
+@property (nonatomic, strong) LuaSyntaxStyler *styler;
 @property (nonatomic, strong) LuaSyntaxHighlighter *highlighter;
 @property (nonatomic, strong) CodeEditorTextView *textView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, strong) NSMutableArray *errorHighlightViews;
+@property (nonatomic, assign) NSInteger indentJump;
 
 @end
 
@@ -74,7 +77,8 @@
       self.errorLine = nil;
       
       self.highlighter = [[LuaSyntaxHighlighter alloc] init];
-  
+      self.styler = [[LuaSyntaxStyler alloc] init];
+      
       [self.scrollView addSubview:self.textView];
     }
     return self;
@@ -148,6 +152,7 @@
 }
 
 - (void)setText:(NSString *)text {
+  self.styler.text = text;
   self.highlighter.text = text;
   self.textView.textColor = [UIColor codeDefaultColor];
   self.textView.attributedText = self.highlighter.attributedText;
@@ -206,8 +211,14 @@
     shouldChangeTextInRange:(NSRange)range
             replacementText:(NSString *)text {
   [self startDisplayLinkIfNeeded];
-  [self.highlighter replaceThenRehighlightCharactersInRange:range
-                                                 withString:text];
+  NSRange styledRange;
+  NSString *styledString = nil;
+  [self.styler replaceThenRestyleCharactersInRange:range
+                                        withString:text
+                                       styledRange:&styledRange
+                                      styledString:&styledString];
+  [self.highlighter replaceThenRehighlightCharactersInRange:styledRange
+                                                 withString:styledString];
   return YES;
 }
 
@@ -215,6 +226,7 @@
   NSRange range = textView.selectedRange;
   CGPoint offset = self.scrollView.contentOffset;
   textView.attributedText = self.highlighter.attributedText;
+  range.location += self.styler.lastIndentJump;
   textView.selectedRange = range;
   [self.scrollView setContentOffset:offset animated:NO];
   [self.delegate codeEditorDidChange:self];

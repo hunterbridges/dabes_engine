@@ -83,6 +83,7 @@
 		CAE3234E171CFB2500E7F7FB /* vmatrix.c in Sources */ = {isa = PBXBuildFile; fileRef = CAE3234D171CFB2400E7F7FB /* vmatrix.c */; };
 		CAEA954E173475E100C90B8C /* sfx.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA954C173475E100C90B8C /* sfx.c */; };
 		CAEA95621737630D00C90B8C /* stepper.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA95601737630D00C90B8C /* stepper.c */; };
+		CAEF194C175AFE4900B3A3A1 /* LuaSyntaxStyler.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -278,6 +279,8 @@
 		CAEA954D173475E100C90B8C /* sfx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfx.h; sourceTree = "<group>"; };
 		CAEA95601737630D00C90B8C /* stepper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stepper.c; sourceTree = "<group>"; };
 		CAEA95611737630D00C90B8C /* stepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stepper.h; sourceTree = "<group>"; };
+		CAEF194A175AFE4900B3A3A1 /* LuaSyntaxStyler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LuaSyntaxStyler.h; sourceTree = "<group>"; };
+		CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LuaSyntaxStyler.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -510,6 +513,8 @@
 			children = (
 				CA46A67717599E5B00F2311E /* LuaSyntaxHighlighter.h */,
 				CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */,
+				CAEF194A175AFE4900B3A3A1 /* LuaSyntaxStyler.h */,
+				CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */,
 			);
 			name = Code;
 			sourceTree = "<group>";
@@ -808,6 +813,7 @@
 				CA46A67917599E5B00F2311E /* LuaSyntaxHighlighter.m in Sources */,
 				CA46A67D1759A02000F2311E /* UIColor+LuaHighlighting.m in Sources */,
 				CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */,
+				CAEF194C175AFE4900B3A3A1 /* LuaSyntaxStyler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
