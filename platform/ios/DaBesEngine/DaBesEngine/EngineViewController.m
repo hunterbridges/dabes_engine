@@ -5,6 +5,9 @@
 #import "tile_map_parse.h"
 #import "ortho_chipmunk_scene.h"
 
+NSString *kEngineReadyForScriptNotification =
+    @"kEngineReadyForScriptNotification";
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 char *bundlePath__;
@@ -158,7 +161,7 @@ char *bundlePath__;
 }
 
 - (void)initEngine {
-  engine_ = Engine_create("media/scripts/boxfall.lua", NULL);
+  engine_ = Engine_create("scripts/boxfall/boot.lua", NULL);
   Scripting_boot(engine_->scripting);
 }
 
@@ -195,6 +198,10 @@ char *bundlePath__;
     scene_->_(control)(scene_, engine_);
     scene_->_(update)(scene_, engine_);
     Input_reset(engine_->input);
+    
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kEngineReadyForScriptNotification
+        object:self];
   }
 }
 
@@ -227,7 +234,8 @@ char *bundlePath__;
                      kCFStringEncodingUTF8);
   printf("%s\n", cNewFilePath);
   Engine_log("Injecting map <%@>", [newFilePath lastPathComponent]);
-  Scene_load_tile_map(scene_, engine_, cNewFilePath, 1);
+  Scene_load_tile_map(scene_, engine_, cNewFilePath, 1,
+                      scene_->tile_map->meters_per_tile);
 }
 
 - (void)restartScene {

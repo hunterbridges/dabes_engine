@@ -65,8 +65,7 @@ int luab_Scene_load_map(lua_State *L) {
     const char *file = lua_tostring(L, 2);
     float meters_per_tile = lua_tonumber(L, 3);
 
-    Scene_load_tile_map(scene, engine, (char *)file, 0);
-    scene->tile_map->meters_per_tile = meters_per_tile;
+    Scene_load_tile_map(scene, engine, (char *)file, 0, meters_per_tile);
 
     return 1;
 error:

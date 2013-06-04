@@ -12,8 +12,10 @@
 
 @interface ScriptEditorViewController : UIViewController
 
-- (id)initWithEngine:(Engine *)engine;
-  
+- (id)initWithEngineVC:(EngineViewController *)engineVC
+              withPath:(NSString *)path;
+
 @property (nonatomic, readonly) CodeEditorView *editorView;
+@property (nonatomic, copy) NSString *queuedScript;
 
 @end

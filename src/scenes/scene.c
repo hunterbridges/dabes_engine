@@ -100,10 +100,11 @@ void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
 }
 
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
-                         int abs_path) {
+                         int abs_path, float meters_per_tile) {
   const char *map_path = abs_path ? map_file : resource_path(map_file);
   TileMap *map = TileMap_parse((char *)map_path, engine);
   if (map == NULL) return;
+  map->meters_per_tile = meters_per_tile;
   Scene_set_tile_map(scene, engine, map);
 }
 

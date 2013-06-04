@@ -21,10 +21,10 @@ const char *resource_path(const char *filename) {
                        stringByAppendingPathComponent:nsFilename];
   
   const char *cFullpath;
-  if ([manager fileExistsAtPath:bundlePath]) {
-    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
-  } else if ([manager fileExistsAtPath:docsFile]) {
+  if ([manager fileExistsAtPath:docsFile]) {
     cFullpath = [docsFile cStringUsingEncoding:NSUTF8StringEncoding];
+  } else if ([manager fileExistsAtPath:bundlePath]) {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
   } else {
     cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
   }

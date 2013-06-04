@@ -90,9 +90,15 @@ const NSInteger kTabWidth = 4;
     [indentScanner scanCharactersFromSet:space intoString:&indent];
     self.lastIndentJump = indent.length;
     
-    NSString *indentedReplace =
-        [NSString stringWithFormat:@"\n%@%@", indent,
-            [string substringFromIndex:1]];
+    NSString *indentedReplace = nil;
+    if (indent) {
+       indentedReplace =
+          [NSString stringWithFormat:@"\n%@%@", indent,
+              [string substringFromIndex:1]];
+    } else {
+       indentedReplace =
+          [NSString stringWithFormat:@"\n%@", [string substringFromIndex:1]];
+    }
     self.text = [self.text stringByReplacingCharactersInRange:range
                                                    withString:indentedReplace];
     *styledRange = range;

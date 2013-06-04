@@ -3,6 +3,7 @@
 #import "ConsoleView.h"
 #import "InterfaceViewController.h"
 #import "EngineViewController.h"
+#import "DirBrowserViewController.h"
 #import "ScriptEditorViewController.h"
 #import "CodeEditorView.h"
 
@@ -16,7 +17,7 @@
   float menuHeight_;
   int pages_;
   ConsoleView *console_;
-  ScriptEditorViewController *scriptEditor_;
+  UINavigationController *scriptEditor_;
   UIPopoverController *popover_;
   UISwitch *camDebugSwitch_;
   UISwitch *gridSwitch_;
@@ -44,8 +45,20 @@
   [self addChildViewController:engineVC_];
   [self.view addSubview:engineVC_.view];
   
+  NSString *path = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"scripts"];
+  Engine *engine = engineVC_.engine;
+  DirBrowserViewController *scriptBrowser =
+      [[DirBrowserViewController alloc] initWithPath:path
+          withFileSelectionBlock:^(DirBrowserViewController *vc, NSString *item) {
+            ScriptEditorViewController *editor =
+                [[ScriptEditorViewController alloc] initWithEngineVC:engineVC_
+                                                            withPath:item];
+            [vc.navigationController pushViewController:editor animated:YES];
+          }];
   scriptEditor_ =
-      [[ScriptEditorViewController alloc] initWithEngine:engineVC_.engine];
+      [[UINavigationController alloc] initWithRootViewController:scriptBrowser];
+  scriptEditor_.navigationBar.tintColor = [UIColor blackColor];
+  scriptEditor_.view.clipsToBounds = YES;
   
   UISwipeGestureRecognizer *downSwipe =
       [[UISwipeGestureRecognizer alloc] initWithTarget:self
@@ -82,12 +95,12 @@
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [self showScriptEditor];
-}
-
 - (void)viewWillDisappear:(BOOL)animated {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [self showScriptEditor];
 }
 
 - (void)dealloc {
@@ -167,7 +180,6 @@
                                         0,
                                         self.view.bounds.size.width / 2,
                                         self.view.bounds.size.height);
-  scriptEditor_.editorView.linkTo = engineVC_;
   [self addChildViewController:scriptEditor_];
   [self.view addSubview:scriptEditor_.view];
   [UIView animateWithDuration:0.5

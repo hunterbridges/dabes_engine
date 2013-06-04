@@ -7,63 +7,100 @@
 //
 
 #import "CodeEditorView.h"
+#import "EngineViewController.h"
 #import "ScriptEditorViewController.h"
 #import "util.h"
 #import "engine.h"
 #import "scripting.h"
 
+static const NSTimeInterval kDebounceInterval = 0.1;
+
 @interface ScriptEditorViewController () <CodeEditorViewDelegate>
 
 @property (nonatomic, strong) CodeEditorView *editorView;
-@property (nonatomic, assign) Engine *engine;
+@property (nonatomic, weak) EngineViewController *engineVC;
+@property (nonatomic, strong) NSTimer *debounce;
+@property (nonatomic, strong) NSString *path;
 
 @end
 
 @implementation ScriptEditorViewController
 
-- (id)initWithEngine:(Engine *)engine {
+- (id)initWithEngineVC:(EngineViewController *)engineVC
+              withPath:(NSString *)path {
   self = [super init];
   if (self) {
-    _engine = engine;
+    self.engineVC = engineVC;
+    self.path = path;
+    
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(loadQueuedScript)
+        name:kEngineReadyForScriptNotification
+        object:nil];
   }
   return self;
+}
+
+- (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-	// Do any additional setup after loading the view.
+  
+  self.navigationItem.title = [self.path lastPathComponent];
+  
   self.editorView = [[CodeEditorView alloc] initWithFrame:self.view.bounds];
   self.editorView.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
                                     UIViewAutoresizingFlexibleHeight);
   self.editorView.delegate = self;
+  self.editorView.linkTo = self.engineVC;
   [self.view addSubview:self.editorView];
   
   [self loadScript];
 }
 
 - (void)loadScript {
-  char *script;
-  int size;
-  int ret = read_text_file("media/scripts/boxfall/entities/megaman.lua",
-                           &script, &size);
-  if (ret) {
-    NSString *str = [[NSString alloc] initWithCString:script
-                                             encoding:NSUTF8StringEncoding];
-    self.editorView.text = str;
+  NSError *error = nil;
+  NSString *str = [NSString stringWithContentsOfFile:self.path
+                                            encoding:NSUTF8StringEncoding
+                                               error:&error];
+  if (error) {
+    NSLog(@"%@", error.description);
+    return;
   }
+  self.editorView.text = str;
 }
 
 - (void)codeEditorDidChange:(CodeEditorView *)codeEditor {
   if (codeEditor.text == nil) return;
+  if (self.debounce) [self.debounce invalidate];
+  self.debounce = [NSTimer scheduledTimerWithTimeInterval:kDebounceInterval
+                                                   target:self
+                                                 selector:@selector(enqueueScript)
+                                                 userInfo:nil
+                                                  repeats:NO];
+}
+
+- (void)enqueueScript {
+  self.debounce = nil;
+  self.queuedScript = self.editorView.text;
+}
+
+- (void)loadQueuedScript {
+  if (self.queuedScript == nil) return;
   const char *newScript =
-      [codeEditor.text cStringUsingEncoding:NSUTF8StringEncoding];
-  lua_State *L = _engine->scripting->L;
-  int error = luaL_loadstring(_engine->scripting->L, newScript);
+      [self.queuedScript cStringUsingEncoding:NSUTF8StringEncoding];
+  self.queuedScript = nil;
+  lua_State *L = self.engineVC.engine->scripting->L;
+  int error = luaL_loadstring(self.engineVC.engine->scripting->L, newScript);
   if (error != 0) {
     NSString *errMsg = nil;
-    self.editorView.errorLine = [self extractErrorLine:lua_tostring(L, -1)
-                                               message:&errMsg];
+    NSNumber *errorLine = [self extractErrorLine:lua_tostring(L, -1)
+                                         message:&errMsg];
+    [self.editorView setErrorLine:errorLine withMessage:errMsg];
     //NSLog(@"Error running script:\n    %@\n", errMsg);
     lua_pop(L, 1);
     return;
@@ -72,14 +109,15 @@
   int result = lua_pcall(L, 0, 0, 0);
   if (result != 0) {
     NSString *errMsg = nil;
-    self.editorView.errorLine = [self extractErrorLine:lua_tostring(L, -1)
-                                               message:&errMsg];
+    NSNumber *errorLine = [self extractErrorLine:lua_tostring(L, -1)
+                                         message:&errMsg];
+    [self.editorView setErrorLine:errorLine withMessage:errMsg];
     //NSLog(@"Error running script:\n    %@\n", errMsg);
     lua_pop(L, 1);
     return;
   }
   
-  self.editorView.errorLine = nil;
+  [self.editorView setErrorLine:nil withMessage:nil];
 }
 
 - (NSNumber *)extractErrorLine:(const char *)luaError

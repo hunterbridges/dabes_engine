@@ -12,6 +12,7 @@
 
 @property (nonatomic, readonly, copy) NSMutableAttributedString *attributedText;
 @property (nonatomic, strong) NSString *text;
+@property (nonatomic, assign) BOOL useCTAttributes;
 
 - (void)highlightEntireString;
 - (void)replaceThenRehighlightCharactersInRange:(NSRange)range

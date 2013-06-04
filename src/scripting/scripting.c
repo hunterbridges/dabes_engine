@@ -42,7 +42,7 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting_load_engine_libs(scripting);
 
     lua_getglobal(scripting->L, "package");
-    lua_pushstring(scripting->L, resource_path("media/scripts/?.lua"));
+    lua_pushstring(scripting->L, resource_path("scripts/?.lua"));
     lua_setfield(scripting->L, -2, "path");
     lua_pop(scripting->L, 1);
 

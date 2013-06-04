@@ -16,8 +16,9 @@ FatMap = Scene:extend({
     configure = function(self)
         -- Music
         local music = Music:new(
-            "media/music/Climb_Intro.ogg",
-            "media/music/Climb_Loop.ogg"
+            -- "media/music/Climb_Intro.ogg",
+            -- "media/music/Climb_Loop.ogg"
+            "media/music/Sneak.ogg"
         )
         self.music = music
         music:play()

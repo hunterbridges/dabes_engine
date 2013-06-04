@@ -4,6 +4,8 @@
 #import "engine.h"
 #import "scene.h"
 
+extern NSString *kEngineReadyForScriptNotification;
+
 @interface EngineViewController : GLKViewController <UIGestureRecognizerDelegate,
                                               GLKViewDelegate>
 

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 The Telemetry Group. All rights reserved.
 //
 
+#import <CoreText/CoreText.h>
 #import "LuaSyntaxHighlighter.h"
 #import "UIColor+LuaHighlighting.h"
 
@@ -133,8 +134,7 @@
       if (checkRange.location != NSNotFound) {
         NSAttributedString *toReplace =
             [[NSAttributedString alloc] initWithString:bufferedString
-                attributes:@{NSForegroundColorAttributeName:
-                               [UIColor codeDefaultColor]}];
+                attributes:[self attributesWithColor:[UIColor codeDefaultColor]]];
         [self.attributedText replaceCharactersInRange:bufferedRange
                                  withAttributedString:toReplace];
         [self highlightEntireString];
@@ -150,6 +150,15 @@
 }
 
 #pragma mark - Private
+
+- (NSDictionary *)attributesWithColor:(UIColor *)color {
+  if (self.useCTAttributes) {
+    return @{(id)kCTForegroundColorAttributeName: (id)color.CGColor};
+  } else {
+    return @{NSForegroundColorAttributeName: color};
+  }
+}
+
 - (BOOL)locationInStringLiteral:(int)loc withEndcap:(NSString **)withEndcap {
   NSString *upTo = [self.text substringToIndex:loc];
   NSScanner *scanner = [NSScanner scannerWithString:upTo];
@@ -263,7 +272,7 @@
         }
       }
       NSDictionary *attrs =
-          @{NSForegroundColorAttributeName: [UIColor codeStringColor]};
+          [self attributesWithColor:[UIColor codeStringColor]];
       NSAttributedString *toAppend =
           [[NSAttributedString alloc] initWithString:strLiteral
                                           attributes:attrs];
@@ -292,7 +301,7 @@
       
       if (needsDecimal) {
         NSDictionary *attrs =
-            @{NSForegroundColorAttributeName: [UIColor codeDefaultColor]};
+            [self attributesWithColor:[UIColor codeDefaultColor]];
         NSAttributedString *toAppend =
             [[NSAttributedString alloc] initWithString:@"." attributes:attrs];
         [highlighted appendAttributedString:toAppend];
@@ -359,22 +368,25 @@
 
 - (NSAttributedString *)highlightWord:(NSString *)string {
   NSDictionary *attrs =
-      @{NSForegroundColorAttributeName: [UIColor codeDefaultColor]};
+      [self attributesWithColor:[UIColor codeDefaultColor]];
   
 #pragma mark Keyword
   
   if ([self.keywords containsObject:string]) {
-    attrs = @{NSForegroundColorAttributeName: [UIColor codeKeywordColor]};
+    attrs =
+        [self attributesWithColor:[UIColor codeKeywordColor]];
     
 #pragma mark Control Flow
     
   } else if ([self.controlFlow containsObject:string]) {
-    attrs = @{NSForegroundColorAttributeName: [UIColor codeControlFlowColor]};
+    attrs =
+        [self attributesWithColor:[UIColor codeControlFlowColor]];
     
 #pragma mark Value Words
     
   } else if ([self.valueKeywords containsObject:string]) {
-    attrs = @{NSForegroundColorAttributeName: [UIColor codeBooleanColor]};
+    attrs =
+        [self attributesWithColor:[UIColor codeBooleanColor]];
     
   }
   NSAttributedString *attr = [[NSAttributedString alloc] initWithString:string

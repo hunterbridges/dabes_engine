@@ -84,6 +84,9 @@
 		CAEA954E173475E100C90B8C /* sfx.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA954C173475E100C90B8C /* sfx.c */; };
 		CAEA95621737630D00C90B8C /* stepper.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA95601737630D00C90B8C /* stepper.c */; };
 		CAEF194C175AFE4900B3A3A1 /* LuaSyntaxStyler.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */; };
+		CAEF196E175DAA3A00B3A3A1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAEF196D175DAA3A00B3A3A1 /* CoreText.framework */; };
+		CAEF1970175DBA9000B3A3A1 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CAEF196F175DBA9000B3A3A1 /* scripts */; };
+		CAEF1975175DC2CC00B3A3A1 /* DirBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -281,6 +284,10 @@
 		CAEA95611737630D00C90B8C /* stepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stepper.h; sourceTree = "<group>"; };
 		CAEF194A175AFE4900B3A3A1 /* LuaSyntaxStyler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LuaSyntaxStyler.h; sourceTree = "<group>"; };
 		CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LuaSyntaxStyler.m; sourceTree = "<group>"; };
+		CAEF196D175DAA3A00B3A3A1 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CAEF196F175DBA9000B3A3A1 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ../../../scripts; sourceTree = "<group>"; };
+		CAEF1973175DC2CC00B3A3A1 /* DirBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirBrowserViewController.h; sourceTree = "<group>"; };
+		CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirBrowserViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -288,6 +295,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAEF196E175DAA3A00B3A3A1 /* CoreText.framework in Frameworks */,
 				CA3F99C8172F9C4F00ED1135 /* OpenAL.framework in Frameworks */,
 				CA65C6F21729B73000A7D4E5 /* liblua.a in Frameworks */,
 				CA5E5E9F17211C0D00CAF6A2 /* libChipmunk-iPhone.a in Frameworks */,
@@ -315,11 +323,11 @@
 		CA24C72616FC1E7E0045D5DE = {
 			isa = PBXGroup;
 			children = (
+				CAEF196F175DBA9000B3A3A1 /* scripts */,
 				CAB3597A16FC4EBC004CF684 /* media */,
+				CA24C7BB16FC22C10045D5DE /* Platform */,
 				CA24C73C16FC1E7E0045D5DE /* DaBesEngine */,
-				CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */,
-				CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */,
-				CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */,
+				CAEF1957175DA98F00B3A3A1 /* Third Party */,
 				CA24C73116FC1E7E0045D5DE /* Frameworks */,
 				CA24C73016FC1E7E0045D5DE /* Products */,
 			);
@@ -336,6 +344,7 @@
 		CA24C73116FC1E7E0045D5DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CAEF196D175DAA3A00B3A3A1 /* CoreText.framework */,
 				CA3F99C7172F9C4F00ED1135 /* OpenAL.framework */,
 				CA3F99B8172F85E000ED1135 /* Ogg.framework */,
 				CA3F99B9172F85E000ED1135 /* Vorbis.framework */,
@@ -375,7 +384,6 @@
 				CA24C78D16FC20900045D5DE /* prefix.h */,
 				CA24C78E16FC20900045D5DE /* util.c */,
 				CA24C78F16FC20900045D5DE /* util.h */,
-				CA24C7BB16FC22C10045D5DE /* Platform */,
 				CA24C73D16FC1E7E0045D5DE /* Supporting Files */,
 			);
 			path = DaBesEngine;
@@ -474,7 +482,7 @@
 			isa = PBXGroup;
 			children = (
 				CA46A67A17599FED00F2311E /* Categories */,
-				CA46A67417599E4100F2311E /* Code */,
+				CA46A67417599E4100F2311E /* Script Editing */,
 				CA63D7A21708093800EE59CA /* Views */,
 				CAB359C016FE7BB2004CF684 /* Input */,
 				CAB359BD16FE6AAE004CF684 /* Audio */,
@@ -484,10 +492,9 @@
 				CA24C75316FC1E7E0045D5DE /* EngineViewController.m */,
 				CAB359C116FE96E9004CF684 /* InterfaceViewController.h */,
 				CAB359C216FE96E9004CF684 /* InterfaceViewController.m */,
-				CAA725311758851A00CAD209 /* ScriptEditorViewController.h */,
-				CAA725321758851A00CAD209 /* ScriptEditorViewController.m */,
 			);
 			name = Platform;
+			path = DaBesEngine;
 			sourceTree = "<group>";
 		};
 		CA3F99C1172F87AC00ED1135 /* audio */ = {
@@ -508,15 +515,17 @@
 			path = ../../../../src/audio;
 			sourceTree = "<group>";
 		};
-		CA46A67417599E4100F2311E /* Code */ = {
+		CA46A67417599E4100F2311E /* Script Editing */ = {
 			isa = PBXGroup;
 			children = (
-				CA46A67717599E5B00F2311E /* LuaSyntaxHighlighter.h */,
-				CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */,
-				CAEF194A175AFE4900B3A3A1 /* LuaSyntaxStyler.h */,
-				CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */,
+				CAEF1972175DC29D00B3A3A1 /* Code */,
+				CAEF1971175DC29600B3A3A1 /* Views */,
+				CAA725311758851A00CAD209 /* ScriptEditorViewController.h */,
+				CAA725321758851A00CAD209 /* ScriptEditorViewController.m */,
+				CAEF1973175DC2CC00B3A3A1 /* DirBrowserViewController.h */,
+				CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */,
 			);
-			name = Code;
+			name = "Script Editing";
 			sourceTree = "<group>";
 		};
 		CA46A67A17599FED00F2311E /* Categories */ = {
@@ -559,8 +568,6 @@
 			children = (
 				CA63D7A31708094C00EE59CA /* ConsoleView.h */,
 				CA63D7A41708094C00EE59CA /* ConsoleView.m */,
-				CAA725361758953800CAD209 /* CodeEditorView.h */,
-				CAA725371758953800CAD209 /* CodeEditorView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -637,6 +644,36 @@
 			);
 			name = scripting;
 			path = ../../../../src/scripting;
+			sourceTree = "<group>";
+		};
+		CAEF1957175DA98F00B3A3A1 /* Third Party */ = {
+			isa = PBXGroup;
+			children = (
+				CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */,
+				CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */,
+				CA63D7C1170F60B300EE59CA /* lcthw.xcodeproj */,
+			);
+			name = "Third Party";
+			sourceTree = "<group>";
+		};
+		CAEF1971175DC29600B3A3A1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CAA725361758953800CAD209 /* CodeEditorView.h */,
+				CAA725371758953800CAD209 /* CodeEditorView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		CAEF1972175DC29D00B3A3A1 /* Code */ = {
+			isa = PBXGroup;
+			children = (
+				CA46A67717599E5B00F2311E /* LuaSyntaxHighlighter.h */,
+				CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */,
+				CAEF194A175AFE4900B3A3A1 /* LuaSyntaxStyler.h */,
+				CAEF194B175AFE4900B3A3A1 /* LuaSyntaxStyler.m */,
+			);
+			name = Code;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -754,6 +791,7 @@
 				CAB359B916FE242F004CF684 /* Icon@2x.png in Resources */,
 				CAB359C716FED230004CF684 /* blueprint.jpg in Resources */,
 				CA46A66E175930D000F2311E /* Inconsolata.otf in Resources */,
+				CAEF1970175DBA9000B3A3A1 /* scripts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -814,6 +852,7 @@
 				CA46A67D1759A02000F2311E /* UIColor+LuaHighlighting.m in Sources */,
 				CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */,
 				CAEF194C175AFE4900B3A3A1 /* LuaSyntaxStyler.m in Sources */,
+				CAEF1975175DC2CC00B3A3A1 /* DirBrowserViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

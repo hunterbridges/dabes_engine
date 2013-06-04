@@ -49,7 +49,7 @@ Scene *Scene_create(Engine *engine, SceneProto proto);
 void Scene_destroy(Scene *scene, Engine *engine);
 void Scene_restart(Scene *scene, Engine *engine);
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
-                         int abs_path);
+                         int abs_path, float meters_per_tile);
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
 void Scene_reset_camera(Scene *scene);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
