@@ -87,6 +87,7 @@
 		CAEF196E175DAA3A00B3A3A1 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAEF196D175DAA3A00B3A3A1 /* CoreText.framework */; };
 		CAEF1970175DBA9000B3A3A1 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CAEF196F175DBA9000B3A3A1 /* scripts */; };
 		CAEF1975175DC2CC00B3A3A1 /* DirBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */; };
+		CAEF1979175E618C00B3A3A1 /* DebugMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -288,6 +289,8 @@
 		CAEF196F175DBA9000B3A3A1 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ../../../scripts; sourceTree = "<group>"; };
 		CAEF1973175DC2CC00B3A3A1 /* DirBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirBrowserViewController.h; sourceTree = "<group>"; };
 		CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirBrowserViewController.m; sourceTree = "<group>"; };
+		CAEF1977175E618C00B3A3A1 /* DebugMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugMenuViewController.h; sourceTree = "<group>"; };
+		CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugMenuViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -482,6 +485,7 @@
 			isa = PBXGroup;
 			children = (
 				CA46A67A17599FED00F2311E /* Categories */,
+				CAEF1976175E615A00B3A3A1 /* Debug Menu */,
 				CA46A67417599E4100F2311E /* Script Editing */,
 				CA63D7A21708093800EE59CA /* Views */,
 				CAB359C016FE7BB2004CF684 /* Input */,
@@ -676,6 +680,15 @@
 			name = Code;
 			sourceTree = "<group>";
 		};
+		CAEF1976175E615A00B3A3A1 /* Debug Menu */ = {
+			isa = PBXGroup;
+			children = (
+				CAEF1977175E618C00B3A3A1 /* DebugMenuViewController.h */,
+				CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */,
+			);
+			name = "Debug Menu";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -853,6 +866,7 @@
 				CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */,
 				CAEF194C175AFE4900B3A3A1 /* LuaSyntaxStyler.m in Sources */,
 				CAEF1975175DC2CC00B3A3A1 /* DirBrowserViewController.m in Sources */,
+				CAEF1979175E618C00B3A3A1 /* DebugMenuViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,16 +2,7 @@
 #import "input.h"
 #import "tile_map.h"
 
-typedef enum {
-  GraphicalResourceKindSprite = 0,
-  GraphicalResourceKindTileset = 1
-} GraphicalResourceKind;
-
-@interface InterfaceViewController : UIViewController <UIScrollViewDelegate,
-  UITextFieldDelegate, UIImagePickerControllerDelegate, UIAlertViewDelegate,
-  UIScrollViewDelegate, UINavigationControllerDelegate> {
-    Input *touchInput_;
-}
+@interface InterfaceViewController : UIViewController
 
 - (void)didEnterBackground;
 - (void)willEnterForeground;
