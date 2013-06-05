@@ -185,7 +185,6 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     scene->space = cpSpaceNew();
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
-    //cpSpaceSetCollisionBias(scene->space, 1.0);
     scene->space->collisionSlop = 0.0;
     scene->space->collisionBias = 0.1;
 
@@ -212,11 +211,12 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
             // TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
             int col = i % scene->tile_map->cols;
             int row = i / scene->tile_map->cols;
+            float corr = 0.01;
             cpVect tile_verts[4] = {
-              { grid_size * col, grid_size * row + grid_size },
-              { grid_size * col + grid_size, grid_size * row + grid_size },
-              { grid_size * col + grid_size, grid_size * row },
-              { grid_size * col, grid_size * row },
+              { grid_size * col + corr,             grid_size * row + grid_size - corr},
+              { grid_size * col + grid_size - corr, grid_size * row + grid_size - corr},
+              { grid_size * col + grid_size - corr, grid_size * row + corr},
+              { grid_size * col + corr,             grid_size * row + corr},
             };
             cpShape *tile_shape = cpPolyShapeNew(map_body, 4, tile_verts,
                                                 cpvzero);

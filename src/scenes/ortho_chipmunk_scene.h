@@ -4,7 +4,8 @@
 
 typedef enum {
   OCSCollisionTypeEntity = 1,
-  OCSCollisionTypeTile = 2
+  OCSCollisionTypeTile = 2,
+  OCSCollisionTypeDrawShape = 3
 } OCSCollisionType;
 
 extern SceneProto OrthoChipmunkSceneProto;

@@ -6,7 +6,10 @@ Megaman = Entity:extend({
     body_type = "chipmunk",
 
     init = function(self)
-        local body = Body:new(self.body_type, 2.0, 2.0, 100, false)
+        local w = 2.0
+        local h = 2.0
+        local body = Body:new(self.body_type, w, h, 100, false)
+        body:set_hit_box(21.0 / 32.0, 24.0 / 32.0, {0.0, h * 4.0 / 32.0})
         body.friction = 0.7
         self.body = body
 

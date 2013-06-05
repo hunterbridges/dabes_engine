@@ -22,6 +22,7 @@ typedef struct BodyProto {
     VPoint (*gfx_center)(struct Body *body, float pixels_per_meter);
 
     void (*apply_force)(struct Body *body, VPoint force, VPoint offset);
+    void (*set_hit_box)(struct Body *body, float w, float h, VPoint offset);
 
     VPoint (*get_pos)(struct Body *body);
     void (*set_pos)(struct Body *body, VPoint pos);
@@ -53,6 +54,8 @@ typedef struct Body {
     float mass;
     float w;
     float h;
+
+    VPoint draw_offset;
 } Body;
 
 Body *Body_create(BodyProto proto, float w, float h, float mass,

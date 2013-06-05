@@ -16,6 +16,7 @@ What is done:
     * Sprite animations
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
+    * Basic Hitboxes
 * Audio engine:
     * OGG support
     * Seamless music queueing and looping
@@ -31,7 +32,6 @@ What is not yet done:
     * Source volume
 * Graphics engine:
     * Keyframe animations
-* Hitboxes
 * Scripting engine:
     * Camera bindings
     * Space bindings
@@ -46,7 +46,7 @@ Bugs:
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
-* Getting stuck in ground tiles
+* Getting "snagged" on ground tiles
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules

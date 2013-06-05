@@ -89,14 +89,6 @@
     return self;
 }
 
-- (void)viewDidLoad {
-  [self startDisplayLinkIfNeeded];
-}
-
-- (void)dealloc {
-  [self stopDisplayLink];
-}
-
 - (void)layoutSubviews {
   [super layoutSubviews];
   self.scrollView.frame = self.bounds;

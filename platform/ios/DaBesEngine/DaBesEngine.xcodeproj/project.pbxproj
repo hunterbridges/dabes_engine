@@ -487,7 +487,6 @@
 				CA46A67A17599FED00F2311E /* Categories */,
 				CAEF1976175E615A00B3A3A1 /* Debug Menu */,
 				CA46A67417599E4100F2311E /* Script Editing */,
-				CA63D7A21708093800EE59CA /* Views */,
 				CAB359C016FE7BB2004CF684 /* Input */,
 				CAB359BD16FE6AAE004CF684 /* Audio */,
 				CA24C74516FC1E7E0045D5DE /* AppDelegate.h */,
@@ -683,6 +682,7 @@
 		CAEF1976175E615A00B3A3A1 /* Debug Menu */ = {
 			isa = PBXGroup;
 			children = (
+				CA63D7A21708093800EE59CA /* Views */,
 				CAEF1977175E618C00B3A3A1 /* DebugMenuViewController.h */,
 				CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */,
 			);

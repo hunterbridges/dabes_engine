@@ -57,6 +57,19 @@ error:
     return 0;
 }
 
+int luab_Body_set_hit_box(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    float w = lua_tonumber(L, 2);
+    float h = lua_tonumber(L, 3);
+    VPoint offset = luaL_tovpoint(L, 4);
+    body->_(set_hit_box)(body, w, h, offset);
+
+    return 0;
+error:
+    return 0;
+}
+
 int luab_Body_get_pos(lua_State *L) {
     Body *body = luaL_tobody(L, 1);
     check(body != NULL, "Body required");
@@ -207,6 +220,7 @@ error:
 static const struct luaL_Reg luab_Body_meths[] = {
     {"__gc", luab_Body_close},
     {"apply_force", luab_Body_apply_force},
+    {"set_hit_box", luab_Body_set_hit_box},
     {"get_pos", luab_Body_get_pos},
     {"set_pos", luab_Body_set_pos},
     {"get_velo", luab_Body_get_velo},

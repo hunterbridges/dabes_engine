@@ -107,10 +107,6 @@
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [self showMenu];
-}
-
 - (void)dealloc {
   Input_destroy(_touchInput);
 }

@@ -16,6 +16,7 @@ Body = BoundObject:extend({
 
 -- Function Bindings
     apply_force = BoundObject.fwd_func("apply_force"),
+    set_hit_box = BoundObject.fwd_func("set_hit_box"),
 
     _getters = {
         pos = BoundObject.fwd_func("get_pos"),
