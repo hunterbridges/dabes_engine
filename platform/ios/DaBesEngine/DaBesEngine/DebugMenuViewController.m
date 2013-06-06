@@ -26,6 +26,7 @@ static const int kPages = 4;
 @property (nonatomic, strong) ConsoleView *console;
 @property (nonatomic, strong) UIPopoverController *popover;
 @property (nonatomic, strong) UISwitch *camDebugSwitch;
+@property (nonatomic, strong) UISwitch *physRenderSwitch;
 @property (nonatomic, strong) UISwitch *gridSwitch;
   
 @property (nonatomic, assign) GraphicalResourceKind importKind;
@@ -164,6 +165,23 @@ static const int kPages = 4;
            forControlEvents:UIControlEventValueChanged];
   [self.scrollView addSubview:self.camDebugSwitch];
   
+  UILabel *physRenderLabel = [[UILabel alloc] init];
+  physRenderLabel.backgroundColor = [UIColor clearColor];
+  physRenderLabel.textColor = [UIColor whiteColor];
+  physRenderLabel.textAlignment = NSTextAlignmentCenter;
+  physRenderLabel.text = @"Physics Render";
+  physRenderLabel.translatesAutoresizingMaskIntoConstraints = NO;
+  [self.scrollView addSubview:physRenderLabel];
+  
+  self.physRenderSwitch = [[UISwitch alloc] init];
+  self.physRenderSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+  self.physRenderSwitch.contentHorizontalAlignment =
+      UIControlContentHorizontalAlignmentCenter;
+  [self.physRenderSwitch addTarget:self
+                     action:@selector(physRenderChanged:)
+           forControlEvents:UIControlEventValueChanged];
+  [self.scrollView addSubview:self.physRenderSwitch];
+  
   UIButton *resetCamButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [resetCamButton setTitle:@"Reset" forState:UIControlStateNormal];
   resetCamButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -236,7 +254,8 @@ static const int kPages = 4;
                                      _scrollView, resetCamButton,
                                      camDebugLabel, _camDebugSwitch, _console,
                                      restartSceneButton, rebootEngineButton,
-                                     gridLabel, _gridSwitch, resLabel,
+                                     gridLabel, _gridSwitch, physRenderLabel,
+                                     _physRenderSwitch, resLabel,
                                      importSpriteButton, importTilesetButton);
   NSArray *headers =
       [NSLayoutConstraint constraintsWithVisualFormat:
@@ -313,7 +332,8 @@ static const int kPages = 4;
   
   row =
       [NSLayoutConstraint constraintsWithVisualFormat:
-          @"|-[restartSceneButton(180)]-(40)-[rebootEngineButton(180)]-(40)-[gridLabel]-[_gridSwitch(==79)]"
+          @"|-[restartSceneButton(180)]-(40)-[rebootEngineButton(180)]-(40)"
+          @"-[gridLabel]-[_gridSwitch(==79)]-(40)-[physRenderLabel]-[_physRenderSwitch(==79)]"
           options:NSLayoutFormatAlignAllTop
           metrics:nil
           views:views];
@@ -492,6 +512,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
 - (void)camDebugChanged:(UISwitch *)sender {
   self.engineVC.scene->debug_camera = sender.on;
+}
+
+- (void)physRenderChanged:(UISwitch *)sender {
+  self.engineVC.scene->render_mode = sender.on;
 }
 
 - (void)debugGridChanged:(UISwitch *)sender {

@@ -53,8 +53,12 @@ Code Gripes:
 
 ```
 # Ya gonna need dis stuf!
-brew install --HEAD sdl sdl_image sdl_ttf sdl_mixer libogg libvorbis
+brew install sdl sdl_image sdl_ttf sdl_mixer libogg libvorbis
 
+# Also install OpenAL Soft
+# http://kcat.strangesoft.net/openal.html
+
+make submodules
 make game
 ./game
 ```
