@@ -2,6 +2,8 @@
 --
 -- Making the Lua global env do weird stuff
 
+math.randomseed(os.time())
+
 _veil = {}
 _injector = {}
 setmetatable(_G, _injector)

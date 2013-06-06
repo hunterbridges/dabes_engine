@@ -62,6 +62,9 @@ void Entity_update(Entity *entity, Engine *engine) {
     check(entity != NULL, "Need entity to update entity");
     check(engine != NULL, "Need engine to update entity");
 
+    if (entity->body && entity->body->cp_body) {
+      cpBodyResetForces(entity->body->cp_body);
+    }
     Scripting_call_hook(engine->scripting, entity, "main");
     Sprite_update(entity->sprite, engine);
 error:

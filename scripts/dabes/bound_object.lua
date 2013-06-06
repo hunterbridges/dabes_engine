@@ -39,6 +39,7 @@ BoundObject = Object:extend({
 
         bound.real = bound:realize(...)
         dab_registerinstance(bound.real, bound)
+        bound.born_at = os.time()
         bound:init()
 
         return bound

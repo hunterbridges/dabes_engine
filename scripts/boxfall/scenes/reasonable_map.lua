@@ -1,14 +1,14 @@
 require 'dabes.controller'
 require 'dabes.scene'
-require 'boxfall.entities.box'
+require 'boxfall.entities.squiggy_box'
 require 'boxfall.entities.megaman'
 
-FatMap = Scene:extend({
+ReasonableMap = Scene:extend({
     kind = "ortho_chipmunk",
     pixels_per_meter = 32.0,
 
     init = function(self)
-        self:load_map("media/tilemaps/fat.tmx", 2.0)
+        self:load_map("media/tilemaps/reasonable.tmx", 2.0)
 
         self:start()
     end,
@@ -16,23 +16,22 @@ FatMap = Scene:extend({
     configure = function(self)
         -- Music
         local music = Music:new(
-            "media/music/Climb_Intro.ogg",
-            "media/music/Climb_Loop.ogg"
+            "media/music/Sneak.ogg"
         )
         self.music = music
         music:play()
 
         -- Entities
-        local num_boxes = 100
+        local num_boxes = 15
         local xo = 6.0
 
         local megaman = Megaman:new()
-        megaman.body.pos = {6.0, 27.25}
+        megaman.body.pos = {5.0, 23.25}
         megaman.controller = get_controller(1)
         self:add_entity(megaman)
 
         for i = 1, num_boxes do
-            local box = Box:new()
+            local box = SquiggyBox:new()
 
             local body = box.body
             body.pos = {xo, 20.0 - 8.0 - i}
