@@ -2,6 +2,11 @@
 #define __ortho_chipmunk_scene_h
 #include "scene.h"
 
+typedef struct {
+    Scene *scene;
+    Engine *engine;
+} OCSIterData;
+
 typedef enum {
   OCSCollisionTypeEntity = 1,
   OCSCollisionTypeTile = 2,

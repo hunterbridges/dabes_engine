@@ -22,6 +22,11 @@ typedef struct SceneProto {
     void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
 } SceneProto;
 
+typedef enum {
+  kSceneRenderModeNormal = 0,
+  kSceneRenderModePhysicsDebug = 1
+} SceneRenderMode;
+
 typedef struct Scene {
     SceneProto proto;
     char *name;
@@ -40,6 +45,7 @@ typedef struct Scene {
 
     short int draw_grid;
     short int debug_camera;
+    short int render_mode;
     int started;
 
     int pixels_per_meter;

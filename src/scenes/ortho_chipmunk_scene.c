@@ -4,6 +4,7 @@
 #include "../entities/body.h"
 #include "../entities/body_bindings.h"
 #include "ortho_chipmunk_scene.h"
+#include "scene.h"
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
@@ -74,7 +75,57 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     Camera_track(scene->camera);
 }
 
+static void render_shape_iter(cpShape *shape, void *data) {
+    cpPolyShape *pshape = (cpPolyShape *)shape;
+    OCSIterData *iter_data = (OCSIterData *)data;
+
+    VPoint shape_verts[pshape->numVerts];
+
+    int i = 0;
+    cpVect *vert = pshape->verts;
+    cpBody *body = cpShapeGetBody(shape);
+    cpVect center = {0, 0};
+    VPoint vcenter = {0, 0};
+    float rot = 0;
+    GLfloat color[4] = {1,1,1,1};
+    if (!cpBodyIsRogue(body)) {
+        color[0] = 0;
+        color[1] = 0;
+        rot = cpBodyGetAngle(body) * 180 / M_PI;
+        center = cpBodyGetPos(body);
+        vcenter.x = center.x * iter_data->scene->pixels_per_meter;
+        vcenter.y = center.y * iter_data->scene->pixels_per_meter;
+    }
+
+    for (i = 0; i < pshape->numVerts; i++, vert++) {
+        shape_verts[i].x = vert->x * iter_data->scene->pixels_per_meter;
+        shape_verts[i].y = vert->y * iter_data->scene->pixels_per_meter;
+    }
+    Graphics_stroke_poly(iter_data->engine->graphics, pshape->numVerts,
+            shape_verts, vcenter, color, 0, rot);
+}
+
+void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
+    Graphics *graphics = ((Engine *)engine)->graphics;
+    GfxShader *dshader = Graphics_get_shader(graphics, "decal");
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Graphics_project_camera(graphics, scene->camera);
+
+    Graphics_use_shader(graphics, dshader);
+    OCSIterData iter_data = {scene, engine};
+    cpSpaceEachShape(scene->space, render_shape_iter, &iter_data);
+
+    // Camera debug
+    if (scene->debug_camera)
+        Camera_debug(scene->camera, engine->graphics);
+}
+
 void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
+    if (scene->render_mode == kSceneRenderModePhysicsDebug) {
+        OrthoChipmunkScene_render_physdebug(scene, engine);
+        return;
+    }
+
     Graphics *graphics = ((Engine *)engine)->graphics;
 
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
@@ -116,6 +167,11 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     scene->camera->rotation_radians += 2 * input->cam_rotate * M_PI / 180;
 
     if (input->cam_debug) scene->debug_camera = !(scene->debug_camera);
+    if (input->phys_render) {
+        scene->render_mode =
+            (scene->render_mode == kSceneRenderModeNormal ?
+             kSceneRenderModePhysicsDebug : kSceneRenderModeNormal);
+    }
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 }
 
@@ -192,13 +248,6 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
                                OCSCollisionTypeTile, collision_begin_cb, NULL,
                                NULL, collision_seperate_cb, NULL);
 
-    int i = 0;
-    LIST_FOREACH(scene->entities, first, next, current) {
-      Entity *entity = current->value;
-      OrthoChipmunkScene_add_entity_body(scene, engine, entity);
-      i++;
-    }
-
     if (scene->tile_map) {
         TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);
         cpBody *map_body = cpSpaceGetStaticBody(scene->space);
@@ -211,7 +260,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
             // TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
             int col = i % scene->tile_map->cols;
             int row = i / scene->tile_map->cols;
-            float corr = 0.01;
+            float corr = 0;
             cpVect tile_verts[4] = {
               { grid_size * col + corr,             grid_size * row + grid_size - corr},
               { grid_size * col + grid_size - corr, grid_size * row + grid_size - corr},
@@ -224,6 +273,13 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
             tile_shape->collision_type = OCSCollisionTypeTile;
             cpSpaceAddStaticShape(scene->space, tile_shape);
         }
+    }
+
+    int i = 0;
+    LIST_FOREACH(scene->entities, first, next, current) {
+      Entity *entity = current->value;
+      OrthoChipmunkScene_add_entity_body(scene, engine, entity);
+      i++;
     }
 
     return 1;

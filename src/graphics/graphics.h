@@ -134,6 +134,8 @@ CGImageRef Graphics_load_CGImage(char *image_name);
 SDL_Surface *Graphics_load_SDLImage(char *image_name);
 #endif
 
+void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
+        VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],

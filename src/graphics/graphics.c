@@ -231,17 +231,10 @@ void GfxTexture_destroy(GfxTexture *texture) {
   free(texture);
 }
 
-void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-                          double line_width, double rotation) {
-    check_mem(graphics);
+void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
+        VPoint center, GLfloat color[4], double line_width, double rotation) {
     Graphics_reset_modelview_matrix(graphics);
-    double w = rect.tr.x - rect.tl.x;
-    double h = rect.bl.y - rect.tl.y;
 
-    VPoint center = {
-        rect.tl.x + w / 2,
-        rect.tl.y + h / 2
-    };
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
@@ -255,20 +248,20 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 
     GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
 
-    GfxUVertex vertices[12] = {
-      // Vertex
-      {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
-      {.raw = {w / 2.0, -h / 2.0, 0, 1}},
-      {.raw = {w / 2.0, h / 2.0, 0, 1}},
-      {.raw = {-w / 2.0, h / 2.0, 0, 1}},
+    GfxUVertex vertices[3 * num_points];
+    int i = 0;
+    for (i = 0; i < num_points; i++) {
+        int pos_idx = i * 3;
+        int color_idx = i * 3 + 1;
+        int tex_idx = i * 3 + 2;
 
-      // Color
-      cVertex, cVertex, cVertex, cVertex,
-
-      // Texture
-      tex, tex, tex, tex
-    };
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GfxUVertex), vertices,
+        VPoint point = points[i];
+        GfxUVertex pos = {.raw = {point.x, point.y, 0.0, 1.0}};
+        vertices[pos_idx] = pos;
+        vertices[color_idx] = cVertex;
+        vertices[tex_idx] = tex;
+    }
+    glBufferData(GL_ARRAY_BUFFER, 3 * num_points * sizeof(GfxUVertex), vertices,
             GL_STATIC_DRAW);
 
     // Texture
@@ -277,13 +270,29 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 #endif
     glBindTexture(GL_TEXTURE_2D, 0);
     glLineWidth(line_width);
-    glDrawArrays(GL_LINE_LOOP, 0, 4);
+    glDrawArrays(GL_LINE_LOOP, 0, num_points);
     return;
 #ifdef DABES_SDL
     glEnable(GL_MULTISAMPLE);
 #endif
-error:
-  return;
+}
+
+void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
+                          double line_width, double rotation) {
+    double w = rect.tr.x - rect.tl.x;
+    double h = rect.bl.y - rect.tl.y;
+    VPoint center = {
+        rect.tl.x + w / 2,
+        rect.tl.y + h / 2
+    };
+
+    int i = 0;
+    VPoint poly[4];
+    for (i = 0; i < 4; i ++) {
+        poly[i] = VPoint_subtract(VRect_vertex(rect, i), center);
+    }
+
+    Graphics_stroke_poly(graphics, 4, poly, center, color, line_width, rotation);
 }
 
 void Graphics_draw_sprite(Graphics *graphics, Sprite *sprite, VRect rect,
@@ -357,17 +366,10 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
 
     GfxUVertex vertices[12] = {
-      // Vertex
-      {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
-      {.raw = {w / 2.0, -h / 2.0, 0, 1}},
-      {.raw = {-w / 2.0, h / 2.0, 0, 1}},
-      {.raw = {w / 2.0, h / 2.0, 0, 1}},
-
-      // Color
-      cVertex, cVertex, cVertex, cVertex,
-
-      // Texture
-      tex_tl, tex_tr, tex_bl, tex_br
+      {.raw = {-w / 2.0, -h / 2.0, 0, 1}}, cVertex, tex_tl,
+      {.raw = {w / 2.0, -h / 2.0, 0, 1}}, cVertex, tex_tr,
+      {.raw = {-w / 2.0, h / 2.0, 0, 1}}, cVertex, tex_bl,
+      {.raw = {w / 2.0, h / 2.0, 0, 1}}, cVertex, tex_br
     };
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -471,15 +473,15 @@ void set_up_decal_shader(GfxShader *UNUSED(shader)) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
-                          GL_FLOAT, GL_FALSE, 0, 0);
+                          GL_FLOAT, GL_FALSE, sizeof(GfxUVertex) * 3, 0);
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_COLOR], 4,
-                          GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *)(sizeof(GfxUVertex) * 4));
+                          GL_FLOAT, GL_FALSE, sizeof(GfxUVertex) * 3,
+                          (GLvoid *)(sizeof(GfxUVertex) * 1));
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
-                          GL_FLOAT, GL_FALSE,
-                          0, (GLvoid *)(sizeof(GfxUVertex) * 8));
+                          GL_FLOAT, GL_FALSE, sizeof(GfxUVertex) * 3,
+                          (GLvoid *)(sizeof(GfxUVertex) * 2));
 }
 
 void tear_down_decal_shader(GfxShader *UNUSED(shader)) {

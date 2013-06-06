@@ -58,6 +58,8 @@ void Input_poll(Input *input) {
                 input->debug_scene_draw_grid = 1;
             if (event.key.keysym.sym == SDLK_c)
                 input->cam_debug = 1;
+            if (event.key.keysym.sym == SDLK_p)
+                input->phys_render = 1;
         }
     }
 #endif
@@ -85,6 +87,7 @@ void Input_reset(Input *input) {
     input->cam_zoom = 0;
     input->cam_rotate = 0;
     input->cam_debug = 0;
+    input->phys_render = 0;
     int i = 0;
     for (i = 0; i < 4; i++) {
         Controller *controller = input->controllers[i];

@@ -11,6 +11,7 @@ typedef struct Input {
     int cam_zoom;
     int cam_rotate;
     int cam_debug;
+    int phys_render;
 } Input;
 
 Input *Input_create();
