@@ -24,7 +24,7 @@ Megaman = Entity:extend({
     end,
 
     build_sprite = function()
-        local sprite = Sprite:new("media/sprites/megaman_run.png", {32, 32})
+        local sprite = Sprite:new("media/sprites/megaman.png", {32, 32})
 
         local standing = SpriteAnimation:new(0)
         standing.fps = 0
@@ -33,6 +33,10 @@ Megaman = Entity:extend({
         local running = SpriteAnimation:new(1, 2, 3, 2)
         running.fps = 7
         sprite:add_animation(running, "running")
+
+        local jumping = SpriteAnimation:new(4)
+        jumping.fps = 0
+        sprite:add_animation(jumping, "jumping")
 
         sprite:use_animation("standing")
 
@@ -107,12 +111,19 @@ Megaman = Entity:extend({
     end,
 
     derive_animation = function(self)
+        local on_ground = self.ground_sensor.on_static
+
         local velo = self.body.velo
         local standing_thresh = 0.25
         if velo[1] < -standing_thresh then
             self.sprite.direction = 180
         elseif velo[1] > standing_thresh then
             self.sprite.direction = 0
+        end
+
+        if not on_ground then
+            self.sprite:use_animation('jumping')
+            return
         end
 
         if velo[1] > -standing_thresh and velo[1] < standing_thresh then
