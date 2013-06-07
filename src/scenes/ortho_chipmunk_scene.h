@@ -10,7 +10,8 @@ typedef struct {
 typedef enum {
   OCSCollisionTypeEntity = 1,
   OCSCollisionTypeTile = 2,
-  OCSCollisionTypeDrawShape = 3
+  OCSCollisionTypeDrawShape = 3,
+  OCSCollisionTypeSensor = 4
 } OCSCollisionType;
 
 extern SceneProto OrthoChipmunkSceneProto;

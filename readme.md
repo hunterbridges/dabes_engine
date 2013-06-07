@@ -17,6 +17,7 @@ What is done:
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
     * Basic Hitboxes
+    * Collision Sensors
 * Audio engine:
     * OGG support
     * Seamless music queueing and looping

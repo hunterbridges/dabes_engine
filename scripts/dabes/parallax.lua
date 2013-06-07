@@ -42,6 +42,10 @@ Parallax = BoundObject:extend({
     end,
 
 -- Function Bindings
+
+    -- add_layer(parallax, layer)
+    --
+    -- Adds a layer on top of the existing layers.
     add_layer = BoundObject.fwd_adder("add_layer"),
 
     _getters = {

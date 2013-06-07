@@ -1,4 +1,6 @@
+#include <chipmunk/chipmunk.h>
 #include "chipmunk_body.h"
+#include "sensor.h"
 
 void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset);
 
@@ -23,7 +25,7 @@ cpShape *cpSnipBoxShapeNew(cpBody *body, float w, float h, float snip,
     float w2 = w / 2.0;
     float h2 = h / 2.0;
     float sw = snip * w2;
-    float sh = snip * h2;
+    float sh = snip * w2;
 
     cpVect verts[8] = {
         { w2 - sw, -h2},
@@ -131,6 +133,30 @@ VPoint ChipmunkBody_gfx_center(Body *body, float pixels_per_meter) {
     return VPoint_scale(center, pixels_per_meter);
 }
 
+void ChipmunkBody_add_sensor(Body *body, Sensor *sensor) {
+    cpVect cp_offset = {sensor->offset.x, sensor->offset.y};
+    cpShape *shape =
+        cpOffsetBoxShapeNew(body->cp_body, sensor->w, sensor->h, cp_offset);
+    cpShapeSetBody(shape, body->cp_body);
+    cpShapeSetSensor(shape, 1);
+    cpShapeSetUserData(shape, sensor);
+    sensor->cp_shape = shape;
+
+    if (body->cp_space) {
+        cpSpaceAddShape(body->cp_space, shape);
+    }
+}
+
+void ChipmunkBody_remove_sensor(Body *UNUSED(body), Sensor *sensor) {
+    if (sensor->cp_space) {
+        cpSpaceRemoveShape(sensor->cp_space, sensor->cp_shape);
+    }
+
+    cpShapeSetBody(sensor->cp_shape, NULL);
+    sensor->body = NULL;
+    sensor->cp_space = NULL;
+}
+
 void ChipmunkBody_apply_force(Body *body, VPoint force, VPoint offset) {
     cpBodyApplyForce(body->cp_body, tocp(force), tocp(offset));
 }
@@ -231,6 +257,9 @@ BodyProto ChipmunkBodyProto = {
 
     .gfx_rect = ChipmunkBody_gfx_rect,
     .gfx_center = ChipmunkBody_gfx_center,
+
+    .add_sensor = ChipmunkBody_add_sensor,
+    .remove_sensor = ChipmunkBody_remove_sensor,
 
     .apply_force = ChipmunkBody_apply_force,
     .set_hit_box = ChipmunkBody_set_hit_box,

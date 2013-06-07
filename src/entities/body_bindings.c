@@ -1,6 +1,7 @@
 #include "body_bindings.h"
 #include "../core/engine.h"
 #include "chipmunk_body.h"
+#include "sensor_bindings.h"
 
 const char *luab_Body_lib = "dab_body";
 const char *luab_Body_metatable = "DaBes.body";
@@ -42,6 +43,31 @@ int luab_Body_close(lua_State *L) {
         Body_destroy(ud->p);
     }
     ud->p = NULL;
+    return 0;
+}
+
+int luab_Body_add_sensor(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    lua_getfield(L, 2, "real");
+    Sensor *sensor = luaL_tosensor(L, -1);
+    Body_add_sensor(body, sensor);
+
+    return 0;
+error:
+    return 0;
+}
+
+int luab_Body_remove_sensor(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    lua_getfield(L, 2, "real");
+    Sensor *sensor = luaL_tosensor(L, -1);
+    Body_remove_sensor(body, sensor);
+    lua_pop(L, 1);
+
+    return 0;
+error:
     return 0;
 }
 
@@ -219,6 +245,8 @@ error:
 
 static const struct luaL_Reg luab_Body_meths[] = {
     {"__gc", luab_Body_close},
+    {"add_sensor", luab_Body_add_sensor},
+    {"remove_sensor", luab_Body_remove_sensor},
     {"apply_force", luab_Body_apply_force},
     {"set_hit_box", luab_Body_set_hit_box},
     {"get_pos", luab_Body_get_pos},

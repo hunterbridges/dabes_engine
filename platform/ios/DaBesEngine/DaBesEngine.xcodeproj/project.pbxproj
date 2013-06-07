@@ -88,6 +88,8 @@
 		CAEF1970175DBA9000B3A3A1 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CAEF196F175DBA9000B3A3A1 /* scripts */; };
 		CAEF1975175DC2CC00B3A3A1 /* DirBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */; };
 		CAEF1979175E618C00B3A3A1 /* DebugMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */; };
+		CAEF197E1761BED100B3A3A1 /* sensor_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEF197A1761BED000B3A3A1 /* sensor_bindings.c */; };
+		CAEF197F1761BED100B3A3A1 /* sensor.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEF197C1761BED100B3A3A1 /* sensor.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -291,6 +293,10 @@
 		CAEF1974175DC2CC00B3A3A1 /* DirBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirBrowserViewController.m; sourceTree = "<group>"; };
 		CAEF1977175E618C00B3A3A1 /* DebugMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugMenuViewController.h; sourceTree = "<group>"; };
 		CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugMenuViewController.m; sourceTree = "<group>"; };
+		CAEF197A1761BED000B3A3A1 /* sensor_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sensor_bindings.c; sourceTree = "<group>"; };
+		CAEF197B1761BED100B3A3A1 /* sensor_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensor_bindings.h; sourceTree = "<group>"; };
+		CAEF197C1761BED100B3A3A1 /* sensor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sensor.c; sourceTree = "<group>"; };
+		CAEF197D1761BED100B3A3A1 /* sensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensor.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -633,6 +639,10 @@
 				CAC581B317585FFD004A8161 /* entity.h */,
 				CAC581B517585FFD004A8161 /* entity_bindings.c */,
 				CAC581B617585FFD004A8161 /* entity_bindings.h */,
+				CAEF197C1761BED100B3A3A1 /* sensor.c */,
+				CAEF197D1761BED100B3A3A1 /* sensor.h */,
+				CAEF197A1761BED000B3A3A1 /* sensor_bindings.c */,
+				CAEF197B1761BED100B3A3A1 /* sensor_bindings.h */,
 			);
 			name = entities;
 			path = ../../../../src/entities;
@@ -867,6 +877,8 @@
 				CAEF194C175AFE4900B3A3A1 /* LuaSyntaxStyler.m in Sources */,
 				CAEF1975175DC2CC00B3A3A1 /* DirBrowserViewController.m in Sources */,
 				CAEF1979175E618C00B3A3A1 /* DebugMenuViewController.m in Sources */,
+				CAEF197E1761BED100B3A3A1 /* sensor_bindings.c in Sources */,
+				CAEF197F1761BED100B3A3A1 /* sensor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,8 +15,30 @@ Body = BoundObject:extend({
     end,
 
 -- Function Bindings
+
+    -- apply_force(body, {x, y} force, {x, y} offset)
+    --
+    -- Apply `force` Newtons `offset` meters from the center of body.
     apply_force = BoundObject.fwd_func("apply_force"),
+
+    -- set_hit_box(body, w, h, {x, y} offset)
+    --
+    -- OK This is a weird function.
+    --
+    -- Make a hitbox of the relative size w, h, and set the physical center
+    -- `offset` meters from the draw center. It is important to note that
+    -- the offset is applied and becomes the body's center.
     set_hit_box = BoundObject.fwd_func("set_hit_box"),
+
+    -- add_sensor(body, sensor)
+    --
+    -- Adds a sensor to body.
+    add_sensor = BoundObject.fwd_adder("add_sensor"),
+
+    -- remove_sensor(body, sensor)
+    --
+    -- Removes a sensor from body.
+    remove_sensor = BoundObject.fwd_remover("remove_sensor"),
 
     _getters = {
         pos = BoundObject.fwd_func("get_pos"),

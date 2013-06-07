@@ -3,6 +3,7 @@
 #include "../audio/sfx.h"
 #include "../entities/body.h"
 #include "../entities/body_bindings.h"
+#include "../entities/sensor.h"
 #include "ortho_chipmunk_scene.h"
 #include "scene.h"
 
@@ -88,13 +89,20 @@ static void render_shape_iter(cpShape *shape, void *data) {
     VPoint vcenter = {0, 0};
     float rot = 0;
     GLfloat color[4] = {1,1,1,1};
+
     if (!cpBodyIsRogue(body)) {
-        color[0] = 0;
-        color[1] = 0;
         rot = cpBodyGetAngle(body) * 180 / M_PI;
         center = cpBodyGetPos(body);
         vcenter.x = center.x * iter_data->scene->pixels_per_meter;
         vcenter.y = center.y * iter_data->scene->pixels_per_meter;
+    }
+
+    if (shape->collision_type == OCSCollisionTypeEntity) {
+        color[0] = 0;
+        color[1] = 0;
+    } else if (shape->collision_type == OCSCollisionTypeSensor) {
+        color[1] = 0;
+        color[2] = 0;
     }
 
     for (i = 0; i < pshape->numVerts; i++, vert++) {
@@ -209,6 +217,26 @@ void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     }
 }
 
+int sensor_coll_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *UNUSED(data)) {
+    cpShape *sShape, *tShape;
+    cpArbiterGetShapes(arb, &sShape, &tShape);
+    Sensor *sensor = cpShapeGetUserData(sShape);
+    sensor->on_static++;
+    return 1;
+}
+
+void sensor_coll_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *UNUSED(data)) {
+    cpShape *sShape, *tShape;
+    cpArbiterGetShapes(arb, &sShape, &tShape);
+    Sensor *sensor = cpShapeGetUserData(sShape);
+    sensor->on_static--;
+    if (sensor->on_static < 0) {
+        sensor->on_static = 0;
+    }
+}
+
 void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
         Entity *entity) {
     assert(entity->body != NULL);
@@ -220,8 +248,15 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     body->state.scene = scene;
 
     entity->pixels_per_meter = scene->pixels_per_meter;
+    body->cp_shape->collision_type = OCSCollisionTypeEntity;
     cpSpaceAddShape(scene->space, body->cp_shape);
     cpSpaceAddBody(scene->space, body->cp_body);
+
+    LIST_FOREACH(body->sensors, first, next, current) {
+        Sensor *sensor = current->value;
+        cpSpaceAddShape(scene->space, sensor->cp_shape);
+        sensor->cp_shape->collision_type = OCSCollisionTypeSensor;
+    }
 }
 
 void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
@@ -247,6 +282,9 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
                                OCSCollisionTypeTile, collision_begin_cb, NULL,
                                NULL, collision_seperate_cb, NULL);
+    cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
+                               OCSCollisionTypeTile, sensor_coll_begin_cb, NULL,
+                               NULL, sensor_coll_seperate_cb, NULL);
 
     if (scene->tile_map) {
         TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);

@@ -1,4 +1,5 @@
 #include "body.h"
+#include "sensor.h"
 
 Body *Body_create(BodyProto proto, float w, float h, float mass,
         int can_rotate) {
@@ -11,6 +12,8 @@ Body *Body_create(BodyProto proto, float w, float h, float mass,
     body->mass = mass;
     body->w = w;
     body->h = h;
+
+    body->sensors = List_create();
 
     int ret = body->_(init)(body, w, h, mass, can_rotate);
     check(ret, "Couldn't configure Body")
@@ -30,4 +33,19 @@ void Body_destroy(Body *body) {
     return;
 error:
     return;
+}
+
+void Body_add_sensor(Body *body, struct Sensor *sensor) {
+    List_push(body->sensors, sensor);
+    body->_(add_sensor)(body, sensor);
+}
+
+void Body_remove_sensor(Body *body, struct Sensor *sensor) {
+    ListNode *found = NULL;
+    LIST_FOREACH(body->sensors, first, next, current) {
+        if (current->value == sensor) found = current;
+    }
+    if (!found) return;
+    List_remove(body->sensors, found);
+    body->_(remove_sensor)(body, sensor);
 }

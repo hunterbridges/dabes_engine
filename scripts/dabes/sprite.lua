@@ -36,8 +36,16 @@ Sprite = BoundObject:extend({
     end,
 
 -- Bound Functions
+
+    -- add_animation(sprite, animation, name)
+    --
+    -- Adds a SpriteAnimation as the given `name`
     add_animation = BoundObject.fwd_adder("add_animation"),
 
+    -- use_animation(sprite, name)
+    --
+    -- Use the animation registered as `name`. If that is already the current
+    -- animation, nothing happens.
     use_animation = BoundObject.fwd_func('use_animation'),
 
     _getters = {

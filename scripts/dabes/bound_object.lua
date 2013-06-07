@@ -77,6 +77,24 @@ BoundObject = Object:extend({
         end
     end,
 
+    -- fwd_remover
+    --
+    -- Used to set up convenient forwarding from Lua interface into binding
+    -- that removes an element from an array. It will remove the cached instance
+    -- of an element so it can be collected.
+    fwd_remover = function(name)
+        return function(self, member, ...)
+            if not self.real then return nil end
+            local fwded = self.real[name]
+
+            local cachekey = '_'..name..'_cache'
+            if self[cachekey] == nil then rawset(self, cachekey, {}) end
+            self[cachekey][member] = nil
+
+            return fwded(self.real, member, ...)
+        end
+    end,
+
     -- readonly
     readonly = function(self, key, val)
         print(key.." is a readonly property")

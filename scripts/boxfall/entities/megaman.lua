@@ -1,5 +1,6 @@
 require 'dabes.entity'
 require 'dabes.body'
+require 'dabes.sensor'
 require 'dabes.sprite'
 
 Megaman = Entity:extend({
@@ -9,9 +10,14 @@ Megaman = Entity:extend({
         local w = 2.0
         local h = 2.0
         local body = Body:new(self.body_type, w, h, 100, false)
-        body:set_hit_box(21.0 / 32.0, 24.0 / 32.0, {0.0, h * 4.0 / 32.0})
+        local hbw = 21.0 / 32.0
+        local hbh = 24.0 / 32.0
+        body:set_hit_box(hbw, hbh, {0.0, h * 4.0 / 32.0})
         body.friction = 0.7
         self.body = body
+
+        self.ground_sensor = Sensor:new(hbw * w / 2, 0.2, {0, hbh / 2 * h - 0.08})
+        body:add_sensor(self.ground_sensor)
 
         self.sprite = self.build_sprite()
         self.alpha = 0
@@ -43,12 +49,12 @@ Megaman = Entity:extend({
         air_accel = 2 * 15,
         turn_accel = 3 * 15,
         max_velo = 15,
-        jump_velo_hi = -8,
-        jump_velo_low = -4
+        jump_velo_hi = -10,
+        jump_velo_low = -5
     },
 
     control = function(self)
-        local on_ground = true -- TODO
+        local on_ground = self.ground_sensor.on_static
         local velo = self.body.velo
         local input_accel = {0, 0}
         if self.controller.right then
@@ -83,7 +89,7 @@ Megaman = Entity:extend({
         else
             if not on_ground then
                 if velo[2] < self.motion.jump_velo_low then
-                    velo[2] = self.motion.jump_velo_lo
+                    velo[2] = self.motion.jump_velo_low
                 end
             end
         end

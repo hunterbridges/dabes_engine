@@ -8,6 +8,7 @@
 #include "../input/controller_bindings.h"
 #include "../entities/body_bindings.h"
 #include "../entities/entity_bindings.h"
+#include "../entities/sensor_bindings.h"
 #include "../scenes/scene_bindings.h"
 #include "../graphics/parallax_bindings.h"
 #include "../graphics/sprite_bindings.h"
@@ -24,6 +25,7 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_controller(scripting->L);
     luaopen_dabes_body(scripting->L);
     luaopen_dabes_entity(scripting->L);
+    luaopen_dabes_sensor(scripting->L);
     luaopen_dabes_scene(scripting->L);
     luaopen_dabes_parallax(scripting->L);
     luaopen_dabes_sprite(scripting->L);

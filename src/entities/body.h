@@ -1,6 +1,7 @@
 #ifndef __body_h
 #define __body_h
 #include <chipmunk/chipmunk.h>
+#include <lcthw/list.h>
 #include "../prefix.h"
 #include "../math/vpoint.h"
 #include "../physics/fixture.h"
@@ -13,6 +14,7 @@ typedef struct {
 } BodyStateData;
 
 struct Body;
+struct Sensor;
 typedef struct BodyProto {
     int (*init)(struct Body *body, float w, float h, float mass,
             int can_rotate);
@@ -20,6 +22,9 @@ typedef struct BodyProto {
 
     VRect (*gfx_rect)(struct Body *body, float pixels_per_meter, int rotate);
     VPoint (*gfx_center)(struct Body *body, float pixels_per_meter);
+
+    void (*add_sensor)(struct Body *body, struct Sensor *sensor);
+    void (*remove_sensor)(struct Body *body, struct Sensor *sensor);
 
     void (*apply_force)(struct Body *body, VPoint force, VPoint offset);
     void (*set_hit_box)(struct Body *body, float w, float h, VPoint offset);
@@ -56,10 +61,14 @@ typedef struct Body {
     float h;
 
     VPoint draw_offset;
+
+    List *sensors;
 } Body;
 
 Body *Body_create(BodyProto proto, float w, float h, float mass,
         int can_rotate);
 void Body_destroy(Body *body);
+void Body_add_sensor(Body *body, struct Sensor *sensor);
+void Body_remove_sensor(Body *body, struct Sensor *sensor);
 
 #endif
