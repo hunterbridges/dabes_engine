@@ -36,7 +36,6 @@ What is not yet done:
 * Scripting engine:
     * Camera bindings
     * Space bindings
-    * Sfx bindings
     * Tile map bindings
     * Scene manager
 * Debug tools:
