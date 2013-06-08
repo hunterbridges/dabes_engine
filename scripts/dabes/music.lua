@@ -23,5 +23,13 @@ Music = BoundObject:extend({
     -- pause(self)
     --
     -- Pauses the music
-    pause = BoundObject.fwd_func("pause")
+    pause = BoundObject.fwd_func("pause"),
+
+    _getters = {
+        volume = BoundObject.fwd_func("get_volume")
+    },
+
+    _setters = {
+        volume = BoundObject.fwd_func("set_volume")
+    }
 })

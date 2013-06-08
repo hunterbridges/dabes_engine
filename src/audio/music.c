@@ -111,6 +111,6 @@ void Music_pause(Music *UNUSED(music)) {
 
 void Music_set_volume(Music *music, double volume) {
     music->volume = volume;
-    // TODO: OGG Volume
+    alSourcef(music->source, AL_GAIN, volume);
 }
 

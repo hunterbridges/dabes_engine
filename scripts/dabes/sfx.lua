@@ -18,6 +18,13 @@ Sfx = BoundObject:extend({
     -- play(self)
     --
     -- Plays the music
-    play = BoundObject.fwd_func('play')
+    play = BoundObject.fwd_func('play'),
 
+    _getters = {
+        volume = BoundObject.fwd_func("get_volume")
+    },
+
+    _setters = {
+        volume = BoundObject.fwd_func("set_volume")
+    }
 })

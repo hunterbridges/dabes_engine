@@ -38,9 +38,24 @@ error:
     return 0;
 }
 
+Scripting_num_getter(Sfx, volume);
+
+int luab_Sfx_set_volume(lua_State *L) {
+    Sfx *sfx = luaL_tosfx(L, 1);
+    check(sfx != NULL, "Sfx required");
+    float volume = lua_tonumber(L, 2);
+    Sfx_set_volume(sfx, volume);
+
+    return 1;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Sfx_meths[] = {
     {"__gc", luab_Sfx_close},
     {"play", luab_Sfx_play},
+    {"get_volume", luab_Sfx_get_volume},
+    {"set_volume", luab_Sfx_set_volume},
     {NULL, NULL}
 };
 

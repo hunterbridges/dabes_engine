@@ -48,5 +48,5 @@ void Sfx_update(Sfx *sfx) {
 
 void Sfx_set_volume(Sfx *sfx, double volume) {
     sfx->volume = volume;
-    // TODO
+    alSourcef(sfx->source, AL_GAIN, volume);
 }

@@ -19,6 +19,7 @@ ReasonableMap = Scene:extend({
             "media/music/Sneak.ogg"
         )
         self.music = music
+        music.volume = 0.3
         music:play()
 
         -- Entities

@@ -63,10 +63,25 @@ error:
     return 0;
 }
 
+Scripting_num_getter(Music, volume);
+
+int luab_Music_set_volume(lua_State *L) {
+    Music *music = luaL_tomusic(L, 1);
+    check(music != NULL, "Music required");
+    float volume = lua_tonumber(L, 2);
+    Music_set_volume(music, volume);
+
+    return 1;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Music_meths[] = {
     {"__gc", luab_Music_close},
     {"play", luab_Music_play},
     {"pause", luab_Music_pause},
+    {"get_volume", luab_Music_get_volume},
+    {"set_volume", luab_Music_set_volume},
     {NULL, NULL}
 };
 

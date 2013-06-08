@@ -89,6 +89,7 @@ Megaman = Entity:extend({
         if self.controller.a_button then
             if on_ground then
                 local jump_sound = Sfx:new("media/sfx/jump.ogg")
+                jump_sound.volume = 2.0
                 jump_sound:play()
 
                 velo[2] = self.motion.jump_velo_hi

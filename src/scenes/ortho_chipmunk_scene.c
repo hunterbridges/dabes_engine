@@ -189,19 +189,6 @@ int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     cpArbiterGetBodies(arb, &eBody, &tBody);
     BodyStateData *state_data = cpBodyGetUserData(eBody);
     state_data->on_ground++;
-
-    Engine *engine = (Engine *)state_data->engine;
-    Scene *scene = (Scene *)state_data->scene;
-    Entity *entity = (Entity *)state_data->entity;
-    if (state_data->on_ground > 1) return 1;
-
-    VRect cam_rect = Camera_visible_rect(scene->camera);
-    VPoint e_center = Entity_center(entity);
-    int onscreen = VRect_contains_point(cam_rect, e_center);
-    if (!onscreen) return 1;
-
-    Sfx *clomp = Audio_gen_sfx(engine->audio, "media/sfx/clomp.ogg");
-    Sfx_play(clomp);
     return 1;
 }
 

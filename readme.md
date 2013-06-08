@@ -30,7 +30,6 @@ What is done:
 What is not yet done:
 * Audio engine:
     * Spatialization
-    * Source volume
 * Graphics engine:
     * Keyframe animations
 * Scripting engine:
