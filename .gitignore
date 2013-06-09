@@ -8,8 +8,6 @@ lib/liblcthw.a
 include/lcthw
 include/lcthw/*
 
-media/music/Sneak.ogg
-
 build/*
 *.pbxuser
 !default.pbxuser

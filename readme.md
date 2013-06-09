@@ -31,7 +31,8 @@ What is not yet done:
 * Audio engine:
     * Spatialization
 * Graphics engine:
-    * Keyframe animations
+    * Keyframe animations/Easer
+    * HUD Layers
 * Scripting engine:
     * Camera bindings
     * Space bindings
@@ -71,3 +72,10 @@ Acknowledgements:
 [Learn C the Hard Way](http://c.learncodethehardway.org/book/) by Zed Shaw,
 [Chipmunk Physics](http://chipmunk-physics.net/) by Howling Moon Software,
 [Lua 5.2.1](http://www.lua.org/) by PUC-Rio
+
+
+Asset Copyrights:
+* Megaman is property of Capcom
+* Ice Cap Zone is property of SEGA
+* All other included graphics are public domain and are free for reuse
+* All included music is Copyrighted to me, Hunter Bridges, and is not available for reuse
