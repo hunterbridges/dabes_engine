@@ -165,6 +165,18 @@ error:
     return 0;
 }
 
+int luab_Scene_get_camera(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    if (scene->camera == NULL || !luaL_lookup_instance(L, scene->camera)) {
+        lua_pushnil(L);
+        return 1;
+    }
+    return 1;
+error:
+    return 0;
+}
+
 // Property synthesis
 Scripting_bool_getter(Scene, draw_grid);
 Scripting_bool_setter(Scene, draw_grid);
@@ -181,6 +193,7 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"set_music", luab_Scene_set_music},
     {"get_parallax", luab_Scene_get_parallax},
     {"set_parallax", luab_Scene_set_parallax},
+    {"get_camera", luab_Scene_get_camera},
     {"get_draw_grid", luab_Scene_get_draw_grid},
     {"set_draw_grid", luab_Scene_set_draw_grid},
     {"get_debug_camera", luab_Scene_get_debug_camera},

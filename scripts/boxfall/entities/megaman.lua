@@ -17,7 +17,7 @@ Megaman = Entity:extend({
         body.friction = 0.7
         self.body = body
 
-        self.ground_sensor = Sensor:new(hbw * w / 2, 0.2, {0, hbh / 2 * h - 0.08})
+        self.ground_sensor = Sensor:new(hbw * w - 0.3, 0.2, {0, hbh / 2 * h - 0.08})
         body:add_sensor(self.ground_sensor)
 
         self.sprite = self.build_sprite()

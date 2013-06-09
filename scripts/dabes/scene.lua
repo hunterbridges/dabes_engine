@@ -3,6 +3,7 @@
 -- This BoundObject represents a Scene (scene.h)
 
 require 'dabes.bound_object'
+require 'dabes.camera'
 require 'dabes.music'
 require 'dabes.parallax'
 
@@ -42,6 +43,17 @@ Scene = BoundObject:extend({
         space = BoundObject.fwd_func("get_space"),
         music = BoundObject.fwd_func("get_music"),
         parallax = BoundObject.fwd_func("get_parallax"),
+
+        camera = function(self)
+            raw_getter = BoundObject.fwd_func("get_camera")
+            got = raw_getter(self)
+            if got == nil then
+                got = Camera:new(self)
+                self._cache.camera = got
+            end
+            return got
+        end,
+
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
         debug_camera = BoundObject.fwd_func("get_debug_camera")
     },
@@ -75,6 +87,18 @@ Scene = BoundObject:extend({
         self._add_entity_cache = nil
         self:_cleancache()
         collectgarbage("collect")
+    end,
+
+    -- reset_camera
+    --
+    -- Hook called by the game engine when the scene needs to reset its camera.
+    reset_camera = function(self)
+        local camera = self.camera
+        camera.scale = 1
+        camera.rotation = 0
+        camera.translation = {0, 0}
+        camera.snap_to_scene = true
+        camera.max_scale = 1
     end
 
 })

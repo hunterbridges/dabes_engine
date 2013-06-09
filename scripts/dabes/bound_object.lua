@@ -58,6 +58,18 @@ BoundObject = Object:extend({
         end
     end,
 
+    -- fwd_func_real
+    --
+    -- Used to set up convenient forwarding from Lua interface into binding.
+    -- Also will map_real varargs.
+    fwd_func_real = function(name)
+        return function(self, ...)
+            if not self.real then return nil end
+
+            return self.real[name](self.real, map_real(...))
+        end
+    end,
+
     -- fwd_adder
     --
     -- Used to set up convenient forwarding from Lua interface into binding

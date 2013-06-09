@@ -10,7 +10,7 @@ What is done:
 * Graphics engine:
     * Can load shaders and draw with them
     * Can load SDL surfaces into OpenGL textures
-    * Camera tracking
+    * Camera tracking (Static, single entity, multi entity)
     * Can render TMX tile maps
     * Parallax layers
     * Sprite animations
@@ -34,7 +34,6 @@ What is not yet done:
     * Keyframe animations/Easer
     * HUD Layers
 * Scripting engine:
-    * Camera bindings
     * Space bindings
     * Tile map bindings
     * Scene manager

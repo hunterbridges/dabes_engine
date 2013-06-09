@@ -26,10 +26,12 @@ ReasonableMap = Scene:extend({
         local num_boxes = 15
         local xo = 6.0
 
+        local entities = {}
         local megaman = Megaman:new()
         megaman.body.pos = {5.0, 23.25}
         megaman.controller = get_controller(1)
         self:add_entity(megaman)
+        table.insert(entities, megaman)
 
         for i = 1, num_boxes do
             local box = SquiggyBox:new()
@@ -41,9 +43,13 @@ ReasonableMap = Scene:extend({
 
             box.alpha = i / num_boxes * 1.0
             self:add_entity(box)
+            table.insert(entities, box)
 
             xo = xo + 2
         end
+
+        self.camera:track_entities(megaman)
+        self.camera.snap_to_scene = true
 
         -- Parallax
         self.parallax = self.gen_parallax()

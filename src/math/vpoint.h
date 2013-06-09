@@ -24,6 +24,7 @@ double VPoint_angle(VPoint a, VPoint b);
 VPoint VPoint_scale(VPoint a, double b);
 double VPoint_dot(VPoint a, VPoint b);
 double VPoint_cross(VPoint a, VPoint b);
+VPoint VPoint_mid(VPoint a, VPoint b);
 VPoint VPoint_rotate(VPoint point, VPoint pivot, double angle_in_rads);
 VPoint VPoint_perp(VPoint a);
 VPoint VPoint_normalize(VPoint a);

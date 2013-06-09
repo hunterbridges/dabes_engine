@@ -10,6 +10,7 @@ Scene *Scene_create(Engine *UNUSED(engine), SceneProto proto) {
     scene->name = NULL;
     scene->proto = proto;
     scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    scene->camera->scene_size = scene->camera->screen_size;
 
     return scene;
 error:
@@ -41,25 +42,8 @@ void Scene_restart(Scene *scene, Engine *engine) {
     scene->_(start)(scene, engine);
 }
 
-void Scene_reset_camera(Scene *scene) {
-    scene->camera->scale = 1;
-    scene->camera->rotation_radians = 0;
-    scene->camera->translation.x = 0;
-    scene->camera->translation.y = 0;
-    scene->camera->snap_to_scene = 1;
-
-    if (scene->entities->first) {
-        scene->camera->track_entity = scene->entities->first->value;
-    } else {
-        scene->camera->track_entity = NULL;
-    }
-
-    if (scene->tile_map) {
-        scene->camera->scene_size =
-            TileMap_draw_size(scene->tile_map, scene->pixels_per_meter);
-    } else {
-        scene->camera->scene_size = scene->camera->screen_size;
-    }
+void Scene_reset_camera(Scene *scene, Engine *engine) {
+    Scripting_call_hook(engine->scripting, scene, "reset_camera");
 }
 
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
@@ -96,6 +80,8 @@ void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
         TileMap_destroy(scene->tile_map);
     }
     scene->tile_map = tile_map;
+    scene->camera->scene_size =
+        TileMap_draw_size(scene->tile_map, scene->pixels_per_meter);
     if(needs_restart) Scene_restart(scene, engine);
 }
 

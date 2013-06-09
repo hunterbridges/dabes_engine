@@ -11,6 +11,7 @@
 #include "../entities/entity_bindings.h"
 #include "../entities/sensor_bindings.h"
 #include "../scenes/scene_bindings.h"
+#include "../graphics/camera_bindings.h"
 #include "../graphics/parallax_bindings.h"
 #include "../graphics/sprite_bindings.h"
 
@@ -29,10 +30,10 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_entity(scripting->L);
     luaopen_dabes_sensor(scripting->L);
     luaopen_dabes_scene(scripting->L);
+    luaopen_dabes_camera(scripting->L);
     luaopen_dabes_parallax(scripting->L);
     luaopen_dabes_sprite(scripting->L);
 }
-
 
 Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting *scripting = malloc(sizeof(Scripting));

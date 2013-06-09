@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CA00424E16FC3DCD00508FB3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA00424D16FC3DCD00508FB3 /* QuartzCore.framework */; };
 		CA00425016FC3DEB00508FB3 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA00424F16FC3DEB00508FB3 /* CoreAudio.framework */; };
+		CA02010817654206008F719D /* camera_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA02010617654206008F719D /* camera_bindings.c */; };
 		CA1A05871762E774007B4682 /* sfx_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA1A05851762E774007B4682 /* sfx_bindings.c */; };
 		CA24C73316FC1E7E0045D5DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA24C73216FC1E7E0045D5DE /* UIKit.framework */; };
 		CA24C73516FC1E7E0045D5DE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA24C73416FC1E7E0045D5DE /* Foundation.framework */; };
@@ -155,6 +156,8 @@
 /* Begin PBXFileReference section */
 		CA00424D16FC3DCD00508FB3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CA00424F16FC3DEB00508FB3 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		CA02010617654206008F719D /* camera_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera_bindings.c; sourceTree = "<group>"; };
+		CA02010717654206008F719D /* camera_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera_bindings.h; sourceTree = "<group>"; };
 		CA1A05851762E774007B4682 /* sfx_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfx_bindings.c; sourceTree = "<group>"; };
 		CA1A05861762E774007B4682 /* sfx_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfx_bindings.h; sourceTree = "<group>"; };
 		CA24C72F16FC1E7E0045D5DE /* DaBesEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DaBesEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -441,6 +444,8 @@
 			children = (
 				CA92BF1916FFBEF000252D27 /* camera.c */,
 				CA92BF1A16FFBEF000252D27 /* camera.h */,
+				CA02010617654206008F719D /* camera_bindings.c */,
+				CA02010717654206008F719D /* camera_bindings.h */,
 				CA24C77116FC20900045D5DE /* graphics.c */,
 				CA24C77216FC20900045D5DE /* graphics.h */,
 				CAC581C717586044004A8161 /* parallax_bindings.c */,
@@ -885,6 +890,7 @@
 				CAEF197E1761BED100B3A3A1 /* sensor_bindings.c in Sources */,
 				CAEF197F1761BED100B3A3A1 /* sensor.c in Sources */,
 				CA1A05871762E774007B4682 /* sfx_bindings.c in Sources */,
+				CA02010817654206008F719D /* camera_bindings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

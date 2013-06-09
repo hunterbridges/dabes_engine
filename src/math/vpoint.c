@@ -34,6 +34,12 @@ double VPoint_cross(VPoint a, VPoint b) {
     return a.x * b.x - a.y * b.y;
 }
 
+VPoint VPoint_mid(VPoint a, VPoint b) {
+    VPoint angle = VPoint_subtract(b, a);
+    VPoint scaled = VPoint_scale(angle, 0.5);
+    return VPoint_add(a, scaled);
+}
+
 VPoint VPoint_rotate(VPoint point, VPoint pivot,
         double angle_in_rads) {
 

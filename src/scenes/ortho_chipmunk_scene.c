@@ -16,14 +16,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->entities == NULL);
     scene->entities = List_create();
 
-    Scene_reset_camera(scene);
-
     Scripting_call_hook(engine->scripting, scene, "configure");
-
-    // TODO: Track in a script
-    if (scene->entities->first) {
-        scene->camera->track_entity = scene->entities->first->value;
-    }
 
     OrthoChipmunkScene_create_space(scene, engine);
 
@@ -167,7 +160,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     Input *input = engine->input;
     if (input->cam_reset) {
-        Scene_reset_camera(scene);
+        Scene_reset_camera(scene, engine);
     }
     scene->camera->scale += 0.02 * input->cam_zoom;
     if (scene->camera->scale < 0) scene->camera->scale = 0;
@@ -271,6 +264,9 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
                                NULL, collision_seperate_cb, NULL);
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
                                OCSCollisionTypeTile, sensor_coll_begin_cb, NULL,
+                               NULL, sensor_coll_seperate_cb, NULL);
+    cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
+                               OCSCollisionTypeEntity, sensor_coll_begin_cb, NULL,
                                NULL, sensor_coll_seperate_cb, NULL);
 
     if (scene->tile_map) {

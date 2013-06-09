@@ -116,10 +116,10 @@ VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz) {
 VMatrix VMatrix_make_ortho(float left, float right, float top,
                            float bottom, float near, float far) {
   VMatrix ortho = {.gl = {
-    2 / (right - left), 0, 0, -1 * (right + left) / (right - left),
-    0, 2 / (top - bottom), 0, -1 * (top + bottom) / (top - bottom),
-    0, 0, -2 / (far - near), far * near / (far - near),
-    0, 0, 0, 1
+    2 / (right - left),    0,                  0,                 -1 * (right + left) / (right - left),
+    0,                     2 / (top - bottom), 0,                 -1 * (top + bottom) / (top - bottom),
+    0,                     0,                  -2 / (far - near), far * near / (far - near),
+    0,                     0,                  0,                 1
   }};
   return ortho;
 }
