@@ -25,8 +25,13 @@ Scene = BoundObject:extend({
 
     -- start(self)
     --
-    -- Starts the scene. Make sure you do this in init()
+    -- Starts the scene.
     start = BoundObject.fwd_func("start"),
+
+    -- stop(self)
+    --
+    -- Stops the scene.
+    stop = BoundObject.fwd_func("stop"),
 
     -- load_map(self, map, meters_per_tile)
     --
@@ -46,7 +51,7 @@ Scene = BoundObject:extend({
 
         camera = function(self)
             raw_getter = BoundObject.fwd_func("get_camera")
-            got = raw_getter(self)
+            local got = raw_getter(self)
             if got == nil then
                 got = Camera:new(self)
                 self._cache.camera = got

@@ -8,6 +8,8 @@ Sensor *Sensor_create(float w, float h, VPoint offset) {
     sensor->h = h;
     sensor->offset = offset;
 
+    sensor->on_sensors = List_create();
+
     return sensor;
 error:
     return NULL;
@@ -24,4 +26,17 @@ void Sensor_destroy(Sensor *sensor) {
     return;
 error:
     return;
+}
+
+void Sensor_overlap_sensor(Sensor *a, Sensor *b) {
+    List_push(a->on_sensors, b);
+}
+
+void Sensor_separate_sensor(Sensor *a, Sensor *b) {
+    LIST_FOREACH(a->on_sensors, first, next, current) {
+        if (current->value != b) continue;
+
+        List_remove(a->on_sensors, current);
+        break;
+    }
 }

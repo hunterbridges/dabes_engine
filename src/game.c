@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
     check(engine != NULL, "Failed to boot engine");
 
     Scripting_boot(engine->scripting);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     while (engine->input->game_quit == 0) {
         Engine_regulate(engine);
@@ -33,6 +34,7 @@ int main(int argc, char *argv[]) {
 
             if (engine->input->game_quit) break;
             Input_reset(engine->input);
+            Engine_frame_end(engine);
         }
     }
 

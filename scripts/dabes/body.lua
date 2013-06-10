@@ -41,6 +41,7 @@ Body = BoundObject:extend({
     remove_sensor = BoundObject.fwd_remover("remove_sensor"),
 
     _getters = {
+        entity = BoundObject.fwd_func("get_entity"),
         pos = BoundObject.fwd_func("get_pos"),
         velo = BoundObject.fwd_func("get_velo"),
         force = BoundObject.fwd_func("get_force"),
@@ -53,6 +54,7 @@ Body = BoundObject:extend({
     },
 
     _setters = {
+        entity = BoundObject.readonly,
         pos = BoundObject.fwd_func("set_pos"),
         velo = BoundObject.fwd_func("set_velo"),
         force = BoundObject.fwd_func("set_force"),

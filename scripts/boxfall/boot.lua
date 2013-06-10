@@ -1,13 +1,9 @@
 require 'boxfall.scenes.fat_map'
 require 'boxfall.scenes.reasonable_map'
+require 'dabes.scene_manager'
 
 function boot()
-    map = ReasonableMap:new()
-
-    scene_manager = {
-        get_current_scene = function()
-            return map.real
-        end
-    }
+    local map = ReasonableMap:new()
+    scene_manager:push_scene(map)
 end
 

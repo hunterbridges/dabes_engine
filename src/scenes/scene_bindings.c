@@ -85,6 +85,19 @@ error:
     return 0;
 }
 
+int luab_Scene_stop(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    if (scene->started) {
+        scene->_(stop)(scene, engine);
+    }
+
+    return 1;
+error:
+    return 0;
+}
+
 int luab_Scene_add_entity(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     Engine *engine = luaL_get_engine(L);
@@ -187,6 +200,7 @@ Scripting_bool_setter(Scene, debug_camera);
 static const struct luaL_Reg luab_Scene_meths[] = {
     {"__gc", luab_Scene_close},
     {"start", luab_Scene_start},
+    {"stop", luab_Scene_stop},
     {"add_entity", luab_Scene_add_entity},
     {"load_map", luab_Scene_load_map},
     {"get_music", luab_Scene_get_music},
@@ -223,12 +237,32 @@ int luaopen_dabes_scene(lua_State *L) {
 
 Scene *luaL_get_current_scene(lua_State *L) {
     lua_getglobal(L, "scene_manager");
-    lua_getfield(L, -1, "get_current_scene");
-    int result = lua_pcall(L, 0, 1, 0);
-    if (result) Scripting_bail(L, "Failed to get current scene");
+    lua_getfield(L, -1, "current_scene");
+    if (lua_isnil(L, -1)) {
+        lua_pop(L, 2);
+        return NULL;
+    }
 
+    lua_getfield(L, -1, "real");
     Scene_userdata *scene_ud = (Scene_userdata *)lua_touserdata(L, -1);
-    Scene *scene = scene_ud->p;
-    lua_pop(L, 2);
+    Scene *scene = NULL;
+    if (scene_ud) {
+        scene = scene_ud->p;
+    }
+    lua_pop(L, 3);
     return scene;
+}
+
+int luaL_flip_scene(lua_State *L) {
+    lua_getglobal(L, "scene_manager");
+    lua_getfield(L, -1, "flip_scene");
+    lua_pushvalue(L, -2);
+    int result = lua_pcall(L, 1, 0, 0);
+    if (result != 0) {
+        debug("Error in flip scene\n    %s", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return 0;
+    }
+    lua_pop(L, 1);
+    return 1;
 }

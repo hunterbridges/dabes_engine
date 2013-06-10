@@ -29,9 +29,41 @@ Scripting_destroy_closer(Sensor);
 
 Scripting_bool_getter(Sensor, on_static);
 
+int luab_Sensor_get_on_sensors(lua_State *L) {
+    Sensor *sensor = luaL_tosensor(L, 1);
+    check(sensor != NULL, "Sensor required");
+    lua_newtable(L);
+    int i = 1;
+    LIST_FOREACH(sensor->on_sensors, first, next, current) {
+        lua_pushnumber(L, i);
+        luaL_lookup_instance(L, current->value);
+        lua_settable(L, -3);
+        i++;
+    }
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Sensor_get_body(lua_State *L) {
+    Sensor *sensor = luaL_tosensor(L, 1);
+    check(sensor != NULL, "Sensor required");
+    if (sensor->body == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+    luaL_lookup_instance(L, sensor->body);
+
+    return 1;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Sensor_meths[] = {
     {"__gc", luab_Sensor_close},
     {"get_on_static", luab_Sensor_get_on_static},
+    {"get_on_sensors", luab_Sensor_get_on_sensors},
+    {"get_body", luab_Sensor_get_body},
     {NULL, NULL}
 };
 

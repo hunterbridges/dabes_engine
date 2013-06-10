@@ -3,6 +3,7 @@ require 'dabes.body'
 require 'dabes.sensor'
 require 'dabes.sfx'
 require 'dabes.sprite'
+inspect = require 'lib.inspect'
 
 Megaman = Entity:extend({
     body_type = "chipmunk",
@@ -17,7 +18,8 @@ Megaman = Entity:extend({
         body.friction = 0.7
         self.body = body
 
-        self.ground_sensor = Sensor:new(hbw * w - 0.2, 0.1, {0, hbh / 2 * h - 0.04})
+        self.ground_sensor = Sensor:new(hbw * w - 0.2, 0.1,
+                                        {0, hbh / 2 * h - 0.04})
         body:add_sensor(self.ground_sensor)
 
         self.sprite = self.build_sprite()
@@ -50,6 +52,23 @@ Megaman = Entity:extend({
     end,
 
     main = function(self)
+        if self.controller.a_button then
+            local on_s = self.ground_sensor.on_sensors
+            for i = 1, #on_s do
+                local other_s = on_s[i]
+                local other_e = other_s.body.entity
+                if other_e ~= nil and other_e.open ~= nil then
+                    local anim = self.sprite:get_animation("turning")
+                    self.opening = true
+
+                    anim.complete = function(self)
+                        other_e:open()
+                        anim.complete = function() end
+                    end
+                end
+            end
+        end
+
         self:control()
         self:derive_animation()
     end,
@@ -64,6 +83,8 @@ Megaman = Entity:extend({
     },
 
     control = function(self)
+        if self.opening then return end
+
         local on_ground = self.ground_sensor.on_static
         local velo = self.body.velo
         local input_accel = {0, 0}
@@ -121,6 +142,10 @@ Megaman = Entity:extend({
 
     derive_animation = function(self)
         local on_ground = self.ground_sensor.on_static
+        if self.opening then
+            self.sprite:use_animation('turning')
+            return
+        end
 
         local velo = self.body.velo
         local standing_thresh = 0.25
@@ -132,11 +157,6 @@ Megaman = Entity:extend({
 
         if not on_ground then
             self.sprite:use_animation('jumping')
-            return
-        end
-
-        if self.controller.up then
-            self.sprite:use_animation('turning')
             return
         end
 

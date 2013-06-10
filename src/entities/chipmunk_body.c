@@ -145,10 +145,12 @@ void ChipmunkBody_add_sensor(Body *body, Sensor *sensor) {
     cpShapeSetSensor(shape, 1);
     cpShapeSetUserData(shape, sensor);
     cpShapeSetCollisionType(shape, OCSCollisionTypeSensor);
+    sensor->body = body;
     sensor->cp_shape = shape;
 
     if (body->cp_space) {
         cpSpaceAddShape(body->cp_space, shape);
+        sensor->cp_space = body->cp_space;
     }
 }
 

@@ -15,5 +15,6 @@ Scripting_caster_for(Scene, luaL_toscene);
 
 int luaopen_dabes_scene(lua_State *L);
 Scene *luaL_get_current_scene(lua_State *L);
+int luaL_flip_scene(lua_State *L);
 
 #endif

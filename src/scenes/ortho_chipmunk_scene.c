@@ -49,6 +49,7 @@ error:
 }
 
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
+    if (scene->started == 0) return;
     OrthoChipmunkScene_control(scene, engine);
 
     int i = 0;
@@ -126,6 +127,7 @@ void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
 }
 
 void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
+    if (scene->started == 0) return;
     if (scene->render_mode == kSceneRenderModePhysicsDebug) {
         OrthoChipmunkScene_render_physdebug(scene, engine);
         return;
@@ -221,6 +223,27 @@ void sensor_coll_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     }
 }
 
+int sensor_sensor_coll_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *UNUSED(data)) {
+    cpShape *aShape, *bShape;
+    cpArbiterGetShapes(arb, &aShape, &bShape);
+    Sensor *sensor_a = cpShapeGetUserData(aShape);
+    Sensor *sensor_b = cpShapeGetUserData(bShape);
+    Sensor_overlap_sensor(sensor_a, sensor_b);
+    Sensor_overlap_sensor(sensor_b, sensor_a);
+    return 1;
+}
+
+void sensor_sensor_coll_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *UNUSED(data)) {
+    cpShape *aShape, *bShape;
+    cpArbiterGetShapes(arb, &aShape, &bShape);
+    Sensor *sensor_a = cpShapeGetUserData(aShape);
+    Sensor *sensor_b = cpShapeGetUserData(bShape);
+    Sensor_separate_sensor(sensor_a, sensor_b);
+    Sensor_separate_sensor(sensor_b, sensor_a);
+}
+
 void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
         Entity *entity) {
     assert(entity != NULL);
@@ -241,6 +264,7 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     LIST_FOREACH(body->sensors, first, next, current) {
         Sensor *sensor = current->value;
         cpSpaceAddShape(scene->space, sensor->cp_shape);
+        sensor->cp_space = scene->space;
     }
 }
 
@@ -273,8 +297,12 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
                                OCSCollisionTypeTile, sensor_coll_begin_cb, NULL,
                                NULL, sensor_coll_seperate_cb, NULL);
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
-                               OCSCollisionTypeEntity, sensor_coll_begin_cb, NULL,
-                               NULL, sensor_coll_seperate_cb, NULL);
+                               OCSCollisionTypeEntity, sensor_coll_begin_cb,
+                               NULL, NULL, sensor_coll_seperate_cb, NULL);
+    cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
+                               OCSCollisionTypeSensor,
+                               sensor_sensor_coll_begin_cb, NULL,
+                               NULL, sensor_sensor_coll_seperate_cb, NULL);
 
     if (scene->tile_map) {
         TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);

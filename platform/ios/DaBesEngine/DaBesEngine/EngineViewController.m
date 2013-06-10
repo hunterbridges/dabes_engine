@@ -195,13 +195,17 @@ char *bundlePath__;
   
   if (engine_->frame_now) {
     scene_ = Engine_get_current_scene(engine_);
-    scene_->_(control)(scene_, engine_);
-    scene_->_(update)(scene_, engine_);
+    if (scene_) {
+      scene_->_(control)(scene_, engine_);
+      scene_->_(update)(scene_, engine_);
+    }
     Input_reset(engine_->input);
     
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kEngineReadyForScriptNotification
         object:self];
+    
+    Engine_frame_end(engine_);
   }
 }
 

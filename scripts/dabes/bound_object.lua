@@ -2,7 +2,6 @@
 --
 -- Some weird meta stuff that lets us have a nice object oriented interface
 -- around the C bindings.
-local inspect = require 'lib.inspect'
 require 'dabes.object'
 
 function map_real(...)

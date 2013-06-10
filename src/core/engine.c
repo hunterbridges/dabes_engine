@@ -48,7 +48,7 @@ void Engine_destroy(Engine *engine) {
     // Scripting has to go first, as it
     // manages all the objects that leverage other things.
     Scripting_destroy(engine->scripting);
-  
+
     Audio_destroy(engine->audio);
     Input_destroy(engine->input);
     engine->graphics->_(destroy)(engine->graphics);
@@ -128,3 +128,6 @@ Scene *Engine_get_current_scene(Engine *engine) {
     return luaL_get_current_scene(engine->scripting->L);
 }
 
+void Engine_frame_end(Engine *engine) {
+    luaL_flip_scene(engine->scripting->L);
+}

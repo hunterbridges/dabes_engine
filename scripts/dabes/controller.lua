@@ -25,7 +25,9 @@ Controller = BoundObject:extend({
         left = BoundObject.readonly,
         right = BoundObject.readonly,
         a_button = BoundObject.readonly
-    }
+    },
+
+    _noinject = true
 })
 
 _controllers = {}

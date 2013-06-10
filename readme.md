@@ -26,6 +26,7 @@ What is done:
     * Entity control scripts
     * Interaction scripts
     * Scene scripts
+    * Scene Manager
 
 What is not yet done:
 * Audio engine:

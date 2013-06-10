@@ -44,6 +44,7 @@ uint32_t Engine_get_ticks(Engine *engine);
 
 struct Scene;
 struct Scene *Engine_get_current_scene(Engine *engine);
+void Engine_frame_end(Engine *engine);
 
 #ifdef DABES_IOS
 #define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)

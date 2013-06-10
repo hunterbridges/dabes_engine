@@ -9,8 +9,6 @@ FatMap = Scene:extend({
 
     init = function(self)
         self:load_map("media/tilemaps/fat.tmx", 1.0)
-
-        self:start()
     end,
 
     configure = function(self)
@@ -30,6 +28,7 @@ FatMap = Scene:extend({
         local megaman = Megaman:new()
         megaman.body.pos = {6.0 / 2, 27.25 / 2}
         megaman.controller = get_controller(1)
+        megaman.z_index = 3
         self:add_entity(megaman)
 
         self.camera:track_entities(megaman)
@@ -48,6 +47,12 @@ FatMap = Scene:extend({
 
             xo = xo + 2
         end
+
+        local door = Door:new()
+        door.destination = ReasonableMap
+        door.body.pos = {3.0, 13.1 + 1 / 64}
+        door.z_index = 2
+        self:add_entity(door)
 
         -- Parallax
         self.parallax = self.gen_parallax()

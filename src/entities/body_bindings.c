@@ -96,6 +96,20 @@ error:
     return 0;
 }
 
+int luab_Body_get_entity(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    if (body->state.entity == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+    luaL_lookup_instance(L, body->state.entity);
+
+    return 1;
+error:
+    return 0;
+}
+
 int luab_Body_get_pos(lua_State *L) {
     Body *body = luaL_tobody(L, 1);
     check(body != NULL, "Body required");
@@ -291,6 +305,7 @@ static const struct luaL_Reg luab_Body_meths[] = {
     {"remove_sensor", luab_Body_remove_sensor},
     {"apply_force", luab_Body_apply_force},
     {"set_hit_box", luab_Body_set_hit_box},
+    {"get_entity", luab_Body_get_entity},
     {"get_pos", luab_Body_get_pos},
     {"set_pos", luab_Body_set_pos},
     {"get_velo", luab_Body_get_velo},

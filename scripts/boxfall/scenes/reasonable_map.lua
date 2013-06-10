@@ -3,6 +3,7 @@ require 'dabes.scene'
 require 'boxfall.entities.squiggy_box'
 require 'boxfall.entities.megaman'
 require 'boxfall.entities.door'
+require 'boxfall.scenes.fat_map'
 
 ReasonableMap = Scene:extend({
     kind = "ortho_chipmunk",
@@ -10,8 +11,13 @@ ReasonableMap = Scene:extend({
 
     init = function(self)
         self:load_map("media/tilemaps/reasonable.tmx", 1.0)
+    end,
 
-        self:start()
+    cleanup = function(self)
+        self._add_entity_cache = nil
+        self:_cleancache()
+        self.music:stop()
+        collectgarbage("collect")
     end,
 
     configure = function(self)
@@ -55,8 +61,8 @@ ReasonableMap = Scene:extend({
         self.camera.snap_to_scene = true
 
         local door = Door:new()
-        door.body.pos = {10.0, 1.1 + 1 / 64}
-        door.sprite:use_animation("closed")
+        door.destination = FatMap
+        door.body.pos = {2.5, 11.1 + 1 / 64}
         door.z_index = 2
         self:add_entity(door)
 
