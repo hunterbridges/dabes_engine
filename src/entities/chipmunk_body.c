@@ -1,4 +1,5 @@
 #include <chipmunk/chipmunk.h>
+#include "../scenes/ortho_chipmunk_scene.h"
 #include "chipmunk_body.h"
 #include "sensor.h"
 
@@ -97,6 +98,7 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
 
     cpShape *shape = cpBoxShapeNew(cp_body, w, h);
     cpShapeSetBody(shape, cp_body);
+    cpShapeSetCollisionType(shape, OCSCollisionTypeEntity);
     body->cp_shape = shape;
 
     return 1;
@@ -105,7 +107,9 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
 void ChipmunkBody_cleanup(Body *body) {
     if (body->cp_space) {
         cpSpaceRemoveShape(body->cp_space, body->cp_shape);
-        cpSpaceRemoveBody(body->cp_space, body->cp_body);
+
+        if (!body->is_rogue)
+            cpSpaceRemoveBody(body->cp_space, body->cp_body);
     }
 
     cpShapeDestroy(body->cp_shape);
@@ -140,6 +144,7 @@ void ChipmunkBody_add_sensor(Body *body, Sensor *sensor) {
     cpShapeSetBody(shape, body->cp_body);
     cpShapeSetSensor(shape, 1);
     cpShapeSetUserData(shape, sensor);
+    cpShapeSetCollisionType(shape, OCSCollisionTypeSensor);
     sensor->cp_shape = shape;
 
     if (body->cp_space) {
@@ -177,6 +182,13 @@ void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset) {
     cpShape *shape = cpSnipBoxShapeNew(cp_body, w * body->w, h * body->h, 0.25, ccp(0,0));
     cpShapeSetBody(shape, cp_body);
     body->cp_shape = shape;
+
+    if (body->is_static) {
+        cpShapeSetSensor(shape, 1);
+        cpShapeSetCollisionType(body->cp_shape, OCSCollisionTypeStaticEntity);
+    } else {
+        cpShapeSetCollisionType(body->cp_shape, OCSCollisionTypeEntity);
+    }
 
     if (body->cp_space) {
         cpSpaceAddShape(body->cp_space, body->cp_shape);
@@ -251,6 +263,44 @@ void ChipmunkBody_set_can_rotate(Body *body, int can_rotate) {
     cpBodySetMoment(body->cp_body, moment);
 }
 
+int ChipmunkBody_get_is_rogue(Body *body) {
+    return body->is_rogue;
+}
+
+void ChipmunkBody_set_is_rogue(Body *body, int is_rogue) {
+    if (is_rogue == body->is_rogue) return;
+    body->is_rogue = is_rogue;
+
+    if (is_rogue) {
+        cpBodySetMass(body->cp_body, INFINITY);
+        cpBodySetMoment(body->cp_body, INFINITY);
+
+        if (body->cp_space)
+            cpSpaceRemoveBody(body->cp_space, body->cp_body);
+    } else {
+        ChipmunkBody_set_mass(body, body->mass);
+        if (body->cp_space)
+            cpSpaceAddBody(body->cp_space, body->cp_body);
+    }
+}
+
+int ChipmunkBody_get_is_static(Body *body) {
+    return body->is_static;
+}
+
+void ChipmunkBody_set_is_static(Body *body, int is_static) {
+    body->is_static = is_static;
+
+    if (is_static) {
+        ChipmunkBody_set_is_rogue(body, 1);
+        cpShapeSetSensor(body->cp_shape, 1);
+        cpShapeSetCollisionType(body->cp_shape, OCSCollisionTypeStaticEntity);
+    } else {
+        cpShapeSetSensor(body->cp_shape, 0);
+        cpShapeSetCollisionType(body->cp_shape, OCSCollisionTypeEntity);
+    }
+}
+
 BodyProto ChipmunkBodyProto = {
     .init = ChipmunkBody_init,
     .cleanup = ChipmunkBody_cleanup,
@@ -277,5 +327,10 @@ BodyProto ChipmunkBodyProto = {
     .get_mass = ChipmunkBody_get_mass,
     .set_mass = ChipmunkBody_set_mass,
     .get_can_rotate = ChipmunkBody_get_can_rotate,
-    .set_can_rotate = ChipmunkBody_set_can_rotate
+    .set_can_rotate = ChipmunkBody_set_can_rotate,
+    .get_is_rogue = ChipmunkBody_get_is_rogue,
+    .set_is_rogue = ChipmunkBody_set_is_rogue,
+    .get_is_static = ChipmunkBody_get_is_static,
+    .set_is_static = ChipmunkBody_set_is_static
 };
+

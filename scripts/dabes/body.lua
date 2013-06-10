@@ -47,7 +47,9 @@ Body = BoundObject:extend({
         angle = BoundObject.fwd_func("get_angle"),
         friction = BoundObject.fwd_func("get_friction"),
         mass = BoundObject.fwd_func("get_mass"),
-        can_rotate = BoundObject.fwd_func("get_can_rotate")
+        can_rotate = BoundObject.fwd_func("get_can_rotate"),
+        is_rogue = BoundObject.fwd_func("get_is_rogue"),
+        is_static = BoundObject.fwd_func("get_is_static")
     },
 
     _setters = {
@@ -57,6 +59,8 @@ Body = BoundObject:extend({
         angle = BoundObject.fwd_func("set_angle"),
         friction = BoundObject.fwd_func("set_friction"),
         mass = BoundObject.fwd_func("set_mass"),
-        can_rotate = BoundObject.fwd_func("set_can_rotate")
+        can_rotate = BoundObject.fwd_func("set_can_rotate"),
+        is_rogue = BoundObject.fwd_func("set_is_rogue"),
+        is_static = BoundObject.fwd_func("set_is_static")
     }
 })

@@ -1,3 +1,4 @@
+#include <lcthw/bstrlib.h>
 #include "sprite_bindings.h"
 
 const char *luab_SpriteAnimation_lib = "dab_spriteanimation";
@@ -52,12 +53,17 @@ error:
     return 0;
 }
 
+Scripting_bool_getter(SpriteAnimation, repeats);
+Scripting_bool_setter(SpriteAnimation, repeats);
+
 static const struct luaL_Reg luab_SpriteAnimation_meths[] = {
     {"__gc", luab_SpriteAnimation_close},
     {"get_current_index", luab_SpriteAnimation_get_current_index},
     {"set_current_index", luab_SpriteAnimation_set_current_index},
     {"get_fps", luab_SpriteAnimation_get_fps},
     {"set_fps", luab_SpriteAnimation_set_fps},
+    {"get_repeats", luab_SpriteAnimation_get_repeats},
+    {"set_repeats", luab_SpriteAnimation_set_repeats},
     {NULL, NULL}
 };
 
@@ -111,6 +117,25 @@ error:
     return 0;
 }
 
+int luab_Sprite_get_animation(lua_State *L) {
+    const char *name = lua_tostring(L, 2);
+    Sprite *sprite = luaL_tosprite(L, 1);
+    check(sprite != NULL, "Sprite required");
+    bstring bname = bfromcstr(name);
+    SpriteAnimation *animation = Hashmap_get(sprite->animations, (void *)bname);
+    bdestroy(bname);
+    if (animation == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    luaL_lookup_instance(L, animation);
+
+    return 1;
+error:
+    return 0;
+}
+
 int luab_Sprite_use_animation(lua_State *L) {
     Sprite *sprite = luaL_tosprite(L, 1);
     check(sprite != NULL, "Sprite required");
@@ -142,6 +167,7 @@ error:
 static const struct luaL_Reg luab_Sprite_meths[] = {
     {"__gc", luab_Sprite_close},
     {"add_animation", luab_Sprite_add_animation},
+    {"get_animation", luab_Sprite_get_animation},
     {"use_animation", luab_Sprite_use_animation},
     {"get_current_animation", luab_Sprite_get_current_animation},
     {"get_direction", luab_Sprite_get_direction},

@@ -1,3 +1,4 @@
+#include <lcthw/darray_algos.h>
 #include "../core/engine.h"
 #include "../audio/audio.h"
 #include "../audio/sfx.h"
@@ -5,6 +6,7 @@
 #include "../entities/body_bindings.h"
 #include "../entities/sensor.h"
 #include "ortho_chipmunk_scene.h"
+#include "../entities/entity.h"
 #include "scene.h"
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
@@ -14,7 +16,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     if (scene->started) return;
     assert(scene->world == NULL);
     assert(scene->entities == NULL);
-    scene->entities = List_create();
+    scene->entities = DArray_create(sizeof(Entity *), 8);
 
     Scripting_call_hook(engine->scripting, scene, "configure");
 
@@ -28,7 +30,7 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
     Scripting_call_hook(engine->scripting, scene, "cleanup");
 
-    List_destroy(scene->entities);
+    DArray_destroy(scene->entities);
     scene->entities = NULL;
 
     if (scene->space) {
@@ -49,10 +51,11 @@ error:
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     OrthoChipmunkScene_control(scene, engine);
 
-    {LIST_FOREACH(scene->entities, first, next, current) {
-        Entity *entity = current->value;
+    int i = 0;
+    for (i = 0; i < DArray_count(scene->entities); i++) {
+        Entity *entity = DArray_get(scene->entities, i);
         Scripting_call_hook(engine->scripting, entity, "presolve");
-    }}
+    }
 
     int phys_ticks = engine->frame_ticks < 100 ? engine->frame_ticks : 100;
     Stepper_update(engine->physics->stepper, phys_ticks);
@@ -61,10 +64,10 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
       cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
     }
 
-    {LIST_FOREACH(scene->entities, first, next, current) {
-        Entity *entity = current->value;
+    for (i = 0; i < DArray_count(scene->entities); i++) {
+        Entity *entity = DArray_get(scene->entities, i);
         Entity_update(entity, engine);
-    }}
+    }
 
     Camera_track(scene->camera);
 }
@@ -83,12 +86,10 @@ static void render_shape_iter(cpShape *shape, void *data) {
     float rot = 0;
     GLfloat color[4] = {1,1,1,1};
 
-    if (!cpBodyIsRogue(body)) {
-        rot = cpBodyGetAngle(body) * 180 / M_PI;
-        center = cpBodyGetPos(body);
-        vcenter.x = center.x * iter_data->scene->pixels_per_meter;
-        vcenter.y = center.y * iter_data->scene->pixels_per_meter;
-    }
+    rot = cpBodyGetAngle(body) * 180 / M_PI;
+    center = cpBodyGetPos(body);
+    vcenter.x = center.x * iter_data->scene->pixels_per_meter;
+    vcenter.y = center.y * iter_data->scene->pixels_per_meter;
 
     if (shape->collision_type == OCSCollisionTypeEntity) {
         color[0] = 0;
@@ -96,7 +97,10 @@ static void render_shape_iter(cpShape *shape, void *data) {
     } else if (shape->collision_type == OCSCollisionTypeSensor) {
         color[1] = 0;
         color[2] = 0;
+    } else if (shape->collision_type == OCSCollisionTypeStaticEntity) {
+        color[1] = 0;
     }
+
 
     for (i = 0; i < pshape->numVerts; i++, vert++) {
         shape_verts[i].x = vert->x * iter_data->scene->pixels_per_meter;
@@ -142,10 +146,10 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
 
     Graphics_use_shader(graphics, dshader);
-    LIST_FOREACH(scene->entities, first, next, current) {
-        Entity *thing = current->value;
-        if (thing == NULL) break;
-        Entity_render(thing, engine);
+    int i = 0;
+    for (i = 0; i < DArray_count(scene->entities); i++) {
+        Entity *entity = DArray_get(scene->entities, i);
+        Entity_render(entity, engine);
     }
 
     // Camera debug
@@ -219,6 +223,7 @@ void sensor_coll_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
 
 void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
         Entity *entity) {
+    assert(entity != NULL);
     assert(entity->body != NULL);
     Body *body = entity->body;
 
@@ -228,14 +233,14 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     body->state.scene = scene;
 
     entity->pixels_per_meter = scene->pixels_per_meter;
-    body->cp_shape->collision_type = OCSCollisionTypeEntity;
     cpSpaceAddShape(scene->space, body->cp_shape);
-    cpSpaceAddBody(scene->space, body->cp_body);
+
+    if (!body->is_rogue)
+        cpSpaceAddBody(scene->space, body->cp_body);
 
     LIST_FOREACH(body->sensors, first, next, current) {
         Sensor *sensor = current->value;
         cpSpaceAddShape(scene->space, sensor->cp_shape);
-        sensor->cp_shape->collision_type = OCSCollisionTypeSensor;
     }
 }
 
@@ -243,7 +248,9 @@ void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
         Entity *entity) {
     assert(entity != NULL);
     assert(scene != NULL);
-    List_push(scene->entities, entity);
+    entity->scene = scene;
+    DArray_push(scene->entities, entity);
+    DArray_mergesort(scene->entities, (DArray_compare)Entity_z_cmp);
     if (scene->space) {
         OrthoChipmunkScene_add_entity_body(scene, engine, entity);
     }
@@ -297,17 +304,15 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     }
 
     int i = 0;
-    LIST_FOREACH(scene->entities, first, next, current) {
-      Entity *entity = current->value;
-      OrthoChipmunkScene_add_entity_body(scene, engine, entity);
-      i++;
+    for (i = 0; i < DArray_count(scene->entities); i++) {
+        Entity *entity = DArray_get(scene->entities, i);
+        OrthoChipmunkScene_add_entity_body(scene, engine, entity);
     }
 
     return 1;
 error:
     return 0;
 }
-
 
 SceneProto OrthoChipmunkSceneProto = {
     .start = OrthoChipmunkScene_start,

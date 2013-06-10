@@ -20,14 +20,16 @@ Entity = BoundObject:extend({
        controller = BoundObject.fwd_func('get_controller'),
        sprite = BoundObject.fwd_func('get_sprite'),
        body = BoundObject.fwd_func('get_body'),
-       alpha = BoundObject.fwd_func('get_alpha')
+       alpha = BoundObject.fwd_func('get_alpha'),
+       z_index = BoundObject.fwd_func('get_z_index')
    },
 
    _setters = {
        controller = BoundObject.fwd_func('set_controller'),
        sprite = BoundObject.fwd_func('set_sprite'),
        body = BoundObject.fwd_func('set_body'),
-       alpha = BoundObject.fwd_func('set_alpha')
+       alpha = BoundObject.fwd_func('set_alpha'),
+       z_index = BoundObject.fwd_func('set_z_index')
    },
 
 -- Hooks

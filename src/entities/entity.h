@@ -13,15 +13,16 @@ typedef enum {
     EntityPhysicsShapeTypeCPShape
 } EntityPhysicsShapeType;
 
+struct Scene;
 typedef struct Entity {
-    Object proto;
-
     Controller *controller;
     Sprite *sprite;
     Body *body;
+    struct Scene *scene;
     GLfloat alpha;
 
     int pixels_per_meter;
+    int z_index;
 } Entity;
 
 struct Engine;
@@ -33,7 +34,7 @@ void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
-
-extern Object EntityProto;
+void Entity_set_z_index(Entity *entity, int z_index);
+int Entity_z_cmp(void **a, void **b);
 
 #endif

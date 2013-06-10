@@ -2,6 +2,7 @@ require 'dabes.controller'
 require 'dabes.scene'
 require 'boxfall.entities.squiggy_box'
 require 'boxfall.entities.megaman'
+require 'boxfall.entities.door'
 
 ReasonableMap = Scene:extend({
     kind = "ortho_chipmunk",
@@ -24,12 +25,13 @@ ReasonableMap = Scene:extend({
 
         -- Entities
         local num_boxes = 15
-        local xo = 6.0
+        local xo = 6.0 / 2
 
         local entities = {}
         local megaman = Megaman:new()
         megaman.body.pos = {5.0 / 2, 23.25 / 2}
         megaman.controller = get_controller(1)
+        megaman.z_index = 3
         self:add_entity(megaman)
         table.insert(entities, megaman)
 
@@ -37,11 +39,12 @@ ReasonableMap = Scene:extend({
             local box = SquiggyBox:new()
 
             local body = box.body
-            body.pos = {xo, 10.0 - 4.0 - i}
+            body.pos = {xo, 10.0 - 4.0 - i / 3}
             body.angle = math.pi / 16.0 * (i % 8)
             body.mass = 100.0 + 900.0 * i / num_boxes
 
             box.alpha = 0
+            box.z_index = 1
             self:add_entity(box)
             table.insert(entities, box)
 
@@ -50,6 +53,12 @@ ReasonableMap = Scene:extend({
 
         self.camera:track_entities(megaman)
         self.camera.snap_to_scene = true
+
+        local door = Door:new()
+        door.body.pos = {10.0, 1.1 + 1 / 64}
+        door.sprite:use_animation("closed")
+        door.z_index = 2
+        self:add_entity(door)
 
         -- Parallax
         self.parallax = self.gen_parallax()

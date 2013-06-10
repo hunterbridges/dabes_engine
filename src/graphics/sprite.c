@@ -10,6 +10,7 @@ SpriteAnimation *SpriteAnimation_create(int num_frames, int frames[]) {
     for (i = 0; i < num_frames; i++) {
         animation->frames[i] = frames[i];
     }
+    animation->repeats = 1;
     animation->loop_start = frames[0];
     animation->stepper = Stepper_create();
     animation->current_index = 0;
@@ -103,7 +104,14 @@ void Sprite_update(Sprite *sprite, Engine *engine) {
     int steps = Stepper_clear(cur_anim->stepper);
     if (!steps) return;
     new_idx += steps;
-    if (new_idx >= cur_anim->num_frames) new_idx %= cur_anim->num_frames;
+    if (new_idx >= cur_anim->num_frames) {
+        Scripting_call_hook(engine->scripting, cur_anim, "complete");
+        if (cur_anim->repeats) {
+            new_idx %= cur_anim->num_frames;
+        } else {
+            new_idx = cur_anim->num_frames - 1;
+        }
+    }
 
     cur_anim->current_index = new_idx;
     sprite->current_frame = cur_anim->frames[new_idx];

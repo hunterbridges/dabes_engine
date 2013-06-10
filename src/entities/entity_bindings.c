@@ -116,6 +116,20 @@ error:
     return 0;
 }
 
+Scripting_num_getter(Entity, z_index);
+
+int luab_Entity_set_z_index(lua_State *L) {
+    int z_index = lua_tonumber(L, 2);
+    Entity *entity = luaL_toentity(L, 1);
+    check(entity != NULL, "Entity required");
+    Entity_set_z_index(entity, z_index);
+
+    return 0;
+error:
+    return 0;
+}
+
+
 static const struct luaL_Reg luab_Entity_meths[] = {
     {"__gc", luab_Entity_close},
     {"get_controller", luab_Entity_get_controller},
@@ -126,6 +140,8 @@ static const struct luaL_Reg luab_Entity_meths[] = {
     {"set_body", luab_Entity_set_body},
     {"get_alpha", luab_Entity_get_alpha},
     {"set_alpha", luab_Entity_set_alpha},
+    {"get_z_index", luab_Entity_get_z_index},
+    {"set_z_index", luab_Entity_set_z_index},
     {NULL, NULL}
 };
 

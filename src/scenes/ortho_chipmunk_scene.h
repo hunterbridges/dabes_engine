@@ -11,7 +11,8 @@ typedef enum {
   OCSCollisionTypeEntity = 1,
   OCSCollisionTypeTile = 2,
   OCSCollisionTypeDrawShape = 3,
-  OCSCollisionTypeSensor = 4
+  OCSCollisionTypeSensor = 4,
+  OCSCollisionTypeStaticEntity = 5
 } OCSCollisionType;
 
 extern SceneProto OrthoChipmunkSceneProto;

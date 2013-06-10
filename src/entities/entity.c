@@ -1,13 +1,16 @@
+#include <lcthw/darray_algos.h>
 #include "../core/engine.h"
 #include "entity.h"
 #include "../audio/sfx.h"
 #include "../physics/world.h"
+#include "../scenes/scene.h"
 
 Entity *Entity_create() {
     Entity *entity = calloc(1, sizeof(Entity));
     check(entity != NULL, "Failed to create entity");
 
     entity->alpha = 1.f;
+    entity->z_index = 1;
 
     return entity;
 error:
@@ -70,3 +73,20 @@ void Entity_update(Entity *entity, Engine *engine) {
 error:
     return;
 }
+
+void Entity_set_z_index(Entity *entity, int z_index) {
+    entity->z_index = z_index;
+    if (entity->scene) {
+        DArray_mergesort(entity->scene->entities, (DArray_compare)Entity_z_cmp);
+    }
+}
+
+int Entity_z_cmp(void **a, void **b) {
+    Entity *left = (Entity *)*a;
+    Entity *right = (Entity *)*b;
+    if (left->z_index > right->z_index) return 1;
+    if (left->z_index == right->z_index) return 0;
+    if (left->z_index < right->z_index) return -1;
+    return 0;
+}
+

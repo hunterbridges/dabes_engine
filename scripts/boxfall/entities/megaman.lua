@@ -31,13 +31,18 @@ Megaman = Entity:extend({
         standing.fps = 0
         sprite:add_animation(standing, "standing")
 
-        local running = SpriteAnimation:new(1, 2, 3, 2)
+        local running = SpriteAnimation:new(4, 5, 6, 5)
         running.fps = 7
         sprite:add_animation(running, "running")
 
-        local jumping = SpriteAnimation:new(4)
+        local jumping = SpriteAnimation:new(12)
         jumping.fps = 0
         sprite:add_animation(jumping, "jumping")
+
+        local turning = SpriteAnimation:new(8, 9, 10, 11)
+        turning.fps = 7
+        turning.repeats = false
+        sprite:add_animation(turning, "turning")
 
         sprite:use_animation("standing")
 
@@ -127,6 +132,11 @@ Megaman = Entity:extend({
 
         if not on_ground then
             self.sprite:use_animation('jumping')
+            return
+        end
+
+        if self.controller.up then
+            self.sprite:use_animation('turning')
             return
         end
 

@@ -15,13 +15,23 @@ SpriteAnimation = BoundObject:extend({
 -- Bound Functions
     _getters = {
         current_index = BoundObject.fwd_func('get_current_index'),
-        fps = BoundObject.fwd_func('get_fps')
+        fps = BoundObject.fwd_func('get_fps'),
+        repeats = BoundObject.fwd_func('get_repeats')
     },
 
     _setters = {
         current_index = BoundObject.fwd_func('set_current_index'),
-        fps = BoundObject.fwd_func('set_fps')
-    }
+        fps = BoundObject.fwd_func('set_fps'),
+        repeats = BoundObject.fwd_func('set_repeats')
+    },
+
+-- Hooks
+
+    -- complete
+    --
+    -- Hook called when an animation reaches the end.
+    complete = function(self)
+    end
 })
 
 --------------------------------------------------------------------------------
@@ -41,6 +51,11 @@ Sprite = BoundObject:extend({
     --
     -- Adds a SpriteAnimation as the given `name`
     add_animation = BoundObject.fwd_adder("add_animation"),
+
+    -- get_animation(sprite, name)
+    --
+    -- Gets SpriteAnimation with the given `name`
+    get_animation = BoundObject.fwd_func("get_animation"),
 
     -- use_animation(sprite, name)
     --

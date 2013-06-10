@@ -243,6 +243,48 @@ error:
     return 0;
 }
 
+int luab_Body_get_is_rogue(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    lua_pushboolean(L, body->_(get_is_rogue)(body));
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Body_set_is_rogue(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    int is_rogue = lua_toboolean(L, 2);
+    body->_(set_is_rogue)(body, is_rogue);
+
+    return 0;
+error:
+    return 0;
+}
+
+int luab_Body_get_is_static(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    lua_pushboolean(L, body->_(get_is_static)(body));
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Body_set_is_static(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    int is_static = lua_toboolean(L, 2);
+    body->_(set_is_static)(body, is_static);
+
+    return 0;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Body_meths[] = {
     {"__gc", luab_Body_close},
     {"add_sensor", luab_Body_add_sensor},
@@ -263,6 +305,10 @@ static const struct luaL_Reg luab_Body_meths[] = {
     {"set_mass", luab_Body_set_mass},
     {"get_can_rotate", luab_Body_get_can_rotate},
     {"set_can_rotate", luab_Body_set_can_rotate},
+    {"get_is_rogue", luab_Body_get_is_rogue},
+    {"set_is_rogue", luab_Body_set_is_rogue},
+    {"get_is_static", luab_Body_get_is_static},
+    {"set_is_static", luab_Body_set_is_static},
     {NULL, NULL}
 };
 

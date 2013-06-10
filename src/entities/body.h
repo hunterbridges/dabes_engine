@@ -43,6 +43,10 @@ typedef struct BodyProto {
     void (*set_mass)(struct Body *body, float mass);
     int (*get_can_rotate)(struct Body *body);
     void (*set_can_rotate)(struct Body *body, int can_rotate);
+    int (*get_is_rogue)(struct Body *body);
+    void (*set_is_rogue)(struct Body *body, int is_rogue);
+    int (*get_is_static)(struct Body *body);
+    void (*set_is_static)(struct Body *body, int is_static);
 } BodyProto;
 
 typedef struct Body {
@@ -55,6 +59,8 @@ typedef struct Body {
     cpShape *cp_shape;
     cpBody *cp_body;
 
+    int is_rogue;
+    int is_static;
     int can_rotate;
     float mass;
     float w;

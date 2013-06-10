@@ -13,6 +13,7 @@ typedef struct SpriteAnimation {
     int num_frames;
     int loop_start;
     int current_index;
+    int repeats;
     Stepper *stepper;
     int frames[];
 } SpriteAnimation;

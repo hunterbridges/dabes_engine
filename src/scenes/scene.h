@@ -1,6 +1,7 @@
 #ifndef __scene_h
 #define __scene_h
 #include <chipmunk/chipmunk.h>
+#include <lcthw/darray.h>
 #include "../prefix.h"
 #include "../audio/audio.h"
 #include "../audio/music.h"
@@ -33,6 +34,7 @@ typedef struct Scene {
 
     GfxTexture *bg_texture; // deprecated
 
+    DArray *entities;
     Music *music;
     Camera *camera;
     union {
@@ -41,7 +43,6 @@ typedef struct Scene {
     };
     Parallax *parallax;
     TileMap *tile_map;
-    List *entities;
 
     short int draw_grid;
     short int debug_camera;

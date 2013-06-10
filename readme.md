@@ -33,6 +33,7 @@ What is not yet done:
 * Graphics engine:
     * Keyframe animations/Easer
     * HUD Layers
+    * Static scenes
 * Scripting engine:
     * Space bindings
     * Tile map bindings

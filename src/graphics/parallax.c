@@ -17,7 +17,7 @@ Parallax *Parallax_create() {
     Parallax *parallax = malloc(sizeof(Parallax));
     check(parallax != NULL, "Could not create parallax");
 
-    parallax->layers = DArray_create(sizeof(ParallaxLayer), 8);
+    parallax->layers = DArray_create(sizeof(ParallaxLayer *), 8);
     parallax->camera = NULL;
     GfxSize level = {1, 1};
     parallax->level_size = level;
