@@ -5,10 +5,10 @@ require 'boxfall.entities.megaman'
 
 ReasonableMap = Scene:extend({
     kind = "ortho_chipmunk",
-    pixels_per_meter = 32.0,
+    pixels_per_meter = 64.0,
 
     init = function(self)
-        self:load_map("media/tilemaps/reasonable.tmx", 2.0)
+        self:load_map("media/tilemaps/reasonable.tmx", 1.0)
 
         self:start()
     end,
@@ -28,7 +28,7 @@ ReasonableMap = Scene:extend({
 
         local entities = {}
         local megaman = Megaman:new()
-        megaman.body.pos = {5.0, 23.25}
+        megaman.body.pos = {5.0 / 2, 23.25 / 2}
         megaman.controller = get_controller(1)
         self:add_entity(megaman)
         table.insert(entities, megaman)
@@ -37,15 +37,15 @@ ReasonableMap = Scene:extend({
             local box = SquiggyBox:new()
 
             local body = box.body
-            body.pos = {xo, 20.0 - 8.0 - i}
+            body.pos = {xo, 10.0 - 4.0 - i}
             body.angle = math.pi / 16.0 * (i % 8)
             body.mass = 100.0 + 900.0 * i / num_boxes
 
-            box.alpha = i / num_boxes * 1.0
+            box.alpha = 0
             self:add_entity(box)
             table.insert(entities, box)
 
-            xo = xo + 2
+            xo = xo + 1
         end
 
         self.camera:track_entities(megaman)

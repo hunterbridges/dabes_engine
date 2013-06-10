@@ -5,10 +5,10 @@ require 'boxfall.entities.megaman'
 
 FatMap = Scene:extend({
     kind = "ortho_chipmunk",
-    pixels_per_meter = 32.0,
+    pixels_per_meter = 64.0,
 
     init = function(self)
-        self:load_map("media/tilemaps/fat.tmx", 2.0)
+        self:load_map("media/tilemaps/fat.tmx", 1.0)
 
         self:start()
     end,
@@ -20,6 +20,7 @@ FatMap = Scene:extend({
             "media/music/Climb_Loop.ogg"
         )
         self.music = music
+        music.volume = 0.5
         music:play()
 
         -- Entities
@@ -27,9 +28,12 @@ FatMap = Scene:extend({
         local xo = 6.0
 
         local megaman = Megaman:new()
-        megaman.body.pos = {6.0, 27.25}
+        megaman.body.pos = {6.0 / 2, 27.25 / 2}
         megaman.controller = get_controller(1)
         self:add_entity(megaman)
+
+        self.camera:track_entities(megaman)
+        self.camera.snap_to_scene = true
 
         for i = 1, num_boxes do
             local box = Box:new()

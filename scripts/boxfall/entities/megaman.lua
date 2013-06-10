@@ -8,8 +8,8 @@ Megaman = Entity:extend({
     body_type = "chipmunk",
 
     init = function(self)
-        local w = 2.0
-        local h = 2.0
+        local w = 1.0
+        local h = 1.0
         local body = Body:new(self.body_type, w, h, 100, false)
         local hbw = 21.0 / 32.0
         local hbh = 24.0 / 32.0
@@ -17,7 +17,7 @@ Megaman = Entity:extend({
         body.friction = 0.7
         self.body = body
 
-        self.ground_sensor = Sensor:new(hbw * w - 0.3, 0.2, {0, hbh / 2 * h - 0.08})
+        self.ground_sensor = Sensor:new(hbw * w - 0.2, 0.1, {0, hbh / 2 * h - 0.04})
         body:add_sensor(self.ground_sensor)
 
         self.sprite = self.build_sprite()
@@ -50,12 +50,12 @@ Megaman = Entity:extend({
     end,
 
     motion = {
-        run_accel = 15,
-        air_accel = 2 * 15,
-        turn_accel = 3 * 15,
-        max_velo = 15,
-        jump_velo_hi = -10,
-        jump_velo_low = -5
+        run_accel = 10,
+        air_accel = 2 * 10,
+        turn_accel = 3 * 10,
+        max_velo = 10,
+        jump_velo_hi = -8,
+        jump_velo_low = -4
     },
 
     control = function(self)
