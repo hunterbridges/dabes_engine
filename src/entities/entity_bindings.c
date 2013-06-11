@@ -62,6 +62,20 @@ error:
     return 0;
 }
 
+int luab_Entity_get_scene(lua_State *L) {
+    Entity *entity = luaL_toentity(L, 1);
+    check(entity != NULL, "Entity required");
+    if (entity->scene == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+    luaL_lookup_instance(L, entity->scene);
+
+    return 1;
+error:
+    return 0;
+}
+
 int luab_Entity_get_sprite(lua_State *L) {
     Entity *entity = luaL_toentity(L, 1);
     check(entity != NULL, "Entity required");
@@ -134,6 +148,7 @@ static const struct luaL_Reg luab_Entity_meths[] = {
     {"__gc", luab_Entity_close},
     {"get_controller", luab_Entity_get_controller},
     {"set_controller", luab_Entity_set_controller},
+    {"get_scene", luab_Entity_get_scene},
     {"get_sprite", luab_Entity_get_sprite},
     {"set_sprite", luab_Entity_set_sprite},
     {"get_body", luab_Entity_get_body},

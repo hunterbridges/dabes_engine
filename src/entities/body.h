@@ -39,6 +39,8 @@ typedef struct BodyProto {
     void (*set_angle)(struct Body *body, float angle);
     float (*get_friction)(struct Body *body);
     void (*set_friction)(struct Body *body, float friction);
+    float (*get_elasticity)(struct Body *body);
+    void (*set_elasticity)(struct Body *body, float elasticity);
     float (*get_mass)(struct Body *body);
     void (*set_mass)(struct Body *body, float mass);
     int (*get_can_rotate)(struct Body *body);

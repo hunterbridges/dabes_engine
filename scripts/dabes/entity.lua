@@ -18,6 +18,7 @@ Entity = BoundObject:extend({
 -- Function Bindings
    _getters = {
        controller = BoundObject.fwd_func('get_controller'),
+       scene = BoundObject.fwd_func('get_scene'),
        sprite = BoundObject.fwd_func('get_sprite'),
        body = BoundObject.fwd_func('get_body'),
        alpha = BoundObject.fwd_func('get_alpha'),
@@ -26,6 +27,7 @@ Entity = BoundObject:extend({
 
    _setters = {
        controller = BoundObject.fwd_func('set_controller'),
+       scene = BoundObject.readonly,
        sprite = BoundObject.fwd_func('set_sprite'),
        body = BoundObject.fwd_func('set_body'),
        alpha = BoundObject.fwd_func('set_alpha'),

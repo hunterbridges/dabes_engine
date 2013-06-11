@@ -1,3 +1,4 @@
+require 'boxfall.entities.box'
 require 'dabes.entity'
 require 'dabes.body'
 require 'dabes.sensor'
@@ -9,6 +10,8 @@ Megaman = Entity:extend({
     body_type = "chipmunk",
 
     init = function(self)
+        self.holding_up = false
+
         local w = 1.0
         local h = 1.0
         local body = Body:new(self.body_type, w, h, 100, false)
@@ -67,6 +70,23 @@ Megaman = Entity:extend({
                     end
                 end
             end
+        end
+
+        local old_hup = self.holding_up
+        if self.controller.up then
+            self.holding_up = true
+        else
+            self.holding_up = false
+        end
+        if old_hup ~= self.holding_up and self.holding_up == true then
+            local projectile = Box:new()
+            local ppos = self.body.pos
+            ppos[2] = ppos[2] - 1.0
+            projectile.body.pos = ppos
+            projectile.body.velo = {0, -15}
+            projectile.body.elasticity = 0.1
+            projectile.body.mass = 1000
+            self.scene:add_entity(projectile)
         end
 
         self:control()

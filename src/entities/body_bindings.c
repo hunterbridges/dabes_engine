@@ -215,6 +215,27 @@ error:
     return 0;
 }
 
+int luab_Body_get_elasticity(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    lua_pushnumber(L, body->_(get_elasticity)(body));
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Body_set_elasticity(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    float elasticity = lua_tonumber(L, 2);
+    body->_(set_elasticity)(body, elasticity);
+
+    return 0;
+error:
+    return 0;
+}
+
 int luab_Body_get_mass(lua_State *L) {
     Body *body = luaL_tobody(L, 1);
     check(body != NULL, "Body required");
@@ -316,6 +337,8 @@ static const struct luaL_Reg luab_Body_meths[] = {
     {"set_angle", luab_Body_set_angle},
     {"get_friction", luab_Body_get_friction},
     {"set_friction", luab_Body_set_friction},
+    {"get_elasticity", luab_Body_get_elasticity},
+    {"set_elasticity", luab_Body_set_elasticity},
     {"get_mass", luab_Body_get_mass},
     {"set_mass", luab_Body_set_mass},
     {"get_can_rotate", luab_Body_get_can_rotate},

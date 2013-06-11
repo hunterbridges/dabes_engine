@@ -240,6 +240,17 @@ void ChipmunkBody_set_friction(Body *body, float friction) {
         cpShapeSetFriction(body->cp_shape, friction);
 }
 
+float ChipmunkBody_get_elasticity(Body *body) {
+    if (body->cp_shape)
+        return cpShapeGetElasticity(body->cp_shape);
+    return 0;
+}
+
+void ChipmunkBody_set_elasticity(Body *body, float elasticity) {
+    if (body->cp_shape)
+        cpShapeSetElasticity(body->cp_shape, elasticity);
+}
+
 float ChipmunkBody_get_mass(Body *body) {
     return cpBodyGetMass(body->cp_body);
 }
@@ -326,6 +337,8 @@ BodyProto ChipmunkBodyProto = {
     .set_angle = ChipmunkBody_set_angle,
     .get_friction = ChipmunkBody_get_friction,
     .set_friction = ChipmunkBody_set_friction,
+    .get_elasticity = ChipmunkBody_get_elasticity,
+    .set_elasticity = ChipmunkBody_set_elasticity,
     .get_mass = ChipmunkBody_get_mass,
     .set_mass = ChipmunkBody_set_mass,
     .get_can_rotate = ChipmunkBody_get_can_rotate,
