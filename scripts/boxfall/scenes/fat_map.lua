@@ -43,6 +43,7 @@ FatMap = Scene:extend({
             body.mass = 100.0 + 900.0 * i / num_boxes
 
             box.alpha = i / num_boxes * 1.0
+            box.z_index = 2
             self:add_entity(box)
 
             xo = xo + 2
@@ -51,7 +52,7 @@ FatMap = Scene:extend({
         local door = Door:new()
         door.destination = ReasonableMap
         door.body.pos = {3.0, 13.1 + 1 / 64}
-        door.z_index = 2
+        door.z_index = 1
         self:add_entity(door)
 
         -- Parallax

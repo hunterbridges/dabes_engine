@@ -50,7 +50,7 @@ ReasonableMap = Scene:extend({
             body.mass = 100.0 + 900.0 * i / num_boxes
 
             box.alpha = 0
-            box.z_index = 1
+            box.z_index = 2
             self:add_entity(box)
             table.insert(entities, box)
 
@@ -63,7 +63,7 @@ ReasonableMap = Scene:extend({
         local door = Door:new()
         door.destination = FatMap
         door.body.pos = {2.5, 11.1 + 1 / 64}
-        door.z_index = 2
+        door.z_index = 1
         self:add_entity(door)
 
         -- Parallax

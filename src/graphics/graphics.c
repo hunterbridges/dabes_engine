@@ -116,9 +116,9 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     GLenum color_format = GL_RGBA;
 #if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
     color_format = GL_BGRA;
@@ -328,32 +328,20 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     GfxUVertex tex_tr = {.raw = {1,0,0,0}};
     GfxUVertex tex_bl = {.raw = {0,1,0,0}};
     GfxUVertex tex_br = {.raw = {1,1,0,0}};
+    VPoint pot_scale = {1, 1};
+    GfxSize texel_size = {1, 1};
     if (texture) {
-        tex_tl.packed.x = textureOffset.x / texture->size.w;
-        tex_tl.packed.y = textureOffset.y / texture->size.h;
+        pot_scale.x = texture->size.w / texture->pot_size.w;
+        pot_scale.y = texture->size.h / texture->pot_size.h;
 
-        tex_tr.packed.x = (textureOffset.x + textureSize.w) / texture->size.w;
-        tex_tr.packed.y = textureOffset.y / texture->size.h;
+        textureOffset.x /= texture->size.w;
+        textureOffset.y /= texture->size.h;
 
-        tex_bl.packed.x = textureOffset.x / texture->size.w;
-        tex_bl.packed.y = (textureOffset.y + textureSize.h) / texture->size.h;
+        textureSize.w /= texture->size.w;
+        textureSize.h /= texture->size.h;
 
-        tex_br.packed.x = (textureOffset.x + textureSize.w) / texture->size.w;
-        tex_br.packed.y = (textureOffset.y + textureSize.h) / texture->size.h;
-
-        // Remap the texture coords to the power-of-two compatible ones.
-        VPoint pot_scale = {
-            texture->size.w / texture->pot_size.w,
-            texture->size.h / texture->pot_size.h
-        };
-        tex_tl.packed.x *= pot_scale.x;
-        tex_tr.packed.x *= pot_scale.x;
-        tex_bl.packed.x *= pot_scale.x;
-        tex_br.packed.x *= pot_scale.x;
-        tex_tl.packed.y *= pot_scale.y;
-        tex_tr.packed.y *= pot_scale.y;
-        tex_bl.packed.y *= pot_scale.y;
-        tex_br.packed.y *= pot_scale.y;
+        texel_size.w = 1 / texture->pot_size.w;
+        texel_size.h = 1 / texture->pot_size.h;
     }
 
     glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
@@ -362,6 +350,14 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
                        GL_FALSE, graphics->projection_matrix.gl);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
                        GL_FALSE, graphics->modelview_matrix.gl);
+    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_SIZE],
+                       textureSize.w, textureSize.h);
+    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_OFFSET],
+                       textureOffset.x, textureOffset.y);
+    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_POT_SCALE],
+                       pot_scale.x, pot_scale.y);
+    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_TEXEL_SIZE],
+                       texel_size.w, texel_size.h);
 
     GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
 
@@ -506,6 +502,14 @@ void Graphics_build_decal_shader(Graphics *graphics) {
         glGetUniformLocation(program, "modelView");
     GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX] =
         glGetUniformLocation(program, "projection");
+    GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_OFFSET] =
+        glGetUniformLocation(program, "textureOffset");
+    GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_SIZE] =
+        glGetUniformLocation(program, "textureSize");
+    GfxShader_uniforms[UNIFORM_DECAL_POT_SCALE] =
+        glGetUniformLocation(program, "potScale");
+    GfxShader_uniforms[UNIFORM_DECAL_TEXEL_SIZE] =
+        glGetUniformLocation(program, "texelSize");
     GfxShader_attributes[ATTRIB_DECAL_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_DECAL_COLOR] =
