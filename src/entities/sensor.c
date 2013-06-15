@@ -33,10 +33,5 @@ void Sensor_overlap_sensor(Sensor *a, Sensor *b) {
 }
 
 void Sensor_separate_sensor(Sensor *a, Sensor *b) {
-    LIST_FOREACH(a->on_sensors, first, next, current) {
-        if (current->value != b) continue;
-
-        List_remove(a->on_sensors, current);
-        break;
-    }
+    List_remove_value(a->on_sensors, b);
 }
