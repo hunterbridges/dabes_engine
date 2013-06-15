@@ -6,6 +6,7 @@ uniform sampler2D texture;
 uniform vec2 textureOffset;
 uniform vec2 textureSize;
 uniform vec2 potScale;
+uniform vec2 texelSize;
 
 void main()
 {
