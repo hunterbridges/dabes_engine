@@ -30,7 +30,7 @@ Megaman = Entity:extend({
     end,
 
     build_sprite = function()
-        local sprite = Sprite:new("media/sprites/megaman.png", {32, 32})
+        local sprite = Sprite:new("media/sprites/megaman.png", {32, 32}, 1)
 
         local standing = SpriteAnimation:new(0)
         standing.fps = 0

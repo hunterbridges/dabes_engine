@@ -40,8 +40,8 @@ Sprite = BoundObject:extend({
     lib = dab_sprite,
 
 -- Hook Overloads
-    realize = function(class, texname, cell_size)
-        local ret = class.lib.new(texname, cell_size)
+    realize = function(class, texname, cell_size, padding)
+        local ret = class.lib.new(texname, cell_size, padding)
         return ret
     end,
 

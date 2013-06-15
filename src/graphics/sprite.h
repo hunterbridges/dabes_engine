@@ -31,6 +31,7 @@ typedef enum {
 typedef struct Sprite {
     GfxTexture *texture;
     GfxSize cell_size;
+    int padding;
     int rows;
     int cols;
     int num_frames;
@@ -43,7 +44,7 @@ typedef struct Sprite {
     SpriteFrame frames[];
 } Sprite;
 
-Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size);
+Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size, int padding);
 void Sprite_destroy(Sprite *sprite);
 void Sprite_update(Sprite *sprite, Engine *engine);
 

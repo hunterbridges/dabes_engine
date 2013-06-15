@@ -23,11 +23,10 @@ Audio *Audio_create() {
     const ALCchar *defaultDevice =
         alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
     check(defaultDevice != NULL, "Could not get default audio device");
-    debug("%s", defaultDevice);
-  
+
     audio->device = alcOpenDevice(defaultDevice);
     check(audio->device != NULL, "Could not open audio device");
-  
+
     audio->context = alcCreateContext(audio->device, NULL);
     check(audio->context != NULL, "Could not open audio context");
 

@@ -13,13 +13,6 @@ ReasonableMap = Scene:extend({
         self:load_map("media/tilemaps/reasonable.tmx", 1.0)
     end,
 
-    cleanup = function(self)
-        self._add_entity_cache = nil
-        self:_cleancache()
-        self.music:stop()
-        collectgarbage("collect")
-    end,
-
     configure = function(self)
         -- Music
         local music = Music:new(

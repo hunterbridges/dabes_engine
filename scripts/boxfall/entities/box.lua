@@ -10,7 +10,7 @@ Box = Entity:extend({
     end,
 
     build_sprite = function()
-        local sprite = Sprite:new("media/sprites/dumblock.png", {32, 32})
+        local sprite = Sprite:new("media/sprites/dumblock.png", {32, 32}, 0)
 
         return sprite
     end

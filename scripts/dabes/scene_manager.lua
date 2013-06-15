@@ -10,7 +10,6 @@ SceneManager = Object:extend({
 
     flip_scene = function(self)
         if self.queued_scene == nil then return end
-        print(engine)
 
         if self.current_scene == nil then
             self.current_scene = self.queued_scene

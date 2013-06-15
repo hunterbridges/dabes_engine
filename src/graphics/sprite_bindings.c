@@ -92,9 +92,10 @@ int luab_Sprite_new(lua_State *L) {
             (char *)texname);
     check(tex != NULL, "Couldn't load image %s", texname);
 
+    int padding = lua_tonumber(L, 3);
     VPoint cellp = luaL_tovpoint(L, 2);
     GfxSize cell_size = {cellp.x, cellp.y};
-    Sprite *sprite = Sprite_create(tex, cell_size);
+    Sprite *sprite = Sprite_create(tex, cell_size, padding);
 
     luaL_register_ud(L, -1, (void **)&ud->p, sprite);
     return 1;

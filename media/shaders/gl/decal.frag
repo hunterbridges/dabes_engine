@@ -14,7 +14,7 @@ void main()
   texCoord = texCoord * textureSize;
   texCoord = texCoord + textureOffset;
   texCoord = texCoord * potScale;
-  texCoord = texCoord + texelSize / 4.0;
+  // texCoord = texCoord + texelSize / 4.0;
   vec4 mixed = colorVarying;
   if (hasTexture != 0) {
     vec4 texColor = texture2D(texture, texCoord);

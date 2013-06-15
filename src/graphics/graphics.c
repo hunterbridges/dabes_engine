@@ -299,6 +299,8 @@ void Graphics_draw_sprite(Graphics *graphics, Sprite *sprite, VRect rect,
         GLfloat color[4], double rot_degs) {
     SpriteFrame *frame = &sprite->frames[sprite->current_frame];
     VPoint frame_offset = frame->offset;
+    frame_offset.x += sprite->padding;
+    frame_offset.y += sprite->padding;
     GfxSize draw_size = sprite->cell_size;
 
     if (sprite->direction == SPRITE_DIR_FACING_LEFT) {
@@ -787,9 +789,9 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
 }
 
 Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
-        GfxSize cell_size) {
+        GfxSize cell_size, int padding) {
     GfxTexture *texture = Graphics_texture_from_image(graphics, image_name);
-    Sprite *sprite = Sprite_create(texture, cell_size);
+    Sprite *sprite = Sprite_create(texture, cell_size, padding);
     check(sprite != NULL, "Couldn't create sprite");
 
     return sprite;

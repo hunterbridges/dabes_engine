@@ -26,13 +26,13 @@ Door = Entity:extend({
     end,
 
     build_sprite = function()
-        local sprite = Sprite:new("media/sprites/door.png", {32, 64})
+        local sprite = Sprite:new("media/sprites/door.png", {32, 64}, 1)
 
-        local closed = SpriteAnimation:new(48)
+        local closed = SpriteAnimation:new(0)
         closed.fps = 0
         sprite:add_animation(closed, "closed")
 
-        local opening = SpriteAnimation:new(48, 60, 72, 84)
+        local opening = SpriteAnimation:new(0, 1, 2, 3)
         opening.fps = 4
         opening.repeats = false
         sprite:add_animation(opening, "opening")

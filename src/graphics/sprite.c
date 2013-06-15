@@ -29,7 +29,7 @@ error:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size) {
+Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size, int padding) {
     check(texture != NULL, "Need texture to build sprite");
     int cols = floor(texture->size.w / cell_size.w);
     int rows = floor(texture->size.h / cell_size.h);
@@ -39,6 +39,7 @@ Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size) {
                             num_frames * sizeof(SpriteFrame));
     sprite->cell_size = cell_size;
     sprite->texture = texture;
+    sprite->padding = padding;
 
     sprite->cols = cols;
     sprite->rows = rows;
@@ -52,8 +53,8 @@ Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size) {
         int row = i / sprite->cols;
         int col = i % sprite->cols;
         SpriteFrame *frame = &sprite->frames[i];
-        frame->offset.x = col * cell_size.w;
-        frame->offset.y = row * cell_size.h;
+        frame->offset.x = col * (cell_size.w + 2 * padding);
+        frame->offset.y = row * (cell_size.h + 2 * padding);
     }
 
     sprite->current_frame = 0;
