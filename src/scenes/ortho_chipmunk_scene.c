@@ -5,6 +5,7 @@
 #include "../entities/body.h"
 #include "../entities/body_bindings.h"
 #include "../entities/sensor.h"
+#include "../graphics/draw_buffer.h"
 #include "ortho_chipmunk_scene.h"
 #include "../entities/entity.h"
 #include "scene.h"
@@ -151,9 +152,11 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
-        Entity_render(entity, engine);
+        Entity_render(entity, engine, dshader->draw_buffer);
     }
-
+    DrawBuffer_draw(dshader->draw_buffer);
+    DrawBuffer_empty(dshader->draw_buffer);
+    
     // Camera debug
     if (scene->debug_camera)
         Camera_debug(scene->camera, engine->graphics);
@@ -274,7 +277,6 @@ void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
     assert(scene != NULL);
     entity->scene = scene;
     DArray_push(scene->entities, entity);
-    DArray_mergesort(scene->entities, (DArray_compare)Entity_z_cmp);
     if (scene->space) {
         OrthoChipmunkScene_add_entity_body(scene, engine, entity);
     }

@@ -127,13 +127,8 @@ error:
 }
 
 void Audio_destroy_music(Audio *audio, struct Music *music) {
-  LIST_FOREACH(audio->musics, first, next, current) {
-    if (current->value == music) {
-      List_remove(audio->musics, current);
-      Music_destroy(music);
-      break;
-    }
-  }
+    int result = List_remove_value(audio->musics, music);
+    if (result) Music_destroy(music);
 }
 
 struct Sfx *Audio_gen_sfx(Audio *audio, const char *filename) {
@@ -146,11 +141,6 @@ error:
 }
 
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx) {
-  LIST_FOREACH(audio->active_sfx, first, next, current) {
-    if (current->value == sfx) {
-      List_remove(audio->active_sfx, current);
-      Sfx_destroy(sfx);
-      break;
-    }
-  }
+    int result = List_remove_value(audio->active_sfx, sfx);
+    if (result) Sfx_destroy(sfx);
 }

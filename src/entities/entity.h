@@ -26,9 +26,12 @@ typedef struct Entity {
 } Entity;
 
 struct Engine;
+struct DrawBuffer;
+
 Entity *Entity_create();
 void Entity_destroy(Entity *entity);
-void Entity_render(Entity *self, void *engine);
+void Entity_render(Entity *self, struct Engine *engine,
+                   struct DrawBuffer *draw_buffer);
 void Entity_assign_controller(Entity *entity, Controller *controller);
 void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);

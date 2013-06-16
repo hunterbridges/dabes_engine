@@ -110,7 +110,7 @@ error: \
     return 0; \
 }
 
-#define Scripting_GfxUVertex_getter(STYPE, SPROP) \
+#define Scripting_VVector4_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
@@ -130,13 +130,13 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     return 1; \
 }
 
-#define Scripting_GfxUVertex_setter(STYPE, SPROP) \
+#define Scripting_VVector4_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     check(luaL_unpack_exact(L, 4), \
             "Please provide 4 numbers to set " #STYPE "->" #SPROP ); \
-    GfxUVertex vertex = {.raw = {lua_tonumber(L, -4), lua_tonumber(L, -3), \
+    VVector4 vertex = {.raw = {lua_tonumber(L, -4), lua_tonumber(L, -3), \
         lua_tonumber(L, -2), lua_tonumber(L, -1)}}; \
     lua_pop(L, 4); \
     s->SPROP = vertex; \

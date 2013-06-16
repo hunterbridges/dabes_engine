@@ -195,10 +195,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       };
       Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
 
-      GfxUVertex tex_tl = {.raw = {0,0,0,0}};
-      GfxUVertex tex_tr = {.raw = {1,0,0,0}};
-      GfxUVertex tex_bl = {.raw = {0,1,0,0}};
-      GfxUVertex tex_br = {.raw = {1,1,0,0}};
+      VVector4 tex_tl = {.raw = {0,0,0,0}};
+      VVector4 tex_tr = {.raw = {1,0,0,0}};
+      VVector4 tex_bl = {.raw = {0,1,0,0}};
+      VVector4 tex_br = {.raw = {1,1,0,0}};
       glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX],
                          1, GL_FALSE, graphics->projection_matrix.gl);
       glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX],
@@ -262,8 +262,8 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
           glBindTexture(GL_TEXTURE_2D, 0);
       }
 
-      size_t v_size = 8 * sizeof(GfxUVertex);
-      GfxUVertex vertices[8] = {
+      size_t v_size = 8 * sizeof(VVector4);
+      VVector4 vertices[8] = {
         // Vertex
         {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
         {.raw = {w / 2.0, -h / 2.0, 0, 1}},

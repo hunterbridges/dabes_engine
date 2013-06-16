@@ -99,16 +99,16 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
             0 - (hyp - screen_size.w) / 2.0,
             0 - (hyp - screen_size.h) / 2.0,
             hyp, hyp);
-    Graphics_draw_rect(graphics, sea_rect, parallax->sea_color.raw,
-        NULL, VPointZero, GfxSizeZero, 0);
+    Graphics_draw_rect(graphics, NULL, sea_rect, parallax->sea_color.raw,
+        NULL, VPointZero, GfxSizeZero, 0, 0);
 
     // render sky color
     VRect sky_rect = VRect_from_xywh(
             0 - (hyp - screen_size.w) / 2.0,
             0 - (hyp - screen_size.h) / 2.0,
             hyp, hyp / 2.0 - y_wiggle);
-    Graphics_draw_rect(graphics, sky_rect, parallax->sky_color.raw,
-        NULL, VPointZero, GfxSizeZero, 0);
+    Graphics_draw_rect(graphics, NULL, sky_rect, parallax->sky_color.raw,
+        NULL, VPointZero, GfxSizeZero, 0, 0);
 
     Graphics_use_shader(graphics, pshader);
     Graphics_reset_modelview_matrix(graphics);
@@ -121,10 +121,10 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         hyp / screen_size.w,
         hyp / screen_size.h
     };
-    GfxUVertex tex_tl = {.raw = {0,0,0,0}};
-    GfxUVertex tex_tr = {.raw = {stretch.x,0,0,0}};
-    GfxUVertex tex_bl = {.raw = {0,1.0,0,0}};
-    GfxUVertex tex_br = {.raw = {stretch.x,1.0,0,0}};
+    VVector4 tex_tl = {.raw = {0,0,0,0}};
+    VVector4 tex_tr = {.raw = {stretch.x,0,0,0}};
+    VVector4 tex_bl = {.raw = {0,1.0,0,0}};
+    VVector4 tex_br = {.raw = {stretch.x,1.0,0,0}};
 
     int i = 0;
     for (i = 0; i < DArray_count(parallax->layers); i++) {
@@ -169,7 +169,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
                 final_scale);
         glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
 
-        GfxUVertex vertices[8] = {
+        VVector4 vertices[8] = {
           // Vertex
           {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
           {.raw = {rect.tr.x, rect.tr.y, 0, 1}},
@@ -179,7 +179,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
           // Texture
           tex_tl, tex_tr, tex_bl, tex_br
         };
-        glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GfxUVertex), vertices,
+        glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(VVector4), vertices,
                 GL_STATIC_DRAW);
 
         glActiveTexture(GL_TEXTURE0);

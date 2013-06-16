@@ -116,11 +116,11 @@ int luab_Parallax_close(lua_State *L) {
     return 0;
 }
 
-Scripting_GfxUVertex_getter(Parallax, sky_color);
-Scripting_GfxUVertex_setter(Parallax, sky_color);
+Scripting_VVector4_getter(Parallax, sky_color);
+Scripting_VVector4_setter(Parallax, sky_color);
 
-Scripting_GfxUVertex_getter(Parallax, sea_color);
-Scripting_GfxUVertex_setter(Parallax, sea_color);
+Scripting_VVector4_getter(Parallax, sea_color);
+Scripting_VVector4_setter(Parallax, sea_color);
 
 Scripting_num_getter(Parallax, y_wiggle);
 Scripting_num_setter(Parallax, y_wiggle);

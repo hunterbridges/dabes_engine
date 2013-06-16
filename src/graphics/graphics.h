@@ -21,26 +21,11 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
 GfxSize load_image_dimensions_from_image(char *filename);
 
-typedef union GfxUVertex {
-  struct {
-    GLfloat x;
-    GLfloat y;
-    GLfloat z;
-    GLfloat w;
-  } packed;
-  struct {
-    GLfloat r;
-    GLfloat g;
-    GLfloat b;
-    GLfloat a;
-  } rgba;
-  float raw[4];
-} GfxUVertex;
-
 typedef struct GfxTexture {
-  GfxSize size;
-  GfxSize pot_size;
-  GLuint gl_tex;
+    const char *name;
+    GfxSize size;
+    GfxSize pot_size;
+    GLuint gl_tex;
 } GfxTexture;
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
@@ -56,13 +41,8 @@ void GfxTexture_destroy(GfxTexture *texture);
 
 enum {
     UNIFORM_DECAL_PROJECTION_MATRIX,
-    UNIFORM_DECAL_MODELVIEW_MATRIX,
     UNIFORM_DECAL_HAS_TEXTURE,
     UNIFORM_DECAL_TEXTURE,
-    UNIFORM_DECAL_TEXTURE_OFFSET,
-    UNIFORM_DECAL_TEXTURE_SIZE,
-    UNIFORM_DECAL_POT_SCALE,
-    UNIFORM_DECAL_TEXEL_SIZE,
     UNIFORM_TILEMAP_PROJECTION_MATRIX,
     UNIFORM_TILEMAP_MODELVIEW_MATRIX,
     UNIFORM_TILEMAP_TILE_SIZE,
@@ -87,6 +67,7 @@ enum {
     ATTRIB_DECAL_VERTEX,
     ATTRIB_DECAL_COLOR,
     ATTRIB_DECAL_TEXTURE,
+    ATTRIB_DECAL_MODELVIEW_MATRIX,
     ATTRIB_TILEMAP_VERTEX,
     ATTRIB_TILEMAP_TEXTURE,
     ATTRIB_PARALLAX_VERTEX,
@@ -104,10 +85,12 @@ extern GLint GfxShader_uniforms[NUM_UNIFORMS];
 extern GLint GfxShader_attributes[NUM_ATTRIBUTES];
 extern GLint GfxShader_samplers[NUM_SAMPLERS];
 
+struct DrawBuffer;
 typedef struct GfxShader {
-  void (*set_up)(struct GfxShader *shader);
-  void (*tear_down)(struct GfxShader *shader);
-  GLuint gl_program;
+    void (*set_up)(struct GfxShader *shader);
+    void (*tear_down)(struct GfxShader *shader);
+    GLuint gl_program;
+    struct DrawBuffer *draw_buffer;
 } GfxShader;
 
 ///////////
@@ -142,9 +125,9 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
-void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-        GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
-        double rotation);
+void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
+        VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
+        GfxSize textureSize, double rotation, int z_index);
 void Graphics_draw_debug_text(Graphics *graphics,
         int ticks_since_last);
 
@@ -182,8 +165,9 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name);
 
 // Sprites
 struct Sprite;
-void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite, VRect rect,
-        GLfloat color[4], double rot_degs);
+void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
+                          struct DrawBuffer *draw_buffer, VRect rect,
+                          GLfloat color[4], double rot_degs, int z_index);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
     GfxSize cell_size, int padding);
 

@@ -20,6 +20,7 @@ static const VPoint VPointZero = {0,0};
 
 VPoint VPoint_add(VPoint a, VPoint b);
 VPoint VPoint_subtract(VPoint a, VPoint b);
+VPoint VPoint_multiply(VPoint a, VPoint b);
 double VPoint_angle(VPoint a, VPoint b);
 VPoint VPoint_scale(VPoint a, double b);
 double VPoint_dot(VPoint a, VPoint b);

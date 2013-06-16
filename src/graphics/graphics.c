@@ -1,4 +1,5 @@
 #include <lcthw/bstrlib.h>
+#include "draw_buffer.h"
 #include "graphics.h"
 #include "sprite.h"
 
@@ -238,30 +239,39 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
-    GfxUVertex tex = {.raw = {0,0,0,0}};
+    VVector4 tex = {.raw = {0,0,0,0}};
 
     glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE], 0);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
-                       GL_FALSE, graphics->modelview_matrix.gl);
 
-    GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-
-    GfxUVertex vertices[3 * num_points];
+    VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
+    
+    // Transpose modelview matrix because attribute reads columns, not rows.
+    VMatrix tmvm = graphics->modelview_matrix;
+    
+    VVector4 vertices[7 * num_points];
     int i = 0;
     for (i = 0; i < num_points; i++) {
-        int pos_idx = i * 3;
-        int color_idx = i * 3 + 1;
-        int tex_idx = i * 3 + 2;
-
+        int pos_idx   = i * 7;
+        int color_idx = i * 7 + 1;
+        int tex_idx   = i * 7 + 2;
+        int mvm_1_idx = i * 7 + 3;
+        int mvm_2_idx = i * 7 + 4;
+        int mvm_3_idx = i * 7 + 5;
+        int mvm_4_idx = i * 7 + 6;
+        
         VPoint point = points[i];
-        GfxUVertex pos = {.raw = {point.x, point.y, 0.0, 1.0}};
+        VVector4 pos = {.raw = {point.x, point.y, 0.0, 1.0}};
         vertices[pos_idx] = pos;
         vertices[color_idx] = cVertex;
         vertices[tex_idx] = tex;
+        vertices[mvm_1_idx] = tmvm.v[0];
+        vertices[mvm_2_idx] = tmvm.v[1];
+        vertices[mvm_3_idx] = tmvm.v[2];
+        vertices[mvm_4_idx] = tmvm.v[3];
     }
-    glBufferData(GL_ARRAY_BUFFER, 3 * num_points * sizeof(GfxUVertex), vertices,
+    glBufferData(GL_ARRAY_BUFFER, 7 * num_points * sizeof(VVector4), vertices,
             GL_STATIC_DRAW);
 
     // Texture
@@ -295,8 +305,10 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     Graphics_stroke_poly(graphics, 4, poly, center, color, line_width, rotation);
 }
 
-void Graphics_draw_sprite(Graphics *graphics, Sprite *sprite, VRect rect,
-        GLfloat color[4], double rot_degs) {
+
+void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
+                          struct DrawBuffer *draw_buffer, VRect rect,
+                          GLfloat color[4], double rot_degs, int z_index) {
     SpriteFrame *frame = &sprite->frames[sprite->current_frame];
     VPoint frame_offset = frame->offset;
     frame_offset.x += sprite->padding;
@@ -307,13 +319,13 @@ void Graphics_draw_sprite(Graphics *graphics, Sprite *sprite, VRect rect,
         frame_offset.x += sprite->cell_size.w;
         draw_size.w = -sprite->cell_size.w;
     }
-    Graphics_draw_rect(graphics, rect, color, sprite->texture, frame_offset,
-            draw_size, rot_degs);
+    Graphics_draw_rect(graphics, draw_buffer, rect, color, sprite->texture,
+                       frame_offset, draw_size, rot_degs, z_index);
 }
 
-void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-        GfxTexture *texture, VPoint textureOffset, GfxSize textureSize,
-        double rotation) {
+void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
+        VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
+        GfxSize textureSize, double rotation, int z_index) {
     check_mem(graphics);
     Graphics_reset_modelview_matrix(graphics);
     double w = rect.tr.x - rect.tl.x;
@@ -326,13 +338,11 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
-    GfxUVertex tex_tl = {.raw = {0,0,0,0}};
-    GfxUVertex tex_tr = {.raw = {1,0,0,0}};
-    GfxUVertex tex_bl = {.raw = {0,1,0,0}};
-    GfxUVertex tex_br = {.raw = {1,1,0,0}};
+    VRect tex_rect = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
     VPoint pot_scale = {1, 1};
     GfxSize texel_size = {1, 1};
     if (texture) {
+        
         pot_scale.x = texture->size.w / texture->pot_size.w;
         pot_scale.y = texture->size.h / texture->pot_size.h;
 
@@ -342,40 +352,84 @@ void Graphics_draw_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         textureSize.w /= texture->size.w;
         textureSize.h /= texture->size.h;
 
+        VPoint size_vec = {textureSize.w, textureSize.h};
+        int i = 0;
+        for (i = 0; i < 4; i++) {
+            VPoint vertex = VRect_vertex(tex_rect, i);
+            vertex = VPoint_multiply(vertex, size_vec);
+            vertex = VPoint_add(vertex, textureOffset);
+            vertex = VPoint_multiply(vertex, pot_scale);
+            VRect_set_vertex(&tex_rect, i, vertex);
+        }
+        
         texel_size.w = 1 / texture->pot_size.w;
         texel_size.h = 1 / texture->pot_size.h;
     }
-
+  
     glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
                 texture ? texture->gl_tex : 0);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX], 1,
-                       GL_FALSE, graphics->modelview_matrix.gl);
-    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_SIZE],
-                       textureSize.w, textureSize.h);
-    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_OFFSET],
-                       textureOffset.x, textureOffset.y);
-    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_POT_SCALE],
-                       pot_scale.x, pot_scale.y);
-    glUniform2f(GfxShader_uniforms[UNIFORM_DECAL_TEXEL_SIZE],
-                       texel_size.w, texel_size.h);
+    VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
+    
+    // Transpose modelview matrix because attribute reads columns, not rows.
+    VMatrix tmvm = graphics->modelview_matrix;
 
-    GfxUVertex cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-
-    GfxUVertex vertices[12] = {
-      {.raw = {-w / 2.0, -h / 2.0, 0, 1}}, cVertex, tex_tl,
-      {.raw = {w / 2.0, -h / 2.0, 0, 1}}, cVertex, tex_tr,
-      {.raw = {-w / 2.0, h / 2.0, 0, 1}}, cVertex, tex_bl,
-      {.raw = {w / 2.0, h / 2.0, 0, 1}}, cVertex, tex_br
+    VVector4 vertices[7 * 6] = {
+        {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+            cVertex,
+            {tex_rect.tl.x, tex_rect.tl.y, 0, 0},
+            tmvm.v[0],
+            tmvm.v[1],
+            tmvm.v[2],
+            tmvm.v[3],
+        {.raw = {w / 2.0, -h / 2.0, 0, 1}},
+            cVertex,
+            {tex_rect.tr.x, tex_rect.tr.y, 0, 0},
+            tmvm.v[0],
+            tmvm.v[1],
+            tmvm.v[2],
+            tmvm.v[3],
+        {.raw = {w / 2.0, h / 2.0, 0, 1}},
+            cVertex,
+            {tex_rect.br.x,tex_rect.br.y, 0, 0},
+            tmvm.v[0],
+            tmvm.v[1],
+            tmvm.v[2],
+            tmvm.v[3],
+        
+        {.raw = {w / 2.0, h / 2.0, 0, 1}},
+            cVertex,
+            {tex_rect.br.x,tex_rect.br.y, 0, 0},
+            tmvm.v[0],
+            tmvm.v[1],
+            tmvm.v[2],
+            tmvm.v[3],
+        {.raw = {-w / 2.0, h / 2.0, 0, 1}},
+            cVertex,
+            {tex_rect.bl.x, tex_rect.bl.y, 0, 0},
+            tmvm.v[0],
+            tmvm.v[1],
+            tmvm.v[2],
+            tmvm.v[3],
+        {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+            cVertex,
+            {tex_rect.tl.x, tex_rect.tl.y, 0, 0},
+            tmvm.v[0],
+            tmvm.v[1],
+            tmvm.v[2],
+            tmvm.v[3],
     };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
 
-    // Texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    if (draw_buffer) {
+        DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 7, vertices);
+    } else {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
     return;
 error:
     return;
@@ -470,26 +524,54 @@ void set_up_decal_shader(GfxShader *UNUSED(shader)) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
+    
+    // Position, color, texture, modelView * 4
+    size_t v_size = sizeof(VVector4) * 7;
+    
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
-                          GL_FLOAT, GL_FALSE, sizeof(GfxUVertex) * 3, 0);
+                          GL_FLOAT, GL_FALSE, v_size, 0);
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_COLOR], 4,
-                          GL_FLOAT, GL_FALSE, sizeof(GfxUVertex) * 3,
-                          (GLvoid *)(sizeof(GfxUVertex) * 1));
+                          GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 1));
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
-                          GL_FLOAT, GL_FALSE, sizeof(GfxUVertex) * 3,
-                          (GLvoid *)(sizeof(GfxUVertex) * 2));
+                          GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 2));
+    
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX],
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 3));
+    
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1,
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 4));
+    
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2,
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 5));
+    
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3,
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 6));
 }
 
 void tear_down_decal_shader(GfxShader *UNUSED(shader)) {
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
 }
 
 void Graphics_build_decal_shader(Graphics *graphics) {
-    GfxShader *shader = malloc(sizeof(GfxShader));
+    GfxShader *shader = calloc(1, sizeof(GfxShader));
     check(shader != NULL, "Could not alloc decal shader");
 
     int rc = Graphics_load_shader(graphics, shader_path("decal.vert"),
@@ -500,25 +582,22 @@ void Graphics_build_decal_shader(Graphics *graphics) {
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE] =
         glGetUniformLocation(program, "hasTexture");
-    GfxShader_uniforms[UNIFORM_DECAL_MODELVIEW_MATRIX] =
-        glGetUniformLocation(program, "modelView");
     GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX] =
         glGetUniformLocation(program, "projection");
-    GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_OFFSET] =
-        glGetUniformLocation(program, "textureOffset");
-    GfxShader_uniforms[UNIFORM_DECAL_TEXTURE_SIZE] =
-        glGetUniformLocation(program, "textureSize");
-    GfxShader_uniforms[UNIFORM_DECAL_POT_SCALE] =
-        glGetUniformLocation(program, "potScale");
-    GfxShader_uniforms[UNIFORM_DECAL_TEXEL_SIZE] =
-        glGetUniformLocation(program, "texelSize");
     GfxShader_attributes[ATTRIB_DECAL_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_DECAL_COLOR] =
         glGetAttribLocation(program, "color");
-
+    GfxShader_attributes[ATTRIB_DECAL_TEXTURE] =
+        glGetAttribLocation(program, "texture");
+    GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] =
+        glGetAttribLocation(program, "modelView");
+    
     shader->set_up = &set_up_decal_shader;
     shader->tear_down = &tear_down_decal_shader;
+    
+    shader->draw_buffer = DrawBuffer_create();
+    
     return;
 error:
     if (shader) free(shader);
@@ -533,7 +612,7 @@ void set_up_tilemap_shader(GfxShader *UNUSED(shader)) {
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *)(sizeof(GfxUVertex) * 4));
+                          (GLvoid *)(sizeof(VVector4) * 4));
 }
 
 void tear_down_tilemap_shader (GfxShader *UNUSED(shader)) {
@@ -588,7 +667,7 @@ void set_up_parallax_shader(GfxShader *UNUSED(shader)) {
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *)(sizeof(GfxUVertex) * 4));
+                          (GLvoid *)(sizeof(VVector4) * 4));
 }
 
 void tear_down_parallax_shader (GfxShader *UNUSED(shader)) {

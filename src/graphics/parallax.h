@@ -20,8 +20,8 @@ typedef struct Parallax {
     DArray *layers;
     Camera *camera;
     GfxSize level_size;
-    GfxUVertex sky_color;
-    GfxUVertex sea_color;
+    VVector4 sky_color;
+    VVector4 sea_color;
     double y_wiggle;
     double sea_level;
 } Parallax;

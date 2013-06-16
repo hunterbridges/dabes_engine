@@ -49,16 +49,17 @@ VRect Entity_bounding_rect(Entity *entity) {
     return VRect_bounding_box(real);
 }
 
-void Entity_render(Entity *self, void *engine) {
-    Entity *entity = self;
-    Graphics *graphics = ((Engine *)engine)->graphics;
+void Entity_render(Entity *entity, struct Engine *engine,
+                   struct DrawBuffer *draw_buffer) {
+    Graphics *graphics = engine->graphics;
 
-    VRect rect = Entity_base_rect(self);
+    VRect rect = Entity_base_rect(entity);
     float rads = entity->body->_(get_angle)(entity->body);
     float degrees = rads * 180.0 / M_PI;
     GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
 
-    Graphics_draw_sprite(graphics, entity->sprite, rect, color, degrees);
+    Graphics_draw_sprite(graphics, entity->sprite, draw_buffer, rect, color,
+                         degrees, entity->z_index);
 }
 
 void Entity_update(Entity *entity, Engine *engine) {
@@ -76,9 +77,6 @@ error:
 
 void Entity_set_z_index(Entity *entity, int z_index) {
     entity->z_index = z_index;
-    if (entity->scene) {
-        DArray_mergesort(entity->scene->entities, (DArray_compare)Entity_z_cmp);
-    }
 }
 
 int Entity_z_cmp(void **a, void **b) {

@@ -17,6 +17,22 @@ typedef union VVector3 {
 VVector3 VVector3_normalize(VVector3 vector);
 float VVector3_length(VVector3 vector);
 
+typedef union VVector4 {
+  struct {
+    float x;
+    float y;
+    float z;
+    float w;
+  } packed;
+  struct {
+    float r;
+    float g;
+    float b;
+    float a;
+  } rgba;
+  float raw[4];
+} VVector4;
+
 typedef union VMatrix {
     struct {
       float m11, m12, m13, m14;
@@ -25,6 +41,7 @@ typedef union VMatrix {
       float m41, m42, m43, m44;
     } gfx;
     float gl[16];
+    VVector4 v[4];
 #ifdef DABES_IOS
     CATransform3D ca;
     GLKMatrix4 glk;
@@ -34,6 +51,7 @@ typedef union VMatrix {
 extern const VMatrix VMatrixIdentity;
 
 VMatrix VMatrix_multiply(VMatrix a, VMatrix b);
+VMatrix VMatrix_transpose(VMatrix m);
 VMatrix VMatrix_scale(VMatrix matrix, double x, double y, double z);
 VMatrix VMatrix_make_rotation(float radians, float x, float y, float z);
 VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,

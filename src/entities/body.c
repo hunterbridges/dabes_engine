@@ -41,11 +41,7 @@ void Body_add_sensor(Body *body, struct Sensor *sensor) {
 }
 
 void Body_remove_sensor(Body *body, struct Sensor *sensor) {
-    ListNode *found = NULL;
-    LIST_FOREACH(body->sensors, first, next, current) {
-        if (current->value == sensor) found = current;
-    }
-    if (!found) return;
-    List_remove(body->sensors, found);
+    int result = List_remove_value(body->sensors, sensor);
+    if (!result) return;
     body->_(remove_sensor)(body, sensor);
 }

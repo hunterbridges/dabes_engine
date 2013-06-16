@@ -94,6 +94,14 @@ VPoint VRect_vertex(VRect box, unsigned int index) {
     return no;
 }
 
+void VRect_set_vertex(VRect *box, unsigned int index, VPoint vertex) {
+    assert(index <= 3);
+    if (index == 0) box->tl = vertex;
+    if (index == 1) box->tr = vertex;
+    if (index == 2) box->br = vertex;
+    if (index == 3) box->bl = vertex;
+}
+
 VRect VRect_rotate(VRect box, VPoint pivot, double angle_in_rads) {
     VRect rotated = box;
     rotated.tl = VPoint_rotate(rotated.tl, pivot, angle_in_rads);

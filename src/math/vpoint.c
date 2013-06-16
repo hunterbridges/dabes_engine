@@ -16,6 +16,11 @@ VPoint VPoint_subtract(VPoint a, VPoint b) {
     return new;
 }
 
+VPoint VPoint_multiply(VPoint a, VPoint b) {
+    VPoint new = {a.x * b.x, a.y * b.y};
+    return new;
+}
+
 double VPoint_angle(VPoint a, VPoint b) {
     VPoint d = VPoint_subtract(b, a);
     return atan2(d.y, d.x);

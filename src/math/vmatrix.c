@@ -52,6 +52,16 @@ VMatrix VMatrix_multiply(VMatrix a, VMatrix b) {
     return mout;
 }
 
+VMatrix VMatrix_transpose(VMatrix m) {
+    VMatrix mout = {.gl = {
+        m.v[0].packed.x, m.v[1].packed.x, m.v[2].packed.x, m.v[3].packed.x,
+        m.v[0].packed.y, m.v[1].packed.y, m.v[2].packed.y, m.v[3].packed.y,
+        m.v[0].packed.z, m.v[1].packed.z, m.v[2].packed.z, m.v[3].packed.z,
+        m.v[0].packed.w, m.v[1].packed.w, m.v[2].packed.w, m.v[3].packed.w
+    }};
+    return mout;
+}
+
 VMatrix VMatrix_scale(VMatrix matrix, double x, double y, double z) {
     VMatrix scaled = {.gl = {
       matrix.gl[0] * x, matrix.gl[1] * x, matrix.gl[2] * x, matrix.gl[3] * x,
