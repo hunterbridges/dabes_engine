@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "vmatrix.h"
+#include "../util.h"
 
 const VMatrix VMatrixIdentity = {.gl = {
   1, 0, 0, 0,
@@ -132,4 +133,12 @@ VMatrix VMatrix_make_ortho(float left, float right, float top,
     0,                     0,                  0,                 1
   }};
   return ortho;
+}
+
+int VMatrix_is_equal(VMatrix a, VMatrix b) {
+    int i = 0;
+    for (i = 0; i < 16; i++) {
+        if (!fequal(a.gl[i], b.gl[i])) return 0;
+    }
+    return 1;
 }

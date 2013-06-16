@@ -1008,6 +1008,8 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/../../../third_party/OggVorbis\"",
 				);
+				GCC_FAST_MATH = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBesEngine/DaBesEngine-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1023,6 +1025,7 @@
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/liblcthw-axjihrnjansjqnheivuszpbufqgd/Build/Products/Debug-iphoneos\"",
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/lcthw-axrjvzehauplcydzkbhppmajtfle/Build/Products/Debug-iphoneos\"",
 				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = armv7;
@@ -1039,6 +1042,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/../../../third_party/OggVorbis\"",
 				);
+				GCC_FAST_MATH = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBesEngine/DaBesEngine-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1054,6 +1058,7 @@
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/liblcthw-axjihrnjansjqnheivuszpbufqgd/Build/Products/Debug-iphoneos\"",
 					"\"$(SRCROOT)/../../../../../Library/Developer/Xcode/DerivedData/lcthw-axrjvzehauplcydzkbhppmajtfle/Build/Products/Debug-iphoneos\"",
 				);
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = armv7;

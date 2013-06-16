@@ -59,5 +59,6 @@ VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,
 VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz);
 VMatrix VMatrix_make_ortho(float left, float right, float top,
                            float bottom, float near, float far);
+int VMatrix_is_equal(VMatrix a, VMatrix b);
 
 #endif

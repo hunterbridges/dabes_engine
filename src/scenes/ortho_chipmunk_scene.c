@@ -115,7 +115,6 @@ static void render_shape_iter(cpShape *shape, void *data) {
 void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
     Graphics *graphics = ((Engine *)engine)->graphics;
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Graphics_project_camera(graphics, scene->camera);
 
     Graphics_use_shader(graphics, dshader);
@@ -139,21 +138,29 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    ////////////////////////////////////////////////////////////////////////////
+    
     if (scene->parallax) Parallax_render(scene->parallax, engine->graphics);
-
+    
     Graphics_project_camera(graphics, scene->camera);
+    
+    ////////////////////////////////////////////////////////////////////////////
 
     Graphics_use_shader(graphics, tshader);
     TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
 
+    ////////////////////////////////////////////////////////////////////////////
+    
     Graphics_use_shader(graphics, dshader);
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
+                       GL_FALSE, graphics->projection_matrix.gl);
+    
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
         Entity_render(entity, engine, dshader->draw_buffer);
     }
+    
     DrawBuffer_draw(dshader->draw_buffer);
     DrawBuffer_empty(dshader->draw_buffer);
     
@@ -261,9 +268,10 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     entity->pixels_per_meter = scene->pixels_per_meter;
     cpSpaceAddShape(scene->space, body->cp_shape);
 
-    if (!body->is_rogue)
+    if (!body->is_rogue) {
         cpSpaceAddBody(scene->space, body->cp_body);
-
+    }
+  
     LIST_FOREACH(body->sensors, first, next, current) {
         Sensor *sensor = current->value;
         cpSpaceAddShape(scene->space, sensor->cp_shape);
@@ -291,6 +299,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     cpSpaceSetGravity(scene->space, gravity);
     scene->space->collisionSlop = 0.0;
     scene->space->collisionBias = 0.1;
+    //cpSpaceSetSleepTimeThreshold(scene->space, 1.0);
 
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
                                OCSCollisionTypeTile, collision_begin_cb, NULL,

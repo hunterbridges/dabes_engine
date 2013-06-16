@@ -1,3 +1,6 @@
+#ifdef DABES_IOS
+#include <OpenGLES/ES2/glext.h>
+#endif
 #include <lcthw/bstrlib.h>
 #include "draw_buffer.h"
 #include "graphics.h"
@@ -116,10 +119,6 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
 
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     GLenum color_format = GL_RGBA;
 #if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
     color_format = GL_BGRA;
@@ -127,6 +126,10 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     GLenum er = glGetError();
     if (er != GL_NO_ERROR) {
         printf("%d\n", GL_MAX_TEXTURE_SIZE);
@@ -246,10 +249,10 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
                        GL_FALSE, graphics->projection_matrix.gl);
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-    
+
     // Transpose modelview matrix because attribute reads columns, not rows.
     VMatrix tmvm = graphics->modelview_matrix;
-    
+
     VVector4 vertices[7 * num_points];
     int i = 0;
     for (i = 0; i < num_points; i++) {
@@ -260,7 +263,7 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         int mvm_2_idx = i * 7 + 4;
         int mvm_3_idx = i * 7 + 5;
         int mvm_4_idx = i * 7 + 6;
-        
+
         VPoint point = points[i];
         VVector4 pos = {.raw = {point.x, point.y, 0.0, 1.0}};
         vertices[pos_idx] = pos;
@@ -342,7 +345,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     VPoint pot_scale = {1, 1};
     GfxSize texel_size = {1, 1};
     if (texture) {
-        
+
         pot_scale.x = texture->size.w / texture->pot_size.w;
         pot_scale.y = texture->size.h / texture->pot_size.h;
 
@@ -361,17 +364,13 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             vertex = VPoint_multiply(vertex, pot_scale);
             VRect_set_vertex(&tex_rect, i, vertex);
         }
-        
+
         texel_size.w = 1 / texture->pot_size.w;
         texel_size.h = 1 / texture->pot_size.h;
     }
-  
-    glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
-                texture ? texture->gl_tex : 0);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, graphics->projection_matrix.gl);
+
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-    
+
     // Transpose modelview matrix because attribute reads columns, not rows.
     VMatrix tmvm = graphics->modelview_matrix;
 
@@ -397,7 +396,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
-        
+
         {.raw = {w / 2.0, h / 2.0, 0, 1}},
             cVertex,
             {tex_rect.br.x,tex_rect.br.y, 0, 0},
@@ -420,11 +419,12 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[2],
             tmvm.v[3],
     };
-    
 
     if (draw_buffer) {
         DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 7, vertices);
     } else {
+        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
+                    texture ? texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
         glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -520,7 +520,9 @@ void Graphics_translate_modelview_matrix(Graphics *graphics,
         VMatrix_translate(graphics->modelview_matrix, x, y, z);
 }
 
-void set_up_decal_shader(GfxShader *UNUSED(shader)) {
+void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
@@ -528,10 +530,10 @@ void set_up_decal_shader(GfxShader *UNUSED(shader)) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
-    
+
     // Position, color, texture, modelView * 4
     size_t v_size = sizeof(VVector4) * 7;
-    
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, v_size, 0);
 
@@ -542,25 +544,29 @@ void set_up_decal_shader(GfxShader *UNUSED(shader)) {
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 2));
-    
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX],
                           4, GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 3));
-    
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1,
                           4, GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 4));
-    
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2,
                           4, GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 5));
-    
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3,
                           4, GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 6));
+
+    graphics->bind_vao(0);
 }
 
-void tear_down_decal_shader(GfxShader *UNUSED(shader)) {
+void tear_down_decal_shader(GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
@@ -568,6 +574,8 @@ void tear_down_decal_shader(GfxShader *UNUSED(shader)) {
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
+
+    graphics->bind_vao(0);
 }
 
 void Graphics_build_decal_shader(Graphics *graphics) {
@@ -592,19 +600,23 @@ void Graphics_build_decal_shader(Graphics *graphics) {
         glGetAttribLocation(program, "texture");
     GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] =
         glGetAttribLocation(program, "modelView");
-    
+
+    graphics->gen_vao(1, &shader->gl_vertex_array);
+
+    set_up_decal_shader(shader, graphics);
     shader->set_up = &set_up_decal_shader;
     shader->tear_down = &tear_down_decal_shader;
-    
+
     shader->draw_buffer = DrawBuffer_create();
-    
     return;
 error:
     if (shader) free(shader);
     return;
 }
 
-void set_up_tilemap_shader(GfxShader *UNUSED(shader)) {
+void set_up_tilemap_shader(GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE]);
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX], 4,
@@ -613,11 +625,17 @@ void set_up_tilemap_shader(GfxShader *UNUSED(shader)) {
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, 0,
                           (GLvoid *)(sizeof(VVector4) * 4));
+
+    graphics->bind_vao(0);
 }
 
-void tear_down_tilemap_shader (GfxShader *UNUSED(shader)) {
+void tear_down_tilemap_shader (GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE]);
+
+    graphics->bind_vao(0);
 }
 
 void Graphics_build_tilemap_shader(Graphics *graphics) {
@@ -651,6 +669,9 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
     GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE] =
         glGetAttribLocation(program, "texture");
 
+    graphics->gen_vao(1, &shader->gl_vertex_array);
+
+    set_up_tilemap_shader(shader, graphics);
     shader->set_up = &set_up_tilemap_shader;
     shader->tear_down = &tear_down_tilemap_shader;
     return;
@@ -659,7 +680,9 @@ error:
     return;
 }
 
-void set_up_parallax_shader(GfxShader *UNUSED(shader)) {
+void set_up_parallax_shader(GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX], 4,
@@ -668,11 +691,17 @@ void set_up_parallax_shader(GfxShader *UNUSED(shader)) {
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, 0,
                           (GLvoid *)(sizeof(VVector4) * 4));
+
+    graphics->bind_vao(0);
 }
 
-void tear_down_parallax_shader (GfxShader *UNUSED(shader)) {
+void tear_down_parallax_shader (GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
+
+    graphics->bind_vao(0);
 }
 
 void Graphics_build_parallax_shader(Graphics *graphics) {
@@ -708,6 +737,9 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
     GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE] =
         glGetAttribLocation(program, "texture");
 
+    graphics->gen_vao(1, &shader->gl_vertex_array);
+
+    set_up_parallax_shader(shader, graphics);
     shader->set_up = &set_up_parallax_shader;
     shader->tear_down = &tear_down_parallax_shader;
     return;
@@ -731,6 +763,29 @@ int Graphics_init(void *self) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     graphics->current_shader = NULL;
     graphics->shaders = Hashmap_create(NULL, NULL);
+
+    graphics->gl_vao_enabled = 0;
+#ifdef DABES_IOS
+    graphics->gl_vao_enabled = 1;
+    graphics->gen_vao = glGenVertexArraysOES;
+    graphics->bind_vao = glBindVertexArrayOES;
+    graphics->del_vao = glDeleteVertexArraysOES;
+#endif
+#ifdef DABES_SDL
+    if (strstr((char *)glGetString(GL_EXTENSIONS),
+               "GL_ARB_vertex_array_object")) {
+        graphics->gl_vao_enabled = 1;
+        graphics->gen_vao = SDL_GL_GetProcAddress("glGenVertexArraysARB");
+        graphics->bind_vao = SDL_GL_GetProcAddress("glBindVertexArrayARB");
+        graphics->del_vao = SDL_GL_GetProcAddress("glDeleteVertexArraysARB");
+    } else if (strstr((char *)glGetString(GL_EXTENSIONS),
+                      "GL_APPLE_vertex_array_object")) {
+        graphics->gl_vao_enabled = 1;
+        graphics->gen_vao = SDL_GL_GetProcAddress("glGenVertexArraysAPPLE");
+        graphics->bind_vao = SDL_GL_GetProcAddress("glBindVertexArrayAPPLE");
+        graphics->del_vao = SDL_GL_GetProcAddress("glDeleteVertexArraysAPPLE");
+    }
+#endif
 
     Graphics_build_decal_shader(graphics);
     Graphics_build_tilemap_shader(graphics);
@@ -804,26 +859,25 @@ error:
 }
 
 GfxShader *Graphics_get_shader(Graphics *graphics, char *name) {
-  bstring key = bfromcstr(name);
-  GfxShader *val = Hashmap_get(graphics->shaders, key);
-  if (val) return val;
-  return NULL;
+    bstring key = bfromcstr(name);
+    GfxShader *val = Hashmap_get(graphics->shaders, key);
+    bdestroy(key);
+    if (val) return val;
+    return NULL;
 }
 
 void Graphics_use_shader(Graphics *graphics, GfxShader *shader) {
-  if (graphics->current_shader) {
-    graphics->current_shader->tear_down(graphics->current_shader);
-  }
+    if (shader == graphics->current_shader) return;
+    if (shader == NULL) {
+        graphics->bind_vao(0);
 
-  graphics->current_shader = NULL;
+        glUseProgram(0);
+    } else {
+        graphics->bind_vao(shader->gl_vertex_array);
 
-  if (shader != NULL) {
-    glUseProgram(shader->gl_program);
-    shader->set_up(shader);
+        glUseProgram(shader->gl_program);
+    }
     graphics->current_shader = shader;
-  } else {
-    glUseProgram(0);
-  }
 }
 
 void Graphics_log_shader(GLuint shader) {

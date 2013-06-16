@@ -85,11 +85,13 @@ extern GLint GfxShader_uniforms[NUM_UNIFORMS];
 extern GLint GfxShader_attributes[NUM_ATTRIBUTES];
 extern GLint GfxShader_samplers[NUM_SAMPLERS];
 
+struct Graphics;
 struct DrawBuffer;
 typedef struct GfxShader {
-    void (*set_up)(struct GfxShader *shader);
-    void (*tear_down)(struct GfxShader *shader);
+    void (*set_up)(struct GfxShader *shader, struct Graphics *graphics);
+    void (*tear_down)(struct GfxShader *shader, struct Graphics *graphics);
     GLuint gl_program;
+    GLuint gl_vertex_array;
     struct DrawBuffer *draw_buffer;
 } GfxShader;
 
@@ -111,6 +113,11 @@ typedef struct Graphics {
     Hashmap *textures;
     Hashmap *shaders;
     Hashmap *sprites;
+
+    int gl_vao_enabled;
+    void (*gen_vao)(GLsizei n, GLuint *arrays);
+    void (*bind_vao)(GLuint array);
+    void (*del_vao)(GLsizei n, const GLuint *arrays);
 } Graphics;
 
 // Rendering

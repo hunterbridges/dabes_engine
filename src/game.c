@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
             scene = Engine_get_current_scene(engine);
             if (scene) {
                 scene->_(update)(scene, engine);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 scene->_(render)(scene, engine);
             }
 #ifdef DEBUG

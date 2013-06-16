@@ -63,6 +63,11 @@ error:
 
 void DrawBufferLayer_destroy(DrawBufferLayer *layer) {
     check(layer != NULL, "No Draw buffer layer to destroy");
+    int i = 0;
+    for (i = 0; i < DArray_count(layer->textures); i++) {
+        DrawBufferTexture *buftex = DArray_get(layer->textures, i);
+        bdestroy(buftex->key);
+    }
     DArray_clear_destroy(layer->textures);
     Hashmap_destroy(layer->texture_buffers,
                     (Hashmap_destroy_func)DArray_clear_destroy);
@@ -74,6 +79,9 @@ error:
 
 void DrawBufferLayer_draw(DrawBufferLayer *layer) {
     int i = 0;
+    
+    static int l_has_texture = -1;
+    
     for (i = 0; i < DArray_count(layer->textures); i++) {
         DrawBufferTexture *buftex = DArray_get(layer->textures, i);
         DArray *texshapes = Hashmap_get(layer->texture_buffers, buftex->key);
@@ -96,6 +104,12 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer) {
             v_head += shape->num_vectors;
         }
         
+        int has_texture = buftex->texture ? 1 : 0;
+        if (has_texture != l_has_texture) {
+            glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
+                        has_texture);
+            l_has_texture = has_texture;
+        }
         glBindTexture(GL_TEXTURE_2D,
                       buftex->texture ? buftex->texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, num_vectors * sizeof(VVector4), vectors,
@@ -151,12 +165,16 @@ void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture, int z_index,
                     insert->next = current;
                     current->prev->next = insert;
                     current->prev = insert;
+                    buffer->layers->count++;
+                    break;
                 } else {
                     List_unshift(buffer->layers, layer);
+                    break;
                 }
             } else if (this_layer->z_index < z_index && !current->next) {
                 layer = DrawBufferLayer_create(z_index);
                 List_push(buffer->layers, layer);
+                break;
             }
         }
     } else {
@@ -185,6 +203,5 @@ void DrawBuffer_draw(DrawBuffer *buffer) {
     LIST_FOREACH(buffer->layers, first, next, current) {
         DrawBufferLayer_draw(current->value);
     }
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 

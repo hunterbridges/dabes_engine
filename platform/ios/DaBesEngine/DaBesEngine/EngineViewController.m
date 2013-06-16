@@ -52,7 +52,6 @@ char *bundlePath__;
                  cStringUsingEncoding:NSASCIIStringEncoding];
 
   self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-
   if (!self.context) {
       NSLog(@"Failed to create ES context");
   }
@@ -64,7 +63,13 @@ char *bundlePath__;
   self.glkView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
   self.glkView.delegate = self;
   self.view = self.glkView;
-
+  self.view.opaque = YES;
+  CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.view.layer;
+  eaglLayer.drawableProperties = @{
+    kEAGLDrawablePropertyRetainedBacking: @(NO),
+    kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGB565
+  };
+  
   moveGesture_ =
       [[UILongPressGestureRecognizer alloc]
           initWithTarget:self
@@ -168,7 +173,7 @@ char *bundlePath__;
 - (void)setupGL {
   [EAGLContext setCurrentContext:self.context];
   
-  self.preferredFramesPerSecond = 30;
+  self.preferredFramesPerSecond = 60;
   self.effect = [[GLKBaseEffect alloc] init];
 }
 
@@ -193,12 +198,11 @@ char *bundlePath__;
   Input_touch(engine_->input, touchInput_);
   Audio_stream(engine_->audio);
   
+  scene_ = Engine_get_current_scene(engine_);
+  
   if (engine_->frame_now) {
-    scene_ = Engine_get_current_scene(engine_);
-    if (scene_) {
-      scene_->_(control)(scene_, engine_);
-      scene_->_(update)(scene_, engine_);
-    }
+    if (scene_) scene_->_(control)(scene_, engine_);
+    if (scene_) scene_->_(update)(scene_, engine_);
     Input_reset(engine_->input);
     
     [[NSNotificationCenter defaultCenter]
@@ -214,6 +218,7 @@ char *bundlePath__;
   scene_->camera->screen_size.w = self.view.bounds.size.width;
   scene_->camera->screen_size.h = self.view.bounds.size.height;
   
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   scene_->_(render)(scene_, engine_);
 #ifdef DEBUG
   Graphics_draw_debug_text(engine_->graphics, engine_->frame_ticks);

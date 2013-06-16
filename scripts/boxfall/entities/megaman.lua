@@ -19,6 +19,7 @@ Megaman = Entity:extend({
         local hbh = 24.0 / 32.0
         body:set_hit_box(hbw, hbh, {0.0, h * 4.0 / 32.0})
         body.friction = 0.7
+        body.elasticity = 0
         self.body = body
 
         self.ground_sensor = Sensor:new(hbw * w - 0.2, 0.1,
