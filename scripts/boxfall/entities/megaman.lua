@@ -64,6 +64,7 @@ Megaman = Entity:extend({
                 if other_e ~= nil and other_e.open ~= nil then
                     local anim = self.sprite:get_animation("turning")
                     self.opening = true
+                    self.body.is_rogue = true
 
                     anim.complete = function(self)
                         other_e:open()

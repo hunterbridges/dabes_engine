@@ -11,6 +11,7 @@
 #include "../graphics/parallax.h"
 #include "../graphics/tile_map.h"
 #include "../physics/world.h"
+#include "../math/vmatrix.h"
 
 struct Scene;
 typedef struct SceneProto {
@@ -43,6 +44,8 @@ typedef struct Scene {
     };
     Parallax *parallax;
     TileMap *tile_map;
+
+    VVector4 cover_color;
 
     short int draw_grid;
     short int debug_camera;

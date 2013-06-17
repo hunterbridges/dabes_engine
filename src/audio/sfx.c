@@ -43,7 +43,12 @@ void Sfx_play(Sfx *sfx) {
 
 void Sfx_update(Sfx *sfx) {
     OggStream_update(sfx->ogg_stream);
-    if (sfx->ogg_stream && sfx->ogg_stream->ended) sfx->ended = 1;
+    ALenum state;
+    alGetSourcei(sfx->source, AL_SOURCE_STATE, &state);
+    if (sfx->ogg_stream && sfx->ogg_stream->ended &&
+        state == AL_STOPPED) {
+      sfx->ended = 1;
+    }
 }
 
 void Sfx_set_volume(Sfx *sfx, double volume) {

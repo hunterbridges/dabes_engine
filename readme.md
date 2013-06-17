@@ -14,6 +14,7 @@ What is done:
     * Can render TMX tile maps
     * Parallax layers
     * Sprite animations
+    * Keyframe animations/Easer
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
     * Basic Hitboxes
@@ -32,13 +33,11 @@ What is not yet done:
 * Audio engine:
     * Spatialization
 * Graphics engine:
-    * Keyframe animations/Easer
     * HUD Layers
     * Static scenes
 * Scripting engine:
     * Space bindings
     * Tile map bindings
-    * Scene manager
 * Debug tools:
     * Entity inspector
 

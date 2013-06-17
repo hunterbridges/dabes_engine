@@ -2,12 +2,14 @@
 #define __engine_h
 
 #include <sys/time.h>
+#include <lcthw/list.h>
 #include "../prefix.h"
 #include "../audio/audio.h"
 #include "../scripting/scripting.h"
 #include "../input/input.h"
 #include "../graphics/graphics.h"
 #include "../physics/physics.h"
+#include "easer.h"
 
 typedef struct EngineTimer {
     struct timeval started_at;
@@ -23,6 +25,8 @@ typedef struct Engine {
     Graphics *graphics;
     Physics *physics;
     Scripting *scripting;
+
+    List *easers;
 
     EngineTimer timer;
 
@@ -45,6 +49,9 @@ uint32_t Engine_get_ticks(Engine *engine);
 struct Scene;
 struct Scene *Engine_get_current_scene(Engine *engine);
 void Engine_frame_end(Engine *engine);
+
+Easer *Engine_gen_easer(Engine *engine, int length_ms, Easer_curve curve);
+void Engine_update_easers(Engine *engine);
 
 #ifdef DABES_IOS
 #define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)

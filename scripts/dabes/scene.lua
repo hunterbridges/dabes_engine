@@ -4,6 +4,7 @@
 
 require 'dabes.bound_object'
 require 'dabes.camera'
+require 'dabes.easer'
 require 'dabes.music'
 require 'dabes.parallax'
 
@@ -19,6 +20,41 @@ Scene = BoundObject:extend({
 
     realize = function(class)
         return class.lib.new(class.kind, class.pixels_per_meter)
+    end,
+
+-- Functions
+    fade_in = function(scene, more_update, completion)
+        if scene._fade_in_easer ~= nil then return end
+
+        local easer = Easer:new(500)
+        easer.update = function(e)
+            local color = scene.cover_color
+            color[4] = 1.0 - e.value
+            scene.cover_color = color
+            if more_update ~= nil then more_update(scene, e) end
+        end
+        easer.finish = function(e)
+            if completion ~= nil then completion(scene) end
+            scene._fade_in_easer = nil
+        end
+        scene._fade_in_easer = easer
+    end,
+
+    fade_out = function(scene, more_update, completion)
+        if scene._fade_out_easer ~= nil then return end
+
+        local easer = Easer:new(500)
+        easer.update = function(e)
+            local color = scene.cover_color
+            color[4] = e.value
+            scene.cover_color = color
+            if more_update ~= nil then more_update(scene, e) end
+        end
+        easer.finish = function(e)
+            if completion ~= nil then completion(scene) end
+            scene._fade_out_easer = nil
+        end
+        scene._fade_out_easer = easer
     end,
 
 -- Function Bindings
@@ -60,7 +96,8 @@ Scene = BoundObject:extend({
         end,
 
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
-        debug_camera = BoundObject.fwd_func("get_debug_camera")
+        debug_camera = BoundObject.fwd_func("get_debug_camera"),
+        cover_color = BoundObject.fwd_func("get_cover_color")
     },
 
     _setters = {
@@ -68,7 +105,8 @@ Scene = BoundObject:extend({
         music = BoundObject.fwd_func("set_music"),
         parallax = BoundObject.fwd_func("set_parallax"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
-        debug_camera = BoundObject.fwd_func("set_debug_camera")
+        debug_camera = BoundObject.fwd_func("set_debug_camera"),
+        cover_color = BoundObject.fwd_func("set_cover_color")
     },
 
 -- Hooks

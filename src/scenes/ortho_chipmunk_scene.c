@@ -139,31 +139,60 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
     ////////////////////////////////////////////////////////////////////////////
-    
+
+    // If the cover color is opaque, we don't need to render anything beneath.
     if (scene->parallax) Parallax_render(scene->parallax, engine->graphics);
-    
+
     Graphics_project_camera(graphics, scene->camera);
-    
-    ////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////
 
     Graphics_use_shader(graphics, tshader);
     TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
 
-    ////////////////////////////////////////////////////////////////////////////
-    
+    ////////////////////////////////////////////////////////////////////////
+
     Graphics_use_shader(graphics, dshader);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-    
+
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
         Entity_render(entity, engine, dshader->draw_buffer);
     }
-    
+
     DrawBuffer_draw(dshader->draw_buffer);
     DrawBuffer_empty(dshader->draw_buffer);
-    
+
+    ////////////////////////////////////////////////////////////////////////
+
+    if (scene->cover_color.rgba.a > 0.0) {
+        Graphics_use_shader(graphics, dshader);
+        Camera screen_cam = {
+          .focal = {0, 0},
+          .screen_size = scene->camera->screen_size,
+          .scale = 1,
+          .rotation_radians = 0,
+          .margin = scene->camera->margin,
+          .translation = {0, 0}
+        };
+        Graphics_reset_projection_matrix(graphics);
+        Graphics_reset_modelview_matrix(graphics);
+        Graphics_project_camera(graphics, &screen_cam);
+        VRect cover_rect = VRect_from_xywh(-screen_cam.screen_size.w / 2.0,
+                                           -screen_cam.screen_size.h / 2.0,
+                                           screen_cam.screen_size.w,
+                                           screen_cam.screen_size.h);
+        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX],
+                           1, GL_FALSE, graphics->projection_matrix.gl);
+        Graphics_draw_rect(graphics, NULL, cover_rect,
+                scene->cover_color.raw, NULL, VPointZero, GfxSizeZero,
+                0, 0);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
     // Camera debug
     if (scene->debug_camera)
         Camera_debug(scene->camera, engine->graphics);
@@ -271,7 +300,7 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     if (!body->is_rogue) {
         cpSpaceAddBody(scene->space, body->cp_body);
     }
-  
+
     LIST_FOREACH(body->sensors, first, next, current) {
         Sensor *sensor = current->value;
         cpSpaceAddShape(scene->space, sensor->cp_shape);
@@ -299,7 +328,8 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     cpSpaceSetGravity(scene->space, gravity);
     scene->space->collisionSlop = 0.0;
     scene->space->collisionBias = 0.1;
-    //cpSpaceSetSleepTimeThreshold(scene->space, 1.0);
+    cpSpaceSetSleepTimeThreshold(scene->space, 0.4);
+    cpSpaceSetIdleSpeedThreshold(scene->space, 1.0);
 
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
                                OCSCollisionTypeTile, collision_begin_cb, NULL,

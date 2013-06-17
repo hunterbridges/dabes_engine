@@ -13,13 +13,21 @@ SceneManager = Object:extend({
 
         if self.current_scene == nil then
             self.current_scene = self.queued_scene
+            self.queued_scene = nil
             self.current_scene:start()
+            self.current_scene:fade_in(self.current_scene.fade_in_effect)
         else
-            self.current_scene:stop()
-            self.current_scene = self.queued_scene
-            self.current_scene:start()
+            self.inbound_scene = self.queued_scene
+            self.queued_scene = nil
+            self.current_scene:fade_out(self.current_scene.fade_out_effect,
+                function(scene)
+                    self.current_scene:stop()
+                    self.current_scene = self.inbound_scene
+                    self.inbound_scene = nil
+                    self.current_scene:fade_in(self.current_scene.fade_in_effect)
+                    self.current_scene:start()
+                end)
         end
-        self.queued_scene = nil
     end,
 
     _noinject = true

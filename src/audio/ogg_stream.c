@@ -1,6 +1,6 @@
 #include "ogg_stream.h"
 
-const int BUFFER_SIZE = 4096 * 8;
+const int BUFFER_SIZE = 48000;
 
 int OggStream_stream(OggStream *ogg_stream, ALuint buffer);
 void OggStream_empty(OggStream *ogg_stream);
@@ -134,7 +134,6 @@ int OggStream_playing(OggStream *ogg_stream) {
 int OggStream_update(OggStream *ogg_stream) {
     if (ogg_stream == NULL) return 0;
     int processed;
-    int active = 1;
 
     ALenum state;
     alGetSourcei(ogg_stream->source, AL_SOURCE_STATE, &state);
@@ -142,27 +141,31 @@ int OggStream_update(OggStream *ogg_stream) {
 
     alGetSourcei(ogg_stream->source, AL_BUFFERS_PROCESSED, &processed);
 
+    int buffered = 0;
     while (processed--) {
         ALuint buffer;
 
         alSourceUnqueueBuffers(ogg_stream->source, 1, &buffer);
         Audio_check();
 
-        active = OggStream_stream(ogg_stream, buffer);
-        if (!active) continue;
-
-        alSourceQueueBuffers(ogg_stream->source, 1, &buffer);
-        Audio_check();
+        buffered = OggStream_stream(ogg_stream, buffer);
+        if (buffered) {
+          alSourceQueueBuffers(ogg_stream->source, 1, &buffer);
+          Audio_check();
+        }
     }
 
-    if (state != AL_STOPPED) return active;
-    if (ogg_stream->eof) {
-      ogg_stream->ended = 1;
-    } else {
-      alSourcePlay(ogg_stream->source);
+    alGetSourcei(ogg_stream->source, AL_SOURCE_STATE, &state);
+    if (state == AL_STOPPED) {
+      if (buffered) {
+        // You can hear a hiccup if this happens.
+        alSourcePlay(ogg_stream->source);
+      } else if (!buffered && ogg_stream->eof) {
+        ogg_stream->ended = 1;
+      }
     }
 
-    return active;
+    return buffered;
 }
 
 int OggStream_stream(OggStream *ogg_stream, ALuint buffer) {

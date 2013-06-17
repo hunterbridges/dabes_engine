@@ -6,9 +6,19 @@ require 'boxfall.entities.megaman'
 FatMap = Scene:extend({
     kind = "ortho_chipmunk",
     pixels_per_meter = 64.0,
+    music_volume = 0.5,
 
     init = function(self)
         self:load_map("media/tilemaps/fat.tmx", 1.0)
+    end,
+
+    fade_in_effect = function(scene, e)
+        scene.camera.scale = 2.0 - e.value
+    end,
+
+    fade_out_effect = function(scene, e)
+        scene.camera.scale = 1.0 + e.value
+        scene.music.volume = (1.0 - e.value) * scene.music_volume
     end,
 
     configure = function(self)
@@ -18,7 +28,7 @@ FatMap = Scene:extend({
             "media/music/Climb_Loop.ogg"
         )
         self.music = music
-        music.volume = 0.5
+        music.volume = self.music_volume
         music:play()
 
         -- Entities

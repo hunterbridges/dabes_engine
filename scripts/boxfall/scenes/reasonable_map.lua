@@ -8,9 +8,19 @@ require 'boxfall.scenes.fat_map'
 ReasonableMap = Scene:extend({
     kind = "ortho_chipmunk",
     pixels_per_meter = 64.0,
+    music_volume = 0.3,
 
     init = function(self)
         self:load_map("media/tilemaps/reasonable.tmx", 1.0)
+    end,
+
+    fade_in_effect = function(scene, e)
+        scene.camera.scale = 2.0 - e.value
+    end,
+
+    fade_out_effect = function(scene, e)
+        scene.camera.scale = 1.0 + e.value
+        scene.music.volume = (1.0 - e.value) * scene.music_volume
     end,
 
     configure = function(self)
@@ -19,7 +29,7 @@ ReasonableMap = Scene:extend({
             "media/music/Sneak.ogg"
         )
         self.music = music
-        music.volume = 0.3
+        music.volume = self.music_volume
         music:play()
 
         -- Entities

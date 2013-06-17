@@ -49,5 +49,7 @@ Door = Entity:extend({
             opening.complete = function() end
         end
         self.sprite:use_animation("opening")
+        local door_sound = Sfx:new("media/sfx/door.ogg")
+        door_sound:play()
     end
 })

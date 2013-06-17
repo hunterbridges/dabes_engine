@@ -197,6 +197,9 @@ Scripting_bool_setter(Scene, draw_grid);
 Scripting_bool_getter(Scene, debug_camera);
 Scripting_bool_setter(Scene, debug_camera);
 
+Scripting_VVector4_getter(Scene, cover_color);
+Scripting_VVector4_setter(Scene, cover_color);
+
 static const struct luaL_Reg luab_Scene_meths[] = {
     {"__gc", luab_Scene_close},
     {"start", luab_Scene_start},
@@ -212,6 +215,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"set_draw_grid", luab_Scene_set_draw_grid},
     {"get_debug_camera", luab_Scene_get_debug_camera},
     {"set_debug_camera", luab_Scene_set_debug_camera},
+    {"get_cover_color", luab_Scene_get_cover_color},
+    {"set_cover_color", luab_Scene_set_cover_color},
     {NULL, NULL}
 };
 

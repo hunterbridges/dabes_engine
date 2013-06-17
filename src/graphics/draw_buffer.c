@@ -26,7 +26,7 @@ void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
     DArray *shapes = NULL;
     for (i = 0; i < DArray_count(layer->textures); i++) {
         DrawBufferTexture *buftex = DArray_get(layer->textures, i);
-        if (!streq(buftex->key, bkey)) continue;
+        if (bstrcmp(buftex->key, bkey) != 0) continue;
             
         found = 1;
         shapes = Hashmap_get(layer->texture_buffers, bkey);

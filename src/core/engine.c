@@ -22,6 +22,7 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     engine->input = Input_create();
     engine->graphics = NEW(Graphics, "Graphics Engine");
     engine->physics = Physics_create();
+    engine->easers = List_create();
 
     engine->scripting = Scripting_create(engine, boot_script);
     check(engine == luaL_get_engine(engine->scripting->L),
@@ -130,4 +131,20 @@ Scene *Engine_get_current_scene(Engine *engine) {
 
 void Engine_frame_end(Engine *engine) {
     luaL_flip_scene(engine->scripting->L);
+}
+
+Easer *Engine_gen_easer(Engine *engine, int length_ms, Easer_curve curve) {
+    Easer *easer = Easer_create(length_ms, curve);
+    List_push(engine->easers, easer);
+    return easer;
+}
+
+void Engine_update_easers(Engine *engine) {
+    LIST_FOREACH(engine->easers, first, next, current) {
+        Easer *easer = current->value;
+        Easer_update(easer, engine, engine->frame_ticks);
+        if (easer->finished) {
+            List_remove(engine->easers, current);
+        }
+    }
 }

@@ -5,6 +5,7 @@
 #import "tile_map_parse.h"
 #import "ortho_chipmunk_scene.h"
 
+NSTimeInterval kBufferRefreshDelay = 0.01;
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
 
@@ -17,9 +18,6 @@ char *bundlePath__;
   GLuint _vertexArray;
   GLuint _vertexBuffer;
   
-  Engine *engine_;
-  Scene *scene_;
-  
   Input *touchInput_;
   UILongPressGestureRecognizer *moveGesture_;
   UILongPressGestureRecognizer *jumpGesture_;
@@ -27,6 +25,9 @@ char *bundlePath__;
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
 @property (nonatomic, strong) GLKView *glkView;
+@property (nonatomic, assign) Engine *engine;
+@property (nonatomic, assign) Scene *scene;
+@property (nonatomic, strong) NSThread *audioThread;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -168,6 +169,19 @@ char *bundlePath__;
 - (void)initEngine {
   engine_ = Engine_create("scripts/boxfall/boot.lua", NULL);
   Scripting_boot(engine_->scripting);
+  
+  self.audioThread =
+      [[NSThread alloc] initWithTarget:self
+                              selector:@selector(runAudioThread:)
+                                object:self];
+  [self.audioThread start];
+}
+
+- (void)runAudioThread:(EngineViewController *)viewController {
+  while (true) {
+    Audio_stream(viewController.engine->audio);
+    [NSThread sleepForTimeInterval:kBufferRefreshDelay];
+  }
 }
 
 - (void)setupGL {
@@ -196,11 +210,11 @@ char *bundlePath__;
 - (void)update {
   Engine_regulate(engine_);
   Input_touch(engine_->input, touchInput_);
-  Audio_stream(engine_->audio);
   
   scene_ = Engine_get_current_scene(engine_);
   
   if (engine_->frame_now) {
+    Engine_update_easers(engine_);
     if (scene_) scene_->_(control)(scene_, engine_);
     if (scene_) scene_->_(update)(scene_, engine_);
     Input_reset(engine_->input);
@@ -214,7 +228,7 @@ char *bundlePath__;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
-  if (!scene_) return;
+  if (!(scene_ && scene_->started)) return;
   scene_->camera->screen_size.w = self.view.bounds.size.width;
   scene_->camera->screen_size.h = self.view.bounds.size.height;
   

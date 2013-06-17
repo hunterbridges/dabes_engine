@@ -55,7 +55,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     lua_Number ret = s->SPROP; \
-    lua_pushinteger(L, ret); \
+    lua_pushnumber(L, ret); \
     return 1; \
 }
 

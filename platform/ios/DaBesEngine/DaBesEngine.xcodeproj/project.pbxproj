@@ -48,6 +48,8 @@
 		CA46A67917599E5B00F2311E /* LuaSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */; };
 		CA46A67D1759A02000F2311E /* UIColor+LuaHighlighting.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67C1759A02000F2311E /* UIColor+LuaHighlighting.m */; };
 		CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */; };
+		CA5D22CC176ED86F0044793D /* easer_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22C8176ED86F0044793D /* easer_bindings.c */; };
+		CA5D22CD176ED86F0044793D /* easer.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22CA176ED86F0044793D /* easer.c */; };
 		CA5E5E901721093A00CAF6A2 /* ortho_chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */; };
 		CA5E5E9F17211C0D00CAF6A2 /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
 		CA5E5EBA1724EDC500CAF6A2 /* parallax.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5EB81724EDC500CAF6A2 /* parallax.c */; };
@@ -229,6 +231,10 @@
 		CA46A67E1759A1D400F2311E /* UIColor+Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
 		CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
 		CA46A681175A77F500F2311E /* scene_bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scene_bindings.h; sourceTree = "<group>"; };
+		CA5D22C8176ED86F0044793D /* easer_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = easer_bindings.c; sourceTree = "<group>"; };
+		CA5D22C9176ED86F0044793D /* easer_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = easer_bindings.h; sourceTree = "<group>"; };
+		CA5D22CA176ED86F0044793D /* easer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = easer.c; sourceTree = "<group>"; };
+		CA5D22CB176ED86F0044793D /* easer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = easer.h; sourceTree = "<group>"; };
 		CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ortho_chipmunk_scene.c; sourceTree = "<group>"; };
 		CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_chipmunk_scene.h; sourceTree = "<group>"; };
 		CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk6.xcodeproj; path = "../../../third_party/Chipmunk-6.1.4/xcode/Chipmunk6.xcodeproj"; sourceTree = "<group>"; };
@@ -429,6 +435,10 @@
 		CA24C76116FC20900045D5DE /* core */ = {
 			isa = PBXGroup;
 			children = (
+				CA5D22C8176ED86F0044793D /* easer_bindings.c */,
+				CA5D22C9176ED86F0044793D /* easer_bindings.h */,
+				CA5D22CA176ED86F0044793D /* easer.c */,
+				CA5D22CB176ED86F0044793D /* easer.h */,
 				CA24C76516FC20900045D5DE /* engine.c */,
 				CA24C76616FC20900045D5DE /* engine.h */,
 				CA30660B17054AFE00629F80 /* base64.h */,
@@ -897,6 +907,8 @@
 				CA1A05871762E774007B4682 /* sfx_bindings.c in Sources */,
 				CA02010817654206008F719D /* camera_bindings.c in Sources */,
 				CA02010C176D86EE008F719D /* draw_buffer.c in Sources */,
+				CA5D22CC176ED86F0044793D /* easer_bindings.c in Sources */,
+				CA5D22CD176ED86F0044793D /* easer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
