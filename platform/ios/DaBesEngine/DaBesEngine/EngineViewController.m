@@ -28,6 +28,7 @@ char *bundlePath__;
 @property (nonatomic, assign) Engine *engine;
 @property (nonatomic, assign) Scene *scene;
 @property (nonatomic, strong) NSThread *audioThread;
+@property (nonatomic, assign) BOOL audioThreadFinished;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -170,6 +171,7 @@ char *bundlePath__;
   engine_ = Engine_create("scripts/boxfall/boot.lua", NULL);
   Scripting_boot(engine_->scripting);
   
+  self.audioThreadFinished = NO;
   self.audioThread =
       [[NSThread alloc] initWithTarget:self
                               selector:@selector(runAudioThread:)
@@ -181,6 +183,10 @@ char *bundlePath__;
   while (true) {
     Audio_stream(viewController.engine->audio);
     [NSThread sleepForTimeInterval:kBufferRefreshDelay];
+    if ([NSThread currentThread].isCancelled) {
+      viewController.audioThreadFinished = YES;
+      return;
+    }
   }
 }
 
@@ -266,8 +272,30 @@ char *bundlePath__;
 }
 
 - (void)reboot {
-  Engine_destroy(engine_);
-  [self initEngine];
+  [self addObserver:self
+         forKeyPath:@"audioThreadFinished"
+            options:NSKeyValueObservingOptionNew
+            context:NULL];
+  [self.audioThread cancel];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+  if (object == self && [keyPath isEqualToString:@"audioThreadFinished"] &&
+          [[change objectForKey:NSKeyValueChangeNewKey] boolValue]) {
+      [self removeObserver:self forKeyPath:@"audioThreadFinished"];
+      double delayInSeconds = 0.1;
+      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+      dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+          Engine_destroy(engine_);
+          self.audioThread = nil;
+          [self initEngine];
+      });
+      return;
+  }
+  [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 }
 
 @end
