@@ -16,7 +16,7 @@
 const char *resource_path(const char *filename);
 FILE *load_resource(char *filename);
 int read_text_file(char *filename, GLchar **out, GLint *size);
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
 int read_file_data(char *filename, unsigned long int **data, GLint *size);
 #endif
 

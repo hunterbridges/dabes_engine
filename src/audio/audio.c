@@ -9,8 +9,7 @@ ALfloat listenerOri[]={0.0,0.0,1.0,0.0,1.0,0.0};
 Audio *Audio_create() {
     Audio *audio = calloc(1, sizeof(Audio));
     check(audio != NULL, "Couldn't create audio");
-#ifdef DABES_IOS
-#else
+#ifdef DABES_SDL
    int audio_rate = 44100;
     Uint16 audio_format = AUDIO_S16;
     int audio_channels = 2;

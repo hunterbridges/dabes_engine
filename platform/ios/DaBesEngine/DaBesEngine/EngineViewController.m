@@ -286,12 +286,15 @@ char *bundlePath__;
   if (object == self && [keyPath isEqualToString:@"audioThreadFinished"] &&
           [[change objectForKey:NSKeyValueChangeNewKey] boolValue]) {
       [self removeObserver:self forKeyPath:@"audioThreadFinished"];
+      self.audioThread = nil;
       double delayInSeconds = 0.1;
       dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
       dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-          Engine_destroy(engine_);
-          self.audioThread = nil;
-          [self initEngine];
+        Engine_destroy(engine_);
+        self.engine = NULL;
+        [self performSelectorOnMainThread:@selector(initEngine)
+                                 withObject:nil
+                              waitUntilDone:NO];
       });
       return;
   }

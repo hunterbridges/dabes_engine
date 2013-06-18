@@ -1,7 +1,7 @@
 #ifndef __audio_h
 #define __audio_h
 #include <lcthw/list.h>
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 #else

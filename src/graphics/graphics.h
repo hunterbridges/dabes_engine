@@ -5,7 +5,7 @@
 #include "../math/vmatrix.h"
 #include "../math/vrect.h"
 
-#ifndef DABES_IOS
+#ifdef DABES_SDL
 #include <SDL/SDL_ttf.h>
 #endif
 
@@ -102,7 +102,7 @@ typedef struct Graphics {
     GfxSize screen_size;
     GLuint debug_text_texture;
     GfxShader *current_shader;
-#ifndef DABES_IOS
+#ifdef DABES_SDL
     TTF_Font *debug_text_font;
 #endif
     GLuint array_buffer;
@@ -121,7 +121,7 @@ typedef struct Graphics {
 } Graphics;
 
 // Rendering
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
 CGImageRef Graphics_load_CGImage(char *image_name);
 #endif
 #ifdef DABES_SDL

@@ -4,7 +4,7 @@
 #include <math.h>
 #include <float.h>
 
-#ifndef DABES_IOS
+#if !defined(DABES_IOS) && !defined(DABES_MAC)
   #include <assert.h>
   #include <stdio.h>
   #include <stdlib.h>

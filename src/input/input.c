@@ -23,9 +23,7 @@ void Input_destroy(Input *input) {
 }
 
 void Input_poll(Input *input) {
-#ifdef DABES_IOS
-  return;
-#else
+#ifdef DABES_SDL
     // Hold keys
     Uint8 *keystate = SDL_GetKeyState(NULL);
     input->cam_zoom = 0;

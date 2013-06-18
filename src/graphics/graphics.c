@@ -1,6 +1,9 @@
 #ifdef DABES_IOS
 #include <OpenGLES/ES2/glext.h>
 #endif
+#ifdef DABES_MAC
+#include <OpenGL/glext.h>
+#endif
 #include <lcthw/bstrlib.h>
 #include "draw_buffer.h"
 #include "graphics.h"
@@ -12,7 +15,7 @@ GLint GfxShader_attributes[NUM_ATTRIBUTES];
 int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
-#ifndef DABES_IOS
+#if defined(DABES_MAC) || defined(DABES_SDL)
     glEnable(GL_MULTISAMPLE);
 #endif
     glDisable(GL_DEPTH_TEST);
@@ -20,7 +23,7 @@ int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
     check(error == GL_NO_ERROR, "OpenGL init error...");
     return 1;
 error:
-#ifndef DABES_IOS
+#ifdef DABES_SDL
     printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 #endif
     return 0;
@@ -28,7 +31,7 @@ error:
 
 GfxSize load_image_dimensions_from_image(char *image_name) {
   GfxSize dimensions = {0,0};
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
   unsigned long int *data = NULL;
   GLint size = 0;
   read_file_data(image_name, &data, &size);
@@ -145,7 +148,7 @@ error:
     return NULL;
 }
 
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
 GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
     CGColorSpaceRef colorSpace = NULL;
     check(image != NULL, "No CGImage to load");
@@ -198,7 +201,7 @@ SDL_Surface *Graphics_load_SDLImage(char *image_name) {
 }
 #endif
 
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
 CGImageRef Graphics_load_CGImage(char *image_name) {
     unsigned long int *data = NULL;
     GLint size = 0;
@@ -216,7 +219,7 @@ CGImageRef Graphics_load_CGImage(char *image_name) {
 #endif
 
 GfxTexture *GfxTexture_from_image(char *image_name) {
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
     CGImageRef cg_image = Graphics_load_CGImage(image_name);
     return GfxTexture_from_CGImage(cg_image);
 #else
@@ -750,7 +753,7 @@ error:
 
 int Graphics_init(void *self) {
     Graphics *graphics = self;
-#ifndef DABES_IOS
+#ifdef DABES_SDL
     graphics->debug_text_font = TTF_OpenFont("media/fonts/uni.ttf", 8);
 #endif
     graphics->debug_text_texture = 0;
@@ -770,6 +773,12 @@ int Graphics_init(void *self) {
     graphics->gen_vao = glGenVertexArraysOES;
     graphics->bind_vao = glBindVertexArrayOES;
     graphics->del_vao = glDeleteVertexArraysOES;
+#endif
+#ifdef DABES_MAC
+    graphics->gl_vao_enabled = 1;
+    graphics->gen_vao = glGenVertexArraysAPPLE;
+    graphics->bind_vao = glBindVertexArrayAPPLE;
+    graphics->del_vao = glDeleteVertexArraysAPPLE;
 #endif
 #ifdef DABES_SDL
     if (strstr((char *)glGetString(GL_EXTENSIONS),
@@ -799,7 +808,7 @@ int Graphics_init(void *self) {
 
 void Graphics_destroy(void *self) {
     Graphics *graphics = self;
-#ifndef DABES_IOS
+#ifdef DABES_SDL
     TTF_CloseFont(graphics->debug_text_font);
 #endif
 

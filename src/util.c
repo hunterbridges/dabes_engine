@@ -1,6 +1,6 @@
 #include "util.h"
 
-#ifndef DABES_IOS
+#ifdef DABES_SDL
 const char *resource_path(const char *filename) {
   return filename;
 }
