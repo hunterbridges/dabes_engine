@@ -130,6 +130,7 @@
 		CA7241B61730E55300255032 /* music.c in Sources */ = {isa = PBXBuildFile; fileRef = CA7241B21730E55300255032 /* music.c */; };
 		CA7241B71730E55300255032 /* ogg_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = CA7241B41730E55300255032 /* ogg_stream.c */; };
 		CA72A2B316FC4B0000A545F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA24C74216FC1E7E0045D5DE /* main.m */; };
+		CA92A823177191CE00B3E379 /* SDKInspectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA92A81D1771919D00B3E379 /* SDKInspectorView.m */; };
 		CA92BF1B16FFBEF000252D27 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = CA92BF1916FFBEF000252D27 /* camera.c */; };
 		CAA725331758851A00CAD209 /* ScriptEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA725321758851A00CAD209 /* ScriptEditorViewController.m */; };
 		CAA725381758953800CAD209 /* CodeEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA725371758953800CAD209 /* CodeEditorView.m */; };
@@ -433,6 +434,8 @@
 		CA7241B41730E55300255032 /* ogg_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_stream.c; sourceTree = "<group>"; };
 		CA7241B51730E55300255032 /* ogg_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_stream.h; sourceTree = "<group>"; };
 		CA72A2B116FC49BE00A545F7 /* game.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = game.c; path = ../../../../src/game.c; sourceTree = "<group>"; };
+		CA92A81C1771919D00B3E379 /* SDKInspectorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKInspectorView.h; sourceTree = "<group>"; };
+		CA92A81D1771919D00B3E379 /* SDKInspectorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKInspectorView.m; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = camera.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CAA725311758851A00CAD209 /* ScriptEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptEditorViewController.h; sourceTree = "<group>"; };
@@ -856,6 +859,8 @@
 				CA5D22F6177009450044793D /* SDKEngineViewController.m */,
 				CA5D238217700FE10044793D /* SDKEngineView.h */,
 				CA5D238317700FE10044793D /* SDKEngineView.m */,
+				CA92A81C1771919D00B3E379 /* SDKInspectorView.h */,
+				CA92A81D1771919D00B3E379 /* SDKInspectorView.m */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -1375,6 +1380,7 @@
 				CA5D23AF177015330044793D /* scripting.c in Sources */,
 				CA5D23B0177015330044793D /* object.c in Sources */,
 				CA5D23B1177015330044793D /* util.c in Sources */,
+				CA92A823177191CE00B3E379 /* SDKInspectorView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

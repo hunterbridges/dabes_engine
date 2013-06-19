@@ -7,9 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "SDKInspectorView.h"
 
 @interface SDKAppDelegate : NSObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
+@property (assign) IBOutlet NSWindow *inspectorWindow;
+@property (assign) IBOutlet SDKInspectorView *inspectorView;
 
 @end

@@ -5,6 +5,9 @@
 
 @property (nonatomic, assign) Engine *engine;
 
-- (void)update;
+- (id)initWithFrame:(NSRect)frameRect
+        pixelFormat:(NSOpenGLPixelFormat *)format
+         touchInput:(Input *)touchInput;
+  - (void)update;
 
 @end

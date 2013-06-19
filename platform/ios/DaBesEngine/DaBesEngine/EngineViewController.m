@@ -27,8 +27,6 @@ char *bundlePath__;
 @property (nonatomic, strong) GLKView *glkView;
 @property (nonatomic, assign) Engine *engine;
 @property (nonatomic, assign) Scene *scene;
-@property (nonatomic, strong) NSThread *audioThread;
-@property (nonatomic, assign) BOOL audioThreadFinished;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -170,24 +168,6 @@ char *bundlePath__;
 - (void)initEngine {
   engine_ = Engine_create("scripts/boxfall/boot.lua", NULL);
   Scripting_boot(engine_->scripting);
-  
-  self.audioThreadFinished = NO;
-  self.audioThread =
-      [[NSThread alloc] initWithTarget:self
-                              selector:@selector(runAudioThread:)
-                                object:self];
-  [self.audioThread start];
-}
-
-- (void)runAudioThread:(EngineViewController *)viewController {
-  while (true) {
-    Audio_stream(viewController.engine->audio);
-    [NSThread sleepForTimeInterval:kBufferRefreshDelay];
-    if ([NSThread currentThread].isCancelled) {
-      viewController.audioThreadFinished = YES;
-      return;
-    }
-  }
 }
 
 - (void)setupGL {
@@ -215,6 +195,7 @@ char *bundlePath__;
 
 - (void)update {
   Engine_regulate(engine_);
+  Audio_stream(self.engine->audio);
   Input_touch(engine_->input, touchInput_);
   
   scene_ = Engine_get_current_scene(engine_);
@@ -272,33 +253,9 @@ char *bundlePath__;
 }
 
 - (void)reboot {
-  [self addObserver:self
-         forKeyPath:@"audioThreadFinished"
-            options:NSKeyValueObservingOptionNew
-            context:NULL];
-  [self.audioThread cancel];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context {
-  if (object == self && [keyPath isEqualToString:@"audioThreadFinished"] &&
-          [[change objectForKey:NSKeyValueChangeNewKey] boolValue]) {
-      [self removeObserver:self forKeyPath:@"audioThreadFinished"];
-      self.audioThread = nil;
-      double delayInSeconds = 0.1;
-      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-      dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        Engine_destroy(engine_);
-        self.engine = NULL;
-        [self performSelectorOnMainThread:@selector(initEngine)
-                                 withObject:nil
-                              waitUntilDone:NO];
-      });
-      return;
-  }
-  [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  Engine_destroy(engine_);
+  self.engine = NULL;
+  [self initEngine];
 }
 
 @end

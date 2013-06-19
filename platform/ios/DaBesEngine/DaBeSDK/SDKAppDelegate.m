@@ -54,6 +54,15 @@ FILE *load_resource(char *filename) {
   self.engineVC = [[SDKEngineViewController alloc] init];
   self.engineVC.view.frame = ((NSView *)self.window.contentView).bounds;
   [self.window.contentView addSubview:self.engineVC.view];
+  
+  // wtf
+  self.inspectorView.touchInput = self.engineVC.touchInput;
+  self.inspectorView.engine = self.engineVC.engine;
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self.engineVC
+      selector:@selector(update)
+      name:kControlChangedNotification
+      object:self.inspectorView];
 }
 
 @end

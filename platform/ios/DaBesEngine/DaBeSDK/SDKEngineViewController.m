@@ -1,13 +1,10 @@
 #import "SDKEngineViewController.h"
 #import "SDKEngineView.h"
-#import "engine.h"
-#import "scene.h"
 #import "scripting.h"
+#import "controller.h"
 
 @interface SDKEngineViewController ()
 
-@property (nonatomic, assign) Engine *engine;
-@property (nonatomic, readonly) Scene *scene;
 @property (nonatomic, strong) NSTimer *updateTimer;
 
 @end
@@ -21,6 +18,7 @@ char *bundlePath__;
     bundlePath__ = (char *)[[NSString stringWithFormat:@"%@/",
                              [[NSBundle mainBundle] bundlePath]]
                    cStringUsingEncoding:NSASCIIStringEncoding];
+    self.touchInput = Input_create();
   }
   
   return self;
@@ -37,7 +35,8 @@ char *bundlePath__;
   NSOpenGLPixelFormat *format =
       [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
   self.view = [[SDKEngineView alloc] initWithFrame:CGRectZero
-                                       pixelFormat:format];
+                                       pixelFormat:format
+                                        touchInput:self.touchInput];
   [((SDKEngineView *)self.view).openGLContext makeCurrentContext];
   [self initEngine];
   Engine_regulate(self.engine);
@@ -46,6 +45,9 @@ char *bundlePath__;
                                                     selector:@selector(update)
                                                     userInfo:nil
                                                      repeats:YES];
+  [[NSRunLoop currentRunLoop]
+      addTimer:self.updateTimer
+      forMode:NSEventTrackingRunLoopMode];
 }
 
 - (void)initEngine {
@@ -56,6 +58,8 @@ char *bundlePath__;
 
 - (void)update {
   Engine_regulate(self.engine);
+  Input_touch(self.engine->input, self.touchInput);
+  Audio_stream(self.engine->audio);
   if (self.engine->frame_now) {
     Engine_update_easers(self.engine);
     Scene *scene = self.scene;
@@ -82,5 +86,6 @@ char *bundlePath__;
   if (!self.engine) return NULL;
   return Engine_get_current_scene(self.engine);
 }
+
 
 @end
