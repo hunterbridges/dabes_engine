@@ -68,7 +68,7 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
                                          row * grid * ppm,
                                          grid * ppm,
                                          grid * ppm);
-            Graphics_stroke_rect(graphics, rect, color, 0, 0);
+            Graphics_stroke_rect(graphics, rect, color, 1, 0);
         }
     }
 }
@@ -175,9 +175,24 @@ void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode) {
     }
 }
 
-void Scene_select_entities_at(Scene *scene, VPoint screen_point) {
-    if (scene->selection_mode == kSceneNotSelecting) return;
+int Scene_select_entities_at(Scene *scene, VPoint screen_point) {
+    if (scene->selection_mode == kSceneNotSelecting) return 0;
   
-    // Convert screen point to world point
-    VPoint world_point = Camera_cast_point(scene->camera, screen_point);
+    VPoint graphics_point = Camera_cast_point(scene->camera, screen_point);
+    Entity *hit = NULL;
+    if (scene->proto.hit_test) {
+        hit = scene->_(hit_test)(scene, graphics_point);
+    }
+  
+    if (hit) {
+        if (hit->selected) {
+            List_remove_value(scene->selected_entities, hit);
+            hit->selected = 0;
+        } else {
+            List_push(scene->selected_entities, hit);
+            hit->selected = 1;
+        }
+    }
+  
+    return hit && hit->selected;
 }

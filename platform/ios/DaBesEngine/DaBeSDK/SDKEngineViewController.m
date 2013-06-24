@@ -5,6 +5,7 @@
 
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kNewSceneNotification =  @"kNewSceneNotification";
+NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
 
 @interface SDKEngineViewController ()
 

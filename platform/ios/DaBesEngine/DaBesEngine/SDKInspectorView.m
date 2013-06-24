@@ -71,6 +71,11 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
       selector:@selector(handleNewSceneNotification:)
       name:kNewSceneNotification
       object:nil];
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+      selector:@selector(handleEntitySelectedNotification:)
+      name:kEntitySelectedNotification
+      object:nil];
 }
 
 - (void)setEngineVC:(SDKEngineViewController *)engineVC {
@@ -108,6 +113,23 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 
 - (void)handleNewSceneNotification:(NSNotification *)notif {
   [self updateAllLabels:YES];
+}
+
+- (void)handleEntitySelectedNotification:(NSNotification *)notif {
+  if (self.engineVC.scene->selection_mode == kSceneSelectingForCamera) {
+    int i = 0;
+    Entity *track[self.engineVC.scene->selected_entities->count];
+    LIST_FOREACH(self.engineVC.scene->selected_entities, first, next, current) {
+      track[i] = current->value;
+      i++;
+    }
+    Camera_track_entities(self.engineVC.scene->camera, i, track);
+    if (![notif.userInfo[@"commandKey"] boolValue]) {
+      Scene_set_selection_mode(self.engineVC.scene, kSceneNotSelecting);
+      self.cameraEditingTracking = NO;
+      [self.cameraTrackEntityTip close];
+    }
+  }
 }
 
 - (void)constructUpdateMap {
@@ -289,7 +311,6 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     
     [mainWindow makeKeyAndOrderFront:nil];
     
-    // Set scene to be in "Select Entities" mode
     Scene_set_selection_mode(self.engineVC.scene, kSceneSelectingForCamera);
   }
 }

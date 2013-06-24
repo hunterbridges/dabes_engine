@@ -22,6 +22,7 @@ typedef struct SceneProto {
     void (*render)(struct Scene *scene, Engine *engine);
     void (*control)(struct Scene *scene, Engine *engine);
     void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
+    Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
 } SceneProto;
 
 typedef enum {
@@ -76,6 +77,6 @@ void Scene_update(Scene *scene, Engine *engine);
 void Scene_control(Scene *scene, Engine *engine);
 
 void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
-void Scene_select_entities_at(Scene *scene, VPoint screen_point);
+int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 
 #endif

@@ -1,3 +1,4 @@
+#import "SDKEngineViewController.h"
 #import "SDKEngineView.h"
 #import "scene.h"
 #import "input.h"
@@ -114,7 +115,14 @@
   NSPoint converted = [self convertPoint:mouse fromView:nil];
   CGPoint cgConv = NSPointToCGPoint(converted);
   VPoint screen_point = {cgConv.x, self.bounds.size.height - cgConv.y};
-  Scene_select_entities_at(scene, screen_point);
+  int selected = Scene_select_entities_at(scene, screen_point);
+  if (selected) {
+    BOOL commandKeyPressed = ([theEvent modifierFlags] & NSCommandKeyMask) != 0;
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kEntitySelectedNotification
+        object:self
+        userInfo:@{@"commandKey": @(commandKeyPressed)}];
+  }
 }
 
 @end

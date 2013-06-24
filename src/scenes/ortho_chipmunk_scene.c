@@ -313,6 +313,26 @@ void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
     }
 }
 
+void hit_test_func(cpShape *shape, cpFloat distance, cpVect point, void *data) {
+    if (shape->collision_type == OCSCollisionTypeEntity) {
+        Entity **top = data;
+        cpBody *cpb = shape->body;
+        BodyStateData *state = cpb->data;
+        if (*top == NULL || state->entity->z_index > (*top)->z_index) {
+            *top = state->entity;
+        }
+    }
+}
+
+Entity *OrthoChipmunkScene_hit_test(Scene *scene, VPoint g_point) {
+    VPoint world_point = VPoint_scale(g_point, 1.0 / scene->pixels_per_meter);
+    Entity *top = NULL;
+    cpVect wp = {world_point.x, world_point.y};
+    cpSpaceNearestPointQuery(scene->space, wp, 0.0, CP_ALL_LAYERS,
+                             CP_NO_GROUP, hit_test_func, &top);
+    return top;
+}
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(scene);
     check_mem(engine);
@@ -384,5 +404,6 @@ SceneProto OrthoChipmunkSceneProto = {
     .update = OrthoChipmunkScene_update,
     .render = OrthoChipmunkScene_render,
     .control = OrthoChipmunkScene_control,
-    .add_entity = OrthoChipmunkScene_add_entity
+    .add_entity = OrthoChipmunkScene_add_entity,
+    .hit_test = OrthoChipmunkScene_hit_test
 };

@@ -249,20 +249,19 @@ VPoint Camera_project_point(Camera *camera, VPoint point) {
 }
 
 VPoint Camera_cast_point(Camera *camera, VPoint point) {
-  VPoint_debug(point, "Screen");
-  VPoint top_left = VPoint_add(camera->focal, camera->translation);
   VPoint correction = {-camera->screen_size.w / 2.0,
                        -camera->screen_size.h / 2.0};
   correction = VPoint_scale(correction, 1 / camera->scale);
   correction = VPoint_rotate(correction, VPointZero, camera->rotation_radians);
-  VPoint_debug(correction, "Correction");
+  
+  VPoint top_left = VPoint_add(camera->focal, camera->translation);
   top_left = VPoint_add(top_left, correction);
   
   VPoint new = point;
   new = VPoint_scale(new, 1 / camera->scale);
-  
+  new = VPoint_rotate(new, VPointZero, camera->rotation_radians);
   new = VPoint_add(new, top_left);
-  VPoint_debug(new, "Casted point");
+  
   return new;
 }
 
@@ -289,7 +288,7 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
     GLfloat cam_color[4] = {1, 0, 0, 1};
     VRect track_rect = Camera_tracking_rect(&screen_cam);
     track_rect = VRect_move(track_rect, VPoint_scale(camera->translation, -camera->scale));
-    Graphics_stroke_rect(graphics, track_rect, cam_color, 0, 0);
+    Graphics_stroke_rect(graphics, track_rect, cam_color, 1, 0);
 
     if (camera->track_entities) {
         GLfloat e_color[4] = {0, 1, 0, 1};
@@ -299,7 +298,7 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
             VRect e_rect = Entity_real_rect(*entity);
             VRect e_bound = Camera_project_rect(camera, e_rect);
             e_bound = VRect_bounding_box(e_bound);
-            Graphics_stroke_rect(graphics, e_bound, e_color, 0, 0);
+            Graphics_stroke_rect(graphics, e_bound, e_color, 1, 0);
         }
     }
 }
