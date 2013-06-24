@@ -25,10 +25,10 @@ int main(int argc, char *argv[]) {
             Engine_update_easers(engine);
             scene = Engine_get_current_scene(engine);
             if (scene) {
-                scene->_(update)(scene, engine);
+                Scene_update(scene, engine);
                 if (scene->started) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    scene->_(render)(scene, engine);
+                    Scene_render(scene, engine);
                 }
             }
 #ifdef DEBUG

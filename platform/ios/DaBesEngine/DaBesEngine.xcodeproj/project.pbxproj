@@ -50,6 +50,8 @@
 		CA46A67917599E5B00F2311E /* LuaSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67817599E5B00F2311E /* LuaSyntaxHighlighter.m */; };
 		CA46A67D1759A02000F2311E /* UIColor+LuaHighlighting.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67C1759A02000F2311E /* UIColor+LuaHighlighting.m */; };
 		CA46A6801759A1DA00F2311E /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */; };
+		CA4956F6177369E9000EC990 /* SDKPanner.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4956F5177369E9000EC990 /* SDKPanner.m */; };
+		CA4956F917736EB0000EC990 /* NSView+Center.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4956F817736EB0000EC990 /* NSView+Center.m */; };
 		CA5D22CC176ED86F0044793D /* easer_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22C8176ED86F0044793D /* easer_bindings.c */; };
 		CA5D22CD176ED86F0044793D /* easer.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22CA176ED86F0044793D /* easer.c */; };
 		CA5D22E0177007B20044793D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CA5D22DE177007B20044793D /* InfoPlist.strings */; };
@@ -384,6 +386,10 @@
 		CA46A67E1759A1D400F2311E /* UIColor+Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
 		CA46A67F1759A1DA00F2311E /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
 		CA46A681175A77F500F2311E /* scene_bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scene_bindings.h; sourceTree = "<group>"; };
+		CA4956F4177369E9000EC990 /* SDKPanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKPanner.h; sourceTree = "<group>"; };
+		CA4956F5177369E9000EC990 /* SDKPanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKPanner.m; sourceTree = "<group>"; };
+		CA4956F717736EB0000EC990 /* NSView+Center.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+Center.h"; sourceTree = "<group>"; };
+		CA4956F817736EB0000EC990 /* NSView+Center.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+Center.m"; sourceTree = "<group>"; };
 		CA5D22C8176ED86F0044793D /* easer_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = easer_bindings.c; sourceTree = "<group>"; };
 		CA5D22C9176ED86F0044793D /* easer_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = easer_bindings.h; sourceTree = "<group>"; };
 		CA5D22CA176ED86F0044793D /* easer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = easer.c; sourceTree = "<group>"; };
@@ -780,6 +786,17 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
+		CA4956F31773699F000EC990 /* UI Elements */ = {
+			isa = PBXGroup;
+			children = (
+				CA4956F4177369E9000EC990 /* SDKPanner.h */,
+				CA4956F5177369E9000EC990 /* SDKPanner.m */,
+				CA4956F717736EB0000EC990 /* NSView+Center.h */,
+				CA4956F817736EB0000EC990 /* NSView+Center.m */,
+			);
+			name = "UI Elements";
+			sourceTree = "<group>";
+		};
 		CA5D22D7177007B20044793D /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -852,6 +869,7 @@
 			children = (
 				CA5D22DC177007B20044793D /* Supporting Files */,
 				CA5D22FE177009740044793D /* Frameworks */,
+				CA4956F31773699F000EC990 /* UI Elements */,
 				CA5D22E7177007B20044793D /* SDKAppDelegate.h */,
 				CA5D22E8177007B20044793D /* SDKAppDelegate.m */,
 				CA5D22EA177007B20044793D /* MainMenu.xib */,
@@ -1381,6 +1399,8 @@
 				CA5D23B0177015330044793D /* object.c in Sources */,
 				CA5D23B1177015330044793D /* util.c in Sources */,
 				CA92A823177191CE00B3E379 /* SDKInspectorView.m in Sources */,
+				CA4956F6177369E9000EC990 /* SDKPanner.m in Sources */,
+				CA4956F917736EB0000EC990 /* NSView+Center.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1657,6 +1677,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "DABES_MAC=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				HEADER_SEARCH_PATHS = (
 					"/Users/hbridges/Coding/dabes_engine/include/**",

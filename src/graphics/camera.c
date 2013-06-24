@@ -248,6 +248,24 @@ VPoint Camera_project_point(Camera *camera, VPoint point) {
   return new;
 }
 
+VPoint Camera_cast_point(Camera *camera, VPoint point) {
+  VPoint_debug(point, "Screen");
+  VPoint top_left = VPoint_add(camera->focal, camera->translation);
+  VPoint correction = {-camera->screen_size.w / 2.0,
+                       -camera->screen_size.h / 2.0};
+  correction = VPoint_scale(correction, 1 / camera->scale);
+  correction = VPoint_rotate(correction, VPointZero, camera->rotation_radians);
+  VPoint_debug(correction, "Correction");
+  top_left = VPoint_add(top_left, correction);
+  
+  VPoint new = point;
+  new = VPoint_scale(new, 1 / camera->scale);
+  
+  new = VPoint_add(new, top_left);
+  VPoint_debug(new, "Casted point");
+  return new;
+}
+
 VRect Camera_project_rect(Camera *camera, VRect rect) {
   VRect new = rect;
   new.tl = Camera_project_point(camera, rect.tl);

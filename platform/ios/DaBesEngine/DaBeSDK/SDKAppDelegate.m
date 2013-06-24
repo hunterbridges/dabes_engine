@@ -57,12 +57,7 @@ FILE *load_resource(char *filename) {
   
   // wtf
   self.inspectorView.touchInput = self.engineVC.touchInput;
-  self.inspectorView.engine = self.engineVC.engine;
-  [[NSNotificationCenter defaultCenter]
-      addObserver:self.engineVC
-      selector:@selector(update)
-      name:kControlChangedNotification
-      object:self.inspectorView];
+  self.inspectorView.engineVC = self.engineVC;
 }
 
 @end

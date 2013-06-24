@@ -6,6 +6,11 @@
 #include <OpenGLES/ES2/gl.h>
 #include <QuartzCore/CoreAnimation.h>
 #endif
+#ifdef DABES_MAC
+#include <OpenGL/OpenGL.h>
+#include <GLKit/GLKMath.h>
+#include <QuartzCore/CATransform3D.h>
+#endif
 
 typedef union VVector3 {
   struct { float x, y, z; };
@@ -42,8 +47,10 @@ typedef union VMatrix {
     } gfx;
     float gl[16];
     VVector4 v[4];
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
     CATransform3D ca;
+#endif
+#ifdef DABES_IOS
     GLKMatrix4 glk;
 #endif
 } VMatrix;

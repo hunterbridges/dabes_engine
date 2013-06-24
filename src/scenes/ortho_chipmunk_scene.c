@@ -50,28 +50,18 @@ error:
 }
 
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
-    if (scene->started == 0) return;
-    OrthoChipmunkScene_control(scene, engine);
-
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
         Scripting_call_hook(engine->scripting, entity, "presolve");
     }
 
-    int phys_ticks = engine->frame_ticks < 100 ? engine->frame_ticks : 100;
+    int phys_ticks = (int)(engine->frame_ticks < 100 ? engine->frame_ticks : 100);
     Stepper_update(engine->physics->stepper, phys_ticks);
 
     while (Stepper_pop(engine->physics->stepper)) {
       cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
     }
-
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        Entity_update(entity, engine);
-    }
-
-    Camera_track(scene->camera);
 }
 
 static void render_shape_iter(cpShape *shape, void *data) {
@@ -166,6 +156,19 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     DrawBuffer_empty(dshader->draw_buffer);
 
     ////////////////////////////////////////////////////////////////////////
+  
+    if (scene->selection_mode != kSceneNotSelecting) {
+        int i = 0;
+        for (i = 0; i < DArray_count(scene->entities); i++) {
+            Entity *entity = DArray_get(scene->entities, i);
+            VRect entity_rect = Entity_real_rect(entity);
+            GLfloat color[4] = {1, 1, 1, 0.5};
+            if (entity->selected) color[3] = 1.0;
+            Graphics_stroke_rect(graphics, entity_rect, color, 2, 0);
+        }
+    }
+    
+    ////////////////////////////////////////////////////////////////////////
 
     if (scene->cover_color.rgba.a > 0.0) {
         Graphics_use_shader(graphics, dshader);
@@ -204,15 +207,6 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     Input *input = engine->input;
-    if (input->cam_reset) {
-        Scene_reset_camera(scene, engine);
-    }
-    scene->camera->scale += 0.02 * input->cam_zoom;
-    if (scene->camera->scale < 0) scene->camera->scale = 0;
-
-    scene->camera->rotation_radians += 2 * input->cam_rotate * M_PI / 180;
-
-    if (input->cam_debug) scene->debug_camera = !(scene->debug_camera);
     if (input->phys_render) {
         scene->render_mode =
             (scene->render_mode == kSceneRenderModeNormal ?

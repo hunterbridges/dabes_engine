@@ -3,6 +3,9 @@
 #import "scripting.h"
 #import "controller.h"
 
+NSString *kFrameEndNotification =  @"kFrameEndNotification";
+NSString *kNewSceneNotification =  @"kNewSceneNotification";
+
 @interface SDKEngineViewController ()
 
 @property (nonatomic, strong) NSTimer *updateTimer;
@@ -54,17 +57,18 @@ char *bundlePath__;
   self.engine = Engine_create("scripts/boxfall/boot.lua", NULL);
   Scripting_boot(self.engine->scripting);
   ((SDKEngineView *)self.view).engine = self.engine;
+  [self refreshScene];
 }
 
 - (void)update {
   Engine_regulate(self.engine);
   Input_touch(self.engine->input, self.touchInput);
   Audio_stream(self.engine->audio);
+  
   if (self.engine->frame_now) {
     Engine_update_easers(self.engine);
     Scene *scene = self.scene;
-    if (scene) scene->_(control)(scene, self.engine);
-    if (scene) scene->_(update)(scene, self.engine);
+    if (scene) Scene_update(scene, self.engine);
     [self draw];
     Input_reset(self.engine->input);
     
@@ -75,6 +79,10 @@ char *bundlePath__;
      */
     
     Engine_frame_end(self.engine);
+    [self refreshScene];
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kFrameEndNotification
+        object:self];
   }
 }
 
@@ -82,9 +90,15 @@ char *bundlePath__;
   [self.view setNeedsDisplay:YES];
 }
 
-- (Scene *)scene {
-  if (!self.engine) return NULL;
-  return Engine_get_current_scene(self.engine);
+- (void)refreshScene {
+  Scene *old = self.scene;
+  Scene *new = Engine_get_current_scene(self.engine);
+  if (old != new) {
+    self.scene = new;
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kNewSceneNotification
+        object:self];
+  }
 }
 
 

@@ -23,6 +23,8 @@ typedef struct Entity {
 
     int pixels_per_meter;
     int z_index;
+  
+    int selected;
 } Entity;
 
 struct Engine;

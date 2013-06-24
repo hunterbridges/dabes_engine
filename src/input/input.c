@@ -70,7 +70,9 @@ void Input_touch(Input *input, Input *touch_input) {
     input->cam_reset = touch_input->cam_reset;
     input->cam_zoom = touch_input->cam_zoom;
     input->cam_rotate = touch_input->cam_rotate;
-
+    input->cam_focal_pan = touch_input->cam_focal_pan;
+    input->cam_translate_pan = touch_input->cam_translate_pan;
+  
     for (i = 0; i < 4; i++) {
         input->controllers[i]->dpad = touch_input->controllers[i]->dpad;
         input->controllers[i]->jump = touch_input->controllers[i]->jump;
@@ -85,6 +87,8 @@ void Input_reset(Input *input) {
     input->cam_zoom = 0;
     input->cam_rotate = 0;
     input->cam_debug = 0;
+    input->cam_focal_pan = VPointZero;
+    input->cam_translate_pan = VPointZero;
     input->phys_render = 0;
     int i = 0;
     for (i = 0; i < 4; i++) {

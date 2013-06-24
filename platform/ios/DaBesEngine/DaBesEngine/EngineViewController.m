@@ -202,8 +202,7 @@ char *bundlePath__;
   
   if (engine_->frame_now) {
     Engine_update_easers(engine_);
-    if (scene_) scene_->_(control)(scene_, engine_);
-    if (scene_) scene_->_(update)(scene_, engine_);
+    if (scene_) Scene_update(scene_, engine_);
     Input_reset(engine_->input);
     
     [[NSNotificationCenter defaultCenter]
@@ -220,7 +219,7 @@ char *bundlePath__;
   scene_->camera->screen_size.h = self.view.bounds.size.height;
   
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  scene_->_(render)(scene_, engine_);
+  Scene_render(scene_, engine_);
 #ifdef DEBUG
   Graphics_draw_debug_text(engine_->graphics, engine_->frame_ticks);
 #endif

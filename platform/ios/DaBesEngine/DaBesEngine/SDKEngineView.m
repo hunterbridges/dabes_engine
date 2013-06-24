@@ -36,7 +36,7 @@
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Scene *scene = Engine_get_current_scene(self.engine);
   if (!scene) return;
-  scene->_(render)(scene, self.engine);
+  Scene_render(scene, self.engine);
   [self.openGLContext flushBuffer];
 }
 
@@ -106,6 +106,15 @@
     }
   }
   [super keyUp:theEvent];
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+  Scene *scene = Engine_get_current_scene(self.engine);
+  NSPoint mouse = [self.window convertScreenToBase:[NSEvent mouseLocation]];
+  NSPoint converted = [self convertPoint:mouse fromView:nil];
+  CGPoint cgConv = NSPointToCGPoint(converted);
+  VPoint screen_point = {cgConv.x, self.bounds.size.height - cgConv.y};
+  Scene_select_entities_at(scene, screen_point);
 }
 
 @end
