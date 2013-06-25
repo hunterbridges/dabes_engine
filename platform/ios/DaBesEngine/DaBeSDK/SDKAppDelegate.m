@@ -40,7 +40,7 @@ FILE *load_resource(char *filename) {
     return file;
 }
 
-@interface SDKAppDelegate ()
+@interface SDKAppDelegate () <NSWindowDelegate>
 
 @property (nonatomic, strong) SDKEngineViewController *engineVC;
 
@@ -53,11 +53,37 @@ FILE *load_resource(char *filename) {
   // Insert code here to initialize your application
   self.engineVC = [[SDKEngineViewController alloc] init];
   self.engineVC.view.frame = ((NSView *)self.window.contentView).bounds;
+  [self.engineVC.view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [self.window.contentView addSubview:self.engineVC.view];
   
   // wtf
   self.inspectorView.touchInput = self.engineVC.touchInput;
   self.inspectorView.engineVC = self.engineVC;
+  
+  [self setUpMenu];
+}
+
+- (void)setUpMenu {
+  [self.inspectorItem setEnabled:YES];
+}
+
+- (IBAction)inspectorItemClicked:(id)sender {
+  NSMenuItem *item = sender;
+  if (item.state == NSOnState) {
+    [self.inspectorWindow close];
+  } else {
+    [self.inspectorWindow makeKeyAndOrderFront:nil];
+  }
+}
+
+#pragma mark - Window Delegate
+
+- (void)windowWillClose:(NSNotification *)notification {
+  self.inspectorItem.state = NSOffState;
+}
+
+- (void)windowDidBecomeKey:(NSNotification *)notification {
+  self.inspectorItem.state = NSOnState;
 }
 
 @end

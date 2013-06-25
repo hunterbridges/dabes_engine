@@ -25,6 +25,13 @@
   
 }
 
+- (void)setEngine:(Engine *)engine {
+  _engine = engine;
+  GfxSize screen_size = {self.bounds.size.width, self.bounds.size.height};
+  self.engine->graphics->screen_size = screen_size;
+  glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
+}
+
 - (BOOL)acceptsFirstResponder {
   return YES;
 }
@@ -123,6 +130,19 @@
         object:self
         userInfo:@{@"commandKey": @(commandKeyPressed)}];
   }
+}
+
+- (void)reshape {
+  [super reshape];
+  [[self openGLContext] update];
+  Scene *scene = Engine_get_current_scene(self.engine);
+  if (scene) {
+    GfxSize screen_size = {self.bounds.size.width, self.bounds.size.height};
+    scene->camera->screen_size = screen_size;
+    self.engine->graphics->screen_size = screen_size;
+    glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
+  }
+  [self setNeedsDisplay:YES];
 }
 
 @end

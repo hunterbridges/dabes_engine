@@ -13,6 +13,7 @@
 
 @property (assign) IBOutlet NSWindow *window;
 @property (assign) IBOutlet NSWindow *inspectorWindow;
+@property (assign) IBOutlet NSMenuItem *inspectorItem;
 @property (assign) IBOutlet SDKInspectorView *inspectorView;
 
 @end
