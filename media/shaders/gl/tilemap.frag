@@ -11,7 +11,7 @@ void main()
 {
   vec2 tilePos = floor(textureVarying.xy * mapRowsCols) / mapRowsCols;
   vec4 tileVal = texture2D(atlas, tilePos);
-  float cell = tileVal.b;
+  float cell = tileVal.r;
 
   float index = floor(cell * 255.0);
   float sheet_col = mod(index, sheetRowsCols.x);

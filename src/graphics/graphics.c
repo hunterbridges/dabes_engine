@@ -7,6 +7,7 @@
 #include <lcthw/bstrlib.h>
 #include "draw_buffer.h"
 #include "graphics.h"
+#include "stb_image.h"
 #include "sprite.h"
 
 GLint GfxShader_uniforms[NUM_UNIFORMS];
@@ -87,18 +88,23 @@ static inline int data_potize(unsigned char **data, int width, int height,
   check(resized_data != NULL, "Couldn't realloc texture for potize");
 
   *data = resized_data;
-  uint32_t *new_data = (uint32_t *)resized_data;
+  unsigned char *new_data = resized_data;
 
   *pot_width = pot_w;
   *pot_height = pot_h;
 
-  int last_orig_index = width * height - 1;
+  int last_orig_index = (width * height - 1) * 4;
   int i = 0;
-  for (i = last_orig_index; i >= 0; i--) {
-    int old_col = i % width;
-    int old_row = i / width;
+  for (i = last_orig_index; i >= 0; i -= 4) {
+    int idx = i / 4;
+    int old_col = idx % width;
+    int old_row = idx / width;
     int new_index = old_row * pot_w + old_col;
-    new_data[new_index] = new_data[i];
+    
+    new_data[new_index * 4] = new_data[i];         // R
+    new_data[new_index * 4 + 1] = new_data[i + 1]; // G
+    new_data[new_index * 4 + 2] = new_data[i + 2]; // B
+    new_data[new_index * 4 + 3] = new_data[i + 3]; // A
   }
 
   return 1;
@@ -123,9 +129,6 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     GLenum color_format = GL_RGBA;
-#if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
-    color_format = GL_BGRA;
-#endif
     glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
@@ -148,85 +151,13 @@ error:
     return NULL;
 }
 
-#if defined(DABES_IOS) || defined(DABES_MAC)
-GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
-    CGColorSpaceRef colorSpace = NULL;
-    check(image != NULL, "No CGImage to load");
-
-    int width = CGImageGetWidth(image);
-    int height = CGImageGetHeight(image);
-    colorSpace = CGColorSpaceCreateDeviceRGB();
-    unsigned char *rawData = calloc(1, height * width * 4);
-    check(rawData != NULL, "Couldn't not allocate context buffer");
-    int bytesPerPixel = 4;
-    int bytesPerRow = bytesPerPixel * width;
-    int bitsPerComponent = 8;
-    CGContextRef context =
-        CGBitmapContextCreate(rawData, width, height, bitsPerComponent,
-                              bytesPerRow, colorSpace,
-                              kCGImageAlphaPremultipliedLast |
-                              kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(colorSpace);
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
-
-    GfxTexture *texture = GfxTexture_from_data(&rawData, width, height,
-            GL_RGBA);
-    CGContextRelease(context);
-    CGImageRelease(image);
-    free(rawData);
-    return texture;
-error:
-    if (colorSpace) CGColorSpaceRelease(colorSpace);
-    CGImageRelease(image);
-    return 0;
-}
-#endif
-
-#ifdef DABES_SDL
-GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
-    check(surface != NULL, "No surface to load");
-
-    GfxTexture *texture =
-        GfxTexture_from_data((unsigned char **)&surface->pixels,
-                surface->w, surface->h, GL_RGBA);
-    SDL_FreeSurface(surface);
-    return texture;
-error:
-    return 0;
-}
-
-SDL_Surface *Graphics_load_SDLImage(char *image_name) {
-    SDL_Surface *image = IMG_Load(image_name);
-    return image;
-}
-#endif
-
-#if defined(DABES_IOS) || defined(DABES_MAC)
-CGImageRef Graphics_load_CGImage(char *image_name) {
-    unsigned long int *data = NULL;
-    GLint size = 0;
-    read_file_data(image_name, &data, &size);
-    CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
-    free(data);
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
-    CGImageRef cg_image =
-         CGImageCreateWithPNGDataProvider(provider, NULL, true,
-                                          kCGRenderingIntentDefault);
-    CGDataProviderRelease(provider);
-    CFRelease(cf_data);
-    return cg_image;
-}
-#endif
-
 GfxTexture *GfxTexture_from_image(char *image_name) {
-#if defined(DABES_IOS) || defined(DABES_MAC)
-    CGImageRef cg_image = Graphics_load_CGImage(image_name);
-    return GfxTexture_from_CGImage(cg_image);
-#else
-    SDL_Surface *image = Graphics_load_SDLImage(image_name);
-    return GfxTexture_from_surface(image);
-#endif
-    return NULL;
+    int x, y, n;
+    unsigned char *data = stbi_load(resource_path(image_name), &x, &y, &n, 4);
+    GfxTexture *texture =
+        GfxTexture_from_data(&data, x, y, GL_RGBA);
+    stbi_image_free(data);
+    return texture;
 }
 
 void GfxTexture_destroy(GfxTexture *texture) {
@@ -535,7 +466,7 @@ void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
 
     // Position, color, texture, modelView * 4
-    size_t v_size = sizeof(VVector4) * 7;
+    int v_size = sizeof(VVector4) * 7;
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, v_size, 0);

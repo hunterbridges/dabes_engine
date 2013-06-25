@@ -31,12 +31,6 @@ typedef struct GfxTexture {
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
         GLenum source_format);
 GfxTexture *GfxTexture_from_image(char *image_name);
-#ifdef DABES_IOS
-GfxTexture *GfxTexture_from_CGImage(CGImageRef image);
-#endif
-#ifdef DABES_SDL
-GfxTexture *GfxTexture_from_surface(SDL_Surface *surface);
-#endif
 void GfxTexture_destroy(GfxTexture *texture);
 
 enum {
@@ -119,14 +113,6 @@ typedef struct Graphics {
     void (*bind_vao)(GLuint array);
     void (*del_vao)(GLsizei n, const GLuint *arrays);
 } Graphics;
-
-// Rendering
-#if defined(DABES_IOS) || defined(DABES_MAC)
-CGImageRef Graphics_load_CGImage(char *image_name);
-#endif
-#ifdef DABES_SDL
-SDL_Surface *Graphics_load_SDLImage(char *image_name);
-#endif
 
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
