@@ -96,6 +96,7 @@ char *bundlePath__;
   Scene *new = Engine_get_current_scene(self.engine);
   if (old != new) {
     self.scene = new;
+    ((SDKEngineView *)self.view).scene = new;
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kNewSceneNotification
         object:self];

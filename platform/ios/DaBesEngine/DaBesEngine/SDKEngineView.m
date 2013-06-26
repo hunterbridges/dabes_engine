@@ -25,15 +25,13 @@
   
 }
 
-- (void)setEngine:(Engine *)engine {
-  _engine = engine;
-  GfxSize screen_size = {self.bounds.size.width, self.bounds.size.height};
-  self.engine->graphics->screen_size = screen_size;
-  glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
-}
-
 - (BOOL)acceptsFirstResponder {
   return YES;
+}
+
+- (void)setScene:(Scene *)scene {
+  _scene = scene;
+  [self resizeGraphics];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -42,7 +40,7 @@
   [self.openGLContext makeCurrentContext];
   if (!self.engine) return;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  Scene *scene = Engine_get_current_scene(self.engine);
+  Scene *scene = self.scene;
   if (!scene) return;
   Scene_render(scene, self.engine);
   [self.openGLContext flushBuffer];
@@ -117,7 +115,7 @@
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
-  Scene *scene = Engine_get_current_scene(self.engine);
+  Scene *scene = self.scene;
   NSPoint mouse = [self.window convertScreenToBase:[NSEvent mouseLocation]];
   NSPoint converted = [self convertPoint:mouse fromView:nil];
   CGPoint cgConv = NSPointToCGPoint(converted);
@@ -132,16 +130,25 @@
   }
 }
 
+- (void)resizeGraphics {
+  GfxSize screen_size = {self.bounds.size.width, self.bounds.size.height};
+  self.engine->graphics->screen_size = screen_size;
+  Scene *scene = self.scene;
+  if (scene) {
+    scene->camera->screen_size = screen_size;
+  }
+  glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
+}
+
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview {
+  [super viewWillMoveToSuperview:newSuperview];
+  [self resizeGraphics];
+}
+
 - (void)reshape {
   [super reshape];
   [[self openGLContext] update];
-  Scene *scene = Engine_get_current_scene(self.engine);
-  if (scene) {
-    GfxSize screen_size = {self.bounds.size.width, self.bounds.size.height};
-    scene->camera->screen_size = screen_size;
-    self.engine->graphics->screen_size = screen_size;
-    glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
-  }
+  [self resizeGraphics];
   [self setNeedsDisplay:YES];
 }
 

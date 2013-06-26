@@ -3,13 +3,14 @@
 #include "../core/engine.h"
 #include "scene.h"
 
-Scene *Scene_create(Engine *UNUSED(engine), SceneProto proto) {
+Scene *Scene_create(Engine *engine, SceneProto proto) {
     Scene *scene = calloc(1, sizeof(Scene));
     check(scene != NULL, "Couldn't create scene");
 
     scene->name = NULL;
     scene->proto = proto;
-    scene->camera = Camera_create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    scene->camera = Camera_create(engine->graphics->screen_size.w,
+                                  engine->graphics->screen_size.h);
     scene->camera->scene_size = scene->camera->screen_size;
 
     return scene;

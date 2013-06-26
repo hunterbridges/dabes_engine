@@ -47,7 +47,6 @@ Bugs:
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
 * Getting "snagged" on ground tiles
-* Reboot Engine has trouble loading assets. Thread weirdness?
 
 Code Gripes:
 * Too many cpp directives, not enough platform specific modules
