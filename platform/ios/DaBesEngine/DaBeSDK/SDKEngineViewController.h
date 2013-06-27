@@ -7,6 +7,7 @@
 extern NSString *kFrameEndNotification;
 extern NSString *kNewSceneNotification;
 extern NSString *kEntitySelectedNotification;
+extern NSString *kEngineReadyForScriptNotification;
 
 @interface SDKEngineViewController : NSViewController
 

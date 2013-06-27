@@ -15,5 +15,6 @@
 @property (assign) IBOutlet NSWindow *inspectorWindow;
 @property (assign) IBOutlet NSMenuItem *inspectorItem;
 @property (assign) IBOutlet SDKInspectorView *inspectorView;
+@property (assign) IBOutlet NSDrawer *scriptEditorDrawer;
 
 @end

@@ -8,3 +8,6 @@
 [submodule "submodules/Fragaria"]
 	path = submodules/Fragaria
 	url = https://github.com/mugginsoft/Fragaria.git
+[submodule "submodules/PSMTabBarControl"]
+	path = submodules/PSMTabBarControl
+	url = https://github.com/dorianj/PSMTabBarControl

@@ -8,6 +8,7 @@
 
 #import "SDKAppDelegate.h"
 #import "SDKEngineViewController.h"
+#import "SDKScriptManagerView.h"
 
 const char *resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
@@ -76,6 +77,25 @@ FILE *load_resource(char *filename) {
   }
 }
 
+#pragma mark - IBActions
+
+- (IBAction)scriptEditorItemClicked:(id)sender {
+  NSMenuItem *item = sender;
+  if (item.state == NSOnState) {
+    [self.scriptEditorDrawer close];
+    item.state = NSOffState;
+  } else {
+    [self.scriptEditorDrawer open];
+    SDKScriptManagerView *scriptView =
+        (SDKScriptManagerView *)self.scriptEditorDrawer.contentView;
+    scriptView.engineVC = self.engineVC;
+    self.scriptEditorDrawer.contentSize =
+        CGSizeMake(self.engineVC.view.bounds.size.width * 0.8,
+                   self.engineVC.view.bounds.size.height);
+    item.state = NSOnState;
+  }
+}
+
 #pragma mark - Window Delegate
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -85,5 +105,4 @@ FILE *load_resource(char *filename) {
 - (void)windowDidBecomeKey:(NSNotification *)notification {
   self.inspectorItem.state = NSOnState;
 }
-
 @end

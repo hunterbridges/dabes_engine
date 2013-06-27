@@ -6,6 +6,8 @@
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kNewSceneNotification =  @"kNewSceneNotification";
 NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
+NSString *kEngineReadyForScriptNotification =
+    @"kEngineReadyForScriptNotification";
 
 @interface SDKEngineViewController ()
 
@@ -73,11 +75,9 @@ char *bundlePath__;
     [self draw];
     Input_reset(self.engine->input);
     
-    /*
     [[NSNotificationCenter defaultCenter]
         postNotificationName:kEngineReadyForScriptNotification
         object:self];
-     */
     
     Engine_frame_end(self.engine);
     [self refreshScene];
