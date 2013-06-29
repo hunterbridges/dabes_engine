@@ -7,11 +7,16 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SDKScriptManagerView.h"
 
+@class SDKScriptEditorWindowController;
+@class SDKScriptTabModel;
 @interface SDKScriptEditorView : NSView
 
 @property (nonatomic, copy) NSString *syntaxDefinition;
-@property (nonatomic, weak) SDKScriptManagerView *scriptManager;
+@property (nonatomic, weak) SDKScriptEditorWindowController *scriptManager;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, weak) SDKScriptTabModel *tabModel;
+
+- (id)initWithPath:(NSString *)path;
 
 @end

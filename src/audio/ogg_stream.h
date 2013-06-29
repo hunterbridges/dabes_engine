@@ -34,6 +34,7 @@ typedef struct OggStream {
     ALuint source;
     ALenum format;
 
+    int started;
     int should_loop;
     int eof;
     int ended;

@@ -9,6 +9,7 @@
 #import "SDKAppDelegate.h"
 #import "SDKEngineViewController.h"
 #import "SDKScriptManagerView.h"
+#import "SDKScriptEditorWindowController.h"
 
 const char *resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
@@ -44,6 +45,7 @@ FILE *load_resource(char *filename) {
 @interface SDKAppDelegate () <NSWindowDelegate>
 
 @property (nonatomic, strong) SDKEngineViewController *engineVC;
+@property (nonatomic, strong) SDKScriptManagerView *scriptManagerView;
 
 @end
 
@@ -82,27 +84,38 @@ FILE *load_resource(char *filename) {
 - (IBAction)scriptEditorItemClicked:(id)sender {
   NSMenuItem *item = sender;
   if (item.state == NSOnState) {
-    [self.scriptEditorDrawer close];
+    [self.scriptEditorController.window close];
+    self.scriptEditorController = nil;
     item.state = NSOffState;
   } else {
-    [self.scriptEditorDrawer open];
-    SDKScriptManagerView *scriptView =
-        (SDKScriptManagerView *)self.scriptEditorDrawer.contentView;
-    scriptView.engineVC = self.engineVC;
-    self.scriptEditorDrawer.contentSize =
-        CGSizeMake(self.engineVC.view.bounds.size.width * 0.8,
-                   self.engineVC.view.bounds.size.height);
+    self.scriptEditorController =
+        [[SDKScriptEditorWindowController alloc] initWithWindowNibName:@"ScriptEditor"];
+    self.scriptEditorController.engineVC = self.engineVC;
+    [self.scriptEditorController.window makeKeyAndOrderFront:nil];
     item.state = NSOnState;
   }
+}
+
+- (IBAction)restartSceneItemClicked:(id)sender {
+  [self.engineVC restartCurrentScene];
 }
 
 #pragma mark - Window Delegate
 
 - (void)windowWillClose:(NSNotification *)notification {
-  self.inspectorItem.state = NSOffState;
+  if (notification.object == self.inspectorWindow) {
+    self.inspectorItem.state = NSOffState;
+  } else if (notification.object == self.scriptEditorController.window) {
+    self.scriptEditorItem.state = NSOffState;
+  }
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
-  self.inspectorItem.state = NSOnState;
+  if (notification.object == self.inspectorWindow) {
+    self.inspectorItem.state = NSOnState;
+  } else if (notification.object == self.scriptEditorController.window) {
+    self.scriptEditorItem.state = NSOnState;
+  }
 }
+
 @end

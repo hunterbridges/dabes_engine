@@ -170,6 +170,12 @@
 		CAEF1979175E618C00B3A3A1 /* DebugMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEF1978175E618C00B3A3A1 /* DebugMenuViewController.m */; };
 		CAEF197E1761BED100B3A3A1 /* sensor_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEF197A1761BED000B3A3A1 /* sensor_bindings.c */; };
 		CAEF197F1761BED100B3A3A1 /* sensor.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEF197C1761BED100B3A3A1 /* sensor.c */; };
+		CAF42955177E4A3200C3220A /* SDKScriptEditorWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42954177E4A3100C3220A /* SDKScriptEditorWindowController.m */; };
+		CAF42963177E529B00C3220A /* SDKScriptEditorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42962177E529B00C3220A /* SDKScriptEditorWindow.m */; };
+		CAF42967177E5DEF00C3220A /* SDKScriptTabModel.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42966177E5DEF00C3220A /* SDKScriptTabModel.m */; };
+		CAF42969177E619500C3220A /* ScriptEditor.xib in Resources */ = {isa = PBXBuildFile; fileRef = CAF42968177E619500C3220A /* ScriptEditor.xib */; };
+		CAF4296C177E650C00C3220A /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4296B177E650C00C3220A /* FileSystemItem.m */; };
+		CAF4296E177E900900C3220A /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF4296D177E900900C3220A /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -566,6 +572,16 @@
 		CAEF197B1761BED100B3A3A1 /* sensor_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensor_bindings.h; sourceTree = "<group>"; };
 		CAEF197C1761BED100B3A3A1 /* sensor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sensor.c; sourceTree = "<group>"; };
 		CAEF197D1761BED100B3A3A1 /* sensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensor.h; sourceTree = "<group>"; };
+		CAF42953177E4A3100C3220A /* SDKScriptEditorWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptEditorWindowController.h; sourceTree = "<group>"; };
+		CAF42954177E4A3100C3220A /* SDKScriptEditorWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptEditorWindowController.m; sourceTree = "<group>"; };
+		CAF42961177E529B00C3220A /* SDKScriptEditorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptEditorWindow.h; sourceTree = "<group>"; };
+		CAF42962177E529B00C3220A /* SDKScriptEditorWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptEditorWindow.m; sourceTree = "<group>"; };
+		CAF42965177E5DEF00C3220A /* SDKScriptTabModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptTabModel.h; sourceTree = "<group>"; };
+		CAF42966177E5DEF00C3220A /* SDKScriptTabModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptTabModel.m; sourceTree = "<group>"; };
+		CAF42968177E619500C3220A /* ScriptEditor.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScriptEditor.xib; sourceTree = "<group>"; };
+		CAF4296A177E650C00C3220A /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
+		CAF4296B177E650C00C3220A /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
+		CAF4296D177E900900C3220A /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -599,6 +615,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAF4296E177E900900C3220A /* Carbon.framework in Frameworks */,
 				CA382ADE177C11FE0049B645 /* PSMTabBarControl.framework in Frameworks */,
 				CA382ACE177BFBDE0049B645 /* MGSFragaria.framework in Frameworks */,
 				CA1D747517702B8500712C8D /* Ogg.framework in Frameworks */,
@@ -962,6 +979,7 @@
 				CA5D22DC177007B20044793D /* Supporting Files */,
 				CA5D22FE177009740044793D /* Frameworks */,
 				CA4956F31773699F000EC990 /* UI Elements */,
+				CAF42964177E5DCD00C3220A /* Script Editor */,
 				CA5D22E7177007B20044793D /* SDKAppDelegate.h */,
 				CA5D22E8177007B20044793D /* SDKAppDelegate.m */,
 				CA5D22EA177007B20044793D /* MainMenu.xib */,
@@ -971,10 +989,6 @@
 				CA5D238317700FE10044793D /* SDKEngineView.m */,
 				CA92A81C1771919D00B3E379 /* SDKInspectorView.h */,
 				CA92A81D1771919D00B3E379 /* SDKInspectorView.m */,
-				CA382ADF177C13BE0049B645 /* SDKScriptManagerView.h */,
-				CA382AE0177C13BE0049B645 /* SDKScriptManagerView.m */,
-				CA382ACF177BFC3C0049B645 /* SDKScriptEditorView.h */,
-				CA382AD0177BFC3C0049B645 /* SDKScriptEditorView.m */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -982,6 +996,7 @@
 		CA5D22FE177009740044793D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CAF4296D177E900900C3220A /* Carbon.framework */,
 				CA5D238017700EAE0044793D /* GLUT.framework */,
 				CA5D2303177009E50044793D /* Cocoa.framework */,
 				CA5D2301177009B30044793D /* libxml2.dylib */,
@@ -1144,6 +1159,26 @@
 			children = (
 			);
 			name = "Debug Menu";
+			sourceTree = "<group>";
+		};
+		CAF42964177E5DCD00C3220A /* Script Editor */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42968177E619500C3220A /* ScriptEditor.xib */,
+				CA382ADF177C13BE0049B645 /* SDKScriptManagerView.h */,
+				CA382AE0177C13BE0049B645 /* SDKScriptManagerView.m */,
+				CA382ACF177BFC3C0049B645 /* SDKScriptEditorView.h */,
+				CA382AD0177BFC3C0049B645 /* SDKScriptEditorView.m */,
+				CAF42953177E4A3100C3220A /* SDKScriptEditorWindowController.h */,
+				CAF42954177E4A3100C3220A /* SDKScriptEditorWindowController.m */,
+				CAF42961177E529B00C3220A /* SDKScriptEditorWindow.h */,
+				CAF42962177E529B00C3220A /* SDKScriptEditorWindow.m */,
+				CAF42965177E5DEF00C3220A /* SDKScriptTabModel.h */,
+				CAF42966177E5DEF00C3220A /* SDKScriptTabModel.m */,
+				CAF4296A177E650C00C3220A /* FileSystemItem.h */,
+				CAF4296B177E650C00C3220A /* FileSystemItem.m */,
+			);
+			name = "Script Editor";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1407,6 +1442,7 @@
 				CA5D22E0177007B20044793D /* InfoPlist.strings in Resources */,
 				CA5D22E6177007B20044793D /* Credits.rtf in Resources */,
 				CA5D22EC177007B20044793D /* MainMenu.xib in Resources */,
+				CAF42969177E619500C3220A /* ScriptEditor.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1555,6 +1591,10 @@
 				CA382AB5177A45450049B645 /* stb_image.c in Sources */,
 				CA382AD1177BFC3C0049B645 /* SDKScriptEditorView.m in Sources */,
 				CA382AE1177C13BF0049B645 /* SDKScriptManagerView.m in Sources */,
+				CAF42955177E4A3200C3220A /* SDKScriptEditorWindowController.m in Sources */,
+				CAF42963177E529B00C3220A /* SDKScriptEditorWindow.m in Sources */,
+				CAF42967177E5DEF00C3220A /* SDKScriptTabModel.m in Sources */,
+				CAF4296C177E650C00C3220A /* FileSystemItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,8 @@
 #import <MGSFragaria/MGSFragaria.h>
 #import "SDKEngineViewController.h"
 #import "SDKScriptEditorView.h"
+#import "SDKScriptEditorWindowController.h"
+#import "SDKScriptTabModel.h"
 
 @interface SDKScriptEditorView () <MGSFragariaTextViewDelegate>
 
@@ -19,27 +21,17 @@
 
 @implementation SDKScriptEditorView
 
-- (id)initWithFrame:(NSRect)frame
+- (id)initWithPath:(NSString *)path
 {
-  self = [super initWithFrame:frame];
+  self = [super init];
   if (self) {
-      // Initialization code here.
     self.fragaria = [[MGSFragaria alloc] init];
     [self.fragaria setObject:self forKey:MGSFODelegate];
     [self.fragaria setObject:@"Lua" forKey:MGSFOSyntaxDefinitionName];
     [self.fragaria embedInView:self];
     
-    NSString *bundlePath = [[[NSBundle mainBundle] resourcePath]
-                            stringByAppendingPathComponent:@"scripts/boxfall/entities/megaman.lua"];
-    NSString *megamanScript =
-        [NSString stringWithContentsOfFile:bundlePath
-                                  encoding:NSUTF8StringEncoding
-                                     error:nil];
-    self.fragaria.string = megamanScript;
-    [self.fragaria addObserver:self
-                    forKeyPath:@"string"
-                       options:NSKeyValueObservingOptionNew
-                       context:NULL];
+    self.path = path;
+    
     [[NSNotificationCenter defaultCenter]
         addObserver:self
         selector:@selector(loadQueuedScript)
@@ -49,6 +41,16 @@
   }
   
   return self;
+}
+
+- (void)setPath:(NSString *)path {
+  _path = [path copy];
+  if (path) {
+    NSString *script = [NSString stringWithContentsOfFile:path
+                                                 encoding:NSUTF8StringEncoding
+                                                    error:nil];
+    self.fragaria.string = script;
+  }
 }
 
 - (void)dealloc {
@@ -62,6 +64,7 @@
 
 - (void)textDidChange:(NSNotification *)notification {
   self.queuedScript = self.fragaria.string;
+  self.tabModel.isEdited = YES;
 }
 
 - (NSNumber *)extractErrorLine:(const char *)luaError

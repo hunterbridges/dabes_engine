@@ -12,6 +12,7 @@ NSString *kEngineReadyForScriptNotification =
 @interface SDKEngineViewController ()
 
 @property (nonatomic, strong) NSTimer *updateTimer;
+@property (nonatomic, assign) BOOL needsRestart;
 
 @end
 
@@ -87,6 +88,10 @@ char *bundlePath__;
   }
 }
 
+- (void)restartCurrentScene {
+  self.needsRestart = YES;
+}
+
 - (void)draw {
   [self.view setNeedsDisplay:YES];
 }
@@ -94,7 +99,12 @@ char *bundlePath__;
 - (void)refreshScene {
   Scene *old = self.scene;
   Scene *new = Engine_get_current_scene(self.engine);
-  if (old != new) {
+  if (old == new) {
+    if (self.needsRestart) {
+      Scene_restart(self.scene, self.engine);
+      self.needsRestart = NO;
+    }
+  } else {
     self.scene = new;
     ((SDKEngineView *)self.view).scene = new;
     [[NSNotificationCenter defaultCenter]

@@ -1,3 +1,4 @@
+#import <Carbon/Carbon.h>
 #import "SDKEngineViewController.h"
 #import "SDKEngineView.h"
 #import "scene.h"
@@ -10,6 +11,8 @@
 @end
 
 @implementation SDKEngineView
+
+static unsigned short int keysDown[128];
 
 - (id)initWithFrame:(NSRect)frameRect
         pixelFormat:(NSOpenGLPixelFormat *)format
@@ -48,70 +51,36 @@
 
 - (void)keyDown:(NSEvent *)theEvent {
   // Arrow keys are associated with the numeric keypad
-  NSString *keys = [theEvent charactersIgnoringModifiers];
-  unichar keyChar = 0;
-  if ( [keys length] == 0 ) return;
-  keyChar = [keys characterAtIndex:0];
-  if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
-    if ( [keys length] == 1 ) {
-      if ( keyChar == NSLeftArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_LEFT;
-        return;
-      }
-      if ( keyChar == NSRightArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_RIGHT;
-        return;
-      }
-      if ( keyChar == NSUpArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_UP;
-        return;
-      }
-      if ( keyChar == NSDownArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_DOWN;
-        return;
-      }
-    }
-  } else {
-    if (keyChar == ' ') {
-      self.touchInput->controllers[0]->jump = 1;
-      return;
-    }
-  }
-  [super keyDown:theEvent];
+  unsigned keyCode = [theEvent keyCode];
+  if (keyCode < 128) keysDown[keyCode] = YES;
+  
+  if (keyCode == kVK_LeftArrow)
+    self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_LEFT;
+  if (keyCode == kVK_RightArrow)
+    self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_RIGHT;
+  if (keyCode == kVK_UpArrow)
+    self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_UP;
+  if (keyCode == kVK_DownArrow)
+    self.touchInput->controllers[0]->dpad |= CONTROLLER_DPAD_DOWN;
+  if (keyCode == kVK_Space)
+    self.touchInput->controllers[0]->jump = 1;
 }
 
 - (void)keyUp:(NSEvent *)theEvent {
   // Arrow keys are associated with the numeric keypad
-  NSString *keys = [theEvent charactersIgnoringModifiers];
-  unichar keyChar = 0;
-  if ( [keys length] == 0 ) return;
-  keyChar = [keys characterAtIndex:0];
-  if ([theEvent modifierFlags] & NSNumericPadKeyMask) {
-    if ( [keys length] == 1 ) {
-      if ( keyChar == NSLeftArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_LEFT);
-        return;
-      }
-      if ( keyChar == NSRightArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_RIGHT);
-        return;
-      }
-      if ( keyChar == NSUpArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_UP);
-        return;
-      }
-      if ( keyChar == NSDownArrowFunctionKey ) {
-        self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_DOWN);
-        return;
-      }
-    }
-  } else {
-    if (keyChar == ' ') {
-      self.touchInput->controllers[0]->jump = 0;
-      return;
-    }
-  }
-  [super keyUp:theEvent];
+  unsigned keyCode = [theEvent keyCode];
+  if (keyCode < 128) keysDown[keyCode] = NO;
+  
+  if (keyCode == kVK_LeftArrow)
+    self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_LEFT);
+  if (keyCode == kVK_RightArrow)
+    self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_RIGHT);
+  if (keyCode == kVK_UpArrow)
+    self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_UP);
+  if (keyCode == kVK_DownArrow)
+    self.touchInput->controllers[0]->dpad &= ~(CONTROLLER_DPAD_DOWN);
+  if (keyCode == kVK_Space)
+    self.touchInput->controllers[0]->jump = 0;
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {

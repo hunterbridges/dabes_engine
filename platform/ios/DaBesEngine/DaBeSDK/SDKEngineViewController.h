@@ -15,4 +15,6 @@ extern NSString *kEngineReadyForScriptNotification;
 @property (nonatomic, assign) Scene *scene;
 @property (nonatomic, assign) Input *touchInput;
 
+- (void)restartCurrentScene;
+
 @end
