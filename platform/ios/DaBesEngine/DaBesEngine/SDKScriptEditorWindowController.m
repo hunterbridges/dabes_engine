@@ -15,7 +15,7 @@
 #import "SDKScriptTabModel.h"
 
 @interface SDKScriptEditorWindowController () <NSTabViewDelegate,
-    NSWindowDelegate>
+    NSWindowDelegate, NSAlertDelegate>
 
 @property (nonatomic, strong) NSTabView *tabView;
 @property (nonatomic, assign) IBOutlet NSView *contentContainerView;
@@ -96,6 +96,50 @@
                                                   NSViewHeightSizable);
 }
 
+- (void)saveEditorToPath:(NSString *)path
+             withTabItem:(NSTabViewItem *)tabViewItem {
+  SDKScriptTabModel *tabModel = tabViewItem.identifier;
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  NSData *fileData =
+      [tabModel.scriptEditor.string dataUsingEncoding:NSUTF8StringEncoding];
+  [fileManager createFileAtPath:path
+                       contents:fileData
+                     attributes:nil];
+  tabModel.isEdited = NO;
+}
+
+- (void)saveEditorWithTabItem:(NSTabViewItem *)tabViewItem {
+  [self saveEditorWithTabItem:tabViewItem andClose:NO];
+}
+
+- (void)saveEditorWithTabItem:(NSTabViewItem *)tabViewItem
+                     andClose:(BOOL)andClose {
+  SDKScriptTabModel *tabModel = tabViewItem.identifier;
+  NSString *path = tabModel.scriptEditor.path;
+  if (path) {
+    [self saveEditorToPath:path withTabItem:tabViewItem];
+    if (andClose) {
+      [self.tabView removeTabViewItem:tabViewItem];
+    }
+    return;
+  }
+  
+  double delayInSeconds = 0.1;
+  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    savePanel.allowedFileTypes = @[@"lua"];
+    savePanel.directoryURL = [NSURL fileURLWithPath:self.rootFileSystemItem.fullPath isDirectory:YES];
+    [savePanel beginSheetModalForWindow:self.window
+        completionHandler:^(NSInteger result) {
+          if (result) {
+            [self saveEditorToPath:savePanel.URL.path withTabItem:tabViewItem];
+            if (andClose) [self.tabView removeTabViewItem:tabViewItem];
+          }
+        }];
+  });
+}
+
 #pragma mark - Window Delegate
 
 - (BOOL)windowShouldClose:(id)sender {
@@ -130,17 +174,19 @@
   
   SDKScriptTabModel *tabModel = [tabViewItem identifier];
 	if(tabModel.isEdited) {
-    NSString *titleText = [NSString stringWithFormat:@"Are you sure you want to close `%@`?",
-                                                    [tabModel.scriptEditor.path lastPathComponent]];
+    NSString *titleText = (tabModel.scriptEditor.path ?
+                           [NSString stringWithFormat:@"Are you sure you want to close %@?",
+                               [tabModel.scriptEditor.path lastPathComponent]] :
+                           @"Are you sure you want to close Untitled?");
 		NSAlert *editedAlert = [NSAlert alertWithMessageText:titleText
                                            defaultButton:@"Save and Close"
                                          alternateButton:@"Cancel"
                                              otherButton:@"Close Without Saving"
-                               informativeTextWithFormat:@"File has been changed."];
+                               informativeTextWithFormat:@"This file has been changed."];
 		[editedAlert beginSheetModalForWindow:self.window
-                            modalDelegate:nil
-                           didEndSelector:nil
-                              contextInfo:nil];
+                            modalDelegate:self
+                           didEndSelector:@selector(editedAlertDidEnd:returnCode:contextInfo:)
+                              contextInfo:(void *)tabViewItem];
 		return NO;
 	}
 	return YES;
@@ -153,6 +199,31 @@
 
 - (BOOL)tabView:(NSTabView*)aTabView shouldDropTabViewItem:(NSTabViewItem *)tabViewItem inTabBar:(PSMTabBarControl *)tabBarControl {
 	return YES;
+}
+
+#pragma mark - Alert Delegate
+
+- (void)editedAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
+  switch (returnCode) {
+    case 1: {
+      // Save and Close
+      NSTabViewItem *tabViewItem = (__bridge NSTabViewItem *)contextInfo;
+      [self saveEditorWithTabItem:tabViewItem andClose:YES];
+    } break;
+      
+    case -1:
+      // Close without saving
+      if (contextInfo) {
+        NSTabViewItem *tabViewItem = (__bridge NSTabViewItem *)contextInfo;
+        [self.tabView removeTabViewItem:tabViewItem];
+      }
+      
+      break;
+      
+    default:
+      // Cancel
+      break;
+  }
 }
 
 #pragma mark - Outline View Data Source

@@ -14,8 +14,8 @@
 
 @interface SDKScriptEditorView () <MGSFragariaTextViewDelegate>
 
-@property (nonatomic, strong) MGSFragaria *fragaria;
 @property (nonatomic, strong) NSString *queuedScript;
+@property (nonatomic, strong) MGSFragaria *fragaria;
 
 @end
 
@@ -74,12 +74,12 @@
   NSCharacterSet *numberSet =
       [NSCharacterSet characterSetWithCharactersInString:@"1234567890"];
   NSScanner *scanner = [NSScanner scannerWithString:string];
-  [scanner scanUpToString:@"]:" intoString:nil];
+  [scanner scanUpToString:@":" intoString:nil];
   
-  scanner.scanLocation += 2;
+  scanner.scanLocation += 1;
   NSString *lineNumber = nil;
   [scanner scanCharactersFromSet:numberSet intoString:&lineNumber];
-  scanner.scanLocation += 2;
+  scanner.scanLocation += 1;
   
   *message = [string substringFromIndex:scanner.scanLocation];
   
@@ -134,5 +134,8 @@
   
 }
 
+- (NSString *)string {
+  return self.fragaria.string;
+}
 
 @end

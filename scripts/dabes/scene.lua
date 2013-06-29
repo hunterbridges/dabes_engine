@@ -86,7 +86,7 @@ Scene = BoundObject:extend({
         parallax = BoundObject.fwd_func("get_parallax"),
 
         camera = function(self)
-            raw_getter = BoundObject.fwd_func("get_camera")
+            local raw_getter = BoundObject.fwd_func("get_camera")
             local got = raw_getter(self)
             if got == nil then
                 got = Camera:new(self)

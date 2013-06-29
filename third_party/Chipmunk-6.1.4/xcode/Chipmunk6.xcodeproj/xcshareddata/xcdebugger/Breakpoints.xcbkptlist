@@ -15,18 +15,9 @@
       <ExceptionBreakpoint
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
-         continueAfterRunningActions = "Yes"
+         continueAfterRunningActions = "No"
          scope = "0"
          stopOnStyle = "0">
-         <Actions>
-            <BreakpointActionProxy
-               ActionType = "Xcode.BreakpointAction.Log">
-               <ActionContent
-                  message = "Exception caught"
-                  conveyanceType = "1">
-               </ActionContent>
-            </BreakpointActionProxy>
-         </Actions>
       </ExceptionBreakpoint>
    </ExceptionBreakpoints>
 </Bucket>
