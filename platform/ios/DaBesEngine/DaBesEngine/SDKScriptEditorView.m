@@ -53,6 +53,10 @@
   }
 }
 
+- (void)reinject {
+  self.queuedScript = self.fragaria.string;
+}
+
 - (void)dealloc {
   [self.fragaria removeObserver:self forKeyPath:@"string"];
 }

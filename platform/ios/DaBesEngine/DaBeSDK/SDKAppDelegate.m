@@ -8,8 +8,10 @@
 
 #import "SDKAppDelegate.h"
 #import "SDKEngineViewController.h"
-#import "SDKScriptManagerView.h"
 #import "SDKScriptEditorWindowController.h"
+#import "SDKScriptEditorView.h"
+#import "SDKScriptTabModel.h"
+#import "scene.h"
 
 const char *resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
@@ -45,7 +47,6 @@ FILE *load_resource(char *filename) {
 @interface SDKAppDelegate () <NSWindowDelegate>
 
 @property (nonatomic, strong) SDKEngineViewController *engineVC;
-@property (nonatomic, strong) SDKScriptManagerView *scriptManagerView;
 
 @end
 
@@ -64,6 +65,12 @@ FILE *load_resource(char *filename) {
   self.inspectorView.engineVC = self.engineVC;
   
   [self setUpMenu];
+  
+  [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(handleNewScene:)
+     name:kNewSceneNotification
+     object:self.engineVC];
 }
 
 - (void)setUpMenu {
@@ -77,6 +84,21 @@ FILE *load_resource(char *filename) {
   } else {
     [self.inspectorWindow makeKeyAndOrderFront:nil];
   }
+}
+
+- (void)handleNewScene:(NSNotification *)notification {
+  [self setSceneRenderMode:self.engineVC.scene->render_mode];
+}
+
+- (void)setSceneRenderMode:(SceneRenderMode)renderMode {
+  if (renderMode == kSceneRenderModeNormal) {
+    self.renderNormalItem.state = NSOnState;
+    self.renderPhysicsItem.state = NSOffState;
+  } else if (renderMode == kSceneRenderModePhysicsDebug) {
+    self.renderNormalItem.state = NSOffState;
+    self.renderPhysicsItem.state = NSOnState;
+  }
+  self.engineVC.scene->render_mode = renderMode;
 }
 
 #pragma mark - IBActions
@@ -100,6 +122,44 @@ FILE *load_resource(char *filename) {
   [self.engineVC restartCurrentScene];
 }
 
+- (IBAction)renderNormalItemClicked:(id)sender {
+  [self setSceneRenderMode:kSceneRenderModeNormal];
+}
+
+- (IBAction)renderPhysicsItemClicked:(id)sender {
+  [self setSceneRenderMode:kSceneRenderModePhysicsDebug];
+}
+
+- (IBAction)saveItemClicked:(id)sender {
+  [self.scriptEditorController saveCurrentTab];
+}
+
+- (IBAction)revertItemClicked:(id)sender {
+  [self.scriptEditorController revertCurrentTab];
+}
+
+- (IBAction)closeItemClicked:(id)sender {
+  NSWindow *keyWindow = [NSApp keyWindow];
+  id firstResponder = [keyWindow firstResponder];
+  if (keyWindow && keyWindow == self.scriptEditorController.window) {
+    [self.scriptEditorController closeItem:sender];
+    return;
+  }
+  [firstResponder performClose:sender];
+}
+
+- (IBAction)createNewTabItemClicked:(id)sender {
+  [self.scriptEditorController newTab];
+}
+
+- (IBAction)prevTabItemClicked:(id)sender {
+  [self.scriptEditorController prevTab];
+}
+
+- (IBAction)nextTabItemClicked:(id)sender {
+  [self.scriptEditorController nextTab];
+}
+
 #pragma mark - Window Delegate
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -116,6 +176,23 @@ FILE *load_resource(char *filename) {
   } else if (notification.object == self.scriptEditorController.window) {
     self.scriptEditorItem.state = NSOnState;
   }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+  if (menuItem == self.saveItem) {
+    return ([NSApp keyWindow] == self.scriptEditorController.window &&
+            self.scriptEditorController.currentTabModel.isEdited);
+  } else if (menuItem == self.revertItem) {
+    return ([NSApp keyWindow] == self.scriptEditorController.window &&
+            self.scriptEditorController.currentTabModel.isEdited &&
+            self.scriptEditorController.currentTabModel.scriptEditor.path);
+  } else if (menuItem == self.prevTabItem || menuItem == self.nextTabItem) {
+    return ([NSApp keyWindow] == self.scriptEditorController.window &&
+            self.scriptEditorController.tabCount > 1);
+  } else if (menuItem == self.createNewTabItem) {
+    return ([NSApp keyWindow] == self.scriptEditorController.window);
+  }
+  return menuItem.action != 0;
 }
 
 @end

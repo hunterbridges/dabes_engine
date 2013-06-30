@@ -7,7 +7,7 @@
 	url = git@github.com:hunterbridges/lua-ios-library.git
 [submodule "submodules/Fragaria"]
 	path = submodules/Fragaria
-	url = https://github.com/mugginsoft/Fragaria.git
+	url = git@github.com:hunterbridges/Fragaria.git
 [submodule "submodules/PSMTabBarControl"]
 	path = submodules/PSMTabBarControl
-	url = https://github.com/dorianj/PSMTabBarControl
+	url = git@github.com:hunterbridges/PSMTabBarControl.git

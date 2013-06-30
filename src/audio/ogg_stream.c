@@ -4,7 +4,7 @@ const int BUFFER_SIZE = 48000;
 
 int OggStream_stream(OggStream *ogg_stream, ALuint buffer);
 void OggStream_empty(OggStream *ogg_stream);
-const char *OggStream_error_string(int code);
+const char *OggStream_error_string(long code);
 
 int OggStream_open_decoder(OggStream *ogg_stream) {
     check(ogg_stream != NULL, "No Ogg Stream to open decoder for");
@@ -172,7 +172,7 @@ int OggStream_stream(OggStream *ogg_stream, ALuint buffer) {
     char data[BUFFER_SIZE];
     int size = 0;
     int section;
-    int result;
+    long result;
 
     while (size < BUFFER_SIZE) {
         result = ov_read(&ogg_stream->stream, data + size, BUFFER_SIZE - size,
@@ -194,7 +194,7 @@ int OggStream_stream(OggStream *ogg_stream, ALuint buffer) {
     if (size == 0) return 0;
 
     alBufferData(buffer, ogg_stream->format, data, size,
-            ogg_stream->vorbis_info->rate);
+            (ALsizei)ogg_stream->vorbis_info->rate);
 
     return Audio_check();
 }
@@ -230,7 +230,7 @@ error:
     return;
 }
 
-const char *OggStream_error_string(int code) {
+const char *OggStream_error_string(long code) {
     switch(code) {
         case OV_EREAD:
             return "Read from media.";

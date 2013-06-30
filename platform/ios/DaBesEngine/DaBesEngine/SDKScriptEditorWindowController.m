@@ -108,6 +108,59 @@
   tabModel.isEdited = NO;
 }
 
+- (NSTabViewItem *)currentTab {
+  return [self.tabView selectedTabViewItem];
+}
+
+- (SDKScriptTabModel *)currentTabModel {
+  return self.currentTab.identifier;
+}
+
+- (NSUInteger)tabCount {
+  return self.tabView.tabViewItems.count;
+}
+
+- (void)newTab {
+  [self addNewTab:self];
+}
+
+- (void)prevTab {
+  NSInteger idx = [self.tabView.tabViewItems indexOfObject:self.currentTab];
+  idx--;
+  if (idx < 0) idx = self.tabView.tabViewItems.count - 1;
+  [self.tabView selectTabViewItemAtIndex:idx];
+}
+
+- (void)nextTab {
+  NSInteger idx = [self.tabView.tabViewItems indexOfObject:self.currentTab];
+  idx++;
+  if (idx >= self.tabView.tabViewItems.count) idx = 0;
+  [self.tabView selectTabViewItemAtIndex:idx];
+}
+
+- (void)closeItem:(id)sender {
+  if (self.tabView.tabViewItems.count > 1) {
+    BOOL shouldClose =
+        [self tabView:self.tabView shouldCloseTabViewItem:self.currentTab];
+    if (shouldClose) {
+      [self.tabView removeTabViewItem:self.currentTab];
+    }
+  } else {
+    [self.window performClose:sender];
+  }
+}
+
+- (void)saveCurrentTab {
+  [self saveEditorWithTabItem:self.currentTab];
+}
+
+- (void)revertCurrentTab {
+  self.currentTabModel.scriptEditor.path =
+      self.currentTabModel.scriptEditor.path;
+  [self.currentTabModel.scriptEditor reinject];
+  self.currentTabModel.isEdited = NO;
+}
+
 - (void)saveEditorWithTabItem:(NSTabViewItem *)tabViewItem {
   [self saveEditorWithTabItem:tabViewItem andClose:NO];
 }
@@ -119,7 +172,11 @@
   if (path) {
     [self saveEditorToPath:path withTabItem:tabViewItem];
     if (andClose) {
-      [self.tabView removeTabViewItem:tabViewItem];
+      if (self.tabView.tabViewItems.count > 1) {
+        [self.tabView removeTabViewItem:tabViewItem];
+      } else {
+        [self.window close];
+      }
     }
     return;
   }
@@ -134,7 +191,12 @@
         completionHandler:^(NSInteger result) {
           if (result) {
             [self saveEditorToPath:savePanel.URL.path withTabItem:tabViewItem];
-            if (andClose) [self.tabView removeTabViewItem:tabViewItem];
+
+            if (self.tabView.tabViewItems.count > 1) {
+              [self.tabView removeTabViewItem:tabViewItem];
+            } else {
+              [self.window close];
+            }
           }
         }];
   });
@@ -143,6 +205,8 @@
 #pragma mark - Window Delegate
 
 - (BOOL)windowShouldClose:(id)sender {
+  /*
+   */
   for (NSTabViewItem *tabItem in self.tabView.tabViewItems) {
     [self.tabView selectTabViewItem:tabItem];
     BOOL shouldClose =
@@ -153,6 +217,10 @@
   return YES;
 }
 
+- (void)windowWillClose:(NSNotification *)notification {
+  [[NSApp delegate] windowWillClose:notification];
+}
+  
 #pragma mark - Tab View Delegate
 
 - (void)tabView:(NSTabView *)aTabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem {
@@ -215,7 +283,12 @@
       // Close without saving
       if (contextInfo) {
         NSTabViewItem *tabViewItem = (__bridge NSTabViewItem *)contextInfo;
-        [self.tabView removeTabViewItem:tabViewItem];
+
+        if (self.tabView.tabViewItems.count > 1) {
+          [self.tabView removeTabViewItem:tabViewItem];
+        } else {
+          [self.window close];
+        }
       }
       
       break;

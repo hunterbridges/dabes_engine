@@ -13,9 +13,9 @@ void extract_gids_from_encoded_data(xmlChar *value, uint32_t **gids,
                                   &decoded,
                                   1024);
     unsigned char *decompressed = calloc(1, 256);
-    int unzip_len = decompress_data(decoded, outlen, &decompressed, 256);
+    unsigned long int unzip_len = decompress_data(decoded, outlen, &decompressed, 256);
     free(decoded);
-    int i = 0;
+    unsigned int i = 0;
     *gids = malloc(sizeof(uint32_t) * (unzip_len / 4));
     int cell = 0;
     for (i = 0; i < unzip_len; i += 4) {

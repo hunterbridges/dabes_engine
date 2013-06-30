@@ -10,6 +10,7 @@
 #import <PSMTabBarControl/PSMTabBarControl.h>
 
 @class SDKEngineViewController;
+@class SDKScriptTabModel;
 @interface SDKScriptEditorWindowController : NSWindowController
     <PSMTabBarControlDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
 
@@ -18,4 +19,15 @@
 @property (nonatomic, assign) IBOutlet NSDrawer *treeDrawer;
 @property (nonatomic, assign) IBOutlet NSOutlineView *treeView;
 
+@property (nonatomic, assign, readonly) NSUInteger tabCount;
+@property (nonatomic, strong, readonly) NSTabViewItem *currentTab;
+@property (nonatomic, strong, readonly) SDKScriptTabModel *currentTabModel;
+
+- (void)newTab;
+- (void)prevTab;
+- (void)nextTab;
+- (void)saveCurrentTab;
+- (void)revertCurrentTab;
+- (void)closeItem:(id)sender;
+  
 @end

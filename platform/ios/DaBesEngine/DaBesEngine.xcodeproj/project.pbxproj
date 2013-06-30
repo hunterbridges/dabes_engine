@@ -46,7 +46,6 @@
 		CA382ACE177BFBDE0049B645 /* MGSFragaria.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA382AC9177BFBBE0049B645 /* MGSFragaria.framework */; };
 		CA382AD1177BFC3C0049B645 /* SDKScriptEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA382AD0177BFC3C0049B645 /* SDKScriptEditorView.m */; };
 		CA382ADE177C11FE0049B645 /* PSMTabBarControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA382AD9177C11D90049B645 /* PSMTabBarControl.framework */; };
-		CA382AE1177C13BF0049B645 /* SDKScriptManagerView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA382AE0177C13BE0049B645 /* SDKScriptManagerView.m */; };
 		CA3F99BA172F85E000ED1135 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B8172F85E000ED1135 /* Ogg.framework */; };
 		CA3F99BB172F85E000ED1135 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B9172F85E000ED1135 /* Vorbis.framework */; };
 		CA3F99C0172F860400ED1135 /* sprite.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3F99BE172F860400ED1135 /* sprite.c */; };
@@ -445,8 +444,6 @@
 		CA382ACF177BFC3C0049B645 /* SDKScriptEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptEditorView.h; sourceTree = "<group>"; };
 		CA382AD0177BFC3C0049B645 /* SDKScriptEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptEditorView.m; sourceTree = "<group>"; };
 		CA382AD2177C11D90049B645 /* PSMTabBarControl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PSMTabBarControl.xcodeproj; path = ../../../submodules/PSMTabBarControl/PSMTabBarControl.xcodeproj; sourceTree = "<group>"; };
-		CA382ADF177C13BE0049B645 /* SDKScriptManagerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptManagerView.h; sourceTree = "<group>"; };
-		CA382AE0177C13BE0049B645 /* SDKScriptManagerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptManagerView.m; sourceTree = "<group>"; };
 		CA3F99B8172F85E000ED1135 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = ../../../third_party/OggVorbis/Ogg.framework; sourceTree = "<group>"; };
 		CA3F99B9172F85E000ED1135 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = ../../../third_party/OggVorbis/Vorbis.framework; sourceTree = "<group>"; };
 		CA3F99BE172F860400ED1135 /* sprite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sprite.c; sourceTree = "<group>"; };
@@ -1165,8 +1162,6 @@
 			isa = PBXGroup;
 			children = (
 				CAF42968177E619500C3220A /* ScriptEditor.xib */,
-				CA382ADF177C13BE0049B645 /* SDKScriptManagerView.h */,
-				CA382AE0177C13BE0049B645 /* SDKScriptManagerView.m */,
 				CA382ACF177BFC3C0049B645 /* SDKScriptEditorView.h */,
 				CA382AD0177BFC3C0049B645 /* SDKScriptEditorView.m */,
 				CAF42953177E4A3100C3220A /* SDKScriptEditorWindowController.h */,
@@ -1590,7 +1585,6 @@
 				CA4956F917736EB0000EC990 /* NSView+Center.m in Sources */,
 				CA382AB5177A45450049B645 /* stb_image.c in Sources */,
 				CA382AD1177BFC3C0049B645 /* SDKScriptEditorView.m in Sources */,
-				CA382AE1177C13BF0049B645 /* SDKScriptManagerView.m in Sources */,
 				CAF42955177E4A3200C3220A /* SDKScriptEditorWindowController.m in Sources */,
 				CAF42963177E529B00C3220A /* SDKScriptEditorWindow.m in Sources */,
 				CAF42967177E5DEF00C3220A /* SDKScriptTabModel.m in Sources */,
@@ -1838,7 +1832,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
-					"\"$(SRCROOT)/../../../third_party/OggVorbis-Mac\"",
 				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1876,7 +1869,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
-					"\"$(SRCROOT)/../../../third_party/OggVorbis-Mac\"",
 				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

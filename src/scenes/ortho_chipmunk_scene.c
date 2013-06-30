@@ -156,7 +156,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     DrawBuffer_empty(dshader->draw_buffer);
 
     ////////////////////////////////////////////////////////////////////////
-  
+
     if (scene->selection_mode != kSceneNotSelecting) {
         int i = 0;
         for (i = 0; i < DArray_count(scene->entities); i++) {
@@ -167,7 +167,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
             Graphics_stroke_rect(graphics, entity_rect, color, 2, 0);
         }
     }
-    
+
     ////////////////////////////////////////////////////////////////////////
 
     if (scene->cover_color.rgba.a > 0.0) {
@@ -313,7 +313,8 @@ void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
     }
 }
 
-void hit_test_func(cpShape *shape, cpFloat distance, cpVect point, void *data) {
+void hit_test_func(cpShape *shape, cpFloat UNUSED(distance),
+        cpVect UNUSED(point), void *data) {
     if (shape->collision_type == OCSCollisionTypeEntity) {
         Entity **top = data;
         cpBody *cpb = shape->body;

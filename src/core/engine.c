@@ -61,8 +61,8 @@ error:
     free(engine);
 }
 
-uint32_t tick_diff(struct timeval earlier, struct timeval later) {
-  uint32_t ticks;
+unsigned long tick_diff(struct timeval earlier, struct timeval later) {
+  unsigned long ticks;
   ticks =
       (later.tv_sec - earlier.tv_sec) * 1000 +
       (later.tv_usec - earlier.tv_usec) / 1000;
@@ -89,8 +89,8 @@ void Engine_resume_time(Engine *engine) {
     engine->timer.paused = 0;
 }
 
-uint32_t Engine_get_ticks(Engine *engine) {
-    uint32_t ticks;
+unsigned long Engine_get_ticks(Engine *engine) {
+    unsigned long ticks;
     struct timeval now;
 
     gettimeofday(&now, NULL);

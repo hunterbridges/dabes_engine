@@ -154,7 +154,10 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     BOOL updating = [[self.usingControls objectForKey:control] boolValue];
     if (updating || force) {
       if ([self respondsToSelector:updateSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self performSelector:updateSelector withObject:nil];
+#pragma clang diagnostic pop
       }
     }
   }

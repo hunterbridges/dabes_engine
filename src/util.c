@@ -17,7 +17,7 @@ int read_text_file(char *filename, GLchar **out, GLint *size) {
     check(file != NULL, "Failed to open %s", filename);
 
     fseek(file, 0, SEEK_END);
-    unsigned int sz = ftell(file);
+    unsigned int sz = (unsigned int)ftell(file);
     rewind(file);
 
     output = malloc(sz * sizeof(char));
@@ -43,7 +43,7 @@ int read_file_data(char *filename, unsigned long int **data, GLint *size) {
     check(file != NULL, "Failed to open %s", filename);
 
     fseek(file, 0, SEEK_END);
-    unsigned int sz = ftell(file);
+    unsigned int sz = (unsigned int)ftell(file);
     rewind(file);
 
     output = malloc(sz * sizeof(unsigned long int) + 1);

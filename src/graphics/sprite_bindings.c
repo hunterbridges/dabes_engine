@@ -21,7 +21,7 @@ int luab_SpriteAnimation_new(lua_State *L) {
 
     int i = 0;
     for (i = 0; i < num_frames; i++) {
-        frames[i] = lua_tointeger(L, 1);
+        frames[i] = (int)lua_tointeger(L, 1);
         lua_remove(L, 1);
     }
 

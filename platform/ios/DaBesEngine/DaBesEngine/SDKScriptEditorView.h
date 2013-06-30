@@ -20,5 +20,6 @@
 @property (nonatomic, copy, readonly) NSString *string;
 
 - (id)initWithPath:(NSString *)path;
+- (void)reinject;
 
 @end
