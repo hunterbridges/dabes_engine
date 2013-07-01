@@ -1,0 +1,30 @@
+dependencies: \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/vrect.c \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/vrect.h \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/vpoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/chipmunk.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/chipmunk_types.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpVect.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpBB.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpSpatialIndex.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpBody.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpShape.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpPolyShape.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpArbiter.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpConstraint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpPinJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpSlideJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpPivotJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpGrooveJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpDampedSpring.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpDampedRotarySpring.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpRotaryLimitJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpRatchetJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpGearJoint.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/constraints/cpSimpleMotor.h \
+  /Users/hbridges/Coding/dabes_engine/include/chipmunk/cpSpace.h \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/../prefix.h \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/../constants.h \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/../dbg.h \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/../object.h \
+  /Users/hbridges/Coding/dabes_engine/platform/ios/DaBesEngine/DaBesEngine/../../../../src/math/../util.h

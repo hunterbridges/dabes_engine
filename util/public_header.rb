@@ -1,0 +1,53 @@
+require 'set'
+require 'pathname'
+
+hfiles=`find #{ARGV[0]} -name "*.h"`.split("\n")
+
+def depend_hfile(path, added, order, depth=[])
+  pn = Pathname.new(path).cleanpath
+  return if added.include?(pn.to_s)
+
+  ireg = /\#include "(.*)"/
+  File.open(pn.to_s, "r") do |infile|
+    while (line = infile.gets)
+      matches = ireg.match(line)
+      next unless matches
+
+      nextpath = "#{pn.dirname}/#{matches[1]}"
+      if !depth.include?(nextpath)
+        nextdepth = depth + [nextpath]
+        depend_hfile(nextpath, added, order, nextdepth)
+      end
+    end
+  end
+  order.push(pn)
+  added.add?(pn.to_s)
+end
+
+def print_hfile(pn)
+  ireg = /\#include "(.*)"/
+  memo = ""
+  File.open(pn.to_s, "r") do |infile|
+    while (line = infile.gets)
+      matches = ireg.match(line)
+
+      unless matches
+        memo += "#{line}"
+      end
+    end
+  end
+  return memo
+end
+
+generated = ""
+added = Set.new
+order = []
+hfiles.each do |hfile|
+  depend_hfile(hfile, added, order)
+end
+
+order.each do |pn|
+  generated += print_hfile(pn)
+end
+
+puts generated
