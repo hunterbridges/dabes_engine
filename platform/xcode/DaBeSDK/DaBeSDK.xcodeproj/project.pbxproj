@@ -1,0 +1,1030 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CA51FC5917835FBA000C73E0 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5517835FBA000C73E0 /* blueprint.jpg */; };
+		CA51FC5A17835FBA000C73E0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5617835FBA000C73E0 /* Icon.png */; };
+		CA51FC5B17835FBA000C73E0 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5717835FBA000C73E0 /* Icon@2x.png */; };
+		CA51FC5C17835FBA000C73E0 /* Inconsolata.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5817835FBA000C73E0 /* Inconsolata.otf */; };
+		CA51FC631783607A000C73E0 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC611783607A000C73E0 /* Ogg.framework */; };
+		CA51FC641783607A000C73E0 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC621783607A000C73E0 /* Vorbis.framework */; };
+		CA51FC66178360CD000C73E0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC65178360CD000C73E0 /* CoreGraphics.framework */; };
+		CA51FC68178360DA000C73E0 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC67178360DA000C73E0 /* AssetsLibrary.framework */; };
+		CA51FC6A178360E3000C73E0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC69178360E3000C73E0 /* AVFoundation.framework */; };
+		CA51FC6C178360EF000C73E0 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC6B178360EE000C73E0 /* OpenGLES.framework */; };
+		CA51FC6E178360F2000C73E0 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC6D178360F2000C73E0 /* GLKit.framework */; };
+		CA51FC70178360FC000C73E0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC6F178360FC000C73E0 /* UIKit.framework */; };
+		CA51FC7217836100000C73E0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7117836100000C73E0 /* Foundation.framework */; };
+		CA51FC7417836107000C73E0 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7317836107000C73E0 /* OpenAL.framework */; };
+		CA51FC7617836111000C73E0 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7517836111000C73E0 /* libxml2.dylib */; };
+		CA51FC7817836114000C73E0 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7717836114000C73E0 /* libz.dylib */; };
+		CA51FC7A1783611D000C73E0 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC791783611D000C73E0 /* CoreText.framework */; };
+		CA51FC7C178362ED000C73E0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7B178362ED000C73E0 /* QuartzCore.framework */; };
+		CA51FC7D17836379000C73E0 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1D1781634F00F36FA3 /* scripts */; };
+		CA51FC7E17836379000C73E0 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1B1781634800F36FA3 /* media */; };
+		CA51FC861783663C000C73E0 /* SDKiOSProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA51FC851783663C000C73E0 /* SDKiOSProjectEngineViewController.m */; };
+		CA705CBF1783588A00D2C6E4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CA705CBD1783588A00D2C6E4 /* InfoPlist.strings */; };
+		CA705CC11783588A00D2C6E4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CC01783588A00D2C6E4 /* main.m */; };
+		CA705CC71783588A00D2C6E4 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = CA705CC61783588A00D2C6E4 /* Default.png */; };
+		CA705CC91783588A00D2C6E4 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA705CC81783588A00D2C6E4 /* Default@2x.png */; };
+		CA705CCB1783588A00D2C6E4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CA705CCA1783588A00D2C6E4 /* Default-568h@2x.png */; };
+		CA705CD417835A6B00D2C6E4 /* DaBes-Mac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788651780FA16005A242D /* DaBes-Mac.framework */; };
+		CA705CD517835A6B00D2C6E4 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA01780F8D000C3220A /* Carbon.framework */; };
+		CA705CD617835A6B00D2C6E4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA11780F8D000C3220A /* Cocoa.framework */; };
+		CA705CD717835A6B00D2C6E4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA21780F8D000C3220A /* GLKit.framework */; };
+		CA705CD817835A6B00D2C6E4 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA31780F8D000C3220A /* libxml2.dylib */; };
+		CA705CD917835A6B00D2C6E4 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA41780F8D000C3220A /* libz.dylib */; };
+		CA705CDA17835A6B00D2C6E4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA51780F8D000C3220A /* OpenAL.framework */; };
+		CA705CDB17835A6B00D2C6E4 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF42AA61780F8D000C3220A /* OpenGL.framework */; };
+		CA705CE917835A6C00D2C6E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA705CE217835A6B00D2C6E4 /* Foundation.framework */; };
+		CA705CEB17835AEE00D2C6E4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA705CEA17835AEE00D2C6E4 /* CoreGraphics.framework */; };
+		CA705CED17835C5500D2C6E4 /* MGSFragaria.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA27884B1780F9D2005A242D /* MGSFragaria.framework */; };
+		CA705CEE17835C5500D2C6E4 /* PSMTabBarControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA27883A1780F9CD005A242D /* PSMTabBarControl.framework */; };
+		CA705CF117835D0C00D2C6E4 /* DaBes-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788671780FA16005A242D /* DaBes-iOS.framework */; };
+		CA705CFA17835E3E00D2C6E4 /* SDKiOSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CF917835E3E00D2C6E4 /* SDKiOSAppDelegate.m */; };
+		CA705CFD17835E4B00D2C6E4 /* AudioBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CFC17835E4B00D2C6E4 /* AudioBridge.m */; };
+		CA705D0017835E6100D2C6E4 /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CFF17835E6100D2C6E4 /* ConsoleView.m */; };
+		CA705D0317835E7400D2C6E4 /* CodeEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0217835E7400D2C6E4 /* CodeEditorView.m */; };
+		CA705D0617835E8400D2C6E4 /* DebugMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */; };
+		CA705D0B17835E9400D2C6E4 /* LuaSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0817835E9400D2C6E4 /* LuaSyntaxHighlighter.m */; };
+		CA705D0C17835E9400D2C6E4 /* LuaSyntaxStyler.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0A17835E9400D2C6E4 /* LuaSyntaxStyler.m */; };
+		CA705D0F17835EA100D2C6E4 /* ScriptEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0E17835EA100D2C6E4 /* ScriptEditorViewController.m */; };
+		CA705D1217835EB700D2C6E4 /* DirBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1117835EB700D2C6E4 /* DirBrowserViewController.m */; };
+		CA705D1817835ECF00D2C6E4 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1717835ECF00D2C6E4 /* InterfaceViewController.m */; };
+		CA705D1D17835EE200D2C6E4 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */; };
+		CA705D1E17835EE200D2C6E4 /* UIColor+LuaHighlighting.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */; };
+		CACE2B1C1781634800F36FA3 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1B1781634800F36FA3 /* media */; };
+		CACE2B1E1781634F00F36FA3 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1D1781634F00F36FA3 /* scripts */; };
+		CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */; };
+		CAF42A6F1780F6EA00C3220A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A6A1780F6EA00C3220A /* main.m */; };
+		CAF42A891780F7B700C3220A /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A741780F7B700C3220A /* FileSystemItem.m */; };
+		CAF42A8A1780F7B700C3220A /* NSView+Center.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A761780F7B700C3220A /* NSView+Center.m */; };
+		CAF42A8B1780F7B700C3220A /* SDKMacAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A781780F7B700C3220A /* SDKMacAppDelegate.m */; };
+		CAF42A8E1780F7B700C3220A /* SDKInspectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A7E1780F7B700C3220A /* SDKInspectorView.m */; };
+		CAF42A8F1780F7B700C3220A /* SDKPanner.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A801780F7B700C3220A /* SDKPanner.m */; };
+		CAF42A901780F7B700C3220A /* SDKScriptEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A821780F7B700C3220A /* SDKScriptEditorView.m */; };
+		CAF42A911780F7B700C3220A /* SDKScriptEditorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A841780F7B700C3220A /* SDKScriptEditorWindow.m */; };
+		CAF42A921780F7B700C3220A /* SDKScriptEditorWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A861780F7B700C3220A /* SDKScriptEditorWindowController.m */; };
+		CAF42A931780F7B700C3220A /* SDKScriptTabModel.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A881780F7B700C3220A /* SDKScriptTabModel.m */; };
+		CAF42A9C1780F88C00C3220A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CAF42A941780F88C00C3220A /* Credits.rtf */; };
+		CAF42A9D1780F88C00C3220A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CAF42A961780F88C00C3220A /* InfoPlist.strings */; };
+		CAF42A9E1780F88C00C3220A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CAF42A981780F88C00C3220A /* MainMenu.xib */; };
+		CAF42A9F1780F88C00C3220A /* ScriptEditor.xib in Resources */ = {isa = PBXBuildFile; fileRef = CAF42A9A1780F88C00C3220A /* ScriptEditor.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CA2788391780F9CD005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53DF68FD067E5B5A0090B5B0;
+			remoteInfo = PSMTabBarControlFramework;
+		};
+		CA27883B1780F9CD005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8BD4395A1185147D00DB4AC3;
+			remoteInfo = PSMTabBarControlDemo;
+		};
+		CA2788441780F9D2005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AB648E2A11FB385700AEF7BD;
+			remoteInfo = "Fragaria Doc";
+		};
+		CA2788461780F9D2005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1107320486CEB800E47090;
+			remoteInfo = "Fragaria GC";
+		};
+		CA2788481780F9D2005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ABCA4DAF16137FC000E4849B;
+			remoteInfo = Fragaria;
+		};
+		CA27884A1780F9D2005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AB69B62B118B745700903D1D;
+			remoteInfo = MGSFragaria;
+		};
+		CA27884C1780F9E2005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53DF68FC067E5B5A0090B5B0;
+			remoteInfo = PSMTabBarControlFramework;
+		};
+		CA27884E1780F9E2005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = AB69B62A118B745700903D1D;
+			remoteInfo = MGSFragaria;
+		};
+		CA2788641780FA16005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAF429741780F36200C3220A;
+			remoteInfo = "DaBes-Mac";
+		};
+		CA2788661780FA16005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAF429941780F38A00C3220A;
+			remoteInfo = "DaBes-iOS";
+		};
+		CA2788711780FA28005A242D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CAF429731780F36200C3220A;
+			remoteInfo = "DaBes-Mac";
+		};
+		CA705CEF17835CF000D2C6E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CA705BCC17834FCC00D2C6E4;
+			remoteInfo = "DaBes-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PSMTabBarControl.xcodeproj; path = ../../../submodules/PSMTabBarControl/PSMTabBarControl.xcodeproj; sourceTree = "<group>"; };
+		CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Fragaria.xcodeproj; path = ../../../submodules/Fragaria/Fragaria.xcodeproj; sourceTree = "<group>"; };
+		CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DaBesEngine.xcodeproj; path = ../../xcode/DaBesEngine/DaBesEngine.xcodeproj; sourceTree = "<group>"; };
+		CA27888D178102D7005A242D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		CA27888E178102D7005A242D /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/OpenAL.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC5517835FBA000C73E0 /* blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blueprint.jpg; sourceTree = "<group>"; };
+		CA51FC5617835FBA000C73E0 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		CA51FC5717835FBA000C73E0 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		CA51FC5817835FBA000C73E0 /* Inconsolata.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Inconsolata.otf; sourceTree = "<group>"; };
+		CA51FC611783607A000C73E0 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = ../../../../third_party/OggVorbis/Ogg.framework; sourceTree = "<group>"; };
+		CA51FC621783607A000C73E0 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = ../../../../third_party/OggVorbis/Vorbis.framework; sourceTree = "<group>"; };
+		CA51FC65178360CD000C73E0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC67178360DA000C73E0 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/AssetsLibrary.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC69178360E3000C73E0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC6B178360EE000C73E0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC6D178360F2000C73E0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC6F178360FC000C73E0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC7117836100000C73E0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC7317836107000C73E0 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/OpenAL.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC7517836111000C73E0 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/usr/lib/libxml2.dylib; sourceTree = DEVELOPER_DIR; };
+		CA51FC7717836114000C73E0 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
+		CA51FC791783611D000C73E0 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/CoreText.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC7B178362ED000C73E0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		CA51FC841783663C000C73E0 /* SDKiOSProjectEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKiOSProjectEngineViewController.h; sourceTree = "<group>"; };
+		CA51FC851783663C000C73E0 /* SDKiOSProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKiOSProjectEngineViewController.m; sourceTree = "<group>"; };
+		CA705CB31783588A00D2C6E4 /* DaBeSDK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DaBeSDK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA705CBC1783588A00D2C6E4 /* DaBeSDK-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DaBeSDK-iOS-Info.plist"; sourceTree = "<group>"; };
+		CA705CBE1783588A00D2C6E4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CA705CC01783588A00D2C6E4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CA705CC21783588A00D2C6E4 /* DaBeSDK-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DaBeSDK-iOS-Prefix.pch"; sourceTree = "<group>"; };
+		CA705CC61783588A00D2C6E4 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		CA705CC81783588A00D2C6E4 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		CA705CCA1783588A00D2C6E4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		CA705CE117835A6B00D2C6E4 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		CA705CE217835A6B00D2C6E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CA705CEA17835AEE00D2C6E4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CA705CF817835E3E00D2C6E4 /* SDKiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDKiOSAppDelegate.h; path = "DaBeSDK-iOS/SDKiOSAppDelegate.h"; sourceTree = SOURCE_ROOT; };
+		CA705CF917835E3E00D2C6E4 /* SDKiOSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDKiOSAppDelegate.m; path = "DaBeSDK-iOS/SDKiOSAppDelegate.m"; sourceTree = SOURCE_ROOT; };
+		CA705CFB17835E4B00D2C6E4 /* AudioBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioBridge.h; path = "DaBeSDK-iOS/AudioBridge.h"; sourceTree = SOURCE_ROOT; };
+		CA705CFC17835E4B00D2C6E4 /* AudioBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioBridge.m; path = "DaBeSDK-iOS/AudioBridge.m"; sourceTree = SOURCE_ROOT; };
+		CA705CFE17835E6100D2C6E4 /* ConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleView.h; path = "DaBeSDK-iOS/ConsoleView.h"; sourceTree = SOURCE_ROOT; };
+		CA705CFF17835E6100D2C6E4 /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConsoleView.m; path = "DaBeSDK-iOS/ConsoleView.m"; sourceTree = SOURCE_ROOT; };
+		CA705D0117835E7400D2C6E4 /* CodeEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeEditorView.h; path = "DaBeSDK-iOS/CodeEditorView.h"; sourceTree = SOURCE_ROOT; };
+		CA705D0217835E7400D2C6E4 /* CodeEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CodeEditorView.m; path = "DaBeSDK-iOS/CodeEditorView.m"; sourceTree = SOURCE_ROOT; };
+		CA705D0417835E8400D2C6E4 /* DebugMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugMenuViewController.h; path = "DaBeSDK-iOS/DebugMenuViewController.h"; sourceTree = SOURCE_ROOT; };
+		CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DebugMenuViewController.m; path = "DaBeSDK-iOS/DebugMenuViewController.m"; sourceTree = SOURCE_ROOT; };
+		CA705D0717835E9400D2C6E4 /* LuaSyntaxHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LuaSyntaxHighlighter.h; path = "DaBeSDK-iOS/LuaSyntaxHighlighter.h"; sourceTree = SOURCE_ROOT; };
+		CA705D0817835E9400D2C6E4 /* LuaSyntaxHighlighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LuaSyntaxHighlighter.m; path = "DaBeSDK-iOS/LuaSyntaxHighlighter.m"; sourceTree = SOURCE_ROOT; };
+		CA705D0917835E9400D2C6E4 /* LuaSyntaxStyler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LuaSyntaxStyler.h; path = "DaBeSDK-iOS/LuaSyntaxStyler.h"; sourceTree = SOURCE_ROOT; };
+		CA705D0A17835E9400D2C6E4 /* LuaSyntaxStyler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LuaSyntaxStyler.m; path = "DaBeSDK-iOS/LuaSyntaxStyler.m"; sourceTree = SOURCE_ROOT; };
+		CA705D0D17835EA100D2C6E4 /* ScriptEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptEditorViewController.h; path = "DaBeSDK-iOS/ScriptEditorViewController.h"; sourceTree = SOURCE_ROOT; };
+		CA705D0E17835EA100D2C6E4 /* ScriptEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ScriptEditorViewController.m; path = "DaBeSDK-iOS/ScriptEditorViewController.m"; sourceTree = SOURCE_ROOT; };
+		CA705D1017835EB700D2C6E4 /* DirBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirBrowserViewController.h; path = "DaBeSDK-iOS/DirBrowserViewController.h"; sourceTree = SOURCE_ROOT; };
+		CA705D1117835EB700D2C6E4 /* DirBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DirBrowserViewController.m; path = "DaBeSDK-iOS/DirBrowserViewController.m"; sourceTree = SOURCE_ROOT; };
+		CA705D1617835ECF00D2C6E4 /* InterfaceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterfaceViewController.h; path = "DaBeSDK-iOS/InterfaceViewController.h"; sourceTree = SOURCE_ROOT; };
+		CA705D1717835ECF00D2C6E4 /* InterfaceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InterfaceViewController.m; path = "DaBeSDK-iOS/InterfaceViewController.m"; sourceTree = SOURCE_ROOT; };
+		CA705D1917835EE200D2C6E4 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Hex.h"; path = "DaBeSDK-iOS/UIColor+Hex.h"; sourceTree = SOURCE_ROOT; };
+		CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Hex.m"; path = "DaBeSDK-iOS/UIColor+Hex.m"; sourceTree = SOURCE_ROOT; };
+		CA705D1B17835EE200D2C6E4 /* UIColor+LuaHighlighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+LuaHighlighting.h"; path = "DaBeSDK-iOS/UIColor+LuaHighlighting.h"; sourceTree = SOURCE_ROOT; };
+		CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+LuaHighlighting.m"; path = "DaBeSDK-iOS/UIColor+LuaHighlighting.m"; sourceTree = SOURCE_ROOT; };
+		CACE2B1B1781634800F36FA3 /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../../media; sourceTree = "<group>"; };
+		CACE2B1D1781634F00F36FA3 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ../../../scripts; sourceTree = "<group>"; };
+		CACE2B3F1783484600F36FA3 /* SDKProjectEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKProjectEngineViewController.h; sourceTree = "<group>"; };
+		CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKProjectEngineViewController.m; sourceTree = "<group>"; };
+		CAF42A6A1780F6EA00C3220A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CAF42A711780F79B00C3220A /* DaBeSDK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DaBeSDK.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAF42A731780F7B700C3220A /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
+		CAF42A741780F7B700C3220A /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
+		CAF42A751780F7B700C3220A /* NSView+Center.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+Center.h"; sourceTree = "<group>"; };
+		CAF42A761780F7B700C3220A /* NSView+Center.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+Center.m"; sourceTree = "<group>"; };
+		CAF42A771780F7B700C3220A /* SDKMacAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKMacAppDelegate.h; sourceTree = "<group>"; };
+		CAF42A781780F7B700C3220A /* SDKMacAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKMacAppDelegate.m; sourceTree = "<group>"; };
+		CAF42A7D1780F7B700C3220A /* SDKInspectorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKInspectorView.h; sourceTree = "<group>"; };
+		CAF42A7E1780F7B700C3220A /* SDKInspectorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKInspectorView.m; sourceTree = "<group>"; };
+		CAF42A7F1780F7B700C3220A /* SDKPanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKPanner.h; sourceTree = "<group>"; };
+		CAF42A801780F7B700C3220A /* SDKPanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKPanner.m; sourceTree = "<group>"; };
+		CAF42A811780F7B700C3220A /* SDKScriptEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptEditorView.h; sourceTree = "<group>"; };
+		CAF42A821780F7B700C3220A /* SDKScriptEditorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptEditorView.m; sourceTree = "<group>"; };
+		CAF42A831780F7B700C3220A /* SDKScriptEditorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptEditorWindow.h; sourceTree = "<group>"; };
+		CAF42A841780F7B700C3220A /* SDKScriptEditorWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptEditorWindow.m; sourceTree = "<group>"; };
+		CAF42A851780F7B700C3220A /* SDKScriptEditorWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptEditorWindowController.h; sourceTree = "<group>"; };
+		CAF42A861780F7B700C3220A /* SDKScriptEditorWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptEditorWindowController.m; sourceTree = "<group>"; };
+		CAF42A871780F7B700C3220A /* SDKScriptTabModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKScriptTabModel.h; sourceTree = "<group>"; };
+		CAF42A881780F7B700C3220A /* SDKScriptTabModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKScriptTabModel.m; sourceTree = "<group>"; };
+		CAF42A951780F88C00C3220A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		CAF42A971780F88C00C3220A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CAF42A991780F88C00C3220A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		CAF42A9B1780F88C00C3220A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ScriptEditor.xib; sourceTree = "<group>"; };
+		CAF42AA01780F8D000C3220A /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		CAF42AA11780F8D000C3220A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CAF42AA21780F8D000C3220A /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		CAF42AA31780F8D000C3220A /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		CAF42AA41780F8D000C3220A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		CAF42AA51780F8D000C3220A /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		CAF42AA61780F8D000C3220A /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		CAF42AAF1780F90E00C3220A /* DaBeSDK-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "DaBeSDK-Info.plist"; path = "DaBeSDK/DaBeSDK-Info.plist"; sourceTree = "<group>"; };
+		CAF42AB11780F92400C3220A /* DaBeSDK-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "DaBeSDK-Prefix.pch"; path = "DaBeSDK/DaBeSDK-Prefix.pch"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CA705CB01783588A00D2C6E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA51FC7C178362ED000C73E0 /* QuartzCore.framework in Frameworks */,
+				CA51FC7A1783611D000C73E0 /* CoreText.framework in Frameworks */,
+				CA51FC7817836114000C73E0 /* libz.dylib in Frameworks */,
+				CA51FC7617836111000C73E0 /* libxml2.dylib in Frameworks */,
+				CA51FC7417836107000C73E0 /* OpenAL.framework in Frameworks */,
+				CA51FC7217836100000C73E0 /* Foundation.framework in Frameworks */,
+				CA51FC70178360FC000C73E0 /* UIKit.framework in Frameworks */,
+				CA51FC6E178360F2000C73E0 /* GLKit.framework in Frameworks */,
+				CA51FC6C178360EF000C73E0 /* OpenGLES.framework in Frameworks */,
+				CA51FC6A178360E3000C73E0 /* AVFoundation.framework in Frameworks */,
+				CA51FC68178360DA000C73E0 /* AssetsLibrary.framework in Frameworks */,
+				CA51FC66178360CD000C73E0 /* CoreGraphics.framework in Frameworks */,
+				CA51FC631783607A000C73E0 /* Ogg.framework in Frameworks */,
+				CA51FC641783607A000C73E0 /* Vorbis.framework in Frameworks */,
+				CA705CF117835D0C00D2C6E4 /* DaBes-iOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CAF42A431780F67700C3220A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA705CED17835C5500D2C6E4 /* MGSFragaria.framework in Frameworks */,
+				CA705CEE17835C5500D2C6E4 /* PSMTabBarControl.framework in Frameworks */,
+				CA705CEB17835AEE00D2C6E4 /* CoreGraphics.framework in Frameworks */,
+				CA705CE917835A6C00D2C6E4 /* Foundation.framework in Frameworks */,
+				CA705CD417835A6B00D2C6E4 /* DaBes-Mac.framework in Frameworks */,
+				CA705CD517835A6B00D2C6E4 /* Carbon.framework in Frameworks */,
+				CA705CD617835A6B00D2C6E4 /* Cocoa.framework in Frameworks */,
+				CA705CD717835A6B00D2C6E4 /* GLKit.framework in Frameworks */,
+				CA705CD817835A6B00D2C6E4 /* libxml2.dylib in Frameworks */,
+				CA705CD917835A6B00D2C6E4 /* libz.dylib in Frameworks */,
+				CA705CDA17835A6B00D2C6E4 /* OpenAL.framework in Frameworks */,
+				CA705CDB17835A6B00D2C6E4 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CA2788341780F9CC005A242D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA27883A1780F9CD005A242D /* PSMTabBarControl.framework */,
+				CA27883C1780F9CD005A242D /* PSMTabBarControlDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA27883E1780F9D2005A242D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA2788451780F9D2005A242D /* Fragaria Doc.app */,
+				CA2788471780F9D2005A242D /* Fragaria GC.app */,
+				CA2788491780F9D2005A242D /* Fragaria.app */,
+				CA27884B1780F9D2005A242D /* MGSFragaria.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA2788531780FA15005A242D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA2788651780FA16005A242D /* DaBes-Mac.framework */,
+				CA2788671780FA16005A242D /* DaBes-iOS.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA51FC7F17836389000C73E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA51FC7B178362ED000C73E0 /* QuartzCore.framework */,
+				CA51FC791783611D000C73E0 /* CoreText.framework */,
+				CA51FC7717836114000C73E0 /* libz.dylib */,
+				CA51FC7517836111000C73E0 /* libxml2.dylib */,
+				CA51FC7317836107000C73E0 /* OpenAL.framework */,
+				CA51FC7117836100000C73E0 /* Foundation.framework */,
+				CA51FC6F178360FC000C73E0 /* UIKit.framework */,
+				CA51FC6D178360F2000C73E0 /* GLKit.framework */,
+				CA51FC6B178360EE000C73E0 /* OpenGLES.framework */,
+				CA51FC69178360E3000C73E0 /* AVFoundation.framework */,
+				CA51FC67178360DA000C73E0 /* AssetsLibrary.framework */,
+				CA51FC65178360CD000C73E0 /* CoreGraphics.framework */,
+				CA51FC611783607A000C73E0 /* Ogg.framework */,
+				CA51FC621783607A000C73E0 /* Vorbis.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CA51FC8717836A14000C73E0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42A711780F79B00C3220A /* DaBeSDK.app */,
+				CA705CB31783588A00D2C6E4 /* DaBeSDK-iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CA705C581783581D00D2C6E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Views;
+			path = ../../DaBesEngine/DaBesEngine;
+			sourceTree = "<group>";
+		};
+		CA705C601783581D00D2C6E4 /* Code */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Code;
+			path = ../../DaBesEngine/DaBesEngine;
+			sourceTree = "<group>";
+		};
+		CA705C631783581D00D2C6E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CA705D0117835E7400D2C6E4 /* CodeEditorView.h */,
+				CA705D0217835E7400D2C6E4 /* CodeEditorView.m */,
+			);
+			name = Views;
+			path = ../../DaBesEngine/DaBesEngine;
+			sourceTree = "<group>";
+		};
+		CA705C6B1783581D00D2C6E4 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Audio;
+			path = ../../DaBesEngine/DaBesEngine;
+			sourceTree = "<group>";
+		};
+		CA705C761783581D00D2C6E4 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				CA705D1917835EE200D2C6E4 /* UIColor+Hex.h */,
+				CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */,
+				CA705D1B17835EE200D2C6E4 /* UIColor+LuaHighlighting.h */,
+				CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */,
+			);
+			name = Categories;
+			path = ../../DaBesEngine/DaBesEngine;
+			sourceTree = "<group>";
+		};
+		CA705CBA1783588A00D2C6E4 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CA705C581783581D00D2C6E4 /* Views */,
+				CA705CFE17835E6100D2C6E4 /* ConsoleView.h */,
+				CA705CFF17835E6100D2C6E4 /* ConsoleView.m */,
+				CA705D0417835E8400D2C6E4 /* DebugMenuViewController.h */,
+				CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */,
+				CA705C601783581D00D2C6E4 /* Code */,
+				CA705D0717835E9400D2C6E4 /* LuaSyntaxHighlighter.h */,
+				CA705D0817835E9400D2C6E4 /* LuaSyntaxHighlighter.m */,
+				CA705D0917835E9400D2C6E4 /* LuaSyntaxStyler.h */,
+				CA705D0A17835E9400D2C6E4 /* LuaSyntaxStyler.m */,
+				CA705C631783581D00D2C6E4 /* Views */,
+				CA705D0D17835EA100D2C6E4 /* ScriptEditorViewController.h */,
+				CA705D0E17835EA100D2C6E4 /* ScriptEditorViewController.m */,
+				CA705D1017835EB700D2C6E4 /* DirBrowserViewController.h */,
+				CA705D1117835EB700D2C6E4 /* DirBrowserViewController.m */,
+				CA705C6B1783581D00D2C6E4 /* Audio */,
+				CA705CFB17835E4B00D2C6E4 /* AudioBridge.h */,
+				CA705CFC17835E4B00D2C6E4 /* AudioBridge.m */,
+				CA705CF817835E3E00D2C6E4 /* SDKiOSAppDelegate.h */,
+				CA705CF917835E3E00D2C6E4 /* SDKiOSAppDelegate.m */,
+				CA51FC841783663C000C73E0 /* SDKiOSProjectEngineViewController.h */,
+				CA51FC851783663C000C73E0 /* SDKiOSProjectEngineViewController.m */,
+				CA705D1617835ECF00D2C6E4 /* InterfaceViewController.h */,
+				CA705D1717835ECF00D2C6E4 /* InterfaceViewController.m */,
+				CA705C761783581D00D2C6E4 /* Categories */,
+				CA51FC7F17836389000C73E0 /* Frameworks */,
+				CA705CBB1783588A00D2C6E4 /* Supporting Files */,
+			);
+			name = iOS;
+			path = "DaBeSDK-iOS";
+			sourceTree = "<group>";
+		};
+		CA705CBB1783588A00D2C6E4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CA51FC5517835FBA000C73E0 /* blueprint.jpg */,
+				CA51FC5617835FBA000C73E0 /* Icon.png */,
+				CA51FC5717835FBA000C73E0 /* Icon@2x.png */,
+				CA51FC5817835FBA000C73E0 /* Inconsolata.otf */,
+				CA705CBC1783588A00D2C6E4 /* DaBeSDK-iOS-Info.plist */,
+				CA705CBD1783588A00D2C6E4 /* InfoPlist.strings */,
+				CA705CC01783588A00D2C6E4 /* main.m */,
+				CA705CC21783588A00D2C6E4 /* DaBeSDK-iOS-Prefix.pch */,
+				CA705CC61783588A00D2C6E4 /* Default.png */,
+				CA705CC81783588A00D2C6E4 /* Default@2x.png */,
+				CA705CCA1783588A00D2C6E4 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CAF42A3D1780F67700C3220A = {
+			isa = PBXGroup;
+			children = (
+				CACE2B1D1781634F00F36FA3 /* scripts */,
+				CACE2B1B1781634800F36FA3 /* media */,
+				CAF42AB21780F95400C3220A /* Dependencies */,
+				CAF42A721780F7B700C3220A /* OS X */,
+				CA705CBA1783588A00D2C6E4 /* iOS */,
+				CA51FC8717836A14000C73E0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CAF42A671780F6D800C3220A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42AB11780F92400C3220A /* DaBeSDK-Prefix.pch */,
+				CAF42AAF1780F90E00C3220A /* DaBeSDK-Info.plist */,
+				CAF42A941780F88C00C3220A /* Credits.rtf */,
+				CAF42A961780F88C00C3220A /* InfoPlist.strings */,
+				CAF42A981780F88C00C3220A /* MainMenu.xib */,
+				CAF42A9A1780F88C00C3220A /* ScriptEditor.xib */,
+				CAF42A6A1780F6EA00C3220A /* main.m */,
+			);
+			name = "Supporting Files";
+			path = ..;
+			sourceTree = "<group>";
+		};
+		CAF42A721780F7B700C3220A /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42A731780F7B700C3220A /* FileSystemItem.h */,
+				CAF42A741780F7B700C3220A /* FileSystemItem.m */,
+				CAF42A751780F7B700C3220A /* NSView+Center.h */,
+				CAF42A761780F7B700C3220A /* NSView+Center.m */,
+				CAF42A771780F7B700C3220A /* SDKMacAppDelegate.h */,
+				CAF42A781780F7B700C3220A /* SDKMacAppDelegate.m */,
+				CAF42A7D1780F7B700C3220A /* SDKInspectorView.h */,
+				CAF42A7E1780F7B700C3220A /* SDKInspectorView.m */,
+				CAF42A7F1780F7B700C3220A /* SDKPanner.h */,
+				CAF42A801780F7B700C3220A /* SDKPanner.m */,
+				CAF42A811780F7B700C3220A /* SDKScriptEditorView.h */,
+				CAF42A821780F7B700C3220A /* SDKScriptEditorView.m */,
+				CAF42A831780F7B700C3220A /* SDKScriptEditorWindow.h */,
+				CAF42A841780F7B700C3220A /* SDKScriptEditorWindow.m */,
+				CAF42A851780F7B700C3220A /* SDKScriptEditorWindowController.h */,
+				CAF42A861780F7B700C3220A /* SDKScriptEditorWindowController.m */,
+				CAF42A871780F7B700C3220A /* SDKScriptTabModel.h */,
+				CAF42A881780F7B700C3220A /* SDKScriptTabModel.m */,
+				CACE2B3F1783484600F36FA3 /* SDKProjectEngineViewController.h */,
+				CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */,
+				CAF42AAE1780F8D600C3220A /* Frameworks */,
+				CAF42A671780F6D800C3220A /* Supporting Files */,
+			);
+			name = "OS X";
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		CAF42AAE1780F8D600C3220A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA705CEA17835AEE00D2C6E4 /* CoreGraphics.framework */,
+				CA705CE117835A6B00D2C6E4 /* CoreFoundation.framework */,
+				CA705CE217835A6B00D2C6E4 /* Foundation.framework */,
+				CA27888D178102D7005A242D /* OpenGL.framework */,
+				CA27888E178102D7005A242D /* OpenAL.framework */,
+				CAF42AA01780F8D000C3220A /* Carbon.framework */,
+				CAF42AA11780F8D000C3220A /* Cocoa.framework */,
+				CAF42AA21780F8D000C3220A /* GLKit.framework */,
+				CAF42AA31780F8D000C3220A /* libxml2.dylib */,
+				CAF42AA41780F8D000C3220A /* libz.dylib */,
+				CAF42AA51780F8D000C3220A /* OpenAL.framework */,
+				CAF42AA61780F8D000C3220A /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		CAF42AB21780F95400C3220A /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */,
+				CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */,
+				CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CA705CB21783588A00D2C6E4 /* DaBeSDK-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA705CCC1783588A00D2C6E4 /* Build configuration list for PBXNativeTarget "DaBeSDK-iOS" */;
+			buildPhases = (
+				CA705CAF1783588A00D2C6E4 /* Sources */,
+				CA705CB01783588A00D2C6E4 /* Frameworks */,
+				CA705CB11783588A00D2C6E4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CA705CF017835CF000D2C6E4 /* PBXTargetDependency */,
+			);
+			name = "DaBeSDK-iOS";
+			productName = "DaBeSDK-iOS";
+			productReference = CA705CB31783588A00D2C6E4 /* DaBeSDK-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CAF42A451780F67700C3220A /* DaBeSDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CAF42A631780F67700C3220A /* Build configuration list for PBXNativeTarget "DaBeSDK" */;
+			buildPhases = (
+				CAF42A421780F67700C3220A /* Sources */,
+				CAF42A431780F67700C3220A /* Frameworks */,
+				CAF42A441780F67700C3220A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CA2788721780FA28005A242D /* PBXTargetDependency */,
+				CA27884D1780F9E2005A242D /* PBXTargetDependency */,
+				CA27884F1780F9E2005A242D /* PBXTargetDependency */,
+			);
+			name = DaBeSDK;
+			productName = DaBeSDK;
+			productReference = CAF42A711780F79B00C3220A /* DaBeSDK.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CAF42A3E1780F67700C3220A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = SDK;
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "The Telemetry Group";
+			};
+			buildConfigurationList = CAF42A411780F67700C3220A /* Build configuration list for PBXProject "DaBeSDK" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CAF42A3D1780F67700C3220A;
+			productRefGroup = CAF42A3D1780F67700C3220A;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CA2788531780FA15005A242D /* Products */;
+					ProjectRef = CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */;
+				},
+				{
+					ProductGroup = CA27883E1780F9D2005A242D /* Products */;
+					ProjectRef = CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */;
+				},
+				{
+					ProductGroup = CA2788341780F9CC005A242D /* Products */;
+					ProjectRef = CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				CAF42A451780F67700C3220A /* DaBeSDK */,
+				CA705CB21783588A00D2C6E4 /* DaBeSDK-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CA27883A1780F9CD005A242D /* PSMTabBarControl.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PSMTabBarControl.framework;
+			remoteRef = CA2788391780F9CD005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA27883C1780F9CD005A242D /* PSMTabBarControlDemo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = PSMTabBarControlDemo.app;
+			remoteRef = CA27883B1780F9CD005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA2788451780F9D2005A242D /* Fragaria Doc.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Fragaria Doc.app";
+			remoteRef = CA2788441780F9D2005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA2788471780F9D2005A242D /* Fragaria GC.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Fragaria GC.app";
+			remoteRef = CA2788461780F9D2005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA2788491780F9D2005A242D /* Fragaria.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = Fragaria.app;
+			remoteRef = CA2788481780F9D2005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA27884B1780F9D2005A242D /* MGSFragaria.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MGSFragaria.framework;
+			remoteRef = CA27884A1780F9D2005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA2788651780FA16005A242D /* DaBes-Mac.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = "DaBes-Mac.framework";
+			remoteRef = CA2788641780FA16005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA2788671780FA16005A242D /* DaBes-iOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework.static;
+			path = "DaBes-iOS.framework";
+			remoteRef = CA2788661780FA16005A242D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CA705CB11783588A00D2C6E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA705CBF1783588A00D2C6E4 /* InfoPlist.strings in Resources */,
+				CA705CC71783588A00D2C6E4 /* Default.png in Resources */,
+				CA705CC91783588A00D2C6E4 /* Default@2x.png in Resources */,
+				CA705CCB1783588A00D2C6E4 /* Default-568h@2x.png in Resources */,
+				CA51FC5917835FBA000C73E0 /* blueprint.jpg in Resources */,
+				CA51FC5A17835FBA000C73E0 /* Icon.png in Resources */,
+				CA51FC5B17835FBA000C73E0 /* Icon@2x.png in Resources */,
+				CA51FC5C17835FBA000C73E0 /* Inconsolata.otf in Resources */,
+				CA51FC7D17836379000C73E0 /* scripts in Resources */,
+				CA51FC7E17836379000C73E0 /* media in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CAF42A441780F67700C3220A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAF42A9C1780F88C00C3220A /* Credits.rtf in Resources */,
+				CAF42A9D1780F88C00C3220A /* InfoPlist.strings in Resources */,
+				CAF42A9E1780F88C00C3220A /* MainMenu.xib in Resources */,
+				CAF42A9F1780F88C00C3220A /* ScriptEditor.xib in Resources */,
+				CACE2B1C1781634800F36FA3 /* media in Resources */,
+				CACE2B1E1781634F00F36FA3 /* scripts in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CA705CAF1783588A00D2C6E4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA705CC11783588A00D2C6E4 /* main.m in Sources */,
+				CA705CFA17835E3E00D2C6E4 /* SDKiOSAppDelegate.m in Sources */,
+				CA705CFD17835E4B00D2C6E4 /* AudioBridge.m in Sources */,
+				CA705D0017835E6100D2C6E4 /* ConsoleView.m in Sources */,
+				CA705D0317835E7400D2C6E4 /* CodeEditorView.m in Sources */,
+				CA705D0617835E8400D2C6E4 /* DebugMenuViewController.m in Sources */,
+				CA705D0B17835E9400D2C6E4 /* LuaSyntaxHighlighter.m in Sources */,
+				CA705D0C17835E9400D2C6E4 /* LuaSyntaxStyler.m in Sources */,
+				CA705D0F17835EA100D2C6E4 /* ScriptEditorViewController.m in Sources */,
+				CA705D1217835EB700D2C6E4 /* DirBrowserViewController.m in Sources */,
+				CA705D1817835ECF00D2C6E4 /* InterfaceViewController.m in Sources */,
+				CA705D1D17835EE200D2C6E4 /* UIColor+Hex.m in Sources */,
+				CA705D1E17835EE200D2C6E4 /* UIColor+LuaHighlighting.m in Sources */,
+				CA51FC861783663C000C73E0 /* SDKiOSProjectEngineViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CAF42A421780F67700C3220A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAF42A6F1780F6EA00C3220A /* main.m in Sources */,
+				CAF42A891780F7B700C3220A /* FileSystemItem.m in Sources */,
+				CAF42A8A1780F7B700C3220A /* NSView+Center.m in Sources */,
+				CAF42A8B1780F7B700C3220A /* SDKMacAppDelegate.m in Sources */,
+				CAF42A8E1780F7B700C3220A /* SDKInspectorView.m in Sources */,
+				CAF42A8F1780F7B700C3220A /* SDKPanner.m in Sources */,
+				CAF42A901780F7B700C3220A /* SDKScriptEditorView.m in Sources */,
+				CAF42A911780F7B700C3220A /* SDKScriptEditorWindow.m in Sources */,
+				CAF42A921780F7B700C3220A /* SDKScriptEditorWindowController.m in Sources */,
+				CAF42A931780F7B700C3220A /* SDKScriptTabModel.m in Sources */,
+				CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CA27884D1780F9E2005A242D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PSMTabBarControlFramework;
+			targetProxy = CA27884C1780F9E2005A242D /* PBXContainerItemProxy */;
+		};
+		CA27884F1780F9E2005A242D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MGSFragaria;
+			targetProxy = CA27884E1780F9E2005A242D /* PBXContainerItemProxy */;
+		};
+		CA2788721780FA28005A242D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DaBes-Mac";
+			targetProxy = CA2788711780FA28005A242D /* PBXContainerItemProxy */;
+		};
+		CA705CF017835CF000D2C6E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "DaBes-iOS";
+			targetProxy = CA705CEF17835CF000D2C6E4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CA705CBD1783588A00D2C6E4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CA705CBE1783588A00D2C6E4 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CAF42A941780F88C00C3220A /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CAF42A951780F88C00C3220A /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		CAF42A961780F88C00C3220A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CAF42A971780F88C00C3220A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CAF42A981780F88C00C3220A /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CAF42A991780F88C00C3220A /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		CAF42A9A1780F88C00C3220A /* ScriptEditor.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CAF42A9B1780F88C00C3220A /* en */,
+			);
+			name = ScriptEditor.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CA705CCD1783588A00D2C6E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../third_party/OggVorbis\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DaBeSDK-iOS/DaBeSDK-iOS-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(SDKROOT)/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = "DaBeSDK-iOS/DaBeSDK-iOS-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-DDABES_IOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CA705CCE1783588A00D2C6E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+					"\"$(SRCROOT)/../../../third_party/OggVorbis\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DaBeSDK-iOS/DaBeSDK-iOS-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(SDKROOT)/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = "DaBeSDK-iOS/DaBeSDK-iOS-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-DDABES_IOS",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		CAF42A611780F67700C3220A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CAF42A621780F67700C3220A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CAF42A641780F67700C3220A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(SDKROOT)/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-DDABES_MAC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CAF42A651780F67700C3220A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(SDKROOT)/usr/include/libxml2",
+				);
+				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-DDABES_MAC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CA705CCC1783588A00D2C6E4 /* Build configuration list for PBXNativeTarget "DaBeSDK-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA705CCD1783588A00D2C6E4 /* Debug */,
+				CA705CCE1783588A00D2C6E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CAF42A411780F67700C3220A /* Build configuration list for PBXProject "DaBeSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAF42A611780F67700C3220A /* Debug */,
+				CAF42A621780F67700C3220A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CAF42A631780F67700C3220A /* Build configuration list for PBXNativeTarget "DaBeSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAF42A641780F67700C3220A /* Debug */,
+				CAF42A651780F67700C3220A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CAF42A3E1780F67700C3220A /* Project object */;
+}
