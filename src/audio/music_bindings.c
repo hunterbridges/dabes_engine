@@ -20,7 +20,7 @@ int luab_Music_new(lua_State *L) {
 
     int i = 0;
     for (i = 0; i < c; i++) {
-        files[i] = lua_tostring(L, 1);
+        files[i] = engine->resource_path(lua_tostring(L, 1));
         lua_remove(L, 1);
     }
 

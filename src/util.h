@@ -13,11 +13,4 @@
 #define fequal(a,b) (fabs((a) - (b)) < FLT_EPSILON)
 #define streq(A, B) (strcmp((const char *)A, (const char *)B) == 0)
 
-const char *resource_path(const char *filename);
-FILE *load_resource(char *filename);
-int read_text_file(char *filename, GLchar **out, GLint *size);
-#if defined(DABES_IOS) || defined(DABES_MAC)
-int read_file_data(char *filename, unsigned long int **data, GLint *size);
-#endif
-
 #endif

@@ -514,7 +514,6 @@
 				CAEF1957175DA98F00B3A3A1 /* Third Party */,
 				CAF4297C1780F36200C3220A /* DaBes-Mac */,
 				CAF429961780F38A00C3220A /* DaBes-iOS */,
-				CAF429751780F36200C3220A /* Frameworks */,
 				CA24C73016FC1E7E0045D5DE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -773,6 +772,7 @@
 				CAF429781780F36200C3220A /* Other Frameworks */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		CAF429781780F36200C3220A /* Other Frameworks */ = {
@@ -794,6 +794,7 @@
 				CACE2B3A178347DE00F36FA3 /* DABMacEngineViewController.m */,
 				CAF429831780F36300C3220A /* DaBes-Mac.h */,
 				CAF429841780F36300C3220A /* DaBes-Mac.m */,
+				CAF429751780F36200C3220A /* Frameworks */,
 				CAF4297D1780F36300C3220A /* Supporting Files */,
 			);
 			path = "DaBes-Mac";

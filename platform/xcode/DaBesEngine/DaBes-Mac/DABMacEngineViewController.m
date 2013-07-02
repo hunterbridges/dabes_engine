@@ -8,6 +8,31 @@ NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
 
+const char *Mac_resource_path(const char *filename) {
+  NSString *nsFilename = [NSString stringWithCString:filename
+                                            encoding:NSUTF8StringEncoding];
+  
+  NSFileManager *manager = [NSFileManager defaultManager];
+  NSString *bundlePath = [[[NSBundle mainBundle] resourcePath]
+                            stringByAppendingPathComponent:nsFilename];
+  NSArray *docsPath =
+      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                          NSUserDomainMask, YES);
+  NSString *docsFile = [[docsPath objectAtIndex:0]
+                       stringByAppendingPathComponent:nsFilename];
+  
+  const char *cFullpath;
+  if ([manager fileExistsAtPath:docsFile]) {
+    cFullpath = [docsFile cStringUsingEncoding:NSUTF8StringEncoding];
+  } else if ([manager fileExistsAtPath:bundlePath]) {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+  } else {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+  }
+  
+  return cFullpath;
+}
+
 @interface DABMacEngineViewController ()
 
 @property (nonatomic, strong) NSTimer *updateTimer;
@@ -69,7 +94,7 @@ char *bundlePath__;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
   
-  self.engine = Engine_create(cBootScript, NULL);
+  self.engine = Engine_create(Mac_resource_path, cBootScript, NULL);
   Scripting_boot(self.engine->scripting);
   ((DABMacEngineView *)self.view).engine = self.engine;
   [self refreshScene];

@@ -9,6 +9,7 @@
 #include "graphics.h"
 #include "stb_image.h"
 #include "sprite.h"
+#include "../core/engine.h"
 
 GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
@@ -30,12 +31,13 @@ error:
     return 0;
 }
 
+/*
 GfxSize load_image_dimensions_from_image(char *image_name) {
   GfxSize dimensions = {0,0};
 #if defined(DABES_IOS) || defined(DABES_MAC)
-  unsigned long int *data = NULL;
+  unsigned char *data = NULL;
   GLint size = 0;
-  read_file_data(image_name, &data, &size);
+  Engine_read_file(image_name, &data, &size);
   CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
   free(data);
   CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
@@ -55,6 +57,7 @@ GfxSize load_image_dimensions_from_image(char *image_name) {
 #endif
   return dimensions;
 }
+ */
 
 // GFX
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
@@ -151,9 +154,9 @@ error:
     return NULL;
 }
 
-GfxTexture *GfxTexture_from_image(char *image_name) {
+GfxTexture *GfxTexture_from_image(const char *image_name) {
     int x, y, n;
-    unsigned char *data = stbi_load(resource_path(image_name), &x, &y, &n, 4);
+    unsigned char *data = stbi_load(image_name, &x, &y, &n, 4);
     GfxTexture *texture =
         GfxTexture_from_data(&data, x, y, GL_RGBA);
     stbi_image_free(data);
@@ -682,8 +685,12 @@ error:
     return;
 }
 
-int Graphics_init(void *self) {
-    Graphics *graphics = self;
+Graphics *Graphics_create(Engine *engine) {
+    Graphics *graphics = calloc(1, sizeof(Graphics));
+    check(graphics != NULL, "Couldn't create graphics");
+  
+    graphics->engine = engine;
+  
 #ifdef DABES_SDL
     graphics->debug_text_font = TTF_OpenFont("media/fonts/uni.ttf", 8);
 #endif
@@ -734,11 +741,12 @@ int Graphics_init(void *self) {
     graphics->textures = Hashmap_create(NULL, NULL);
     graphics->sprites = Hashmap_create(NULL, NULL);
 
-  return 1;
+    return graphics;
+error:
+    return NULL;
 }
 
-void Graphics_destroy(void *self) {
-    Graphics *graphics = self;
+void Graphics_destroy(Graphics *graphics) {
 #ifdef DABES_SDL
     TTF_CloseFont(graphics->debug_text_font);
 #endif
@@ -750,7 +758,7 @@ void Graphics_destroy(void *self) {
     free(graphics);
 }
 
-GLuint Graphics_load_shader(Graphics *UNUSED(graphics), char *vert_name,
+GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
         char *frag_name, GLuint *compiled_program) {
     GLuint vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -759,10 +767,10 @@ GLuint Graphics_load_shader(Graphics *UNUSED(graphics), char *vert_name,
     check(vertex_shader != 0, "Couldn't create vertex shader");
     check(fragment_shader != 0, "Couldn't create fragment shader");
 
-    GLchar *v_src, *f_src;
+    unsigned char *v_src, *f_src;
     GLint v_size, f_size;
-    read_text_file(vert_name, &v_src, &v_size);
-    read_text_file(frag_name, &f_src, &f_size);
+    Engine_load_resource(graphics->engine, vert_name, &v_src, &v_size);
+    Engine_load_resource(graphics->engine, frag_name, &f_src, &f_size);
 
     glShaderSource(vertex_shader, 1, (const GLchar**)&v_src, &v_size);
     glShaderSource(fragment_shader, 1, (const GLchar**)&f_src, &f_size);
@@ -846,7 +854,7 @@ void Graphics_log_program(GLuint program) {
     }
 }
 
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
+GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name) {
     bstring bimage_name = bfromcstr(image_name);
 
     void *val = Hashmap_get(graphics->textures, bimage_name);
@@ -861,7 +869,7 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
     return texture;
 }
 
-Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
+Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
         GfxSize cell_size, int padding) {
     GfxTexture *texture = Graphics_texture_from_image(graphics, image_name);
     Sprite *sprite = Sprite_create(texture, cell_size, padding);
@@ -871,7 +879,3 @@ Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
 error:
     return NULL;
 }
-
-Object GraphicsProto = {
-    .init = Graphics_init
-};

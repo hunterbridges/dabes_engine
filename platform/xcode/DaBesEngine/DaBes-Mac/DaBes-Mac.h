@@ -77,13 +77,6 @@
 #define fequal(a,b) (fabs((a) - (b)) < FLT_EPSILON)
 #define streq(A, B) (strcmp((const char *)A, (const char *)B) == 0)
 
-const char *resource_path(const char *filename);
-FILE *load_resource(char *filename);
-int read_text_file(char *filename, GLchar **out, GLint *size);
-#if defined(DABES_IOS) || defined(DABES_MAC)
-int read_file_data(char *filename, unsigned long int **data, GLint *size);
-#endif
-
 #endif
 #ifndef __prefix_h
 #define __prefix_h
@@ -862,7 +855,7 @@ typedef struct GfxSize {
 static const GfxSize GfxSizeZero = {0,0};
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
-GfxSize load_image_dimensions_from_image(char *filename);
+// GfxSize load_image_dimensions_from_image(char *filename);
 
 typedef struct GfxTexture {
     const char *name;
@@ -873,7 +866,7 @@ typedef struct GfxTexture {
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
         GLenum source_format);
-GfxTexture *GfxTexture_from_image(char *image_name);
+GfxTexture *GfxTexture_from_image(const char *image_name);
 void GfxTexture_destroy(GfxTexture *texture);
 
 enum {
@@ -935,7 +928,8 @@ typedef struct GfxShader {
 ///////////
 
 typedef struct Graphics {
-    Object proto;
+    struct Engine *engine;
+  
     GfxSize screen_size;
     GLuint debug_text_texture;
     GfxShader *current_shader;
@@ -957,6 +951,10 @@ typedef struct Graphics {
     void (*del_vao)(GLsizei n, const GLuint *arrays);
 } Graphics;
 
+struct Engine;
+Graphics *Graphics_create(struct Engine *engine);
+void Graphics_destroy(Graphics *graphics);
+  
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
@@ -997,14 +995,14 @@ void Graphics_log_shader(GLuint shader);
 void Graphics_log_program(GLuint program);
 
 // Textures
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name);
+GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name);
 
 // Sprites
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
                           GLfloat color[4], double rot_degs, int z_index);
-struct Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
+struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
 extern Object GraphicsProto;
@@ -1054,8 +1052,8 @@ typedef struct EngineTimer {
     int paused;
 } EngineTimer;
 
+typedef const char *(*Engine_resource_path_func)(const char *filename);
 typedef struct Engine {
-    Object proto;
     Audio *audio;
     Input *input;
     Graphics *graphics;
@@ -1064,6 +1062,7 @@ typedef struct Engine {
 
     List *easers;
 
+    Engine_resource_path_func resource_path;
     EngineTimer timer;
 
     short int reg_initialized;
@@ -1073,7 +1072,8 @@ typedef struct Engine {
     long unsigned int last_frame_at;
 } Engine;
 
-Engine *Engine_create(const char *boot_script, void **sdl_screen);
+Engine *Engine_create(Engine_resource_path_func path_func,
+                      const char *boot_script, void **sdl_screen);
 void Engine_destroy(Engine *engine);
 int Engine_bootstrap(Engine **engine, void **sdl_screen);
 void Engine_regulate(Engine *engine);
@@ -1089,14 +1089,16 @@ void Engine_frame_end(Engine *engine);
 Easer *Engine_gen_easer(Engine *engine, int length_ms, Easer_curve curve);
 void Engine_update_easers(Engine *engine);
 
+FILE *Engine_open_resource(Engine *engine, char *filename);
+int Engine_load_resource(Engine *engine, char *filename, unsigned char **out,
+                         GLint *size);
+
 #ifdef DABES_IOS
 #define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)
 void Engine_log_iOS(char *fmt, ...);
 #else
 #define Engine_log(A, ...) debug(A, ##__VA_ARGS__)
 #endif
-
-extern Object EngineProto;
 
 #endif
 #ifndef __gzip_h

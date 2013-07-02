@@ -49,7 +49,7 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting_load_engine_libs(scripting);
 
     lua_getglobal(scripting->L, "package");
-    lua_pushstring(scripting->L, resource_path("scripts/?.lua"));
+    lua_pushstring(scripting->L, engine->resource_path("scripts/?.lua"));
     lua_setfield(scripting->L, -2, "path");
     lua_pop(scripting->L, 1);
 
@@ -66,7 +66,7 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     lua_pushcfunction(L, luab_register_instance);
     lua_setglobal(L, "dab_registerinstance");
 
-    int status = luaL_dofile(L, resource_path(boot_script));
+    int status = luaL_dofile(L, engine->resource_path(boot_script));
     if (status) {
       fprintf(stderr, "Failed to run boot script: %s\n", lua_tostring(L, -1));
       free(scripting);

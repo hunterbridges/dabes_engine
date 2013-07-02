@@ -2,7 +2,12 @@
 #include "../scenes/scene.h"
 #include "../scenes/scene_bindings.h"
 
-Engine *Engine_create(const char *boot_script, void **sdl_screen) {
+const char *Engine_default_resource_path(const char *filename) {
+  return filename;
+}
+
+Engine *Engine_create(Engine_resource_path_func path_func,
+                      const char *boot_script, void **sdl_screen) {
     Engine *engine = calloc(1, sizeof(Engine));
     check(engine != NULL, "Could not create engine. World explodes.");
 
@@ -18,9 +23,12 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 #endif
 
+    engine->resource_path =
+        path_func ? path_func : Engine_default_resource_path;
+
     engine->audio = Audio_create();
     engine->input = Input_create();
-    engine->graphics = NEW(Graphics, "Graphics Engine");
+    engine->graphics = Graphics_create(engine);
     engine->physics = Physics_create();
     engine->easers = List_create();
 
@@ -33,7 +41,7 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     engine->frame_skip = 1000 / FPS;
     engine->last_frame_at = 0;
     engine->frame_ticks = 0;
-
+  
     gettimeofday(&(engine->timer.started_at), NULL);
     engine->timer.pause_skip = 0;
     engine->timer.paused = 0;
@@ -52,7 +60,7 @@ void Engine_destroy(Engine *engine) {
 
     Audio_destroy(engine->audio);
     Input_destroy(engine->input);
-    engine->graphics->_(destroy)(engine->graphics);
+    Graphics_destroy(engine->graphics);
     Physics_destroy(engine->physics);
 
     free(engine);
@@ -147,4 +155,36 @@ void Engine_update_easers(Engine *engine) {
             List_remove(engine->easers, current);
         }
     }
+}
+
+FILE *Engine_open_resource(Engine *engine, char *filename) {
+    FILE *file = fopen(engine->resource_path(filename), "r");
+    return file;
+}
+
+int Engine_load_resource(Engine *engine, char *filename, unsigned char **out,
+                         GLint *size) {
+    unsigned char *output = NULL;
+    FILE *file = Engine_open_resource(engine, filename);
+    check(file != NULL, "Failed to open %s", filename);
+
+    fseek(file, 0, SEEK_END);
+    unsigned int sz = (unsigned int)ftell(file);
+    rewind(file);
+
+    output = malloc(sz * sizeof(char));
+    check_mem(output);
+
+    fread(output, 1, sz, file);
+    fclose(file);
+    output[sz] = '\0';
+
+    *out = output;
+    *size = sz;
+
+    return 1;
+error:
+    if (file != NULL) fclose(file);
+    if (output != NULL) free(output);
+    return 0;
 }

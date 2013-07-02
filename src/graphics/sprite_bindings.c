@@ -89,7 +89,7 @@ int luab_Sprite_new(lua_State *L) {
 
     const char *texname = lua_tostring(L, 1);
     GfxTexture *tex = Graphics_texture_from_image(engine->graphics,
-            (char *)texname);
+            engine->resource_path(texname));
     check(tex != NULL, "Couldn't load image %s", texname);
 
     int padding = lua_tonumber(L, 3);

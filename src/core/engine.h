@@ -18,8 +18,8 @@ typedef struct EngineTimer {
     int paused;
 } EngineTimer;
 
+typedef const char *(*Engine_resource_path_func)(const char *filename);
 typedef struct Engine {
-    Object proto;
     Audio *audio;
     Input *input;
     Graphics *graphics;
@@ -28,6 +28,7 @@ typedef struct Engine {
 
     List *easers;
 
+    Engine_resource_path_func resource_path;
     EngineTimer timer;
 
     short int reg_initialized;
@@ -37,7 +38,8 @@ typedef struct Engine {
     long unsigned int last_frame_at;
 } Engine;
 
-Engine *Engine_create(const char *boot_script, void **sdl_screen);
+Engine *Engine_create(Engine_resource_path_func path_func,
+                      const char *boot_script, void **sdl_screen);
 void Engine_destroy(Engine *engine);
 int Engine_bootstrap(Engine **engine, void **sdl_screen);
 void Engine_regulate(Engine *engine);
@@ -53,13 +55,15 @@ void Engine_frame_end(Engine *engine);
 Easer *Engine_gen_easer(Engine *engine, int length_ms, Easer_curve curve);
 void Engine_update_easers(Engine *engine);
 
+FILE *Engine_open_resource(Engine *engine, char *filename);
+int Engine_load_resource(Engine *engine, char *filename, unsigned char **out,
+                         GLint *size);
+
 #ifdef DABES_IOS
 #define Engine_log(A, ...) Engine_log_iOS(A, ##__VA_ARGS__)
 void Engine_log_iOS(char *fmt, ...);
 #else
 #define Engine_log(A, ...) debug(A, ##__VA_ARGS__)
 #endif
-
-extern Object EngineProto;
 
 #endif

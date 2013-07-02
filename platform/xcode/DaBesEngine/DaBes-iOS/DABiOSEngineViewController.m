@@ -5,6 +5,33 @@ NSTimeInterval kBufferRefreshDelay = 0.01;
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
 
+const char *iOS_resource_path(const char *filename) {
+  NSString *nsFilename = [NSString stringWithCString:filename
+                                            encoding:NSUTF8StringEncoding];
+  
+  NSFileManager *manager = [NSFileManager defaultManager];
+  NSString *bundlePath = [[[NSBundle mainBundle] bundlePath]
+                          stringByAppendingPathComponent:nsFilename];
+  NSArray *docsPath =
+  NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                      NSUserDomainMask, YES);
+  NSString *docsFile = [[docsPath objectAtIndex:0]
+                        stringByAppendingPathComponent:nsFilename];
+  
+  const char *cFullpath;
+  if ([manager fileExistsAtPath:docsFile]) {
+    cFullpath = [docsFile cStringUsingEncoding:NSUTF8StringEncoding];
+  } else if ([manager fileExistsAtPath:bundlePath]) {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+  } else {
+    cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+  }
+  
+  return cFullpath;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 char *bundlePath__;
@@ -18,6 +45,7 @@ char *bundlePath__;
   UILongPressGestureRecognizer *moveGesture_;
   UILongPressGestureRecognizer *jumpGesture_;
 }
+
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
 @property (nonatomic, strong) GLKView *glkView;
@@ -160,7 +188,7 @@ char *bundlePath__;
   if (!bootScript) return;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
-  engine_ = Engine_create(cBootScript, NULL);
+  engine_ = Engine_create(iOS_resource_path, cBootScript, NULL);
   Scripting_boot(engine_->scripting);
 }
 

@@ -38,7 +38,7 @@ OggStream *OggStream_create(char *file, ALuint source) {
     check(ogg_stream != NULL, "Couldn't create OGG Stream");
 
     ogg_stream->filename = calloc(1, sizeof(char) * (strlen(file) + 1));
-    ogg_stream->file = fopen(resource_path(file), "rb");
+    ogg_stream->file = fopen(file, "rb");
     check(ogg_stream->file != NULL, "Couldn't open OGG file");
 
     check(OggStream_open_decoder(ogg_stream), "Couldn't open decoder");
