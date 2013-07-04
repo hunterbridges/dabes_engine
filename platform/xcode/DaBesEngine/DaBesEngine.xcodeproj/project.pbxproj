@@ -67,6 +67,10 @@
 		CA705C27178355EF00D2C6E4 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B8172F85E000ED1135 /* Ogg.framework */; };
 		CA705C28178355EF00D2C6E4 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B9172F85E000ED1135 /* Vorbis.framework */; };
 		CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CA705C291783566C00D2C6E4 /* DaBes-iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
+		CAC3820D17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
 		CACE2B3B178347DE00F36FA3 /* DABMacEngineView.h in Headers */ = {isa = PBXBuildFile; fileRef = CACE2B37178347DE00F36FA3 /* DABMacEngineView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CACE2B3C178347DE00F36FA3 /* DABMacEngineView.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B38178347DE00F36FA3 /* DABMacEngineView.m */; };
 		CACE2B3D178347DE00F36FA3 /* DABMacEngineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CACE2B39178347DE00F36FA3 /* DABMacEngineViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -402,6 +406,8 @@
 		CA7241B51730E55300255032 /* ogg_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_stream.h; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = camera.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CAC3820817861D660072E709 /* DABProjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DABProjectManager.h; path = DaBesEngine/DABProjectManager.h; sourceTree = "<group>"; };
+		CAC3820917861D660072E709 /* DABProjectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DABProjectManager.m; path = DaBesEngine/DABProjectManager.m; sourceTree = "<group>"; };
 		CAC581A917585FFD004A8161 /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body.c; sourceTree = "<group>"; };
 		CAC581AA17585FFD004A8161 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = body.h; sourceTree = "<group>"; };
 		CAC581AC17585FFD004A8161 /* body_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body_bindings.c; sourceTree = "<group>"; };
@@ -512,6 +518,7 @@
 			children = (
 				CA24C73C16FC1E7E0045D5DE /* src */,
 				CAEF1957175DA98F00B3A3A1 /* Third Party */,
+				CAC3820317861D250072E709 /* Common */,
 				CAF4297C1780F36200C3220A /* DaBes-Mac */,
 				CAF429961780F38A00C3220A /* DaBes-iOS */,
 				CA24C73016FC1E7E0045D5DE /* Products */,
@@ -715,6 +722,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CAC3820317861D250072E709 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				CAC3820817861D660072E709 /* DABProjectManager.h */,
+				CAC3820917861D660072E709 /* DABProjectManager.m */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
 		CAC581A817585FFD004A8161 /* entities */ = {
 			isa = PBXGroup;
 			children = (
@@ -842,6 +858,7 @@
 			files = (
 				CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */,
 				CA51FC821783659A000C73E0 /* DABiOSEngineViewController.h in Headers */,
+				CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,6 +869,7 @@
 				CA27888C178101DF005A242D /* DaBes-Mac.h in Headers */,
 				CACE2B3B178347DE00F36FA3 /* DABMacEngineView.h in Headers */,
 				CACE2B3D178347DE00F36FA3 /* DABMacEngineViewController.h in Headers */,
+				CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */,
 				CAF42A0C1780F62500C3220A /* audio.h in Headers */,
 				CAF42A0D1780F62500C3220A /* music_bindings.h in Headers */,
 				CAF42A0E1780F62500C3220A /* music.h in Headers */,
@@ -1230,6 +1248,7 @@
 				CA705C1F178350BE00D2C6E4 /* object.c in Sources */,
 				CA705C20178350BE00D2C6E4 /* util.c in Sources */,
 				CA51FC831783659A000C73E0 /* DABiOSEngineViewController.m in Sources */,
+				CAC3820D17861D670072E709 /* DABProjectManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1286,6 +1305,7 @@
 				CAF42A061780F53E00C3220A /* vmatrix.c in Sources */,
 				CACE2B3C178347DE00F36FA3 /* DABMacEngineView.m in Sources */,
 				CACE2B3E178347DE00F36FA3 /* DABMacEngineViewController.m in Sources */,
+				CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

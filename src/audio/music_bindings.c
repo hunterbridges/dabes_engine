@@ -10,7 +10,7 @@ int luab_Music_new(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
 
     int c = lua_gettop(L);
-    const char *files[c];
+    char *files[c];
 
     music_ud = lua_newuserdata(L, sizeof(Music_userdata));
     check(music_ud != NULL, "Could not make music userdata");
@@ -20,12 +20,18 @@ int luab_Music_new(lua_State *L) {
 
     int i = 0;
     for (i = 0; i < c; i++) {
-        files[i] = engine->resource_path(lua_tostring(L, 1));
+        char *ppath = engine->project_path(lua_tostring(L, 1));
+        files[i] = ppath;
         lua_remove(L, 1);
     }
 
     Music *music = Audio_gen_music(engine->audio, c, files);
-
+  
+    i = 0;
+    for (i = 0; i < c; i++) {
+        free(files[i]);
+    }
+  
     luaL_register_ud(L, -1, (void **)&music_ud->p, music);
     return 1;
 error:

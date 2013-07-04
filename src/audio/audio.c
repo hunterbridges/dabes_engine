@@ -116,9 +116,9 @@ error:
     return;
 }
 
-Music *Audio_gen_music(Audio *audio, int num_files, const char *files[]) {
+Music *Audio_gen_music(Audio *audio, int num_files, char *files[]) {
     check(audio != NULL, "No audio to generate music");
-    Music *music = Music_load(num_files, (char **)files);
+    Music *music = Music_load(num_files, files);
     List_push(audio->musics, music);
     return music;
 error:
@@ -130,9 +130,9 @@ void Audio_destroy_music(Audio *audio, struct Music *music) {
     if (result) Music_destroy(music);
 }
 
-struct Sfx *Audio_gen_sfx(Audio *audio, const char *filename) {
+struct Sfx *Audio_gen_sfx(Audio *audio, char *filename) {
     check(audio != NULL, "No audio to generate sfx");
-    Sfx *sfx = Sfx_load((char *)filename);
+    Sfx *sfx = Sfx_load(filename);
     List_push(audio->active_sfx, sfx);
     return sfx;
 error:

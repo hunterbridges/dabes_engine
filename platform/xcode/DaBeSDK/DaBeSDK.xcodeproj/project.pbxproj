@@ -25,9 +25,9 @@
 		CA51FC7817836114000C73E0 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7717836114000C73E0 /* libz.dylib */; };
 		CA51FC7A1783611D000C73E0 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC791783611D000C73E0 /* CoreText.framework */; };
 		CA51FC7C178362ED000C73E0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA51FC7B178362ED000C73E0 /* QuartzCore.framework */; };
-		CA51FC7D17836379000C73E0 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1D1781634F00F36FA3 /* scripts */; };
-		CA51FC7E17836379000C73E0 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1B1781634800F36FA3 /* media */; };
 		CA51FC861783663C000C73E0 /* SDKiOSProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA51FC851783663C000C73E0 /* SDKiOSProjectEngineViewController.m */; };
+		CA51FC9E17861070000C73E0 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC9D17861070000C73E0 /* resources */; };
+		CA51FC9F17861070000C73E0 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC9D17861070000C73E0 /* resources */; };
 		CA705CBF1783588A00D2C6E4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CA705CBD1783588A00D2C6E4 /* InfoPlist.strings */; };
 		CA705CC11783588A00D2C6E4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CC01783588A00D2C6E4 /* main.m */; };
 		CA705CC71783588A00D2C6E4 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = CA705CC61783588A00D2C6E4 /* Default.png */; };
@@ -58,8 +58,6 @@
 		CA705D1817835ECF00D2C6E4 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1717835ECF00D2C6E4 /* InterfaceViewController.m */; };
 		CA705D1D17835EE200D2C6E4 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */; };
 		CA705D1E17835EE200D2C6E4 /* UIColor+LuaHighlighting.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */; };
-		CACE2B1C1781634800F36FA3 /* media in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1B1781634800F36FA3 /* media */; };
-		CACE2B1E1781634F00F36FA3 /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = CACE2B1D1781634F00F36FA3 /* scripts */; };
 		CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */; };
 		CAF42A6F1780F6EA00C3220A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A6A1780F6EA00C3220A /* main.m */; };
 		CAF42A891780F7B700C3220A /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A741780F7B700C3220A /* FileSystemItem.m */; };
@@ -190,6 +188,7 @@
 		CA51FC7B178362ED000C73E0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		CA51FC841783663C000C73E0 /* SDKiOSProjectEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKiOSProjectEngineViewController.h; sourceTree = "<group>"; };
 		CA51FC851783663C000C73E0 /* SDKiOSProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKiOSProjectEngineViewController.m; sourceTree = "<group>"; };
+		CA51FC9D17861070000C73E0 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resources; path = ../../../resources; sourceTree = "<group>"; };
 		CA705CB31783588A00D2C6E4 /* DaBeSDK-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DaBeSDK-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA705CBC1783588A00D2C6E4 /* DaBeSDK-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DaBeSDK-iOS-Info.plist"; sourceTree = "<group>"; };
 		CA705CBE1783588A00D2C6E4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -225,8 +224,6 @@
 		CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Hex.m"; path = "DaBeSDK-iOS/UIColor+Hex.m"; sourceTree = SOURCE_ROOT; };
 		CA705D1B17835EE200D2C6E4 /* UIColor+LuaHighlighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+LuaHighlighting.h"; path = "DaBeSDK-iOS/UIColor+LuaHighlighting.h"; sourceTree = SOURCE_ROOT; };
 		CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+LuaHighlighting.m"; path = "DaBeSDK-iOS/UIColor+LuaHighlighting.m"; sourceTree = SOURCE_ROOT; };
-		CACE2B1B1781634800F36FA3 /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../../media; sourceTree = "<group>"; };
-		CACE2B1D1781634F00F36FA3 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ../../../scripts; sourceTree = "<group>"; };
 		CACE2B3F1783484600F36FA3 /* SDKProjectEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKProjectEngineViewController.h; sourceTree = "<group>"; };
 		CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKProjectEngineViewController.m; sourceTree = "<group>"; };
 		CAF42A6A1780F6EA00C3220A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -470,8 +467,7 @@
 		CAF42A3D1780F67700C3220A = {
 			isa = PBXGroup;
 			children = (
-				CACE2B1D1781634F00F36FA3 /* scripts */,
-				CACE2B1B1781634800F36FA3 /* media */,
+				CA51FC9D17861070000C73E0 /* resources */,
 				CAF42AB21780F95400C3220A /* Dependencies */,
 				CAF42A721780F7B700C3220A /* OS X */,
 				CA705CBA1783588A00D2C6E4 /* iOS */,
@@ -709,8 +705,7 @@
 				CA51FC5A17835FBA000C73E0 /* Icon.png in Resources */,
 				CA51FC5B17835FBA000C73E0 /* Icon@2x.png in Resources */,
 				CA51FC5C17835FBA000C73E0 /* Inconsolata.otf in Resources */,
-				CA51FC7D17836379000C73E0 /* scripts in Resources */,
-				CA51FC7E17836379000C73E0 /* media in Resources */,
+				CA51FC9F17861070000C73E0 /* resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,8 +717,7 @@
 				CAF42A9D1780F88C00C3220A /* InfoPlist.strings in Resources */,
 				CAF42A9E1780F88C00C3220A /* MainMenu.xib in Resources */,
 				CAF42A9F1780F88C00C3220A /* ScriptEditor.xib in Resources */,
-				CACE2B1C1781634800F36FA3 /* media in Resources */,
-				CACE2B1E1781634F00F36FA3 /* scripts in Resources */,
+				CA51FC9E17861070000C73E0 /* resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

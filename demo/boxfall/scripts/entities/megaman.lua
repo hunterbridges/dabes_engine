@@ -1,4 +1,4 @@
-require 'boxfall.entities.box'
+require 'entities.box'
 require 'dabes.entity'
 require 'dabes.body'
 require 'dabes.sensor'

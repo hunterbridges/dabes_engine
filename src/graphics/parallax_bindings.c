@@ -18,8 +18,9 @@ int luab_ParallaxLayer_new(lua_State *L) {
     lua_setmetatable(L, -2);
 
     const char *texname = lua_tostring(L, -2);
-    GfxTexture *tex = Graphics_texture_from_image(engine->graphics,
-            engine->resource_path(texname));
+    char *ppath = engine->project_path(texname);
+    GfxTexture *tex = Graphics_texture_from_image(engine->graphics, ppath);
+    free(ppath);
     check(tex != NULL, "Couldn't load image %s", texname);
 
     ParallaxLayer *layer = ParallaxLayer_create(tex);

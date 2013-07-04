@@ -1,4 +1,4 @@
-require 'boxfall.entities.box'
+require 'entities.box'
 
 BigBox = Box:extend({
 	init = function(self)

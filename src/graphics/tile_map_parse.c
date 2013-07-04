@@ -159,7 +159,9 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           bdestroy(imgpath);
           bdestroy(src);
 
-          FILE *fileexists = Engine_open_resource(engine, cpath);
+          char *ppath = engine->project_path(cpath);
+          FILE *fileexists = fopen(ppath, "r");
+          free(ppath);
           if (fileexists == NULL) {
             free(cpath);
             Tileset_destroy(tileset);
@@ -171,8 +173,9 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           }
           fclose(fileexists);
 
-          tileset->texture = Graphics_texture_from_image(engine->graphics,
-                                                         engine->resource_path(cpath));
+          ppath = engine->project_path(cpath);
+          tileset->texture = Graphics_texture_from_image(engine->graphics, ppath);
+          free(ppath);
           tileset->img_src = cpath;
         }
 

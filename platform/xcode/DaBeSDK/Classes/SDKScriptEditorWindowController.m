@@ -8,6 +8,7 @@
 
 #import <PSMTabBarControl/PSMTabBarControl.h>
 #import <PSMTabBarControl/PSMRolloverButton.h>
+#import <DaBes-Mac/DABProjectManager.h>
 #import "FileSystemItem.h"
 #import "SDKMacAppDelegate.h"
 #import "SDKScriptEditorWindowController.h"
@@ -304,7 +305,8 @@
 - (FileSystemItem *)rootFileSystemItem {
   if (_rootFileSystemItem) return _rootFileSystemItem;
   
-  _rootFileSystemItem = [[FileSystemItem alloc] initWithPath:@"/Users/hbridges/Coding/dabes_engine/scripts/"
+  NSString *path = [[DABProjectManager sharedInstance].projectDir stringByAppendingPathComponent:@"scripts"];
+  _rootFileSystemItem = [[FileSystemItem alloc] initWithPath:path
                                                       parent:nil];
   return _rootFileSystemItem;
 }

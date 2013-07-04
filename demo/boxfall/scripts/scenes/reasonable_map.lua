@@ -1,15 +1,17 @@
 require 'dabes.controller'
 require 'dabes.scene'
-require 'boxfall.entities.box'
-require 'boxfall.entities.megaman'
+require 'entities.squiggy_box'
+require 'entities.megaman'
+require 'entities.door'
+require 'scenes.fat_map'
 
-FatMap = Scene:extend({
+ReasonableMap = Scene:extend({
     kind = "ortho_chipmunk",
     pixels_per_meter = 64.0,
-    music_volume = 0.5,
+    music_volume = 0.3,
 
     init = function(self)
-        self:load_map("media/tilemaps/fat.tmx", 1.0)
+        self:load_map("media/tilemaps/reasonable.tmx", 1.0)
     end,
 
     fade_in_effect = function(scene, e)
@@ -24,44 +26,46 @@ FatMap = Scene:extend({
     configure = function(self)
         -- Music
         local music = Music:new(
-            "media/music/Climb_Intro.ogg",
-            "media/music/Climb_Loop.ogg"
+            "media/music/Sneak.ogg"
         )
         self.music = music
         music.volume = self.music_volume
         music:play()
 
         -- Entities
-        local num_boxes = 100
-        local xo = 6.0
+        local num_boxes = 15
+        local xo = 6.0 / 2
 
+        local entities = {}
         local megaman = Megaman:new()
-        megaman.body.pos = {6.0 / 2, 27.25 / 2}
+        megaman.body.pos = {5.0 / 2, 23.25 / 2}
         megaman.controller = get_controller(1)
         megaman.z_index = 3
         self:add_entity(megaman)
+        table.insert(entities, megaman)
+
+        for i = 1, num_boxes do
+            local box = SquiggyBox:new()
+
+            local body = box.body
+            body.pos = {xo, 10.0 - 4.0 - i / 3}
+            body.angle = math.pi / 16.0 * (i % 8)
+            body.mass = 100.0 + 900.0 * i / num_boxes
+
+            box.alpha = 0
+            box.z_index = 2
+            self:add_entity(box)
+            table.insert(entities, box)
+
+            xo = xo + 1
+        end
 
         self.camera:track_entities(megaman)
         self.camera.snap_to_scene = true
 
-        for i = 1, num_boxes do
-            local box = Box:new()
-
-            local body = box.body
-            body.pos = {xo, 20.0 - 8.0 - i}
-            body.angle = math.pi / 16.0 * (i % 8)
-            body.mass = 100.0 + 900.0 * i / num_boxes
-
-            box.alpha = i / num_boxes * 1.0
-            box.z_index = 2
-            self:add_entity(box)
-
-            xo = xo + 2
-        end
-
         local door = Door:new()
-        door.destination = ReasonableMap
-        door.body.pos = {3.0, 13.1 + 1 / 64}
+        door.destination = FatMap
+        door.body.pos = {2.5, 11.1 + 1 / 64}
         door.z_index = 1
         self:add_entity(door)
 

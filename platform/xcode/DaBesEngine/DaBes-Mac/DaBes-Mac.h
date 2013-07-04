@@ -109,7 +109,7 @@ extern char *bundlePath__;
 #define DABES_GLVERSION "gl"
 #endif
 
-#define shader_path(N) "media/shaders/" DABES_GLVERSION "/" N
+#define shader_path(N) "shaders/" DABES_GLVERSION "/" N
 
 #ifdef __GNUC__
 #  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
@@ -173,7 +173,7 @@ extern char *bundlePath__;
 #define DABES_GLVERSION "gl"
 #endif
 
-#define shader_path(N) "media/shaders/" DABES_GLVERSION "/" N
+#define shader_path(N) "shaders/" DABES_GLVERSION "/" N
 
 #ifdef __GNUC__
 #  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
@@ -211,11 +211,11 @@ void Audio_stream(Audio *audio);
 void Audio_destroy(Audio *audio);
 
 struct Music;
-struct Music *Audio_gen_music(Audio *audio, int num_files, const char *files[]);
+struct Music *Audio_gen_music(Audio *audio, int num_files, char *files[]);
 void Audio_destroy_music(Audio *audio, struct Music *music);
 
 struct Sfx;
-struct Sfx *Audio_gen_sfx(Audio *audio, const char *filename);
+struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 #endif
@@ -295,11 +295,11 @@ void Audio_stream(Audio *audio);
 void Audio_destroy(Audio *audio);
 
 struct Music;
-struct Music *Audio_gen_music(Audio *audio, int num_files, const char *files[]);
+struct Music *Audio_gen_music(Audio *audio, int num_files, char *files[]);
 void Audio_destroy_music(Audio *audio, struct Music *music);
 
 struct Sfx;
-struct Sfx *Audio_gen_sfx(Audio *audio, const char *filename);
+struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 #endif
@@ -535,6 +535,7 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script);
 void Scripting_destroy(Scripting *scripting);
 void Scripting_register_engine(Scripting *scripting, struct Engine *engine);
 void Scripting_boot(Scripting *scripting);
+void Scripting_update_paths(Scripting *scripting, struct Engine *engine);
 
 int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname);
 void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
@@ -1052,7 +1053,7 @@ typedef struct EngineTimer {
     int paused;
 } EngineTimer;
 
-typedef const char *(*Engine_resource_path_func)(const char *filename);
+typedef char *(*Engine_resource_path_func)(const char *filename);
 typedef struct Engine {
     Audio *audio;
     Input *input;
@@ -1063,6 +1064,7 @@ typedef struct Engine {
     List *easers;
 
     Engine_resource_path_func resource_path;
+    Engine_resource_path_func project_path;
     EngineTimer timer;
 
     short int reg_initialized;
@@ -1073,7 +1075,12 @@ typedef struct Engine {
 } Engine;
 
 Engine *Engine_create(Engine_resource_path_func path_func,
+                      Engine_resource_path_func project_path_func,
                       const char *boot_script, void **sdl_screen);
+void Engine_set_resource_path(Engine *engine,
+                              Engine_resource_path_func resource_path);
+void Engine_set_project_path(Engine *engine,
+                             Engine_resource_path_func project_path);
 void Engine_destroy(Engine *engine);
 int Engine_bootstrap(Engine **engine, void **sdl_screen);
 void Engine_regulate(Engine *engine);

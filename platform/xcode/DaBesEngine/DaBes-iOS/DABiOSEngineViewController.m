@@ -8,6 +8,7 @@ NSString *kEngineReadyForScriptNotification =
 const char *iOS_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
+  nsFilename = [@"resources/" stringByAppendingString:nsFilename];
   
   NSFileManager *manager = [NSFileManager defaultManager];
   NSString *bundlePath = [[[NSBundle mainBundle] bundlePath]
@@ -27,7 +28,9 @@ const char *iOS_resource_path(const char *filename) {
     cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
   }
   
-  return cFullpath;
+  char *cpy = calloc(strlen(cFullpath) + 1, sizeof(char));
+  strcpy(cpy, cFullpath);
+  return cpy;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +191,7 @@ char *bundlePath__;
   if (!bootScript) return;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
-  engine_ = Engine_create(iOS_resource_path, cBootScript, NULL);
+  engine_ = Engine_create(iOS_resource_path, DABProjectManager_path_func, cBootScript, NULL);
   Scripting_boot(engine_->scripting);
 }
 
@@ -205,7 +208,7 @@ char *bundlePath__;
   // TODO: CLEANUP
   if (self.engine) {
     Scene_destroy(scene_, engine_);
-    engine_->_(destroy)(engine_);
+    Engine_destroy(engine_);
   }
   self.effect = nil;
 }

@@ -18,7 +18,7 @@ typedef struct EngineTimer {
     int paused;
 } EngineTimer;
 
-typedef const char *(*Engine_resource_path_func)(const char *filename);
+typedef char *(*Engine_resource_path_func)(const char *filename);
 typedef struct Engine {
     Audio *audio;
     Input *input;
@@ -29,6 +29,7 @@ typedef struct Engine {
     List *easers;
 
     Engine_resource_path_func resource_path;
+    Engine_resource_path_func project_path;
     EngineTimer timer;
 
     short int reg_initialized;
@@ -39,7 +40,12 @@ typedef struct Engine {
 } Engine;
 
 Engine *Engine_create(Engine_resource_path_func path_func,
+                      Engine_resource_path_func project_path_func,
                       const char *boot_script, void **sdl_screen);
+void Engine_set_resource_path(Engine *engine,
+                              Engine_resource_path_func resource_path);
+void Engine_set_project_path(Engine *engine,
+                             Engine_resource_path_func project_path);
 void Engine_destroy(Engine *engine);
 int Engine_bootstrap(Engine **engine, void **sdl_screen);
 void Engine_regulate(Engine *engine);

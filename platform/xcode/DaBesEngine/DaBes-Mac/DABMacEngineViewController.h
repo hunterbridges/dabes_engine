@@ -13,6 +13,7 @@ extern NSString *kEngineReadyForScriptNotification;
 @property (nonatomic, assign) Scene *scene;
 @property (nonatomic, assign) Input *touchInput;
 @property (nonatomic, copy, readonly) NSString *bootScript;
+@property (nonatomic, copy, readonly) NSString *projectPath;
 
 - (void)restartCurrentScene;
 

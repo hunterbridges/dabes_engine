@@ -1,4 +1,4 @@
-require 'boxfall.entities.box'
+require 'entities.box'
 
 SquiggyBox = Box:extend({
     main = function(self)
@@ -16,7 +16,7 @@ SquiggyBox = Box:extend({
 
         if velo_x * force_x > 0 then
           if math.abs(velo_x) >= 15 then
-              force_x = 0 
+              force_x = 0
           end
         else
           force_x = force_x * 3

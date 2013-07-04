@@ -15,7 +15,11 @@
 @implementation SDKProjectEngineViewController
 
 - (NSString *)bootScript {
-  return @"scripts/boxfall/boot.lua";
+  return @"scripts/boot.lua";
+}
+
+- (NSString *)projectPath {
+  return @"/Users/hbridges/Coding/dabes_engine/demo/boxfall/boxfall.dabes";
 }
 
 @end

@@ -1,6 +1,7 @@
 #import <DaBes-Mac/DaBes-Mac.h>
 #import "DABMacEngineViewController.h"
 #import "DABMacEngineView.h"
+#import "DABProjectManager.h"
 
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kNewSceneNotification =  @"kNewSceneNotification";
@@ -11,6 +12,7 @@ NSString *kEngineReadyForScriptNotification =
 const char *Mac_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
+  nsFilename = [@"resources/" stringByAppendingString:nsFilename];
   
   NSFileManager *manager = [NSFileManager defaultManager];
   NSString *bundlePath = [[[NSBundle mainBundle] resourcePath]
@@ -29,8 +31,10 @@ const char *Mac_resource_path(const char *filename) {
   } else {
     cFullpath = [bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
   }
-  
-  return cFullpath;
+
+  char *cpy = calloc(strlen(cFullpath) + 1, sizeof(char));
+  strcpy(cpy, cFullpath);
+  return cpy;
 }
 
 @interface DABMacEngineViewController ()
@@ -87,14 +91,19 @@ char *bundlePath__;
   return nil;
 }
 
+- (NSString *)projectPath {
+  return nil;
+}
+
 - (void)initEngine {
   NSString *bootScript = self.bootScript;
   if (!bootScript) return;
   
+  [DABProjectManager sharedInstance].projectPath = self.projectPath;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
   
-  self.engine = Engine_create(Mac_resource_path, cBootScript, NULL);
+  self.engine = Engine_create(Mac_resource_path, DABProjectManager_path_func, cBootScript, NULL);
   Scripting_boot(self.engine->scripting);
   ((DABMacEngineView *)self.view).engine = self.engine;
   [self refreshScene];

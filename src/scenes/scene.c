@@ -88,8 +88,16 @@ void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
 
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path, float meters_per_tile) {
-  const char *map_path = abs_path ? map_file : engine->resource_path(map_file);
-  TileMap *map = TileMap_parse((char *)map_path, engine);
+  TileMap *map = NULL;
+  if (abs_path) {
+    char *map_path = map_file;
+    map = TileMap_parse(map_path, engine);
+  } else {
+    char *map_path = engine->project_path(map_file);
+    map = TileMap_parse(map_path, engine);
+    free(map_path);
+  }
+  
   if (map == NULL) return;
   map->meters_per_tile = meters_per_tile;
   Scene_set_tile_map(scene, engine, map);

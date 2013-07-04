@@ -2,6 +2,14 @@
 #include "gameobjects.h"
 #include "scenes/ortho_chipmunk_scene.h"
 
+char *Boxfall_project_path(const char *filename) {
+  const char *boxfall = "demo/boxfall/";
+  char *newpath = calloc(strlen(boxfall) + strlen(filename) + 1, sizeof(char));
+  strcpy(newpath, boxfall);
+  strcat(newpath, filename);
+  return newpath;
+}
+
 int main(int argc, char *argv[]) {
     argc = (int)argc;
     argv = (char **)argv;
@@ -10,7 +18,8 @@ int main(int argc, char *argv[]) {
     SDL_Surface *screen = NULL;
     Scene *scene = NULL;
 
-    engine = Engine_create(NULL, "scripts/boxfall/boot.lua", (void *)&screen);
+    engine = Engine_create(NULL, Boxfall_project_path,
+            "scripts/boot.lua", (void *)&screen);
     check(engine != NULL, "Failed to boot engine");
 
     Scripting_boot(engine->scripting);

@@ -48,11 +48,8 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting_register_engine(scripting, engine);
     Scripting_load_engine_libs(scripting);
 
-    lua_getglobal(scripting->L, "package");
-    lua_pushstring(scripting->L, engine->resource_path("scripts/?.lua"));
-    lua_setfield(scripting->L, -2, "path");
-    lua_pop(scripting->L, 1);
-
+    Scripting_update_paths(scripting, engine);
+  
     // The pointer map is keyed by C object pointers and contains
     // userdata objects.
     luaL_createweakweaktable(L);
@@ -66,7 +63,10 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     lua_pushcfunction(L, luab_register_instance);
     lua_setglobal(L, "dab_registerinstance");
 
-    int status = luaL_dofile(L, engine->resource_path(boot_script));
+    char *ppath = engine->project_path(boot_script);
+    int status = luaL_dofile(L, ppath);
+    free(ppath);
+  
     if (status) {
       fprintf(stderr, "Failed to run boot script: %s\n", lua_tostring(L, -1));
       free(scripting);
@@ -77,6 +77,24 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
 error:
     if (scripting) free(scripting);
     return NULL;
+}
+
+void Scripting_update_paths(Scripting *scripting, struct Engine *engine) {
+    char *rpath = engine->resource_path("scripts/?.lua");
+    char *ppath = engine->project_path("scripts/?.lua");
+    char *path = calloc(strlen(rpath) + strlen(";") + strlen(ppath) + 1, sizeof(char));
+    strcpy(path, rpath);
+    path = strcat(path, ";");
+    path = strcat(path, ppath);
+  
+    lua_getglobal(scripting->L, "package");
+    lua_pushstring(scripting->L, path);
+    lua_setfield(scripting->L, -2, "path");
+    lua_pop(scripting->L, 1);
+  
+    free(rpath);
+    free(ppath);
+    free(path);
 }
 
 void Scripting_destroy(Scripting *scripting) {

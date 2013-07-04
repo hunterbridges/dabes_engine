@@ -2,11 +2,24 @@
 #include "../scenes/scene.h"
 #include "../scenes/scene_bindings.h"
 
-const char *Engine_default_resource_path(const char *filename) {
-  return filename;
+char *Engine_default_resource_path(const char *filename) {
+  const char *resources = "resources/";
+  char *newpath = calloc(strlen(resources) + strlen(filename) + 1, sizeof(char));
+  strcpy(newpath, resources);
+  strcat(newpath, filename);
+  return newpath;
+}
+
+char *Engine_default_project_path(const char *filename) {
+  const char *project = "project/";
+  char *newpath = calloc(strlen(project) + strlen(filename) + 1, sizeof(char));
+  strcpy(newpath, project);
+  strcat(newpath, filename);
+  return newpath;
 }
 
 Engine *Engine_create(Engine_resource_path_func path_func,
+                      Engine_resource_path_func project_path_func,
                       const char *boot_script, void **sdl_screen) {
     Engine *engine = calloc(1, sizeof(Engine));
     check(engine != NULL, "Could not create engine. World explodes.");
@@ -25,6 +38,8 @@ Engine *Engine_create(Engine_resource_path_func path_func,
 
     engine->resource_path =
         path_func ? path_func : Engine_default_resource_path;
+    engine->project_path =
+        project_path_func ? project_path_func : Engine_default_project_path;
 
     engine->audio = Audio_create();
     engine->input = Input_create();
@@ -41,7 +56,7 @@ Engine *Engine_create(Engine_resource_path_func path_func,
     engine->frame_skip = 1000 / FPS;
     engine->last_frame_at = 0;
     engine->frame_ticks = 0;
-  
+
     gettimeofday(&(engine->timer.started_at), NULL);
     engine->timer.pause_skip = 0;
     engine->timer.paused = 0;
@@ -67,6 +82,18 @@ void Engine_destroy(Engine *engine) {
     return;
 error:
     free(engine);
+}
+
+void Engine_set_resource_path(Engine *engine,
+                              Engine_resource_path_func resource_path) {
+    engine->resource_path = resource_path;
+    Scripting_update_paths(engine->scripting, engine);
+}
+
+void Engine_set_project_path(Engine *engine,
+                             Engine_resource_path_func project_path) {
+    engine->project_path = project_path;
+    Scripting_update_paths(engine->scripting, engine);
 }
 
 unsigned long tick_diff(struct timeval earlier, struct timeval later) {
@@ -158,7 +185,9 @@ void Engine_update_easers(Engine *engine) {
 }
 
 FILE *Engine_open_resource(Engine *engine, char *filename) {
-    FILE *file = fopen(engine->resource_path(filename), "r");
+    char *rpath = engine->resource_path(filename);
+    FILE *file = fopen(rpath, "r");
+    free(rpath);
     return file;
 }
 
