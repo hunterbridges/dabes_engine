@@ -46,7 +46,6 @@
 		CA705CEE17835C5500D2C6E4 /* PSMTabBarControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA27883A1780F9CD005A242D /* PSMTabBarControl.framework */; };
 		CA705CF117835D0C00D2C6E4 /* DaBes-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788671780FA16005A242D /* DaBes-iOS.framework */; };
 		CA705CFA17835E3E00D2C6E4 /* SDKiOSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CF917835E3E00D2C6E4 /* SDKiOSAppDelegate.m */; };
-		CA705CFD17835E4B00D2C6E4 /* AudioBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CFC17835E4B00D2C6E4 /* AudioBridge.m */; };
 		CA705D0017835E6100D2C6E4 /* ConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705CFF17835E6100D2C6E4 /* ConsoleView.m */; };
 		CA705D0317835E7400D2C6E4 /* CodeEditorView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0217835E7400D2C6E4 /* CodeEditorView.m */; };
 		CA705D0617835E8400D2C6E4 /* DebugMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */; };
@@ -203,8 +202,6 @@
 		CA705CEA17835AEE00D2C6E4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		CA705CF817835E3E00D2C6E4 /* SDKiOSAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDKiOSAppDelegate.h; path = "DaBeSDK-iOS/SDKiOSAppDelegate.h"; sourceTree = SOURCE_ROOT; };
 		CA705CF917835E3E00D2C6E4 /* SDKiOSAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDKiOSAppDelegate.m; path = "DaBeSDK-iOS/SDKiOSAppDelegate.m"; sourceTree = SOURCE_ROOT; };
-		CA705CFB17835E4B00D2C6E4 /* AudioBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioBridge.h; path = "DaBeSDK-iOS/AudioBridge.h"; sourceTree = SOURCE_ROOT; };
-		CA705CFC17835E4B00D2C6E4 /* AudioBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioBridge.m; path = "DaBeSDK-iOS/AudioBridge.m"; sourceTree = SOURCE_ROOT; };
 		CA705CFE17835E6100D2C6E4 /* ConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleView.h; path = "DaBeSDK-iOS/ConsoleView.h"; sourceTree = SOURCE_ROOT; };
 		CA705CFF17835E6100D2C6E4 /* ConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConsoleView.m; path = "DaBeSDK-iOS/ConsoleView.m"; sourceTree = SOURCE_ROOT; };
 		CA705D0117835E7400D2C6E4 /* CodeEditorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeEditorView.h; path = "DaBeSDK-iOS/CodeEditorView.h"; sourceTree = SOURCE_ROOT; };
@@ -337,6 +334,41 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CA45C88E17863A6900B995CC /* Script Editor */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42A731780F7B700C3220A /* FileSystemItem.h */,
+				CAF42A741780F7B700C3220A /* FileSystemItem.m */,
+				CAF42A811780F7B700C3220A /* SDKScriptEditorView.h */,
+				CAF42A821780F7B700C3220A /* SDKScriptEditorView.m */,
+				CAF42A831780F7B700C3220A /* SDKScriptEditorWindow.h */,
+				CAF42A841780F7B700C3220A /* SDKScriptEditorWindow.m */,
+				CAF42A851780F7B700C3220A /* SDKScriptEditorWindowController.h */,
+				CAF42A861780F7B700C3220A /* SDKScriptEditorWindowController.m */,
+				CAF42A871780F7B700C3220A /* SDKScriptTabModel.h */,
+				CAF42A881780F7B700C3220A /* SDKScriptTabModel.m */,
+			);
+			name = "Script Editor";
+			sourceTree = "<group>";
+		};
+		CA45C88F17863A7500B995CC /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42A751780F7B700C3220A /* NSView+Center.h */,
+				CAF42A761780F7B700C3220A /* NSView+Center.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
+		CA45C89017863A8300B995CC /* UI Elements */ = {
+			isa = PBXGroup;
+			children = (
+				CAF42A7F1780F7B700C3220A /* SDKPanner.h */,
+				CAF42A801780F7B700C3220A /* SDKPanner.m */,
+			);
+			name = "UI Elements";
+			sourceTree = "<group>";
+		};
 		CA51FC7F17836389000C73E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,16 +402,29 @@
 		CA705C581783581D00D2C6E4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				CA705CFE17835E6100D2C6E4 /* ConsoleView.h */,
+				CA705CFF17835E6100D2C6E4 /* ConsoleView.m */,
+				CA705D0417835E8400D2C6E4 /* DebugMenuViewController.h */,
+				CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */,
 			);
 			name = Views;
 			path = ../../DaBesEngine/DaBesEngine;
 			sourceTree = "<group>";
 		};
-		CA705C601783581D00D2C6E4 /* Code */ = {
+		CA705C601783581D00D2C6E4 /* Script Editor */ = {
 			isa = PBXGroup;
 			children = (
+				CA705C631783581D00D2C6E4 /* Views */,
+				CA705D0717835E9400D2C6E4 /* LuaSyntaxHighlighter.h */,
+				CA705D0817835E9400D2C6E4 /* LuaSyntaxHighlighter.m */,
+				CA705D0917835E9400D2C6E4 /* LuaSyntaxStyler.h */,
+				CA705D0A17835E9400D2C6E4 /* LuaSyntaxStyler.m */,
+				CA705D0D17835EA100D2C6E4 /* ScriptEditorViewController.h */,
+				CA705D0E17835EA100D2C6E4 /* ScriptEditorViewController.m */,
+				CA705D1017835EB700D2C6E4 /* DirBrowserViewController.h */,
+				CA705D1117835EB700D2C6E4 /* DirBrowserViewController.m */,
 			);
-			name = Code;
+			name = "Script Editor";
 			path = ../../DaBesEngine/DaBesEngine;
 			sourceTree = "<group>";
 		};
@@ -390,15 +435,6 @@
 				CA705D0217835E7400D2C6E4 /* CodeEditorView.m */,
 			);
 			name = Views;
-			path = ../../DaBesEngine/DaBesEngine;
-			sourceTree = "<group>";
-		};
-		CA705C6B1783581D00D2C6E4 /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Audio;
-			path = ../../DaBesEngine/DaBesEngine;
 			sourceTree = "<group>";
 		};
 		CA705C761783581D00D2C6E4 /* Categories */ = {
@@ -416,31 +452,15 @@
 		CA705CBA1783588A00D2C6E4 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				CA705C761783581D00D2C6E4 /* Categories */,
 				CA705C581783581D00D2C6E4 /* Views */,
-				CA705CFE17835E6100D2C6E4 /* ConsoleView.h */,
-				CA705CFF17835E6100D2C6E4 /* ConsoleView.m */,
-				CA705D0417835E8400D2C6E4 /* DebugMenuViewController.h */,
-				CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */,
-				CA705C601783581D00D2C6E4 /* Code */,
-				CA705D0717835E9400D2C6E4 /* LuaSyntaxHighlighter.h */,
-				CA705D0817835E9400D2C6E4 /* LuaSyntaxHighlighter.m */,
-				CA705D0917835E9400D2C6E4 /* LuaSyntaxStyler.h */,
-				CA705D0A17835E9400D2C6E4 /* LuaSyntaxStyler.m */,
-				CA705C631783581D00D2C6E4 /* Views */,
-				CA705D0D17835EA100D2C6E4 /* ScriptEditorViewController.h */,
-				CA705D0E17835EA100D2C6E4 /* ScriptEditorViewController.m */,
-				CA705D1017835EB700D2C6E4 /* DirBrowserViewController.h */,
-				CA705D1117835EB700D2C6E4 /* DirBrowserViewController.m */,
-				CA705C6B1783581D00D2C6E4 /* Audio */,
-				CA705CFB17835E4B00D2C6E4 /* AudioBridge.h */,
-				CA705CFC17835E4B00D2C6E4 /* AudioBridge.m */,
+				CA705C601783581D00D2C6E4 /* Script Editor */,
 				CA705CF817835E3E00D2C6E4 /* SDKiOSAppDelegate.h */,
 				CA705CF917835E3E00D2C6E4 /* SDKiOSAppDelegate.m */,
 				CA51FC841783663C000C73E0 /* SDKiOSProjectEngineViewController.h */,
 				CA51FC851783663C000C73E0 /* SDKiOSProjectEngineViewController.m */,
 				CA705D1617835ECF00D2C6E4 /* InterfaceViewController.h */,
 				CA705D1717835ECF00D2C6E4 /* InterfaceViewController.m */,
-				CA705C761783581D00D2C6E4 /* Categories */,
 				CA51FC7F17836389000C73E0 /* Frameworks */,
 				CA705CBB1783588A00D2C6E4 /* Supporting Files */,
 			);
@@ -496,24 +516,13 @@
 		CAF42A721780F7B700C3220A /* OS X */ = {
 			isa = PBXGroup;
 			children = (
-				CAF42A731780F7B700C3220A /* FileSystemItem.h */,
-				CAF42A741780F7B700C3220A /* FileSystemItem.m */,
-				CAF42A751780F7B700C3220A /* NSView+Center.h */,
-				CAF42A761780F7B700C3220A /* NSView+Center.m */,
+				CA45C88F17863A7500B995CC /* Categories */,
+				CA45C89017863A8300B995CC /* UI Elements */,
+				CA45C88E17863A6900B995CC /* Script Editor */,
 				CAF42A771780F7B700C3220A /* SDKMacAppDelegate.h */,
 				CAF42A781780F7B700C3220A /* SDKMacAppDelegate.m */,
 				CAF42A7D1780F7B700C3220A /* SDKInspectorView.h */,
 				CAF42A7E1780F7B700C3220A /* SDKInspectorView.m */,
-				CAF42A7F1780F7B700C3220A /* SDKPanner.h */,
-				CAF42A801780F7B700C3220A /* SDKPanner.m */,
-				CAF42A811780F7B700C3220A /* SDKScriptEditorView.h */,
-				CAF42A821780F7B700C3220A /* SDKScriptEditorView.m */,
-				CAF42A831780F7B700C3220A /* SDKScriptEditorWindow.h */,
-				CAF42A841780F7B700C3220A /* SDKScriptEditorWindow.m */,
-				CAF42A851780F7B700C3220A /* SDKScriptEditorWindowController.h */,
-				CAF42A861780F7B700C3220A /* SDKScriptEditorWindowController.m */,
-				CAF42A871780F7B700C3220A /* SDKScriptTabModel.h */,
-				CAF42A881780F7B700C3220A /* SDKScriptTabModel.m */,
 				CACE2B3F1783484600F36FA3 /* SDKProjectEngineViewController.h */,
 				CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */,
 				CAF42AAE1780F8D600C3220A /* Frameworks */,
@@ -734,7 +743,6 @@
 			files = (
 				CA705CC11783588A00D2C6E4 /* main.m in Sources */,
 				CA705CFA17835E3E00D2C6E4 /* SDKiOSAppDelegate.m in Sources */,
-				CA705CFD17835E4B00D2C6E4 /* AudioBridge.m in Sources */,
 				CA705D0017835E6100D2C6E4 /* ConsoleView.m in Sources */,
 				CA705D0317835E7400D2C6E4 /* CodeEditorView.m in Sources */,
 				CA705D0617835E8400D2C6E4 /* DebugMenuViewController.m in Sources */,

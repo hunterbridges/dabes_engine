@@ -85,7 +85,7 @@ Megaman = Entity:extend({
             local ppos = self.body.pos
             ppos[2] = ppos[2] - 1.0
             projectile.body.pos = ppos
-            projectile.body.velo = {0, -15}
+            projectile.body.velo = {0, -50}
             projectile.body.elasticity = 0.1
             projectile.body.mass = 1000
             self.scene:add_entity(projectile)

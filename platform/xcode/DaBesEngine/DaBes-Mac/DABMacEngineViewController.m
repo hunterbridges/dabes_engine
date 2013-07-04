@@ -9,7 +9,7 @@ NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
 
-const char *Mac_resource_path(const char *filename) {
+char *Mac_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
   nsFilename = [@"resource/" stringByAppendingString:nsFilename];

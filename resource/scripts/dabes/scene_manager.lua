@@ -1,4 +1,5 @@
 -- SceneManager
+require 'dabes.object'
 
 SceneManager = Object:extend({
     current_scene = nil,
