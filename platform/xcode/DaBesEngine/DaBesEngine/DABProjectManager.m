@@ -8,7 +8,7 @@
 
 #import "DABProjectManager.h"
 
-const char *DABProjectManager_path_func(const char *filename) {
+char *DABProjectManager_path_func(const char *filename) {
   DABProjectManager *manager = [DABProjectManager sharedInstance];
   NSString *path =
       [NSString stringWithFormat:@"%@/%s", manager.projectDir, filename];

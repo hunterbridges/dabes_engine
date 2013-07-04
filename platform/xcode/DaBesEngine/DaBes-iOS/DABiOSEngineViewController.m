@@ -1,14 +1,15 @@
 #import <DaBes-iOS/DaBes-iOS.h>
 #import "DABiOSEngineViewController.h"
+#import "DABProjectManager.h"
 
 NSTimeInterval kBufferRefreshDelay = 0.01;
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
 
-const char *iOS_resource_path(const char *filename) {
+char *iOS_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
-  nsFilename = [@"resources/" stringByAppendingString:nsFilename];
+  nsFilename = [@"resource/" stringByAppendingString:nsFilename];
   
   NSFileManager *manager = [NSFileManager defaultManager];
   NSString *bundlePath = [[[NSBundle mainBundle] bundlePath]
@@ -186,9 +187,14 @@ char *bundlePath__;
   return nil;
 }
 
+- (NSString *)projectPath {
+  return nil;
+}
+
 - (void)initEngine {
   NSString *bootScript = self.bootScript;
   if (!bootScript) return;
+  [DABProjectManager sharedInstance].projectPath = self.projectPath;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
   engine_ = Engine_create(iOS_resource_path, DABProjectManager_path_func, cBootScript, NULL);

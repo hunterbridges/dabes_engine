@@ -12,7 +12,7 @@ NSString *kEngineReadyForScriptNotification =
 const char *Mac_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
                                             encoding:NSUTF8StringEncoding];
-  nsFilename = [@"resources/" stringByAppendingString:nsFilename];
+  nsFilename = [@"resource/" stringByAppendingString:nsFilename];
   
   NSFileManager *manager = [NSFileManager defaultManager];
   NSString *bundlePath = [[[NSBundle mainBundle] resourcePath]

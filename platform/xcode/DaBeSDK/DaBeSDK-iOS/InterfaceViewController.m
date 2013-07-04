@@ -54,7 +54,7 @@
   [self addChildViewController:self.engineVC];
   [self.view addSubview:self.engineVC.view];
   
-  NSString *path = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"scripts"];
+  NSString *path = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"demo/boxfall"];
   SDKiOSProjectEngineViewController *engineVC = self.engineVC;
   DirBrowserViewController *scriptBrowser =
       [[DirBrowserViewController alloc] initWithPath:path

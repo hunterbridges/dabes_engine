@@ -19,5 +19,6 @@ extern NSString *kEngineReadyForScriptNotification;
 @property (nonatomic, readonly) Scene *scene;
 @property (nonatomic, readonly) GLKView *glkView;
 @property (nonatomic, copy, readonly) NSString *bootScript;
+@property (nonatomic, copy, readonly) NSString *projectPath;
 
 @end

@@ -11,7 +11,14 @@
 @implementation SDKiOSProjectEngineViewController
 
 - (NSString *)bootScript {
-  return @"scripts/boxfall/boot.lua";
+  return @"scripts/boot.lua";
+}
+
+- (NSString *)projectPath {
+  NSString *demoPath = [[NSBundle mainBundle] pathForResource:@"boxfall"
+                                                       ofType:@"dabes"
+                                                  inDirectory:@"demo/boxfall/"];
+  return demoPath;
 }
 
 @end

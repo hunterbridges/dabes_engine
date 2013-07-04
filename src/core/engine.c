@@ -3,7 +3,7 @@
 #include "../scenes/scene_bindings.h"
 
 char *Engine_default_resource_path(const char *filename) {
-  const char *resources = "resources/";
+  const char *resources = "resource/";
   char *newpath = calloc(strlen(resources) + strlen(filename) + 1, sizeof(char));
   strcpy(newpath, resources);
   strcat(newpath, filename);

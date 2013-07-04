@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-const char *DABProjectManager_path_func(const char *filename);
+char *DABProjectManager_path_func(const char *filename);
 
 @interface DABProjectManager : NSObject
 
