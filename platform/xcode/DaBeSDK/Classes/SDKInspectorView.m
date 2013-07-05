@@ -297,7 +297,7 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     Scene_set_selection_mode(self.engineVC.scene, kSceneNotSelecting);
   } else {
     // Track
-    NSWindow *mainWindow = [(SDKMacAppDelegate *)[NSApp delegate] window];
+    NSWindow *mainWindow = [(SDKMacAppDelegate *)[NSApp delegate] engineWindow];
     CGFloat titleHeight = mainWindow.frame.size.height -
         ((NSView *)mainWindow.contentView).frame.size.height;
     NSRect mainWindowRect = mainWindow.frame;

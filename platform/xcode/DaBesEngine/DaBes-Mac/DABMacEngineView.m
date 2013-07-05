@@ -83,6 +83,7 @@ static unsigned short int keysDown[128];
 
 - (void)mouseDown:(NSEvent *)theEvent {
   Scene *scene = self.scene;
+  if (!scene) return;
   NSPoint mouse = [self.window convertScreenToBase:[NSEvent mouseLocation]];
   NSPoint converted = [self convertPoint:mouse fromView:nil];
   CGPoint cgConv = NSPointToCGPoint(converted);
@@ -109,7 +110,9 @@ static unsigned short int keysDown[128];
 
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview {
   [super viewWillMoveToSuperview:newSuperview];
-  [self resizeGraphics];
+  if (newSuperview) {
+    [self resizeGraphics];
+  }
 }
 
 - (void)reshape {

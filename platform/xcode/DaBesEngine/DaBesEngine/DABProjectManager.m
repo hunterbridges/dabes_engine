@@ -34,4 +34,56 @@ char *DABProjectManager_path_func(const char *filename) {
   return [self.projectPath stringByDeletingLastPathComponent];
 }
 
+- (NSString *)createProjectInDirectory:(NSString *)path {
+  // Derive project name
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  
+  NSString *enclosingDir = [path lastPathComponent];
+  NSString *projectName = [enclosingDir stringByAppendingPathExtension:@"dabes"];
+  NSString *projectPath = [path stringByAppendingPathComponent:projectName];
+  
+  if ([fileManager fileExistsAtPath:projectPath]) {
+    return nil;
+  }
+  
+  // Create project file (Blank for now)
+  NSMutableData *data = [NSMutableData data];
+  char nul = '\0';
+  [data appendBytes:&nul length:1];
+  [fileManager createFileAtPath:projectPath
+                       contents:data
+                     attributes:nil];
+  
+  // Create resource dirs
+  NSArray *dirs = @[
+    @"scripts",
+    @"media",
+    @"media/bgs",
+    @"media/fonts",
+    @"media/music",
+    @"media/sprites",
+    @"media/tilemaps",
+    @"media/tilesets"
+  ];
+  for (NSString *dir in dirs) {
+    NSString *dirpath = [path stringByAppendingPathComponent:dir];
+    NSError *error = nil;
+    [fileManager createDirectoryAtPath:dirpath
+           withIntermediateDirectories:NO
+                            attributes:nil
+                                 error:&error];
+    if (error) {
+      NSLog(@"%@", error.description);
+    }
+  }
+  
+  // Create boot script
+  NSString *bootScript = @"function boot()\n    \nend";
+  NSData *scriptData = [bootScript dataUsingEncoding:NSUTF8StringEncoding];
+  [fileManager createFileAtPath:[path stringByAppendingPathComponent:@"scripts/boot.lua"]
+                       contents:scriptData
+                     attributes:nil];
+  return projectPath;
+}
+
 @end

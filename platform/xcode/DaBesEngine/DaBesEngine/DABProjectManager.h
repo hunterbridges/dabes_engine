@@ -16,5 +16,6 @@ char *DABProjectManager_path_func(const char *filename);
 @property (nonatomic, copy, readonly) NSString *projectDir;
 
 + (DABProjectManager *)sharedInstance;
-
+- (NSString *)createProjectInDirectory:(NSString *)path;
+  
 @end

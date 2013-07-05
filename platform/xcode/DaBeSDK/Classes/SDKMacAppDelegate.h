@@ -12,8 +12,14 @@
 @class SDKScriptEditorWindowController;
 @interface SDKMacAppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
+@property (assign) IBOutlet NSWindow *welcomeWindow;
+@property (assign) IBOutlet NSWindow *engineWindow;
 @property (assign) IBOutlet NSWindow *inspectorWindow;
+
+@property (nonatomic, copy) NSString *curentProject;
+@property (assign) IBOutlet NSMenuItem *cNewProjectItem;
+@property (assign) IBOutlet NSMenuItem *openProjectItem;
+@property (assign) IBOutlet NSMenuItem *closeProjectItem;
 
 @property (assign) IBOutlet NSMenuItem *saveItem;
 @property (assign) IBOutlet NSMenuItem *revertItem;
@@ -27,6 +33,9 @@
 @property (assign) IBOutlet SDKInspectorView *inspectorView;
 @property (nonatomic, strong) SDKScriptEditorWindowController *scriptEditorController;
 
+@property (assign) IBOutlet NSMenuItem *restartSceneItem;
+@property (assign) IBOutlet NSMenuItem *restartGameItem;
+@property (assign) IBOutlet NSMenuItem *renderModesItem;
 @property (assign) IBOutlet NSMenuItem *renderNormalItem;
 @property (assign) IBOutlet NSMenuItem *renderPhysicsItem;
 

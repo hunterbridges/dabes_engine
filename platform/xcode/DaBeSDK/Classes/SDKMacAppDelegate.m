@@ -7,6 +7,7 @@
 //
 
 #import <DaBes-Mac/DaBes-Mac.h>
+#import <DaBes-Mac/DABProjectManager.h>
 #import "SDKMacAppDelegate.h"
 #import "SDKScriptEditorWindowController.h"
 #import "SDKScriptEditorView.h"
@@ -23,16 +24,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-  // Insert code here to initialize your application
-  self.engineVC = [[SDKProjectEngineViewController alloc] init];
-  self.engineVC.view.frame = ((NSView *)self.window.contentView).bounds;
-  [self.engineVC.view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [self.window.contentView addSubview:self.engineVC.view];
-  
-  // wtf
-  self.inspectorView.touchInput = self.engineVC.touchInput;
-  self.inspectorView.engineVC = self.engineVC;
-  
   [self setUpMenu];
   
   [[NSNotificationCenter defaultCenter]
@@ -40,6 +31,21 @@
      selector:@selector(handleNewScene:)
      name:kNewSceneNotification
      object:self.engineVC];
+}
+
+- (void)showEngineWindow {
+  if (!self.engineVC) {
+      // Insert code here to initialize your application
+      self.engineVC = [[SDKProjectEngineViewController alloc] init];
+      [self.engineVC.view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+      
+      // wtf
+      self.inspectorView.touchInput = self.engineVC.touchInput;
+      self.inspectorView.engineVC = self.engineVC;
+  }
+  [self.engineWindow makeKeyAndOrderFront:nil];
+  [self.engineWindow.contentView addSubview:self.engineVC.view];
+  self.engineVC.view.frame = ((NSView *)self.engineWindow.contentView).bounds;
 }
 
 - (void)setUpMenu {
@@ -69,6 +75,29 @@
     self.renderPhysicsItem.state = NSOnState;
   }
   self.engineVC.scene->render_mode = renderMode;
+}
+
+- (void)closeCurrentProject {
+  if (self.curentProject) {
+    [((NSView *)self.engineWindow.contentView).subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.engineVC tearDown];
+    self.engineVC = nil;
+    [self.welcomeWindow close];
+    [self.scriptEditorController.window close];
+    [self.inspectorWindow close];
+    [self.engineWindow close];
+    self.curentProject = nil;
+  }
+}
+
+- (void)openProjectWithPath:(NSString *)path {
+  [self closeCurrentProject];
+  
+  self.curentProject = path;
+  if (self.welcomeWindow.isVisible) {
+    [self.welcomeWindow performClose:nil];
+  }
+  [self showEngineWindow];
 }
 
 #pragma mark - IBActions
@@ -134,6 +163,43 @@
   [self.scriptEditorController nextTab];
 }
 
+- (IBAction)openProjectClicked:(id)sender {
+  NSWindow *current = [NSApp keyWindow];
+  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+  openPanel.allowedFileTypes = @[@"dabes"];
+  [openPanel beginSheetModalForWindow:current
+      completionHandler:^(NSInteger result) {
+        if (result) {
+          [self openProjectWithPath:openPanel.URL.path];
+        }
+      }];
+}
+
+- (IBAction)closeProjectClicked:(id)sender {
+  [self closeCurrentProject];
+  [self.welcomeWindow makeKeyAndOrderFront:nil];
+}
+
+- (IBAction)newProjectClicked:(id)sender {
+  NSWindow *current = [NSApp keyWindow];
+  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+  openPanel.canChooseDirectories = YES;
+  openPanel.canCreateDirectories = YES;
+  openPanel.prompt = @"Create In This Directory";
+  [openPanel beginSheetModalForWindow:current
+      completionHandler:^(NSInteger result) {
+        if (result) {
+          NSString *created =
+              [[DABProjectManager sharedInstance] createProjectInDirectory:openPanel.URL.path];
+          if (created) {
+            [self openProjectWithPath:created];
+          } else {
+            // Error!
+          }
+        }
+      }];
+}
+
 #pragma mark - Window Delegate
 
 - (void)windowWillClose:(NSNotification *)notification {
@@ -165,6 +231,14 @@
             self.scriptEditorController.tabCount > 1);
   } else if (menuItem == self.createNewTabItem) {
     return ([NSApp keyWindow] == self.scriptEditorController.window);
+  } else if (menuItem == self.closeProjectItem) {
+    return !!self.curentProject;
+  } else if (menuItem == self.restartSceneItem) {
+    return !!self.curentProject && self.engineVC.scene;
+  } else if (menuItem == self.restartGameItem) {
+    return !!self.curentProject;
+  } else if (menuItem == self.renderModesItem) {
+    return !!self.curentProject && self.engineVC.scene;
   }
   return menuItem.action != 0;
 }

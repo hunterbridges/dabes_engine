@@ -148,7 +148,11 @@ char *bundlePath__;
 }
 
 - (void)reboot {
-  self.rebootWhenReady = YES;
+  if (self.engine) {
+    self.rebootWhenReady = YES;
+  } else {
+    [self initEngine];
+  }
 }
 
 - (void)update {

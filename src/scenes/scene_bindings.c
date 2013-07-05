@@ -242,6 +242,11 @@ int luaopen_dabes_scene(lua_State *L) {
 
 Scene *luaL_get_current_scene(lua_State *L) {
     lua_getglobal(L, "scene_manager");
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1);
+        return NULL;
+    }
+  
     lua_getfield(L, -1, "current_scene");
     if (lua_isnil(L, -1)) {
         lua_pop(L, 2);

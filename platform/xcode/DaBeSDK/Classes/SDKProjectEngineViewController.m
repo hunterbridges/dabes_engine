@@ -7,6 +7,7 @@
 //
 
 #import "SDKProjectEngineViewController.h"
+#import "SDKMacAppDelegate.h"
 
 @interface SDKProjectEngineViewController ()
 
@@ -19,7 +20,7 @@
 }
 
 - (NSString *)projectPath {
-  return @"/Users/hbridges/Coding/dabes_engine/demo/boxfall/boxfall.dabes";
+  return ((SDKMacAppDelegate *)[NSApp delegate]).curentProject;
 }
 
 @end
