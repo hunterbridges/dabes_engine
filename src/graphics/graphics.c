@@ -15,13 +15,18 @@ GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
 int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
-    glEnable(GL_TEXTURE_2D);
+    GLenum error = glGetError();
+  
     glEnable(GL_BLEND);
+    error = glGetError();
+  
 #if defined(DABES_MAC) || defined(DABES_SDL)
     glEnable(GL_MULTISAMPLE);
 #endif
     glDisable(GL_DEPTH_TEST);
-    GLenum error = glGetError();
+    error = glGetError();
+  
+    error = glGetError();
     check(error == GL_NO_ERROR, "OpenGL init error...");
     return 1;
 error:
@@ -84,17 +89,19 @@ static inline int data_potize(unsigned char **data, int width, int height,
   int pot_h = 2;
   while (pot_w < width) pot_w <<= 1;
   while (pot_h < height) pot_h <<= 1;
+  
+  int pot_d = MAX(pot_h, pot_w);
 
   unsigned char *old_data = *data;
   unsigned char *resized_data = NULL;
-  resized_data = realloc(old_data, pot_w * pot_h * sizeof(unsigned char) * 4);
+  resized_data = realloc(old_data, pot_d * pot_d * sizeof(unsigned char) * 4);
   check(resized_data != NULL, "Couldn't realloc texture for potize");
 
   *data = resized_data;
   unsigned char *new_data = resized_data;
 
-  *pot_width = pot_w;
-  *pot_height = pot_h;
+  *pot_width = pot_d;
+  *pot_height = pot_d;
 
   int last_orig_index = (width * height - 1) * 4;
   int i = 0;
@@ -102,7 +109,7 @@ static inline int data_potize(unsigned char **data, int width, int height,
     int idx = i / 4;
     int old_col = idx % width;
     int old_row = idx / width;
-    int new_index = old_row * pot_w + old_col;
+    int new_index = old_row * pot_d + old_col;
 
     new_data[new_index * 4] = new_data[i];         // R
     new_data[new_index * 4 + 1] = new_data[i + 1]; // G
@@ -129,16 +136,17 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     texture->pot_size.w = pot_width;
     texture->pot_size.h = pot_height;
 
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     GLenum color_format = GL_RGBA;
-    glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
-                 pot_height, 0, color_format,
-                 GL_UNSIGNED_BYTE, *data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
+                 pot_height, 0, color_format,
+                 GL_UNSIGNED_BYTE, *data);
     GLenum er = glGetError();
     if (er != GL_NO_ERROR) {
         printf("%d\n", GL_MAX_TEXTURE_SIZE);
@@ -234,7 +242,6 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
 #ifdef DABES_SDL
     glDisable(GL_MULTISAMPLE);
 #endif
-    glBindTexture(GL_TEXTURE_2D, 0);
     glLineWidth(line_width);
     glDrawArrays(GL_LINE_LOOP, 0, num_points);
     return;
@@ -379,9 +386,14 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
                     texture ? texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+        if (texture) {
+          glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
+        } else {
+          glBindTexture(GL_TEXTURE_2D, 0);
+        }
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
     return;
 error:

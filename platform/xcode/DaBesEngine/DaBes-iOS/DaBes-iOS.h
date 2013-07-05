@@ -74,6 +74,11 @@
 #define MAX(A, B) (A > B ? A : B)
 #endif
 
+#define countfunc() \
+  static int func_ctr = 0; \
+  func_ctr++; \
+  printf("%s called %d\n", __func__, func_ctr);
+
 #define fequal(a,b) (fabs((a) - (b)) < FLT_EPSILON)
 #define streq(A, B) (strcmp((const char *)A, (const char *)B) == 0)
 
@@ -930,6 +935,8 @@ typedef struct GfxShader {
     struct DrawBuffer *draw_buffer;
 } GfxShader;
 
+void GfxShader_destroy(GfxShader *shader, struct Graphics *graphics);
+
 ///////////
 
 typedef struct Graphics {
@@ -948,6 +955,7 @@ typedef struct Graphics {
 
     Hashmap *textures;
     Hashmap *shaders;
+    List *shader_list;
     Hashmap *sprites;
 
     int gl_vao_enabled;
@@ -1700,6 +1708,7 @@ typedef enum {
 
 typedef struct Scene {
     SceneProto proto;
+    void *context;
     char *name;
 
     GfxTexture *bg_texture; // deprecated

@@ -109,8 +109,14 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer) {
                         has_texture);
             l_has_texture = has_texture;
         }
-        glBindTexture(GL_TEXTURE_2D,
-                      buftex->texture ? buftex->texture->gl_tex : 0);
+        GLint gl_tex = 0;
+        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+        if (buftex->texture) {
+            gl_tex = buftex->texture->gl_tex;
+            glBindTexture(GL_TEXTURE_2D, gl_tex);
+        } else {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
         glBufferData(GL_ARRAY_BUFFER, num_vectors * sizeof(VVector4), vectors,
                 GL_DYNAMIC_DRAW);
         glDrawArrays(GL_TRIANGLES, 0, num_points);

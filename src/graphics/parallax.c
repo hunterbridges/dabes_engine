@@ -70,19 +70,6 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *pshader = Graphics_get_shader(graphics, "parallax");
 
-    // Make these static to fend off redundant GL state updates
-    static VMatrix proj =
-        {.gl = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    static VMatrix mvm =
-        {.gl = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    static VPoint l_cam_pos = {0, 0};
-    static int p_texture = -1;
-    static double last_final_scale = FLT_MIN;
-    static double last_repeat_width = FLT_MIN;
-    static VPoint l_pot_scale = {0, 0};
-    static double l_repeats = FLT_MIN;
-    static float l_p_factor = FLT_MIN;
-    
     Graphics_use_shader(graphics, dshader);
     double bg_scale = parallax->camera->scale;
     VPoint screen_center = {
@@ -132,26 +119,14 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     Graphics_use_shader(graphics, pshader);
     Graphics_reset_modelview_matrix(graphics);
     
-    if (!VMatrix_is_equal(proj, graphics->projection_matrix)) {
-        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_PROJECTION_MATRIX], 1,
-                           GL_FALSE, graphics->projection_matrix.gl);
-        proj = graphics->projection_matrix;
-    }
-    if (!VMatrix_is_equal(mvm, graphics->modelview_matrix)) {
-        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX], 1,
-                       GL_FALSE, graphics->modelview_matrix.gl);
-        mvm = graphics->modelview_matrix;
-    }
-    if (VPoint_rel(l_cam_pos, cam_pos) != VPointRelWithin) {
-        glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS],
-                cam_pos.x, cam_pos.y);
-        l_cam_pos = cam_pos;
-    }
-    if (p_texture == -1) {
-        glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
-        p_texture = 0;
-    }
-    
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_PROJECTION_MATRIX], 1,
+                       GL_FALSE, graphics->projection_matrix.gl);
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX], 1,
+                   GL_FALSE, graphics->modelview_matrix.gl);
+    glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS],
+            cam_pos.x, cam_pos.y);
+    glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
+  
     VPoint stretch = {
         hyp / screen_size.w,
         hyp / screen_size.h
@@ -185,40 +160,25 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
 
         double repeat_width = layer->texture->size.w * final_scale /
             parallax->camera->screen_size.w;
-        if (!fequal(repeat_width, last_repeat_width)) {
-            glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEAT_SIZE],
-                    repeat_width, 1.0);
-            last_repeat_width = repeat_width;
-        }
-        
-        if (!fequal(final_scale, last_final_scale)) {
-            glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_SCALE],
-                    final_scale);
-            last_final_scale = final_scale;
-        }
-        
+        glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEAT_SIZE],
+                repeat_width, 1.0);
+      
+        glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_SCALE],
+                final_scale);
+      
         VPoint pot_scale = {
             texture->size.w / texture->pot_size.w,
             texture->size.h / texture->pot_size.h
         };
-        if (VPoint_rel(l_pot_scale, pot_scale) != VPointRelWithin) {
-            glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION],
-                    pot_scale.x, pot_scale.y);
-            l_pot_scale = pot_scale;
-        }
-        
+        glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION],
+                pot_scale.x, pot_scale.y);
+      
         double repeats =
             parallax->level_size.w / (texture->size.w * final_scale);
-        if (!fequal(repeats, l_repeats)) {
-            glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS], repeats);
-            l_repeats = repeats;
-        }
-        
-        if (!fequal(l_p_factor, layer->p_factor)) {
-            glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR],
-                    layer->p_factor);
-            l_p_factor = layer->p_factor;
-        }
+        glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS], repeats);
+      
+        glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR],
+                layer->p_factor);
 
         VVector4 vertices[8] = {
           // Vertex
@@ -233,8 +193,8 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(VVector4), vertices,
                 GL_STATIC_DRAW);
 
+        glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
         glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

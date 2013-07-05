@@ -104,16 +104,30 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
     return 1;
 }
 
-void ChipmunkBody_cleanup(Body *body) {
-    if (body->cp_space) {
-        cpSpaceRemoveShape(body->cp_space, body->cp_shape);
+void body_clear_shapes(cpBody *cpBody, cpShape *shape, void *data) {
+    Body *body = data;
+    if (shape->space_private) {
+      cpSpaceRemoveShape(shape->space_private, shape);
+    }
+    cpShapeSetBody(shape, NULL);
+    cpShapeFree(shape);
+    if (shape == body->cp_shape) body->cp_shape = NULL;
+}
 
+void ChipmunkBody_cleanup(Body *body) {
+    cpBodyEachShape(body->cp_body, body_clear_shapes, body);
+  
+    if (body->cp_shape) {
+        cpShapeSetBody(body->cp_shape, NULL);
+        cpShapeFree(body->cp_shape);
+        body->cp_shape= NULL;
+    }
+  
+    if (body->cp_space) {
         if (!body->is_rogue)
             cpSpaceRemoveBody(body->cp_space, body->cp_body);
     }
 
-    cpShapeSetBody(body->cp_shape, NULL);
-    cpShapeFree(body->cp_shape);
     cpBodyFree(body->cp_body);
 }
 

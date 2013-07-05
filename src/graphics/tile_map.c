@@ -176,11 +176,6 @@ error:
 void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
     if (map == NULL) return;
 
-    static VMatrix proj =
-        {.gl = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    static VMatrix mvm =
-        {.gl = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    
     float pixels_per_tile = map->meters_per_tile * pixels_per_meter;
     VRect rect = VRect_from_xywh(0, 0,
                                  map->cols * pixels_per_tile,
@@ -194,16 +189,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
     };
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
     
-    if (!VMatrix_is_equal(proj, graphics->projection_matrix)) {
-        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX], 1,
-                           GL_FALSE, graphics->projection_matrix.gl);
-        proj = graphics->projection_matrix;
-    }
-    if (!VMatrix_is_equal(mvm, graphics->modelview_matrix)) {
-        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX], 1,
-                       GL_FALSE, graphics->modelview_matrix.gl);
-        mvm = graphics->modelview_matrix;
-    }
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX], 1,
+                       GL_FALSE, graphics->projection_matrix.gl);
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX], 1,
+                   GL_FALSE, graphics->modelview_matrix.gl);
     
     int layer_idx = 0;
     for (layer_idx = 0; layer_idx < map->layers->end;
@@ -217,11 +206,12 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       VVector4 tex_tr = {.raw = {1,0,0,0}};
       VVector4 tex_bl = {.raw = {0,1,0,0}};
       VVector4 tex_br = {.raw = {1,1,0,0}};
+      glActiveTexture(GL_TEXTURE0);
+      glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS], 0);
       if (layer->atlas) {
           glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS],
                       layer->atlas->pot_size.w, layer->atlas->pot_size.h);
 
-          glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS], 0);
           glBindTexture(GL_TEXTURE_2D, layer->atlas->gl_tex);
 
           VPoint pot_scale = {
@@ -263,13 +253,11 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
                   1, 1);
       }
 
+      glActiveTexture(GL_TEXTURE1);
+      glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_TILESET], 1);
       if (layer->tileset && layer->tileset->texture) {
-          glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_TILESET], 1);
-          glActiveTexture(GL_TEXTURE1);
           glBindTexture(GL_TEXTURE_2D, layer->tileset->texture->gl_tex);
       } else {
-          glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_TILESET], 1);
-          glActiveTexture(GL_TEXTURE1);
           glBindTexture(GL_TEXTURE_2D, 0);
       }
 
@@ -287,9 +275,6 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       glBufferData(GL_ARRAY_BUFFER, v_size, vertices, GL_STATIC_DRAW);
 
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-      glBindTexture(GL_TEXTURE_2D, 0);
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

@@ -37,6 +37,7 @@ typedef enum {
 
 typedef struct Scene {
     SceneProto proto;
+    void *context;
     char *name;
 
     GfxTexture *bg_texture; // deprecated

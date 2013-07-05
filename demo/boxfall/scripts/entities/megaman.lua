@@ -4,6 +4,7 @@ require 'dabes.body'
 require 'dabes.sensor'
 require 'dabes.sfx'
 require 'dabes.sprite'
+require 'debug'
 inspect = require 'lib.inspect'
 
 Megaman = Entity:extend({

@@ -10,6 +10,11 @@
 #include "../entities/entity.h"
 #include "scene.h"
 
+typedef struct OrthoChipmunkSceneCtx {
+    List *tile_shapes;
+    cpSpace *space;
+} OrthoChipmunkSceneCtx;
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
 
@@ -18,6 +23,10 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->world == NULL);
     assert(scene->entities == NULL);
     scene->entities = DArray_create(sizeof(Entity *), 8);
+  
+    OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
+    scene->context = context;
+    context->tile_shapes = List_create();
 
     Scripting_call_hook(engine->scripting, scene, "configure");
 
@@ -31,6 +40,16 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
     Scripting_call_hook(engine->scripting, scene, "cleanup");
 
+    OrthoChipmunkSceneCtx *context = scene->context;
+    LIST_FOREACH(context->tile_shapes, first, next, current) {
+        cpShape *shape = current->value;
+        cpSpaceRemoveShape(context->space, shape);
+        cpShapeFree(shape);
+    }
+    List_destroy(context->tile_shapes);
+    free(context);
+    scene->context = NULL;
+  
     DArray_destroy(scene->entities);
     scene->entities = NULL;
 
@@ -339,6 +358,9 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(engine);
 
     scene->space = cpSpaceNew();
+    OrthoChipmunkSceneCtx *context = scene->context;
+    context->space = scene->space;
+  
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
     scene->space->collisionSlop = 0.0;
@@ -384,6 +406,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
             cpShapeSetFriction(tile_shape, 0.5);
             tile_shape->collision_type = OCSCollisionTypeTile;
             cpSpaceAddStaticShape(scene->space, tile_shape);
+            List_push(context->tile_shapes, tile_shape);
         }
     }
 

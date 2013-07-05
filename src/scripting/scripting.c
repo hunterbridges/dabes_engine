@@ -154,8 +154,11 @@ int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname) {
     result = lua_pcall(L, 1, 0, 0);
     if (result != 0) {
         const char *error = lua_tostring(L, -1);
-        debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
-        if (scripting->error_callback) scripting->error_callback(error);
+        if (scripting->error_callback) {
+            scripting->error_callback(error);
+        } else {
+            debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
+        }
         lua_pop(L, 1);
         return 0;
     }
@@ -180,8 +183,11 @@ void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
     result = lua_pcall(L, 1, 0, 1);
     if (result != 0) {
         const char *error = lua_tostring(L, -1);
-        debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
-        if (scripting->error_callback) scripting->error_callback(error);
+        if (scripting->error_callback) {
+            scripting->error_callback(error);
+        } else {
+            debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
+        }
         lua_pop(L, 1);
         return 0;
     }
