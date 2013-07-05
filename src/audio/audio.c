@@ -105,7 +105,7 @@ void Audio_destroy(Audio *audio) {
     }}
     List_destroy(audio->active_sfx);
 
-#ifdef DABES_IOS
+#if defined(DABES_IOS) || defined(DABES_MAC)
     alcSuspendContext(audio->context);
     alcMakeContextCurrent(NULL);
 #endif

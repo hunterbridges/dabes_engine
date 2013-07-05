@@ -182,8 +182,8 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
         xmlFree(attrName);
         xmlFree(attrVal);
       }
-      xmlFree(childName);
     }
+    xmlFree(childName);
   }
 
   *out_tileset = tileset;

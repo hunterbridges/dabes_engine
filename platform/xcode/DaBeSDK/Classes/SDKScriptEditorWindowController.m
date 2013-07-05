@@ -43,13 +43,32 @@
   self.tabView.delegate = (id<NSTabViewDelegate>)self.tab;
   
   [self addNewTab:self withPath:nil];
+  
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+      selector:@selector(handleScriptError:)
+      name:kEngineHasScriptErrorNotification
+      object:nil];
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+      selector:@selector(handleScriptPanic:)
+      name:kEngineHasScriptPanicNotification
+      object:nil];
+}
+
+- (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (IBAction)addNewTab:(id)sender {
   [self addNewTab:sender withPath:nil];
 }
 
-- (void)addNewTab:(id)sender withPath:(NSString *)path {
+- (NSTabViewItem *)addNewTab:(id)sender withPath:(NSString *)path {
+  return [self addNewTab:sender withPath:path andSelect:YES];
+}
+
+- (NSTabViewItem *)addNewTab:(id)sender withPath:(NSString *)path andSelect:(BOOL)select {
 	SDKScriptTabModel *newModel = [[SDKScriptTabModel alloc] init];
 	NSTabViewItem *newItem = [(NSTabViewItem *)[NSTabViewItem alloc] initWithIdentifier:newModel];
   NSString *label = path ? [path lastPathComponent] : @"Untitled";
@@ -60,15 +79,18 @@
   newModel.scriptEditor.scriptManager = self;
   newModel.scriptEditor.tabModel = newModel;
 	[self.tabView addTabViewItem:newItem];
-	[self.tabView selectTabViewItem:newItem]; // this is optional, but expected behavior
+  if (select) {
+    [self.tabView selectTabViewItem:newItem]; // this is optional, but expected behavior
+  }
+  return newItem;
 }
 
-- (void)openPath:(NSString *)path {
+- (NSTabViewItem *)openPath:(NSString *)path andSelect:(BOOL)select {
   for (NSTabViewItem *tabItem in self.tabView.tabViewItems) {
     SDKScriptTabModel *tabModel = tabItem.identifier;
     if ([tabModel.scriptEditor.path isEqualToString:path]) {
-      [self.tabView selectTabViewItem:tabItem];
-      return;
+      if (select) [self.tabView selectTabViewItem:tabItem];
+      return tabItem;
     }
     
     if (tabModel.isBlank && !tabModel.isEdited) {
@@ -76,12 +98,14 @@
       tabModel.isBlank = NO;
       NSString *label = path ? [path lastPathComponent] : @"Untitled";
       [tabItem setLabel:label];
-      [self.tabView selectTabViewItem:tabItem];
-      return;
+      if (select) {
+        [self.tabView selectTabViewItem:tabItem];
+      }
+      return tabItem;
     }
   }
   
-  [self addNewTab:self withPath:path];
+  return [self addNewTab:self withPath:path andSelect:select];
 }
 
 - (void)windowDidLoad
@@ -201,6 +225,32 @@
           }
         }];
   });
+}
+
+#pragma mark - Notif Handlers
+
+- (void)handleScriptError:(NSNotification *)notif {
+    NSString *string = notif.object;
+    NSString *filename = nil;
+    NSString *errMsg = nil;
+    NSNumber *errorLine = [SDKScriptEditorView extractErrorLine:string
+                                                       filename:&filename
+                                                        message:&errMsg];
+    SDKScriptTabModel *tabModel = nil;
+    if ([[filename substringToIndex:1] isEqualToString:@"["]) {
+        // Injected script
+        NSTabViewItem *item = [self.tabView selectedTabViewItem];
+        tabModel = item.identifier;
+    } else {
+        NSTabViewItem *item = [self openPath:filename andSelect:NO];
+        tabModel = item.identifier;
+    }
+    [tabModel.scriptEditor setErrorLine:errorLine withMessage:errMsg];
+}
+
+- (void)handleScriptPanic:(NSNotification *)notif {
+    NSString *string = notif.object;
+    NSLog(@"Script panic -- %@", string);
 }
 
 #pragma mark - Window Delegate
@@ -330,7 +380,7 @@
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
   if ([item numberOfChildren] == -1) {
-    [self openPath:[item fullPath]];
+    [self openPath:[item fullPath] andSelect:YES];
   }
   return YES;
 }

@@ -21,5 +21,9 @@
 
 - (id)initWithPath:(NSString *)path;
 - (void)reinject;
-
++ (NSNumber *)extractErrorLine:(NSString *)string
+                      filename:(NSString **)filename
+                       message:(NSString **)message;
+- (void)setErrorLine:(NSNumber *)errorLine withMessage:(NSString *)message;
+  
 @end

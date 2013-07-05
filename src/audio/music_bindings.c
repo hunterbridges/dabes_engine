@@ -27,7 +27,6 @@ int luab_Music_new(lua_State *L) {
 
     Music *music = Audio_gen_music(engine->audio, c, files);
   
-    i = 0;
     for (i = 0; i < c; i++) {
         free(files[i]);
     }

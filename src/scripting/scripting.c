@@ -37,6 +37,15 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_sprite(scripting->L);
 }
 
+int Scripting_handle_panic(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+    if (engine && engine->scripting->panic_callback) {
+        const char *error = lua_tostring(L, -1);
+        engine->scripting->panic_callback(error);
+    }
+    return 0;
+}
+
 Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting *scripting = malloc(sizeof(Scripting));
     check(scripting != NULL, "Could not create scripting");
@@ -49,6 +58,8 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting_load_engine_libs(scripting);
 
     Scripting_update_paths(scripting, engine);
+  
+    lua_atpanic(L, Scripting_handle_panic);
   
     // The pointer map is keyed by C object pointers and contains
     // userdata objects.
@@ -118,7 +129,10 @@ void Scripting_boot(Scripting *scripting) {
     lua_getglobal(L, "boot");
     int result = lua_pcall(L, 0, 0, 0);
     if (result != 0) {
-        debug("Error running boot():\n    %s", lua_tostring(L, -1));
+        const char *error = lua_tostring(L, -1);
+        debug("Error running boot():\n    %s", error);
+        if (scripting->error_callback) scripting->error_callback(error);
+        lua_pop(L, 1);
     }
 }
 
@@ -131,10 +145,18 @@ int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname) {
     if (!result) return 0;
 
     lua_getfield(L, -1, fname);
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 2);
+        return 0;
+    }
+  
     lua_pushvalue(L, -2);
     result = lua_pcall(L, 1, 0, 0);
     if (result != 0) {
+        const char *error = lua_tostring(L, -1);
         debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
+        if (scripting->error_callback) scripting->error_callback(error);
+        lua_pop(L, 1);
         return 0;
     }
     lua_pop(L, 1);
@@ -157,8 +179,11 @@ void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
     lua_pushvalue(L, -2);
     result = lua_pcall(L, 1, 0, 1);
     if (result != 0) {
+        const char *error = lua_tostring(L, -1);
         debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
-        return NULL;
+        if (scripting->error_callback) scripting->error_callback(error);
+        lua_pop(L, 1);
+        return 0;
     }
     void *ret = lua_touserdata(L, -1);
     lua_pop(L, 2);

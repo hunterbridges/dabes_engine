@@ -56,7 +56,8 @@
 }
 
 - (void)handleNewScene:(NSNotification *)notification {
-  [self setSceneRenderMode:self.engineVC.scene->render_mode];
+  if (self.engineVC.scene)
+    [self setSceneRenderMode:self.engineVC.scene->render_mode];
 }
 
 - (void)setSceneRenderMode:(SceneRenderMode)renderMode {
@@ -89,6 +90,10 @@
 
 - (IBAction)restartSceneItemClicked:(id)sender {
   [self.engineVC restartCurrentScene];
+}
+
+- (IBAction)restartGameClicked:(id)sender {
+  [self.engineVC reboot];
 }
 
 - (IBAction)renderNormalItemClicked:(id)sender {

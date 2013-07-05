@@ -1,3 +1,4 @@
+#import <setjmp.h>
 #import <DaBes-Mac/DaBes-Mac.h>
 #import "DABMacEngineViewController.h"
 #import "DABMacEngineView.h"
@@ -8,6 +9,26 @@ NSString *kNewSceneNotification =  @"kNewSceneNotification";
 NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
+NSString *kEngineHasScriptErrorNotification =
+    @"kEngineHasScriptErrorNotification";
+NSString *kEngineHasScriptPanicNotification =
+    @"kEngineHasScriptPanicNotification";
+
+void Mac_script_error_cb(const char *error) {
+  NSString *str =
+      [[NSString alloc] initWithCString:error encoding:NSUTF8StringEncoding];
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:kEngineHasScriptErrorNotification object:str];
+}
+
+static jmp_buf panic_jmp_buf;
+void Mac_script_panic_cb(const char *error) {
+  NSString *str =
+      [[NSString alloc] initWithCString:error encoding:NSUTF8StringEncoding];
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:kEngineHasScriptPanicNotification object:str];
+  longjmp(panic_jmp_buf, 1);
+}
 
 char *Mac_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
@@ -37,10 +58,17 @@ char *Mac_resource_path(const char *filename) {
   return cpy;
 }
 
+void Mac_handle_abort_trap(int err) {
+    NSLog(@"Should never hit this... ABORT TRAP!");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 @interface DABMacEngineViewController ()
 
 @property (nonatomic, strong) NSTimer *updateTimer;
 @property (nonatomic, assign) BOOL needsRestart;
+@property (nonatomic, assign) BOOL rebootWhenReady;
 
 @end
 
@@ -104,34 +132,62 @@ char *bundlePath__;
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
   
   self.engine = Engine_create(Mac_resource_path, DABProjectManager_path_func, cBootScript, NULL);
+  
+  self.engine->scripting->error_callback = Mac_script_error_cb;
+  self.engine->scripting->panic_callback = Mac_script_panic_cb;
   Scripting_boot(self.engine->scripting);
+  
   ((DABMacEngineView *)self.view).engine = self.engine;
   [self refreshScene];
+}
+
+- (void)tearDown {
+  if (!self.engine) return;
+  Engine_destroy(self.engine);
+  self.engine = nil;
+}
+
+- (void)reboot {
+  self.rebootWhenReady = YES;
 }
 
 - (void)update {
   if (!self.engine) return;
   
-  Engine_regulate(self.engine);
-  Input_touch(self.engine->input, self.touchInput);
-  Audio_stream(self.engine->audio);
-  
-  if (self.engine->frame_now) {
-    Engine_update_easers(self.engine);
-    Scene *scene = self.scene;
-    if (scene) Scene_update(scene, self.engine);
-    [self draw];
-    Input_reset(self.engine->input);
+  if (!setjmp(panic_jmp_buf)) {
+    Engine_regulate(self.engine);
+    Input_touch(self.engine->input, self.touchInput);
+    Audio_stream(self.engine->audio);
     
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:kEngineReadyForScriptNotification
-        object:self];
+    if (self.engine->frame_now) {
+      Engine_update_easers(self.engine);
+      Scene *scene = self.scene;
+      
+      if (scene) Scene_update(scene, self.engine);
+      
+      [self draw];
+      Input_reset(self.engine->input);
+      
+      [[NSNotificationCenter defaultCenter]
+          postNotificationName:kEngineReadyForScriptNotification
+          object:self];
+      
+      Engine_frame_end(self.engine);
+      [self refreshScene];
+      [[NSNotificationCenter defaultCenter]
+          postNotificationName:kFrameEndNotification
+          object:self];
+    }
     
-    Engine_frame_end(self.engine);
-    [self refreshScene];
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:kFrameEndNotification
-        object:self];
+    if (self.rebootWhenReady) {
+      self.rebootWhenReady = NO;
+      [self tearDown];
+      [self initEngine];
+    }
+  } else {
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      [self tearDown];
+      NSLog(@"Crashed.");
   }
 }
 

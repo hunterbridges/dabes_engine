@@ -112,8 +112,9 @@ void ChipmunkBody_cleanup(Body *body) {
             cpSpaceRemoveBody(body->cp_space, body->cp_body);
     }
 
-    cpShapeDestroy(body->cp_shape);
-    cpBodyDestroy(body->cp_body);
+    cpShapeSetBody(body->cp_shape, NULL);
+    cpShapeFree(body->cp_shape);
+    cpBodyFree(body->cp_body);
 }
 
 VRect ChipmunkBody_gfx_rect(Body *body, float pixels_per_meter, int rotate) {
@@ -160,6 +161,8 @@ void ChipmunkBody_remove_sensor(Body *UNUSED(body), Sensor *sensor) {
     }
 
     cpShapeSetBody(sensor->cp_shape, NULL);
+    cpShapeFree(sensor->cp_shape);
+    sensor->cp_shape = NULL;
     sensor->body = NULL;
     sensor->cp_space = NULL;
 }
@@ -172,8 +175,11 @@ void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset) {
     if (body->cp_space) {
         if (body->cp_shape) {
             cpSpaceRemoveShape(body->cp_space, body->cp_shape);
-            cpShapeDestroy(body->cp_shape);
         }
+    }
+  
+    if (body->cp_shape) {
+        cpShapeFree(body->cp_shape);
     }
 
     cpBody *cp_body = body->cp_body;

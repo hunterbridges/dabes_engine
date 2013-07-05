@@ -89,6 +89,8 @@ typedef struct GfxShader {
     struct DrawBuffer *draw_buffer;
 } GfxShader;
 
+void GfxShader_destroy(GfxShader *shader, struct Graphics *graphics);
+
 ///////////
 
 typedef struct Graphics {
@@ -107,6 +109,7 @@ typedef struct Graphics {
 
     Hashmap *textures;
     Hashmap *shaders;
+    List *shader_list;
     Hashmap *sprites;
 
     int gl_vao_enabled;

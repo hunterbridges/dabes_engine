@@ -6,6 +6,8 @@ extern NSString *kFrameEndNotification;
 extern NSString *kNewSceneNotification;
 extern NSString *kEntitySelectedNotification;
 extern NSString *kEngineReadyForScriptNotification;
+extern NSString *kEngineHasScriptErrorNotification;
+extern NSString *kEngineHasScriptPanicNotification;
 
 @interface DABMacEngineViewController : NSViewController
 
@@ -16,5 +18,8 @@ extern NSString *kEngineReadyForScriptNotification;
 @property (nonatomic, copy, readonly) NSString *projectPath;
 
 - (void)restartCurrentScene;
-
+- (void)initEngine;
+- (void)reboot;
+- (void)tearDown;
+  
 @end

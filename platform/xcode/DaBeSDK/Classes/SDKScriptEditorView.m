@@ -16,6 +16,8 @@
 
 @property (nonatomic, strong) NSString *queuedScript;
 @property (nonatomic, strong) MGSFragaria *fragaria;
+@property (nonatomic, copy) NSNumber *errorLine;
+@property (nonatomic, copy) NSString *errorMessage;
 
 @end
 
@@ -46,9 +48,13 @@
 - (void)setPath:(NSString *)path {
   _path = [path copy];
   if (path) {
+    NSError *error = nil;
     NSString *script = [NSString stringWithContentsOfFile:path
                                                  encoding:NSUTF8StringEncoding
-                                                    error:nil];
+                                                    error:&error];
+    if (error) {
+      return;
+    }
     self.fragaria.string = script;
   }
 }
@@ -71,14 +77,16 @@
   self.tabModel.isEdited = YES;
 }
 
-- (NSNumber *)extractErrorLine:(const char *)luaError
++ (NSNumber *)extractErrorLine:(NSString *)string
+                      filename:(NSString **)filename
                        message:(NSString **)message {
-  NSString *string = [[NSString alloc] initWithCString:luaError
-                                              encoding:NSUTF8StringEncoding];
   NSCharacterSet *numberSet =
       [NSCharacterSet characterSetWithCharactersInString:@"1234567890"];
   NSScanner *scanner = [NSScanner scannerWithString:string];
-  [scanner scanUpToString:@":" intoString:nil];
+  
+  NSString *fn = nil;
+  [scanner scanUpToString:@":" intoString:&fn];
+  if (filename != NULL) *filename = fn;
   
   scanner.scanLocation += 1;
   NSString *lineNumber = nil;
@@ -103,8 +111,11 @@
                               newScript);
   if (error != 0) {
     NSString *errMsg = nil;
-    NSNumber *errorLine = [self extractErrorLine:lua_tostring(L, -1)
-                                         message:&errMsg];
+    NSString *string = [[NSString alloc] initWithCString:lua_tostring(L, -1)
+                                                encoding:NSUTF8StringEncoding];
+    NSNumber *errorLine = [SDKScriptEditorView extractErrorLine:string
+                                                       filename:NULL
+                                                        message:&errMsg];
     [self setErrorLine:errorLine withMessage:errMsg];
     //NSLog(@"Error running script:\n    %@\n", errMsg);
     lua_pop(L, 1);
@@ -114,8 +125,11 @@
   int result = lua_pcall(L, 0, 0, 0);
   if (result != 0) {
     NSString *errMsg = nil;
-    NSNumber *errorLine = [self extractErrorLine:lua_tostring(L, -1)
-                                         message:&errMsg];
+    NSString *string = [[NSString alloc] initWithCString:lua_tostring(L, -1)
+                                                encoding:NSUTF8StringEncoding];
+    NSNumber *errorLine = [SDKScriptEditorView extractErrorLine:string
+                                                       filename:NULL
+                                                        message:&errMsg];
     [self setErrorLine:errorLine withMessage:errMsg];
     //NSLog(@"Error running script:\n    %@\n", errMsg);
     lua_pop(L, 1);
@@ -126,16 +140,22 @@
 }
 
 - (void)setErrorLine:(NSNumber *)errorLine withMessage:(NSString *)message {
+  if ([errorLine isEqual:self.errorLine] &&
+      [message isEqualToString:self.errorMessage]) return;
   if (errorLine) {
     SMLSyntaxError *syntaxError = [[SMLSyntaxError alloc] init];
     syntaxError.description = message;
     syntaxError.line = [errorLine intValue] + 1;
     
     self.fragaria.syntaxErrors = @[syntaxError];
+    self.tabModel.objectCount = 1;
   } else {
     self.fragaria.syntaxErrors = nil;
+    self.tabModel.objectCount = 0;
   }
   
+  self.errorLine = errorLine;
+  self.errorMessage = message;
 }
 
 - (NSString *)string {

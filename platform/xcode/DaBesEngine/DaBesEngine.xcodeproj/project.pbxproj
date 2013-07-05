@@ -1454,6 +1454,11 @@
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBes-iOS/DaBes-iOS-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"DABES_IOS=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
@@ -1540,6 +1545,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBes-Mac/DaBes-Mac-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "DABES_MAC=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../../../include/**",

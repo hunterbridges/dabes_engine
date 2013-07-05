@@ -172,6 +172,22 @@ void GfxTexture_destroy(GfxTexture *texture) {
   free(texture);
 }
 
+void GfxShader_destroy(GfxShader *shader, Graphics *graphics) {
+  check(shader != NULL, "No shader to destroy");
+  
+  graphics->del_vao(1, &shader->gl_vertex_array);
+  glDeleteProgram(shader->gl_program);
+  if (shader->draw_buffer) {
+      DrawBuffer_destroy(shader->draw_buffer);
+  }
+  
+  free(shader);
+  
+  return;
+error:
+  return;
+}
+
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation) {
     Graphics_reset_modelview_matrix(graphics);
@@ -523,7 +539,8 @@ void Graphics_build_decal_shader(Graphics *graphics) {
         shader_path("decal.frag"), &shader->gl_program);
     check(rc == 1, "Could not build decal shader");
     Hashmap_set(graphics->shaders, bfromcstr("decal"), shader);
-
+    List_push(graphics->shader_list, shader);
+  
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE] =
         glGetUniformLocation(program, "hasTexture");
@@ -583,7 +600,8 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
         shader_path("tilemap.frag"), &shader->gl_program);
     check(rc == 1, "Could not build tilemap shader");
     Hashmap_set(graphics->shaders, bfromcstr("tilemap"), shader);
-
+    List_push(graphics->shader_list, shader);
+  
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX] =
         glGetUniformLocation(program, "modelView");
@@ -649,6 +667,7 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
         shader_path("parallax.frag"), &shader->gl_program);
     check(rc == 1, "Could not build parallax shader");
     Hashmap_set(graphics->shaders, bfromcstr("parallax"), shader);
+    List_push(graphics->shader_list, shader);
 
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX] =
@@ -704,6 +723,7 @@ Graphics *Graphics_create(Engine *engine) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     graphics->current_shader = NULL;
     graphics->shaders = Hashmap_create(NULL, NULL);
+    graphics->shader_list = List_create();
 
     graphics->gl_vao_enabled = 0;
 #ifdef DABES_IOS
@@ -746,13 +766,26 @@ error:
     return NULL;
 }
 
+void nulldestroy(void *obj) { }
+
 void Graphics_destroy(Graphics *graphics) {
 #ifdef DABES_SDL
     TTF_CloseFont(graphics->debug_text_font);
 #endif
+  
+    Hashmap_destroy(graphics->shaders, nulldestroy);
+    LIST_FOREACH(graphics->shader_list, first, next, current) {
+        GfxShader *shader = current->value;
+        GfxShader_destroy(shader, graphics);
+    }
+    List_destroy(graphics->shader_list);
 
     Hashmap_destroy(graphics->textures,
                     (Hashmap_destroy_func)GfxTexture_destroy);
+  
+    Hashmap_destroy(graphics->sprites,
+                    (Hashmap_destroy_func)Sprite_destroy);
+  
     GLuint textures[] = {graphics->debug_text_texture};
     glDeleteTextures(1, textures);
     free(graphics);
@@ -799,6 +832,11 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
     check(linked == 1, "Linking shader program");
 
+    glDetachShader(program, vertex_shader);
+    glDetachShader(program, fragment_shader);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+  
     //if(strcmp(vert_name, shader_path("decal.vert")) == 0) return 1;
     *compiled_program = program;
     return 1;

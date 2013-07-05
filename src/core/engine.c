@@ -69,6 +69,8 @@ error:
 void Engine_destroy(Engine *engine) {
     check(engine != NULL, "No engine to destroy");
 
+    List_clear_destroy(engine->easers);
+  
     // Scripting has to go first, as it
     // manages all the objects that leverage other things.
     Scripting_destroy(engine->scripting);
@@ -175,12 +177,20 @@ Easer *Engine_gen_easer(Engine *engine, int length_ms, Easer_curve curve) {
 }
 
 void Engine_update_easers(Engine *engine) {
-    LIST_FOREACH(engine->easers, first, next, current) {
-        Easer *easer = current->value;
-        Easer_update(easer, engine, engine->frame_ticks);
+    ListNode *node = engine->easers->first;
+    while (node != NULL) {
+        Easer *easer = node->value;
+
         if (easer->finished) {
-            List_remove(engine->easers, current);
+            ListNode *old = node;
+            node = node->next;
+            List_remove(engine->easers, old);
+            Easer_destroy(easer);
+            continue;
         }
+
+        Easer_update(easer, engine, engine->frame_ticks);
+        node = node->next;
     }
 }
 
@@ -201,7 +211,7 @@ int Engine_load_resource(Engine *engine, char *filename, unsigned char **out,
     unsigned int sz = (unsigned int)ftell(file);
     rewind(file);
 
-    output = malloc(sz * sizeof(char));
+    output = malloc(sz * sizeof(unsigned char));
     check_mem(output);
 
     fread(output, 1, sz, file);

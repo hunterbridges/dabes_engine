@@ -76,8 +76,10 @@ void TileMapLayer_dump_raw_atlas(TileMapLayer *layer) {
 
 void TileMapLayer_destroy(TileMapLayer *layer) {
   check(layer != NULL, "No layer to destroy");
+  if (layer->raw_atlas) free(layer->raw_atlas);
   if (layer->atlas) GfxTexture_destroy(layer->atlas);
   if (layer->tile_gids != NULL) free(layer->tile_gids);
+  free(layer->name);
   free(layer);
   return;
 error:
@@ -86,6 +88,7 @@ error:
 
 void Tileset_destroy(Tileset *tileset) {
   if (tileset->name != NULL) free(tileset->name);
+  free(tileset->img_src);
   free(tileset);
 }
 

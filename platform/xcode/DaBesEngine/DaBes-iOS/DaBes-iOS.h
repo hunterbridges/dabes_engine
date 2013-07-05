@@ -526,8 +526,12 @@ extern const char *SCRIPTING_CL_PARALLAX;
 extern const char *SCRIPTING_CL_PARALLAX_LAYER;
 extern const char *SCRIPTING_ENGINE_REGISTRY_KEY;
 
+typedef void (*Scripting_error_cb)(const char *error);
+
 typedef struct Scripting {
     lua_State *L;
+    Scripting_error_cb error_callback;
+    Scripting_error_cb panic_callback;
 } Scripting;
 
 struct Engine;

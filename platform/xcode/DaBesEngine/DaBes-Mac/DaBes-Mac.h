@@ -526,8 +526,12 @@ extern const char *SCRIPTING_CL_PARALLAX;
 extern const char *SCRIPTING_CL_PARALLAX_LAYER;
 extern const char *SCRIPTING_ENGINE_REGISTRY_KEY;
 
+typedef void (*Scripting_error_cb)(const char *error);
+
 typedef struct Scripting {
     lua_State *L;
+    Scripting_error_cb error_callback;
+    Scripting_error_cb panic_callback;
 } Scripting;
 
 struct Engine;
@@ -926,6 +930,8 @@ typedef struct GfxShader {
     struct DrawBuffer *draw_buffer;
 } GfxShader;
 
+void GfxShader_destroy(GfxShader *shader, struct Graphics *graphics);
+
 ///////////
 
 typedef struct Graphics {
@@ -944,6 +950,7 @@ typedef struct Graphics {
 
     Hashmap *textures;
     Hashmap *shaders;
+    List *shader_list;
     Hashmap *sprites;
 
     int gl_vao_enabled;

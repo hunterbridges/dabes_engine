@@ -17,6 +17,11 @@ setmetatable(_G, _injector)
 _injector.__index = _veil
 
 rawset(_injector, "__newindex", function(table, key, val)
+    if val == nil then
+        table._veil[key] = nil
+        return
+    end
+
     local exists = table._veil[key]
     if _globalkeys[val] == nil then
         if (exists ~= nil and type(exists) == "table" and exists._isobject
