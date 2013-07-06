@@ -1,0 +1,14 @@
+//
+// Prefix header for all source files of the 'DaBeSDK' target in the 'DaBeSDK' project
+//
+
+#define __ASSERTMACROS__
+#define OV_EXCLUDE_STATIC_CALLBACKS
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+
+#ifdef __OBJC__
+  #import <Cocoa/Cocoa.h>
+#endif
+
+#import <OpenGL/gl.h>
+#import <CoreGraphics/CoreGraphics.h>

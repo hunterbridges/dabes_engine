@@ -25,11 +25,11 @@ void Audio_stream(Audio *audio);
 void Audio_destroy(Audio *audio);
 
 struct Music;
-struct Music *Audio_gen_music(Audio *audio, int num_files, const char *files[]);
+struct Music *Audio_gen_music(Audio *audio, int num_files, char *files[]);
 void Audio_destroy_music(Audio *audio, struct Music *music);
 
 struct Sfx;
-struct Sfx *Audio_gen_sfx(Audio *audio, const char *filename);
+struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 #endif

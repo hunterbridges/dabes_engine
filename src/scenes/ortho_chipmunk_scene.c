@@ -10,6 +10,11 @@
 #include "../entities/entity.h"
 #include "scene.h"
 
+typedef struct OrthoChipmunkSceneCtx {
+    List *tile_shapes;
+    cpSpace *space;
+} OrthoChipmunkSceneCtx;
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
 
@@ -18,6 +23,10 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->world == NULL);
     assert(scene->entities == NULL);
     scene->entities = DArray_create(sizeof(Entity *), 8);
+  
+    OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
+    scene->context = context;
+    context->tile_shapes = List_create();
 
     Scripting_call_hook(engine->scripting, scene, "configure");
 
@@ -31,6 +40,16 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
     Scripting_call_hook(engine->scripting, scene, "cleanup");
 
+    OrthoChipmunkSceneCtx *context = scene->context;
+    LIST_FOREACH(context->tile_shapes, first, next, current) {
+        cpShape *shape = current->value;
+        cpSpaceRemoveShape(context->space, shape);
+        cpShapeFree(shape);
+    }
+    List_destroy(context->tile_shapes);
+    free(context);
+    scene->context = NULL;
+  
     DArray_destroy(scene->entities);
     scene->entities = NULL;
 
@@ -50,28 +69,18 @@ error:
 }
 
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
-    if (scene->started == 0) return;
-    OrthoChipmunkScene_control(scene, engine);
-
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
         Scripting_call_hook(engine->scripting, entity, "presolve");
     }
 
-    int phys_ticks = engine->frame_ticks < 100 ? engine->frame_ticks : 100;
+    int phys_ticks = (int)(engine->frame_ticks < 100 ? engine->frame_ticks : 100);
     Stepper_update(engine->physics->stepper, phys_ticks);
 
     while (Stepper_pop(engine->physics->stepper)) {
       cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
     }
-
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        Entity_update(entity, engine);
-    }
-
-    Camera_track(scene->camera);
 }
 
 static void render_shape_iter(cpShape *shape, void *data) {
@@ -167,6 +176,19 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
     ////////////////////////////////////////////////////////////////////////
 
+    if (scene->selection_mode != kSceneNotSelecting) {
+        int i = 0;
+        for (i = 0; i < DArray_count(scene->entities); i++) {
+            Entity *entity = DArray_get(scene->entities, i);
+            VRect entity_rect = Entity_real_rect(entity);
+            GLfloat color[4] = {1, 1, 1, 0.5};
+            if (entity->selected) color[3] = 1.0;
+            Graphics_stroke_rect(graphics, entity_rect, color, 2, 0);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+
     if (scene->cover_color.rgba.a > 0.0) {
         Graphics_use_shader(graphics, dshader);
         Camera screen_cam = {
@@ -204,15 +226,6 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     Input *input = engine->input;
-    if (input->cam_reset) {
-        Scene_reset_camera(scene, engine);
-    }
-    scene->camera->scale += 0.02 * input->cam_zoom;
-    if (scene->camera->scale < 0) scene->camera->scale = 0;
-
-    scene->camera->rotation_radians += 2 * input->cam_rotate * M_PI / 180;
-
-    if (input->cam_debug) scene->debug_camera = !(scene->debug_camera);
     if (input->phys_render) {
         scene->render_mode =
             (scene->render_mode == kSceneRenderModeNormal ?
@@ -319,11 +332,35 @@ void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
     }
 }
 
+void hit_test_func(cpShape *shape, cpFloat UNUSED(distance),
+        cpVect UNUSED(point), void *data) {
+    if (shape->collision_type == OCSCollisionTypeEntity) {
+        Entity **top = data;
+        cpBody *cpb = shape->body;
+        BodyStateData *state = cpb->data;
+        if (*top == NULL || state->entity->z_index > (*top)->z_index) {
+            *top = state->entity;
+        }
+    }
+}
+
+Entity *OrthoChipmunkScene_hit_test(Scene *scene, VPoint g_point) {
+    VPoint world_point = VPoint_scale(g_point, 1.0 / scene->pixels_per_meter);
+    Entity *top = NULL;
+    cpVect wp = {world_point.x, world_point.y};
+    cpSpaceNearestPointQuery(scene->space, wp, 0.0, CP_ALL_LAYERS,
+                             CP_NO_GROUP, hit_test_func, &top);
+    return top;
+}
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(scene);
     check_mem(engine);
 
     scene->space = cpSpaceNew();
+    OrthoChipmunkSceneCtx *context = scene->context;
+    context->space = scene->space;
+  
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
     scene->space->collisionSlop = 0.0;
@@ -369,6 +406,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
             cpShapeSetFriction(tile_shape, 0.5);
             tile_shape->collision_type = OCSCollisionTypeTile;
             cpSpaceAddStaticShape(scene->space, tile_shape);
+            List_push(context->tile_shapes, tile_shape);
         }
     }
 
@@ -390,5 +428,6 @@ SceneProto OrthoChipmunkSceneProto = {
     .update = OrthoChipmunkScene_update,
     .render = OrthoChipmunkScene_render,
     .control = OrthoChipmunkScene_control,
-    .add_entity = OrthoChipmunkScene_add_entity
+    .add_entity = OrthoChipmunkScene_add_entity,
+    .hit_test = OrthoChipmunkScene_hit_test
 };

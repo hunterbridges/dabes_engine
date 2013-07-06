@@ -22,6 +22,7 @@ void Sensor_destroy(Sensor *sensor) {
         Body_remove_sensor(sensor->body, sensor);
     }
 
+    List_destroy(sensor->on_sensors);
     free(sensor);
     return;
 error:

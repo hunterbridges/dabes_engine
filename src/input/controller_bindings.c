@@ -14,7 +14,7 @@ int luab_Controller_new(lua_State *L) {
     luaL_getmetatable(L, luab_Controller_metatable);
     lua_setmetatable(L, -2);
 
-    int idx = lua_tointeger(L, 1) - 1;
+    int idx = (int)lua_tointeger(L, 1) - 1;
     Controller *controller = engine->input->controllers[idx];
     luaL_register_ud(L, -1, (void **)&ud->p, controller);
     return 1;

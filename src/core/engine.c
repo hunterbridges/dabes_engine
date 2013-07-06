@@ -2,7 +2,25 @@
 #include "../scenes/scene.h"
 #include "../scenes/scene_bindings.h"
 
-Engine *Engine_create(const char *boot_script, void **sdl_screen) {
+char *Engine_default_resource_path(const char *filename) {
+  const char *resources = "resource/";
+  char *newpath = calloc(strlen(resources) + strlen(filename) + 1, sizeof(char));
+  strcpy(newpath, resources);
+  strcat(newpath, filename);
+  return newpath;
+}
+
+char *Engine_default_project_path(const char *filename) {
+  const char *project = "project/";
+  char *newpath = calloc(strlen(project) + strlen(filename) + 1, sizeof(char));
+  strcpy(newpath, project);
+  strcat(newpath, filename);
+  return newpath;
+}
+
+Engine *Engine_create(Engine_resource_path_func path_func,
+                      Engine_resource_path_func project_path_func,
+                      const char *boot_script, void **sdl_screen) {
     Engine *engine = calloc(1, sizeof(Engine));
     check(engine != NULL, "Could not create engine. World explodes.");
 
@@ -14,13 +32,17 @@ Engine *Engine_create(const char *boot_script, void **sdl_screen) {
     TTF_Init();
     *sdl_screen =
         SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_OPENGL);
-
-    check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 #endif
+    check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
+  
+    engine->resource_path =
+        path_func ? path_func : Engine_default_resource_path;
+    engine->project_path =
+        project_path_func ? project_path_func : Engine_default_project_path;
 
     engine->audio = Audio_create();
     engine->input = Input_create();
-    engine->graphics = NEW(Graphics, "Graphics Engine");
+    engine->graphics = Graphics_create(engine);
     engine->physics = Physics_create();
     engine->easers = List_create();
 
@@ -46,13 +68,15 @@ error:
 void Engine_destroy(Engine *engine) {
     check(engine != NULL, "No engine to destroy");
 
+    List_clear_destroy(engine->easers);
+  
     // Scripting has to go first, as it
     // manages all the objects that leverage other things.
     Scripting_destroy(engine->scripting);
 
     Audio_destroy(engine->audio);
     Input_destroy(engine->input);
-    engine->graphics->_(destroy)(engine->graphics);
+    Graphics_destroy(engine->graphics);
     Physics_destroy(engine->physics);
 
     free(engine);
@@ -61,8 +85,20 @@ error:
     free(engine);
 }
 
-uint32_t tick_diff(struct timeval earlier, struct timeval later) {
-  uint32_t ticks;
+void Engine_set_resource_path(Engine *engine,
+                              Engine_resource_path_func resource_path) {
+    engine->resource_path = resource_path;
+    Scripting_update_paths(engine->scripting, engine);
+}
+
+void Engine_set_project_path(Engine *engine,
+                             Engine_resource_path_func project_path) {
+    engine->project_path = project_path;
+    Scripting_update_paths(engine->scripting, engine);
+}
+
+unsigned long tick_diff(struct timeval earlier, struct timeval later) {
+  unsigned long ticks;
   ticks =
       (later.tv_sec - earlier.tv_sec) * 1000 +
       (later.tv_usec - earlier.tv_usec) / 1000;
@@ -89,8 +125,8 @@ void Engine_resume_time(Engine *engine) {
     engine->timer.paused = 0;
 }
 
-uint32_t Engine_get_ticks(Engine *engine) {
-    uint32_t ticks;
+unsigned long Engine_get_ticks(Engine *engine) {
+    unsigned long ticks;
     struct timeval now;
 
     gettimeofday(&now, NULL);
@@ -140,11 +176,53 @@ Easer *Engine_gen_easer(Engine *engine, int length_ms, Easer_curve curve) {
 }
 
 void Engine_update_easers(Engine *engine) {
-    LIST_FOREACH(engine->easers, first, next, current) {
-        Easer *easer = current->value;
-        Easer_update(easer, engine, engine->frame_ticks);
+    ListNode *node = engine->easers->first;
+    while (node != NULL) {
+        Easer *easer = node->value;
+
         if (easer->finished) {
-            List_remove(engine->easers, current);
+            ListNode *old = node;
+            node = node->next;
+            List_remove(engine->easers, old);
+            Easer_destroy(easer);
+            continue;
         }
+
+        Easer_update(easer, engine, engine->frame_ticks);
+        node = node->next;
     }
+}
+
+FILE *Engine_open_resource(Engine *engine, char *filename) {
+    char *rpath = engine->resource_path(filename);
+    FILE *file = fopen(rpath, "r");
+    free(rpath);
+    return file;
+}
+
+int Engine_load_resource(Engine *engine, char *filename, unsigned char **out,
+                         GLint *size) {
+    unsigned char *output = NULL;
+    FILE *file = Engine_open_resource(engine, filename);
+    check(file != NULL, "Failed to open %s", filename);
+
+    fseek(file, 0, SEEK_END);
+    unsigned int sz = (unsigned int)ftell(file);
+    rewind(file);
+
+    output = malloc(sz * sizeof(unsigned char));
+    check_mem(output);
+
+    fread(output, 1, sz, file);
+    fclose(file);
+    output[sz] = '\0';
+
+    *out = output;
+    *size = sz;
+
+    return 1;
+error:
+    if (file != NULL) fclose(file);
+    if (output != NULL) free(output);
+    return 0;
 }

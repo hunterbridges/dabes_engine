@@ -6,10 +6,13 @@
 #include "../math/vpoint.h"
 #include "../physics/fixture.h"
 
+struct Entity;
+struct Engine;
+struct Scene;
 typedef struct {
-  void *engine;
-  void *entity;
-  void *scene;
+  struct Engine *engine;
+  struct Entity *entity;
+  struct Scene *scene;
   int on_ground;
 } BodyStateData;
 

@@ -5,19 +5,19 @@
 #include <lcthw/bstrlib.h>
 #include "../dbg.h"
 
-int decompress_data(unsigned char* abSrc, int nLenSrc, unsigned char **abDst,
+unsigned long int decompress_data(unsigned char* abSrc, unsigned long nLenSrc, unsigned char **abDst,
                     int nLenDst) {
   z_stream zInfo = {.avail_in = 0};
   int prevSize = nLenDst;
   unsigned char *src_start = abSrc;
   unsigned char *dst_start = *abDst;
 
-  zInfo.total_in = zInfo.avail_in =  nLenSrc;
+  zInfo.total_in = zInfo.avail_in = (int)nLenSrc;
   zInfo.total_out = zInfo.avail_out = nLenDst;
   zInfo.next_in = src_start;
   zInfo.next_out = dst_start;
 
-  int nErr, nRet= -1;
+  long int nErr, nRet= -1;
   nErr = inflateInit2(&zInfo, 15 + 32);
   if (nErr == Z_OK) {
     do {
@@ -27,7 +27,7 @@ int decompress_data(unsigned char* abSrc, int nLenSrc, unsigned char **abDst,
         case Z_NEED_DICT:
         case Z_STREAM_ERROR:
           nErr = Z_DATA_ERROR;
-          printf("Data error %d", nErr);
+          printf("Data error %ld", nErr);
         case Z_DATA_ERROR:
         case Z_MEM_ERROR:
           inflateEnd(&zInfo);

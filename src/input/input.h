@@ -2,6 +2,7 @@
 #define __input_h
 #include "../prefix.h"
 #include "controller.h"
+#include "../math/vpoint.h"
 
 typedef struct Input {
     Controller *controllers[4];
@@ -10,8 +11,11 @@ typedef struct Input {
     int cam_reset;
     int cam_zoom;
     int cam_rotate;
+    VPoint cam_focal_pan;
+    VPoint cam_translate_pan;
     int cam_debug;
     int phys_render;
+  
 } Input;
 
 Input *Input_create();

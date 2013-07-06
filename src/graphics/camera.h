@@ -31,8 +31,13 @@ void Graphics_project_camera(Graphics *graphics, Camera *camera);
 VRect Camera_base_rect(Camera *camera);
 VRect Camera_visible_rect(Camera *camera);
 VRect Camera_tracking_rect(Camera *camera);
-VPoint Camera_project_point(Camera *camera, VPoint point);
-VRect Camera_project_rect(Camera *camera, VRect rect);
+VRect Camera_project_rect(Camera *camera, VRect rect, int translation);
 void Camera_debug(Camera *camera, Graphics *graphics);
+
+// World point -> screen point
+VPoint Camera_project_point(Camera *camera, VPoint point, int translation);
+
+// Screen point -> world point
+VPoint Camera_cast_point(Camera *camera, VPoint point);
 
 #endif
