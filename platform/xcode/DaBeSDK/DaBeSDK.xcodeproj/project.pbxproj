@@ -59,6 +59,7 @@
 		CA8EC64F1786310F00659757 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA8EC64E1786310F00659757 /* resource */; };
 		CA8EC6501786310F00659757 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA8EC64E1786310F00659757 /* resource */; };
 		CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */; };
+		CAE807631787C2D700B0A213 /* SDKMenuOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE807621787C2D700B0A213 /* SDKMenuOutlineView.m */; };
 		CAF42A6F1780F6EA00C3220A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A6A1780F6EA00C3220A /* main.m */; };
 		CAF42A891780F7B700C3220A /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A741780F7B700C3220A /* FileSystemItem.m */; };
 		CAF42A8A1780F7B700C3220A /* NSView+Center.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A761780F7B700C3220A /* NSView+Center.m */; };
@@ -225,6 +226,8 @@
 		CA8EC64E1786310F00659757 /* resource */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resource; path = ../../../resource; sourceTree = "<group>"; };
 		CACE2B3F1783484600F36FA3 /* SDKProjectEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKProjectEngineViewController.h; sourceTree = "<group>"; };
 		CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKProjectEngineViewController.m; sourceTree = "<group>"; };
+		CAE807611787C2D700B0A213 /* SDKMenuOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDKMenuOutlineView.h; path = DaBeSDK/SDKMenuOutlineView.h; sourceTree = SOURCE_ROOT; };
+		CAE807621787C2D700B0A213 /* SDKMenuOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDKMenuOutlineView.m; path = DaBeSDK/SDKMenuOutlineView.m; sourceTree = SOURCE_ROOT; };
 		CAF42A6A1780F6EA00C3220A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CAF42A711780F79B00C3220A /* DaBeSDK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DaBeSDK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF42A731780F7B700C3220A /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
@@ -347,6 +350,8 @@
 				CAF42A861780F7B700C3220A /* SDKScriptEditorWindowController.m */,
 				CAF42A871780F7B700C3220A /* SDKScriptTabModel.h */,
 				CAF42A881780F7B700C3220A /* SDKScriptTabModel.m */,
+				CAE807611787C2D700B0A213 /* SDKMenuOutlineView.h */,
+				CAE807621787C2D700B0A213 /* SDKMenuOutlineView.m */,
 			);
 			name = "Script Editor";
 			sourceTree = "<group>";
@@ -772,6 +777,7 @@
 				CAF42A921780F7B700C3220A /* SDKScriptEditorWindowController.m in Sources */,
 				CAF42A931780F7B700C3220A /* SDKScriptTabModel.m in Sources */,
 				CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */,
+				CAE807631787C2D700B0A213 /* SDKMenuOutlineView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

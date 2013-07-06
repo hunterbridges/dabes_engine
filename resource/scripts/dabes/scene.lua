@@ -19,6 +19,10 @@ Scene = BoundObject:extend({
 -- Hook Overloads
 
     realize = function(class)
+        if class.kind ~= 'ortho_chipmunk' then
+            error("Invalid class kind `" .. class.kind .. "`")
+        end
+       
         return class.lib.new(class.kind, class.pixels_per_meter)
     end,
 

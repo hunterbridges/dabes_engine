@@ -78,7 +78,15 @@ char *DABProjectManager_path_func(const char *filename) {
   }
   
   // Create boot script
-  NSString *bootScript = @"function boot()\n    \nend";
+  NSString *bootScript = @"require 'dabes.scene_manager'\n"
+                         @"\n"
+                         @"function boot()\n"
+                         @"    -- Usually here you want to create a scene and push it onto the manager.\n"
+                         @"    -- ex.\n"
+                         @"    --\n"
+                         @"    -- local my_scene = MyScene:new()\n"
+                         @"    -- scene_manager:push_scene(my_scene)\n"
+                         @"end";
   NSData *scriptData = [bootScript dataUsingEncoding:NSUTF8StringEncoding];
   [fileManager createFileAtPath:[path stringByAppendingPathComponent:@"scripts/boot.lua"]
                        contents:scriptData

@@ -16,7 +16,11 @@
 @property (assign) IBOutlet NSWindow *engineWindow;
 @property (assign) IBOutlet NSWindow *inspectorWindow;
 
+@property (assign) IBOutlet SDKInspectorView *inspectorView;
+@property (nonatomic, strong) SDKScriptEditorWindowController *scriptEditorController;
 @property (nonatomic, copy) NSString *curentProject;
+@property (nonatomic, strong) NSDocumentController *documentController;
+
 @property (assign) IBOutlet NSMenuItem *cNewProjectItem;
 @property (assign) IBOutlet NSMenuItem *openProjectItem;
 @property (assign) IBOutlet NSMenuItem *closeProjectItem;
@@ -30,8 +34,6 @@
 
 @property (assign) IBOutlet NSMenuItem *inspectorItem;
 @property (assign) IBOutlet NSMenuItem *scriptEditorItem;
-@property (assign) IBOutlet SDKInspectorView *inspectorView;
-@property (nonatomic, strong) SDKScriptEditorWindowController *scriptEditorController;
 
 @property (assign) IBOutlet NSMenuItem *restartSceneItem;
 @property (assign) IBOutlet NSMenuItem *restartGameItem;

@@ -16,7 +16,7 @@
 #import "SDKScriptTabModel.h"
 
 @interface SDKScriptEditorWindowController () <NSTabViewDelegate,
-    NSWindowDelegate, NSAlertDelegate>
+    NSWindowDelegate, NSAlertDelegate, NSMenuDelegate>
 
 @property (nonatomic, strong) NSTabView *tabView;
 @property (nonatomic, assign) IBOutlet NSView *contentContainerView;
@@ -41,6 +41,9 @@
   [self.tab setShowAddTabButton:YES];
   self.tab.tabView = self.tabView;
   self.tabView.delegate = (id<NSTabViewDelegate>)self.tab;
+  
+  [self.treeView reloadData];
+  [self.treeView expandItem:self.rootFileSystemItem];
   
   [self addNewTab:self withPath:nil];
   
@@ -106,6 +109,16 @@
   }
   
   return [self addNewTab:self withPath:path andSelect:select];
+}
+
+- (void)closePath:(NSString *)path {
+  for (NSTabViewItem *tabItem in self.tabView.tabViewItems) {
+    SDKScriptTabModel *tabModel = tabItem.identifier;
+    if ([tabModel.scriptEditor.path isEqualToString:path]) {
+      [self.tabView removeTabViewItem:tabItem];
+      return;
+    }
+  }
 }
 
 - (void)windowDidLoad
@@ -216,6 +229,7 @@
         completionHandler:^(NSInteger result) {
           if (result) {
             [self saveEditorToPath:savePanel.URL.path withTabItem:tabViewItem];
+            if (!andClose) return;
 
             if (self.tabView.tabViewItems.count > 1) {
               [self.tabView removeTabViewItem:tabViewItem];
@@ -227,25 +241,48 @@
   });
 }
 
+- (NSString *)collisionFreePath:(NSString *)path {
+  NSString *directory = [path stringByDeletingLastPathComponent];
+  NSString *basename = [[path lastPathComponent] stringByDeletingPathExtension];
+  NSString *extension = [[path lastPathComponent] pathExtension];
+  
+  NSFileManager *fileManager = [NSFileManager defaultManager];
+  NSString *tryPath = path;
+  int i = 0;
+  while ([fileManager fileExistsAtPath:tryPath isDirectory:NULL]) {
+    NSString *incBase = [NSString stringWithFormat:@"%@-%d", basename, ++i];
+    tryPath = [directory stringByAppendingPathComponent:[incBase stringByAppendingPathExtension:extension]];
+  }
+  
+  return tryPath;
+}
+
 #pragma mark - Notif Handlers
 
 - (void)handleScriptError:(NSNotification *)notif {
     NSString *string = notif.object;
     NSString *filename = nil;
     NSString *errMsg = nil;
-    NSNumber *errorLine = [SDKScriptEditorView extractErrorLine:string
-                                                       filename:&filename
-                                                        message:&errMsg];
-    SDKScriptTabModel *tabModel = nil;
-    if ([[filename substringToIndex:1] isEqualToString:@"["]) {
-        // Injected script
+    @try {
+        NSNumber *errorLine = [SDKScriptEditorView extractErrorLine:string
+                                                           filename:&filename
+                                                            message:&errMsg];
+        SDKScriptTabModel *tabModel = nil;
+        if ([[filename substringToIndex:1] isEqualToString:@"["]) {
+            // Injected script
+            NSTabViewItem *item = [self.tabView selectedTabViewItem];
+            tabModel = item.identifier;
+        } else {
+            NSTabViewItem *item = [self openPath:filename andSelect:NO];
+            tabModel = item.identifier;
+        }
+        [tabModel.scriptEditor setErrorLine:errorLine withMessage:errMsg];
+    } @catch (NSException *exception) {
+        SDKScriptTabModel *tabModel = nil;
         NSTabViewItem *item = [self.tabView selectedTabViewItem];
         tabModel = item.identifier;
-    } else {
-        NSTabViewItem *item = [self openPath:filename andSelect:NO];
-        tabModel = item.identifier;
+        [tabModel.scriptEditor setErrorLine:@(0) withMessage:string];
     }
-    [tabModel.scriptEditor setErrorLine:errorLine withMessage:errMsg];
 }
 
 - (void)handleScriptPanic:(NSNotification *)notif {
@@ -322,6 +359,22 @@
 
 #pragma mark - Alert Delegate
 
+- (void)deleteDirAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode context:(void *)contextInfo {
+  FileSystemItem *fsItem = (__bridge FileSystemItem *)(contextInfo);
+  NSFileManager *fileManager = [NSFileManager defaultManager];
+  if (returnCode) {
+    NSError *error = nil;
+    [fileManager removeItemAtPath:fsItem.fullPath
+                            error:&error];
+    [self closePath:fsItem.fullPath];
+    if (error) {
+      return;
+    }
+    [fsItem.parent refresh];
+    [self.treeView reloadItem:fsItem.parent reloadChildren:YES];
+  }
+}
+
 - (void)editedAlertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo {
   switch (returnCode) {
     case 1: {
@@ -350,7 +403,139 @@
   }
 }
 
+#pragma mark - Directory Menu Item Handlers
+
+- (void)addFileInDirectory:(id)sender {
+  NSMenuItem *menuItem = sender;
+  FileSystemItem *fsItem = menuItem.representedObject;
+  
+  [self.treeView expandItem:fsItem];
+  
+  NSString *untitledPath =
+      [fsItem.fullPath stringByAppendingPathComponent:@"untitled.lua"];
+  untitledPath = [self collisionFreePath:untitledPath];
+  
+  NSData *blank = [NSData data];
+  [[NSFileManager defaultManager]
+      createFileAtPath:untitledPath
+      contents:blank
+      attributes:nil];
+  
+  [fsItem refresh];
+  [self.treeView reloadItem:fsItem reloadChildren:YES];
+  
+  for (FileSystemItem *child in fsItem.children) {
+    if (![[child fullPath] isEqualToString:untitledPath]) continue;
+    [self.treeView editColumn:0
+                          row:[self.treeView rowForItem:child]
+                    withEvent:nil
+                       select:YES];
+  }
+}
+
+- (void)addDirectoryInDirectory:(id)sender {
+  NSMenuItem *menuItem = sender;
+  FileSystemItem *fsItem = menuItem.representedObject;
+  
+  [self.treeView expandItem:fsItem];
+  
+  NSString *untitledPath =
+      [fsItem.fullPath stringByAppendingPathComponent:@"new_directory"];
+  untitledPath = [self collisionFreePath:untitledPath];
+  
+  NSError *error = nil;
+  [[NSFileManager defaultManager]
+      createDirectoryAtPath:untitledPath
+      withIntermediateDirectories:NO
+      attributes:nil
+      error:&error];
+  if (error) {
+    return;
+  }
+  
+  [fsItem refresh];
+  [self.treeView reloadItem:fsItem reloadChildren:YES];
+  
+  for (FileSystemItem *child in fsItem.children) {
+    if (![[child fullPath] isEqualToString:untitledPath]) continue;
+    [self.treeView editColumn:0
+                          row:[self.treeView rowForItem:child]
+                    withEvent:nil
+                       select:YES];
+  }
+}
+
+- (void)deleteDirectory:(id)sender {
+  NSMenuItem *menuItem = sender;
+  FileSystemItem *fsItem = menuItem.representedObject;
+  NSAlert *alert =
+    [NSAlert alertWithMessageText:[NSString stringWithFormat:@"Are you sure you want to delete %@?",
+                                      fsItem.relativePath]
+                    defaultButton:@"Yes"
+                  alternateButton:@"Cancel"
+                      otherButton:nil
+        informativeTextWithFormat:@"This will also delete the directory's contents."];
+  alert.delegate = self;
+  [alert beginSheetModalForWindow:self.window
+                    modalDelegate:self
+                   didEndSelector:@selector(deleteDirAlertDidEnd:returnCode:context:)
+                      contextInfo:(__bridge void *)fsItem];
+}
+
+#pragma mark - File Menu Item Handlers
+
+- (void)deleteFile:(id)sender {
+  NSMenuItem *menuItem = sender;
+  FileSystemItem *fsItem = menuItem.representedObject;
+  NSAlert *alert =
+    [NSAlert alertWithMessageText:[NSString stringWithFormat:@"Are you sure you want to delete %@?",
+                                      fsItem.relativePath]
+                    defaultButton:@"Yes"
+                  alternateButton:@"Cancel"
+                      otherButton:nil
+        informativeTextWithFormat:@"This action cannot be undone."];
+  alert.delegate = self;
+  [alert beginSheetModalForWindow:self.window
+                    modalDelegate:self
+                   didEndSelector:@selector(deleteDirAlertDidEnd:returnCode:context:)
+                      contextInfo:(__bridge void *)fsItem];
+}
+
 #pragma mark - Outline View Data Source
+
+- (NSMenu *)outlineView:(SDKMenuOutlineView *)outlineView menuForItem:(id)item {
+  FileSystemItem *fsItem = item;
+  if (fsItem.isDirectory) {
+    NSMenu *dirActions = [[NSMenu alloc] init];
+    [dirActions addItemWithTitle:@"Add File"
+                           action:@selector(addFileInDirectory:)
+                    keyEquivalent:@""];
+    [dirActions addItemWithTitle:@"Add Directory"
+                           action:@selector(addDirectoryInDirectory:)
+                    keyEquivalent:@""];
+    [dirActions addItemWithTitle:@"Delete"
+                           action:@selector(deleteDirectory:)
+                    keyEquivalent:@""];
+    
+    for (NSMenuItem *item in dirActions.itemArray) {
+      item.target = self;
+      item.representedObject = fsItem;
+    }
+    return dirActions;
+  } else {
+    NSMenu *fileActions = [[NSMenu alloc] init];
+    [fileActions addItemWithTitle:@"Delete"
+                           action:@selector(deleteFile:)
+                    keyEquivalent:@""];
+    
+    for (NSMenuItem *item in fileActions.itemArray) {
+      item.target = self;
+      item.representedObject = fsItem;
+    }
+    return fileActions;
+  }
+  return nil;
+}
 
 - (FileSystemItem *)rootFileSystemItem {
   if (_rootFileSystemItem) return _rootFileSystemItem;
@@ -383,6 +568,16 @@
     [self openPath:[item fullPath] andSelect:YES];
   }
   return YES;
+}
+
+- (void)outlineView:(NSOutlineView *)outlineView
+     setObjectValue:(id)object
+     forTableColumn:(NSTableColumn *)tableColumn
+             byItem:(id)item {
+  FileSystemItem *fsItem = item;
+  [fsItem renameTo:object];
+  [outlineView reloadItem:item];
+  
 }
 
 @end

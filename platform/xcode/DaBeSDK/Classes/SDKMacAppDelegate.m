@@ -26,6 +26,8 @@
 {
   [self setUpMenu];
   
+  self.documentController = [NSDocumentController sharedDocumentController];
+  
   [[NSNotificationCenter defaultCenter]
      addObserver:self
      selector:@selector(handleNewScene:)
@@ -93,11 +95,20 @@
 - (void)openProjectWithPath:(NSString *)path {
   [self closeCurrentProject];
   
+  [self.documentController noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
   self.curentProject = path;
   if (self.welcomeWindow.isVisible) {
     [self.welcomeWindow performClose:nil];
   }
   [self showEngineWindow];
+}
+
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  if (![fileManager fileExistsAtPath:filename]) return NO;
+  
+  [self openProjectWithPath:filename];
+  return YES;
 }
 
 #pragma mark - IBActions
@@ -239,6 +250,10 @@
     return !!self.curentProject;
   } else if (menuItem == self.renderModesItem) {
     return !!self.curentProject && self.engineVC.scene;
+  } else if (menuItem == self.scriptEditorItem) {
+    return !!self.curentProject;
+  } else if (menuItem == self.inspectorItem) {
+    return !!self.curentProject;
   }
   return menuItem.action != 0;
 }
