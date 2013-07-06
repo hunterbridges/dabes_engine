@@ -19,7 +19,7 @@ typedef struct GfxSize {
 static const GfxSize GfxSizeZero = {0,0};
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
-GfxSize load_image_dimensions_from_image(char *filename);
+// GfxSize load_image_dimensions_from_image(char *filename);
 
 typedef struct GfxTexture {
     const char *name;
@@ -30,13 +30,7 @@ typedef struct GfxTexture {
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
         GLenum source_format);
-GfxTexture *GfxTexture_from_image(char *image_name);
-#ifdef DABES_IOS
-GfxTexture *GfxTexture_from_CGImage(CGImageRef image);
-#endif
-#ifdef DABES_SDL
-GfxTexture *GfxTexture_from_surface(SDL_Surface *surface);
-#endif
+GfxTexture *GfxTexture_from_image(const char *image_name);
 void GfxTexture_destroy(GfxTexture *texture);
 
 enum {
@@ -95,10 +89,13 @@ typedef struct GfxShader {
     struct DrawBuffer *draw_buffer;
 } GfxShader;
 
+void GfxShader_destroy(GfxShader *shader, struct Graphics *graphics);
+
 ///////////
 
 typedef struct Graphics {
-    Object proto;
+    struct Engine *engine;
+  
     GfxSize screen_size;
     GLuint debug_text_texture;
     GfxShader *current_shader;
@@ -112,6 +109,7 @@ typedef struct Graphics {
 
     Hashmap *textures;
     Hashmap *shaders;
+    List *shader_list;
     Hashmap *sprites;
 
     int gl_vao_enabled;
@@ -120,14 +118,10 @@ typedef struct Graphics {
     void (*del_vao)(GLsizei n, const GLuint *arrays);
 } Graphics;
 
-// Rendering
-#if defined(DABES_IOS) || defined(DABES_MAC)
-CGImageRef Graphics_load_CGImage(char *image_name);
-#endif
-#ifdef DABES_SDL
-SDL_Surface *Graphics_load_SDLImage(char *image_name);
-#endif
-
+struct Engine;
+Graphics *Graphics_create(struct Engine *engine);
+void Graphics_destroy(Graphics *graphics);
+  
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
@@ -168,14 +162,14 @@ void Graphics_log_shader(GLuint shader);
 void Graphics_log_program(GLuint program);
 
 // Textures
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name);
+GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name);
 
 // Sprites
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
                           GLfloat color[4], double rot_degs, int z_index);
-struct Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
+struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
 extern Object GraphicsProto;

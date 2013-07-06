@@ -13,9 +13,9 @@ void extract_gids_from_encoded_data(xmlChar *value, uint32_t **gids,
                                   &decoded,
                                   1024);
     unsigned char *decompressed = calloc(1, 256);
-    int unzip_len = decompress_data(decoded, outlen, &decompressed, 256);
+    unsigned long int unzip_len = decompress_data(decoded, outlen, &decompressed, 256);
     free(decoded);
-    int i = 0;
+    unsigned int i = 0;
     *gids = malloc(sizeof(uint32_t) * (unzip_len / 4));
     int cell = 0;
     for (i = 0; i < unzip_len; i += 4) {
@@ -159,7 +159,9 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           bdestroy(imgpath);
           bdestroy(src);
 
-          FILE *fileexists = load_resource(cpath);
+          char *ppath = engine->project_path(cpath);
+          FILE *fileexists = fopen(ppath, "r");
+          free(ppath);
           if (fileexists == NULL) {
             free(cpath);
             Tileset_destroy(tileset);
@@ -171,16 +173,17 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
           }
           fclose(fileexists);
 
-          tileset->texture = Graphics_texture_from_image(engine->graphics,
-                                                         cpath);
+          ppath = engine->project_path(cpath);
+          tileset->texture = Graphics_texture_from_image(engine->graphics, ppath);
+          free(ppath);
           tileset->img_src = cpath;
         }
 
         xmlFree(attrName);
         xmlFree(attrVal);
       }
-      xmlFree(childName);
     }
+    xmlFree(childName);
   }
 
   *out_tileset = tileset;

@@ -15,6 +15,7 @@ error:
 
 void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
         int num_points, int num_attrs, VVector4 vectors[]) {
+    check(layer != NULL, "No layer to buffer");
     char key[32];
     int result = sprintf(key, "%p", texture);
     assert(result < 31);
@@ -24,16 +25,18 @@ void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
     int i = 0;
     int found = 0;
     DArray *shapes = NULL;
-    for (i = 0; i < DArray_count(layer->textures); i++) {
-        DrawBufferTexture *buftex = DArray_get(layer->textures, i);
-        if (bstrcmp(buftex->key, bkey) != 0) continue;
-            
-        found = 1;
-        shapes = Hashmap_get(layer->texture_buffers, bkey);
-        bdestroy(bkey);
-        break;
+    if (layer->textures) {
+        for (i = 0; i < DArray_count(layer->textures); i++) {
+            DrawBufferTexture *buftex = DArray_get(layer->textures, i);
+            if (bstrcmp(buftex->key, bkey) != 0) continue;
+                
+            found = 1;
+            shapes = Hashmap_get(layer->texture_buffers, bkey);
+            bdestroy(bkey);
+            break;
+        }
     }
-    
+  
     if (found == 0) {
         DrawBufferTexture *buftex = calloc(1, sizeof(DrawBufferTexture));
         check(buftex != NULL, "Couldn't create draw buffer texture");
@@ -63,11 +66,6 @@ error:
 
 void DrawBufferLayer_destroy(DrawBufferLayer *layer) {
     check(layer != NULL, "No Draw buffer layer to destroy");
-    int i = 0;
-    for (i = 0; i < DArray_count(layer->textures); i++) {
-        DrawBufferTexture *buftex = DArray_get(layer->textures, i);
-        bdestroy(buftex->key);
-    }
     DArray_clear_destroy(layer->textures);
     Hashmap_destroy(layer->texture_buffers,
                     (Hashmap_destroy_func)DArray_clear_destroy);
@@ -93,7 +91,8 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer) {
             num_points += shape->num_points;
             num_vectors += shape->num_vectors;
         }
-        
+        if (num_vectors == 0) continue;
+      
         // Copy the shapes into an inline buffer
         VVector4 vectors[num_vectors];
         VVector4 *v_head = vectors;
@@ -110,8 +109,14 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer) {
                         has_texture);
             l_has_texture = has_texture;
         }
-        glBindTexture(GL_TEXTURE_2D,
-                      buftex->texture ? buftex->texture->gl_tex : 0);
+        GLint gl_tex = 0;
+        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+        if (buftex->texture) {
+            gl_tex = buftex->texture->gl_tex;
+            glBindTexture(GL_TEXTURE_2D, gl_tex);
+        } else {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
         glBufferData(GL_ARRAY_BUFFER, num_vectors * sizeof(VVector4), vectors,
                 GL_DYNAMIC_DRAW);
         glDrawArrays(GL_TRIANGLES, 0, num_points);

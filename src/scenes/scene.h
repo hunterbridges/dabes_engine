@@ -22,6 +22,7 @@ typedef struct SceneProto {
     void (*render)(struct Scene *scene, Engine *engine);
     void (*control)(struct Scene *scene, Engine *engine);
     void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
+    Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
 } SceneProto;
 
 typedef enum {
@@ -29,8 +30,14 @@ typedef enum {
   kSceneRenderModePhysicsDebug = 1
 } SceneRenderMode;
 
+typedef enum {
+  kSceneNotSelecting = 0,
+  kSceneSelectingForCamera
+} SceneEntitySelectionMode;
+
 typedef struct Scene {
     SceneProto proto;
+    void *context;
     char *name;
 
     GfxTexture *bg_texture; // deprecated
@@ -53,6 +60,9 @@ typedef struct Scene {
     int started;
 
     int pixels_per_meter;
+  
+    SceneEntitySelectionMode selection_mode;
+    List *selected_entities;
 } Scene;
 
 Scene *Scene_create(Engine *engine, SceneProto proto);
@@ -63,5 +73,11 @@ void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
 void Scene_reset_camera(Scene *scene, Engine *engine);
+void Scene_render(Scene *scene, Engine *engine);
+void Scene_update(Scene *scene, Engine *engine);
+void Scene_control(Scene *scene, Engine *engine);
+
+void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
+int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 
 #endif

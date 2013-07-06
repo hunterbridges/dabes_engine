@@ -21,7 +21,7 @@ int luab_SpriteAnimation_new(lua_State *L) {
 
     int i = 0;
     for (i = 0; i < num_frames; i++) {
-        frames[i] = lua_tointeger(L, 1);
+        frames[i] = (int)lua_tointeger(L, 1);
         lua_remove(L, 1);
     }
 
@@ -88,8 +88,9 @@ int luab_Sprite_new(lua_State *L) {
     lua_setmetatable(L, -2);
 
     const char *texname = lua_tostring(L, 1);
-    GfxTexture *tex = Graphics_texture_from_image(engine->graphics,
-            (char *)texname);
+    char *ppath = engine->project_path(texname);
+    GfxTexture *tex = Graphics_texture_from_image(engine->graphics, ppath);
+    free(ppath);
     check(tex != NULL, "Couldn't load image %s", texname);
 
     int padding = lua_tonumber(L, 3);

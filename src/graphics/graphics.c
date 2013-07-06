@@ -7,19 +7,26 @@
 #include <lcthw/bstrlib.h>
 #include "draw_buffer.h"
 #include "graphics.h"
+#include "stb_image.h"
 #include "sprite.h"
+#include "../core/engine.h"
 
 GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
 int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
-    glEnable(GL_TEXTURE_2D);
+    GLenum error = glGetError();
+  
     glEnable(GL_BLEND);
+    error = glGetError();
+  
 #if defined(DABES_MAC) || defined(DABES_SDL)
     glEnable(GL_MULTISAMPLE);
 #endif
     glDisable(GL_DEPTH_TEST);
-    GLenum error = glGetError();
+    error = glGetError();
+  
+    error = glGetError();
     check(error == GL_NO_ERROR, "OpenGL init error...");
     return 1;
 error:
@@ -29,12 +36,13 @@ error:
     return 0;
 }
 
+/*
 GfxSize load_image_dimensions_from_image(char *image_name) {
   GfxSize dimensions = {0,0};
 #if defined(DABES_IOS) || defined(DABES_MAC)
-  unsigned long int *data = NULL;
+  unsigned char *data = NULL;
   GLint size = 0;
-  read_file_data(image_name, &data, &size);
+  Engine_read_file(image_name, &data, &size);
   CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
   free(data);
   CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
@@ -54,6 +62,7 @@ GfxSize load_image_dimensions_from_image(char *image_name) {
 #endif
   return dimensions;
 }
+ */
 
 // GFX
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
@@ -80,25 +89,32 @@ static inline int data_potize(unsigned char **data, int width, int height,
   int pot_h = 2;
   while (pot_w < width) pot_w <<= 1;
   while (pot_h < height) pot_h <<= 1;
+  
+  int pot_d = MAX(pot_h, pot_w);
 
   unsigned char *old_data = *data;
   unsigned char *resized_data = NULL;
-  resized_data = realloc(old_data, pot_w * pot_h * sizeof(unsigned char) * 4);
+  resized_data = realloc(old_data, pot_d * pot_d * sizeof(unsigned char) * 4);
   check(resized_data != NULL, "Couldn't realloc texture for potize");
 
   *data = resized_data;
-  uint32_t *new_data = (uint32_t *)resized_data;
+  unsigned char *new_data = resized_data;
 
-  *pot_width = pot_w;
-  *pot_height = pot_h;
+  *pot_width = pot_d;
+  *pot_height = pot_d;
 
-  int last_orig_index = width * height - 1;
+  int last_orig_index = (width * height - 1) * 4;
   int i = 0;
-  for (i = last_orig_index; i >= 0; i--) {
-    int old_col = i % width;
-    int old_row = i / width;
-    int new_index = old_row * pot_w + old_col;
-    new_data[new_index] = new_data[i];
+  for (i = last_orig_index; i >= 0; i -= 4) {
+    int idx = i / 4;
+    int old_col = idx % width;
+    int old_row = idx / width;
+    int new_index = old_row * pot_d + old_col;
+
+    new_data[new_index * 4] = new_data[i];         // R
+    new_data[new_index * 4 + 1] = new_data[i + 1]; // G
+    new_data[new_index * 4 + 2] = new_data[i + 2]; // B
+    new_data[new_index * 4 + 3] = new_data[i + 3]; // A
   }
 
   return 1;
@@ -120,19 +136,17 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     texture->pot_size.w = pot_width;
     texture->pot_size.h = pot_height;
 
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     GLenum color_format = GL_RGBA;
-#if SDL_BYTEORDER != SDL_BIG_ENDIAN && !defined(DABES_IOS)
-    color_format = GL_BGRA;
-#endif
-    glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
-                 pot_height, 0, color_format,
-                 GL_UNSIGNED_BYTE, *data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
+                 pot_height, 0, color_format,
+                 GL_UNSIGNED_BYTE, *data);
     GLenum er = glGetError();
     if (er != GL_NO_ERROR) {
         printf("%d\n", GL_MAX_TEXTURE_SIZE);
@@ -148,85 +162,13 @@ error:
     return NULL;
 }
 
-#if defined(DABES_IOS) || defined(DABES_MAC)
-GfxTexture *GfxTexture_from_CGImage(CGImageRef image) {
-    CGColorSpaceRef colorSpace = NULL;
-    check(image != NULL, "No CGImage to load");
-
-    int width = CGImageGetWidth(image);
-    int height = CGImageGetHeight(image);
-    colorSpace = CGColorSpaceCreateDeviceRGB();
-    unsigned char *rawData = calloc(1, height * width * 4);
-    check(rawData != NULL, "Couldn't not allocate context buffer");
-    int bytesPerPixel = 4;
-    int bytesPerRow = bytesPerPixel * width;
-    int bitsPerComponent = 8;
-    CGContextRef context =
-        CGBitmapContextCreate(rawData, width, height, bitsPerComponent,
-                              bytesPerRow, colorSpace,
-                              kCGImageAlphaPremultipliedLast |
-                              kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(colorSpace);
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
-
-    GfxTexture *texture = GfxTexture_from_data(&rawData, width, height,
-            GL_RGBA);
-    CGContextRelease(context);
-    CGImageRelease(image);
-    free(rawData);
-    return texture;
-error:
-    if (colorSpace) CGColorSpaceRelease(colorSpace);
-    CGImageRelease(image);
-    return 0;
-}
-#endif
-
-#ifdef DABES_SDL
-GfxTexture *GfxTexture_from_surface(SDL_Surface *surface) {
-    check(surface != NULL, "No surface to load");
-
+GfxTexture *GfxTexture_from_image(const char *image_name) {
+    int x, y, n;
+    unsigned char *data = stbi_load(image_name, &x, &y, &n, 4);
     GfxTexture *texture =
-        GfxTexture_from_data((unsigned char **)&surface->pixels,
-                surface->w, surface->h, GL_RGBA);
-    SDL_FreeSurface(surface);
+        GfxTexture_from_data(&data, x, y, GL_RGBA);
+    stbi_image_free(data);
     return texture;
-error:
-    return 0;
-}
-
-SDL_Surface *Graphics_load_SDLImage(char *image_name) {
-    SDL_Surface *image = IMG_Load(image_name);
-    return image;
-}
-#endif
-
-#if defined(DABES_IOS) || defined(DABES_MAC)
-CGImageRef Graphics_load_CGImage(char *image_name) {
-    unsigned long int *data = NULL;
-    GLint size = 0;
-    read_file_data(image_name, &data, &size);
-    CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
-    free(data);
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
-    CGImageRef cg_image =
-         CGImageCreateWithPNGDataProvider(provider, NULL, true,
-                                          kCGRenderingIntentDefault);
-    CGDataProviderRelease(provider);
-    CFRelease(cf_data);
-    return cg_image;
-}
-#endif
-
-GfxTexture *GfxTexture_from_image(char *image_name) {
-#if defined(DABES_IOS) || defined(DABES_MAC)
-    CGImageRef cg_image = Graphics_load_CGImage(image_name);
-    return GfxTexture_from_CGImage(cg_image);
-#else
-    SDL_Surface *image = Graphics_load_SDLImage(image_name);
-    return GfxTexture_from_surface(image);
-#endif
-    return NULL;
 }
 
 void GfxTexture_destroy(GfxTexture *texture) {
@@ -236,6 +178,22 @@ void GfxTexture_destroy(GfxTexture *texture) {
   glDeleteTextures(1, gl_textures);
 
   free(texture);
+}
+
+void GfxShader_destroy(GfxShader *shader, Graphics *graphics) {
+  check(shader != NULL, "No shader to destroy");
+  
+  graphics->del_vao(1, &shader->gl_vertex_array);
+  glDeleteProgram(shader->gl_program);
+  if (shader->draw_buffer) {
+      DrawBuffer_destroy(shader->draw_buffer);
+  }
+  
+  free(shader);
+  
+  return;
+error:
+  return;
 }
 
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
@@ -284,7 +242,6 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
 #ifdef DABES_SDL
     glDisable(GL_MULTISAMPLE);
 #endif
-    glBindTexture(GL_TEXTURE_2D, 0);
     glLineWidth(line_width);
     glDrawArrays(GL_LINE_LOOP, 0, num_points);
     return;
@@ -380,21 +337,21 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     VVector4 vertices[7 * 6] = {
         {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
             cVertex,
-            {tex_rect.tl.x, tex_rect.tl.y, 0, 0},
+            {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
         {.raw = {w / 2.0, -h / 2.0, 0, 1}},
             cVertex,
-            {tex_rect.tr.x, tex_rect.tr.y, 0, 0},
+            {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
         {.raw = {w / 2.0, h / 2.0, 0, 1}},
             cVertex,
-            {tex_rect.br.x,tex_rect.br.y, 0, 0},
+            {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
             tmvm.v[2],
@@ -402,21 +359,21 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
 
         {.raw = {w / 2.0, h / 2.0, 0, 1}},
             cVertex,
-            {tex_rect.br.x,tex_rect.br.y, 0, 0},
+            {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
         {.raw = {-w / 2.0, h / 2.0, 0, 1}},
             cVertex,
-            {tex_rect.bl.x, tex_rect.bl.y, 0, 0},
+            {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
         {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
             cVertex,
-            {tex_rect.tl.x, tex_rect.tl.y, 0, 0},
+            {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
             tmvm.v[2],
@@ -429,9 +386,14 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
                     texture ? texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glBindTexture(GL_TEXTURE_2D, texture ? texture->gl_tex : 0);
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+        if (texture) {
+          glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
+        } else {
+          glBindTexture(GL_TEXTURE_2D, 0);
+        }
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
     return;
 error:
@@ -535,7 +497,7 @@ void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
 
     // Position, color, texture, modelView * 4
-    size_t v_size = sizeof(VVector4) * 7;
+    int v_size = sizeof(VVector4) * 7;
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, v_size, 0);
@@ -589,7 +551,8 @@ void Graphics_build_decal_shader(Graphics *graphics) {
         shader_path("decal.frag"), &shader->gl_program);
     check(rc == 1, "Could not build decal shader");
     Hashmap_set(graphics->shaders, bfromcstr("decal"), shader);
-
+    List_push(graphics->shader_list, shader);
+  
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE] =
         glGetUniformLocation(program, "hasTexture");
@@ -649,7 +612,8 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
         shader_path("tilemap.frag"), &shader->gl_program);
     check(rc == 1, "Could not build tilemap shader");
     Hashmap_set(graphics->shaders, bfromcstr("tilemap"), shader);
-
+    List_push(graphics->shader_list, shader);
+  
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX] =
         glGetUniformLocation(program, "modelView");
@@ -715,6 +679,7 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
         shader_path("parallax.frag"), &shader->gl_program);
     check(rc == 1, "Could not build parallax shader");
     Hashmap_set(graphics->shaders, bfromcstr("parallax"), shader);
+    List_push(graphics->shader_list, shader);
 
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX] =
@@ -751,8 +716,12 @@ error:
     return;
 }
 
-int Graphics_init(void *self) {
-    Graphics *graphics = self;
+Graphics *Graphics_create(Engine *engine) {
+    Graphics *graphics = calloc(1, sizeof(Graphics));
+    check(graphics != NULL, "Couldn't create graphics");
+  
+    graphics->engine = engine;
+  
 #ifdef DABES_SDL
     graphics->debug_text_font = TTF_OpenFont("media/fonts/uni.ttf", 8);
 #endif
@@ -766,6 +735,7 @@ int Graphics_init(void *self) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     graphics->current_shader = NULL;
     graphics->shaders = Hashmap_create(NULL, NULL);
+    graphics->shader_list = List_create();
 
     graphics->gl_vao_enabled = 0;
 #ifdef DABES_IOS
@@ -803,23 +773,37 @@ int Graphics_init(void *self) {
     graphics->textures = Hashmap_create(NULL, NULL);
     graphics->sprites = Hashmap_create(NULL, NULL);
 
-  return 1;
+    return graphics;
+error:
+    return NULL;
 }
 
-void Graphics_destroy(void *self) {
-    Graphics *graphics = self;
+void nulldestroy(void *obj) { }
+
+void Graphics_destroy(Graphics *graphics) {
 #ifdef DABES_SDL
     TTF_CloseFont(graphics->debug_text_font);
 #endif
+  
+    Hashmap_destroy(graphics->shaders, nulldestroy);
+    LIST_FOREACH(graphics->shader_list, first, next, current) {
+        GfxShader *shader = current->value;
+        GfxShader_destroy(shader, graphics);
+    }
+    List_destroy(graphics->shader_list);
 
     Hashmap_destroy(graphics->textures,
                     (Hashmap_destroy_func)GfxTexture_destroy);
+  
+    Hashmap_destroy(graphics->sprites,
+                    (Hashmap_destroy_func)Sprite_destroy);
+  
     GLuint textures[] = {graphics->debug_text_texture};
     glDeleteTextures(1, textures);
     free(graphics);
 }
 
-GLuint Graphics_load_shader(Graphics *UNUSED(graphics), char *vert_name,
+GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
         char *frag_name, GLuint *compiled_program) {
     GLuint vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -828,10 +812,10 @@ GLuint Graphics_load_shader(Graphics *UNUSED(graphics), char *vert_name,
     check(vertex_shader != 0, "Couldn't create vertex shader");
     check(fragment_shader != 0, "Couldn't create fragment shader");
 
-    GLchar *v_src, *f_src;
+    unsigned char *v_src, *f_src;
     GLint v_size, f_size;
-    read_text_file(vert_name, &v_src, &v_size);
-    read_text_file(frag_name, &f_src, &f_size);
+    Engine_load_resource(graphics->engine, vert_name, &v_src, &v_size);
+    Engine_load_resource(graphics->engine, frag_name, &f_src, &f_size);
 
     glShaderSource(vertex_shader, 1, (const GLchar**)&v_src, &v_size);
     glShaderSource(fragment_shader, 1, (const GLchar**)&f_src, &f_size);
@@ -860,6 +844,11 @@ GLuint Graphics_load_shader(Graphics *UNUSED(graphics), char *vert_name,
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
     check(linked == 1, "Linking shader program");
 
+    glDetachShader(program, vertex_shader);
+    glDetachShader(program, fragment_shader);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+  
     //if(strcmp(vert_name, shader_path("decal.vert")) == 0) return 1;
     *compiled_program = program;
     return 1;
@@ -915,7 +904,7 @@ void Graphics_log_program(GLuint program) {
     }
 }
 
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
+GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name) {
     bstring bimage_name = bfromcstr(image_name);
 
     void *val = Hashmap_get(graphics->textures, bimage_name);
@@ -930,7 +919,7 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, char *image_name) {
     return texture;
 }
 
-Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
+Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
         GfxSize cell_size, int padding) {
     GfxTexture *texture = Graphics_texture_from_image(graphics, image_name);
     Sprite *sprite = Sprite_create(texture, cell_size, padding);
@@ -940,7 +929,3 @@ Sprite *Graphics_sprite_from_image(Graphics *graphics, char *image_name,
 error:
     return NULL;
 }
-
-Object GraphicsProto = {
-    .init = Graphics_init
-};

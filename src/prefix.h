@@ -33,7 +33,7 @@ extern char *bundlePath__;
 #define DABES_GLVERSION "gl"
 #endif
 
-#define shader_path(N) "media/shaders/" DABES_GLVERSION "/" N
+#define shader_path(N) "shaders/" DABES_GLVERSION "/" N
 
 #ifdef __GNUC__
 #  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))

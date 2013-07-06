@@ -102,7 +102,7 @@ void Sprite_update(Sprite *sprite, Engine *engine) {
 
     int new_idx = cur_anim->current_index;
     Stepper_update(cur_anim->stepper, engine->frame_ticks);
-    int steps = Stepper_clear(cur_anim->stepper);
+    unsigned long steps = Stepper_clear(cur_anim->stepper);
     if (!steps) return;
     new_idx += steps;
     if (new_idx >= cur_anim->num_frames) {

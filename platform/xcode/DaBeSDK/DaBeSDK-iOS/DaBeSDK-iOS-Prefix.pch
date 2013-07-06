@@ -1,0 +1,23 @@
+//
+// Prefix header for all source files of the 'DaBeSDK-iOS' target in the 'DaBeSDK-iOS' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#define OV_EXCLUDE_STATIC_CALLBACKS
+
+#ifdef __OBJC__
+  #import <UIKit/UIKit.h>
+  #import <Foundation/Foundation.h>
+  #import <GLKit/GLKit.h>
+#endif
+
+#import <OpenGLES/ES2/gl.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <lcthw/list.h>
+#import <lcthw/darray.h>

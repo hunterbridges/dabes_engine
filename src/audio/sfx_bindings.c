@@ -18,7 +18,9 @@ int luab_Sfx_new(lua_State *L) {
     luaL_getmetatable(L, luab_Sfx_metatable);
     lua_setmetatable(L, -2);
 
-    Sfx *sfx = Audio_gen_sfx(engine->audio, file);
+    char *ppath = engine->project_path(file);
+    Sfx *sfx = Audio_gen_sfx(engine->audio, ppath);
+    free(ppath);
 
     luaL_register_ud(L, -1, (void **)&sfx_ud->p, sfx);
     return 1;

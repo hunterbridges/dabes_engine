@@ -81,7 +81,7 @@ static void Camera_track_single(Camera *camera) {
     VRect t_rect = Camera_tracking_rect(camera);
     VRect e_rect = Entity_real_rect(entity);
     VRect t_bound = VRect_bounding_box(t_rect);
-    VRect e_bound = Camera_project_rect(camera, e_rect);
+    VRect e_bound = Camera_project_rect(camera, e_rect, 0);
     e_bound = VRect_bounding_box(e_bound);
     if (VRect_contains_rect(t_bound, e_bound)) return;
 
@@ -237,23 +237,42 @@ VRect Camera_tracking_rect(Camera *camera) {
   return new;
 }
 
-VPoint Camera_project_point(Camera *camera, VPoint point) {
+VPoint Camera_project_point(Camera *camera, VPoint point, int translation) {
   VPoint cam_center = camera->focal;
   VPoint new = VPoint_subtract(point, cam_center);
+  if (translation) {
+    new = VPoint_subtract(new, camera->translation);
+  }
 
   new = VPoint_rotate(new, VPointZero, -camera->rotation_radians);
   new = VPoint_scale(new, camera->scale);
-  new = VPoint_subtract(new, VPoint_scale(camera->translation, camera->scale));
 
   return new;
 }
 
-VRect Camera_project_rect(Camera *camera, VRect rect) {
+VPoint Camera_cast_point(Camera *camera, VPoint point) {
+  VPoint correction = {-camera->screen_size.w / 2.0,
+                       -camera->screen_size.h / 2.0};
+  correction = VPoint_scale(correction, 1 / camera->scale);
+  correction = VPoint_rotate(correction, VPointZero, camera->rotation_radians);
+  
+  VPoint top_left = VPoint_add(camera->focal, camera->translation);
+  top_left = VPoint_add(top_left, correction);
+  
+  VPoint new = point;
+  new = VPoint_scale(new, 1 / camera->scale);
+  new = VPoint_rotate(new, VPointZero, camera->rotation_radians);
+  new = VPoint_add(new, top_left);
+  
+  return new;
+}
+
+VRect Camera_project_rect(Camera *camera, VRect rect, int translation) {
   VRect new = rect;
-  new.tl = Camera_project_point(camera, rect.tl);
-  new.tr = Camera_project_point(camera, rect.tr);
-  new.br = Camera_project_point(camera, rect.br);
-  new.bl = Camera_project_point(camera, rect.bl);
+  new.tl = Camera_project_point(camera, rect.tl, translation);
+  new.tr = Camera_project_point(camera, rect.tr, translation);
+  new.br = Camera_project_point(camera, rect.br, translation);
+  new.bl = Camera_project_point(camera, rect.bl, translation);
   return new;
 }
 
@@ -271,7 +290,7 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
     GLfloat cam_color[4] = {1, 0, 0, 1};
     VRect track_rect = Camera_tracking_rect(&screen_cam);
     track_rect = VRect_move(track_rect, VPoint_scale(camera->translation, -camera->scale));
-    Graphics_stroke_rect(graphics, track_rect, cam_color, 0, 0);
+    Graphics_stroke_rect(graphics, track_rect, cam_color, 1, 0);
 
     if (camera->track_entities) {
         GLfloat e_color[4] = {0, 1, 0, 1};
@@ -279,9 +298,9 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
         int i = 0;
         for (i = 0; i < camera->num_entities; i++, entity++) {
             VRect e_rect = Entity_real_rect(*entity);
-            VRect e_bound = Camera_project_rect(camera, e_rect);
+            VRect e_bound = Camera_project_rect(camera, e_rect, 1);
             e_bound = VRect_bounding_box(e_bound);
-            Graphics_stroke_rect(graphics, e_bound, e_color, 0, 0);
+            Graphics_stroke_rect(graphics, e_bound, e_color, 1, 0);
         }
     }
 }

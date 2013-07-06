@@ -32,7 +32,7 @@ error:
     return;
 }
 
-void Easer_update(Easer *easer, struct Engine *engine, int delta_t) {
+void Easer_update(Easer *easer, struct Engine *engine, unsigned long delta_t) {
     easer->accumulator += delta_t * easer->time_scale;
     easer->accumulator = MIN(easer->length_ms, easer->accumulator);
 

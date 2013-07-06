@@ -1,0 +1,17 @@
+//
+// Prefix header for all source files of the 'DaBes-iOS' target in the 'DaBes-iOS' project
+//
+
+#define OV_EXCLUDE_STATIC_CALLBACKS
+
+#ifdef __OBJC__
+  #import <UIKit/UIKit.h>
+  #import <Foundation/Foundation.h>
+  #import <GLKit/GLKit.h>
+#endif
+
+#import <OpenGLES/ES2/gl.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <lcthw/list.h>
+#import <lcthw/darray.h>
