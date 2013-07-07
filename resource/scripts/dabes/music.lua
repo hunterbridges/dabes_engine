@@ -36,10 +36,12 @@ Music = BoundObject:extend({
     stop = BoundObject.fwd_func("stop"),
 
     _getters = {
-        volume = BoundObject.fwd_func("get_volume")
+        volume = BoundObject.fwd_func("get_volume"),
+        loop = BoundObject.fwd_func("get_loop")
     },
 
     _setters = {
-        volume = BoundObject.fwd_func("set_volume")
+        volume = BoundObject.fwd_func("set_volume"),
+        loop = BoundObject.fwd_func("set_loop")
     }
 })

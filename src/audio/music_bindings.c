@@ -96,6 +96,20 @@ error:
     return 0;
 }
 
+Scripting_bool_getter(Music, loop);
+
+int luab_Music_set_loop(lua_State *L) {
+    Music *music = luaL_tomusic(L, 1);
+    check(music != NULL, "Music required");
+    int loop = lua_toboolean(L, 2);
+    Music_set_loop(music, loop);
+
+    return 1;
+error:
+    return 0;
+}
+
+
 static const struct luaL_Reg luab_Music_meths[] = {
     {"__gc", luab_Music_close},
     {"play", luab_Music_play},
@@ -103,6 +117,8 @@ static const struct luaL_Reg luab_Music_meths[] = {
     {"stop", luab_Music_stop},
     {"get_volume", luab_Music_get_volume},
     {"set_volume", luab_Music_set_volume},
+    {"get_loop", luab_Music_get_loop},
+    {"set_loop", luab_Music_set_loop},
     {NULL, NULL}
 };
 

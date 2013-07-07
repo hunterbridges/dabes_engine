@@ -5,6 +5,7 @@ Music *Music_load(int num_files, char *ogg_files[]) {
     Music *music = malloc(sizeof(Music) + num_files * sizeof(char *));
     check(music != NULL, "Couldn't create Music");
     music->volume = 1;
+    music->loop = 1;
     music->playing = 0;
     music->ended = 0;
     music->ogg_streams = List_create();
@@ -100,13 +101,15 @@ void Music_update(Music *music) {
         OggStream *next_stream = next_node->value;
         OggStream_play(next_stream);
         music->active_stream = next_stream;
-    } else {
+    } else if (music->active_stream->should_loop) {
         // Loop!
         OggStream_rewind(music->active_stream);
         OggStream_play(music->active_stream);
     }
 
-    if (music->active_stream->ended) music->ended = 1;
+    if (music->active_stream && music->active_stream->ended) {
+        music->ended = 1;
+    }
 }
 
 void Music_pause(Music *UNUSED(music)) {
@@ -116,5 +119,13 @@ void Music_pause(Music *UNUSED(music)) {
 void Music_set_volume(Music *music, double volume) {
     music->volume = volume;
     alSourcef(music->source, AL_GAIN, volume);
+}
+
+void Music_set_loop(Music *music, int loop) {
+    music->loop = loop;
+    if (music->ogg_streams->last) {
+        OggStream *last_stream = (OggStream *)music->ogg_streams->last->value;
+        last_stream->should_loop = loop;
+    }
 }
 

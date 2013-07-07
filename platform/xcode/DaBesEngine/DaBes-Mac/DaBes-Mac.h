@@ -318,6 +318,7 @@ typedef struct Music {
     List *ogg_streams;
     int playing;
     int ended;
+    int loop;
     ALuint source;
     OggStream *active_stream;
 
@@ -332,6 +333,7 @@ void Music_update(Music *music);
 void Music_pause(Music *music);
 void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
+void Music_set_loop(Music *music, int loop);
 
 #endif
 #ifndef __binding_macros_h
