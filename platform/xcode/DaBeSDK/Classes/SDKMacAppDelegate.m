@@ -35,6 +35,15 @@
      object:self.engineVC];
 }
 
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag {
+  if (self.curentProject) {
+    [self.engineWindow makeKeyAndOrderFront:nil];
+  } else {
+    [self.welcomeWindow makeKeyAndOrderFront:nil];
+  }
+  return YES;
+}
+
 - (void)showEngineWindow {
   if (!self.engineVC) {
       // Insert code here to initialize your application
@@ -56,7 +65,8 @@
 
 - (IBAction)inspectorItemClicked:(id)sender {
   NSMenuItem *item = sender;
-  if (item.state == NSOnState) {
+  if (item.state == NSOnState &&
+      [NSApp keyWindow] == self.inspectorWindow) {
     [self.inspectorWindow close];
   } else {
     [self.inspectorWindow makeKeyAndOrderFront:nil];
@@ -115,14 +125,17 @@
 
 - (IBAction)scriptEditorItemClicked:(id)sender {
   NSMenuItem *item = sender;
-  if (item.state == NSOnState) {
+  if (item.state == NSOnState &&
+      [NSApp keyWindow] == self.scriptEditorController.window) {
     [self.scriptEditorController.window close];
     self.scriptEditorController = nil;
     item.state = NSOffState;
   } else {
-    self.scriptEditorController =
-        [[SDKScriptEditorWindowController alloc] initWithWindowNibName:@"ScriptEditor"];
-    self.scriptEditorController.engineVC = self.engineVC;
+    if (!self.scriptEditorController) {
+      self.scriptEditorController =
+          [[SDKScriptEditorWindowController alloc] initWithWindowNibName:@"ScriptEditor"];
+      self.scriptEditorController.engineVC = self.engineVC;
+    }
     [self.scriptEditorController.window makeKeyAndOrderFront:nil];
     item.state = NSOnState;
   }

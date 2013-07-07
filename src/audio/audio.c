@@ -119,6 +119,7 @@ error:
 Music *Audio_gen_music(Audio *audio, int num_files, char *files[]) {
     check(audio != NULL, "No audio to generate music");
     Music *music = Music_load(num_files, files);
+    check(music != NULL, "Couldn't load music");
     List_push(audio->musics, music);
     return music;
 error:
@@ -131,8 +132,9 @@ void Audio_destroy_music(Audio *audio, struct Music *music) {
 }
 
 struct Sfx *Audio_gen_sfx(Audio *audio, char *filename) {
-    check(audio != NULL, "No audio to generate sfx");
+    check(audio != NULL, "No audio to generate Sfx");
     Sfx *sfx = Sfx_load(filename);
+    check(sfx != NULL, "Couldn't load Sfx");
     List_push(audio->active_sfx, sfx);
     return sfx;
 error:

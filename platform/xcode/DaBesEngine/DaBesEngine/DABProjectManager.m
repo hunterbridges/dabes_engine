@@ -61,6 +61,7 @@ char *DABProjectManager_path_func(const char *filename) {
     @"media/bgs",
     @"media/fonts",
     @"media/music",
+    @"media/sfx",
     @"media/sprites",
     @"media/tilemaps",
     @"media/tilesets"

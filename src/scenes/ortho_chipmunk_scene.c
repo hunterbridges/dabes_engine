@@ -18,23 +18,6 @@ typedef struct OrthoChipmunkSceneCtx {
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
 
-void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
-    if (scene->started) return;
-    assert(scene->world == NULL);
-    assert(scene->entities == NULL);
-    scene->entities = DArray_create(sizeof(Entity *), 8);
-  
-    OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
-    scene->context = context;
-    context->tile_shapes = List_create();
-
-    Scripting_call_hook(engine->scripting, scene, "configure");
-
-    OrthoChipmunkScene_create_space(scene, engine);
-
-    scene->started = 1;
-}
-
 void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
 
@@ -60,6 +43,30 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
     Stepper_reset(engine->physics->stepper);
     scene->started = 0;
+}
+
+void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
+    if (scene->started) return;
+    assert(scene->world == NULL);
+    assert(scene->entities == NULL);
+    scene->entities = DArray_create(sizeof(Entity *), 8);
+  
+    OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
+    scene->context = context;
+    context->tile_shapes = List_create();
+
+    if (Scripting_call_hook(engine->scripting, scene, "configure")) {
+      OrthoChipmunkScene_create_space(scene, engine);
+      scene->started = 1;
+    } else {
+      // Need to do a graceful stop since user could have manipulated the scene
+      // before the hook hit the error.
+      
+      scene->started = 1;
+      OrthoChipmunkScene_stop(scene, engine);
+      
+      // Now scene->started is 0
+    }
 }
 
 void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
@@ -180,6 +187,8 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
         int i = 0;
         for (i = 0; i < DArray_count(scene->entities); i++) {
             Entity *entity = DArray_get(scene->entities, i);
+            if (!entity) continue;
+          
             VRect entity_rect = Entity_real_rect(entity);
             GLfloat color[4] = {1, 1, 1, 0.5};
             if (entity->selected) color[3] = 1.0;

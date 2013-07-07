@@ -14,13 +14,18 @@ int luab_Sfx_new(lua_State *L) {
 
     sfx_ud = lua_newuserdata(L, sizeof(Sfx_userdata));
     check(sfx_ud != NULL, "Could not make sfx userdata");
-
+    sfx_ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Sfx_metatable);
     lua_setmetatable(L, -2);
 
     char *ppath = engine->project_path(file);
     Sfx *sfx = Audio_gen_sfx(engine->audio, ppath);
     free(ppath);
+    if (sfx == NULL) {
+      lua_pop(L, 1);
+      return 0;
+    }
 
     luaL_register_ud(L, -1, (void **)&sfx_ud->p, sfx);
     return 1;

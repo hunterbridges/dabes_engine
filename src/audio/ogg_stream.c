@@ -120,8 +120,11 @@ error:
 }
 
 int OggStream_stop(OggStream *ogg_stream) {
+    check(ogg_stream != NULL, "No OGG Stream to stop");
     alSourceStop(ogg_stream->source);
     return Audio_check();
+error:
+    return 0;
 }
 
 int OggStream_playing(OggStream *ogg_stream) {

@@ -27,12 +27,16 @@ Music *Music_load(int num_files, char *ogg_files[]) {
         strcpy(music->ogg_files[i], filename);
         OggStream *ogg_stream = OggStream_create(filename,
                                                  music->source);
+        check(ogg_stream != NULL, "Failed to create OGG Stream: %s", filename);
         List_push(music->ogg_streams, ogg_stream);
         if (i == num_files - 1) ogg_stream->should_loop = 1;
     }
 
     return music;
 error:
+    if (music) {
+      Music_destroy(music);
+    }
     return NULL;
 }
 

@@ -10,7 +10,8 @@ int luab_Camera_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Camera_userdata));
     check(ud != NULL, "Could not make Camera userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Camera_metatable);
     lua_setmetatable(L, -2);
 

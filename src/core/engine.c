@@ -62,6 +62,7 @@ Engine *Engine_create(Engine_resource_path_func path_func,
 
     return engine;
 error:
+    if (engine) Engine_destroy(engine);
     return NULL;
 }
 

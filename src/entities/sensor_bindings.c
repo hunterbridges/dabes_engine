@@ -9,6 +9,7 @@ int luab_Sensor_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Sensor_userdata));
     check(ud != NULL, "Could not make Sensor userdata");
+    ud->p = NULL;
 
     luaL_getmetatable(L, luab_Sensor_metatable);
     lua_setmetatable(L, -2);

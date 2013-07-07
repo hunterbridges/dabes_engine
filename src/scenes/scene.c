@@ -153,7 +153,9 @@ void Scene_control(Scene *scene, Engine *engine) {
 }
 
 void Scene_render(Scene *scene, Engine *engine) {
-    if (scene->proto.render != NULL) scene->_(render)(scene, engine);
+    if (scene->proto.render != NULL) {
+        scene->_(render)(scene, engine);
+    }
 }
 
 void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode) {

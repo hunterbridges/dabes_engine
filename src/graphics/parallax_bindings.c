@@ -13,7 +13,8 @@ int luab_ParallaxLayer_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(ParallaxLayer_userdata));
     check(ud != NULL, "Could not make ParralaxLayer userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_ParallaxLayer_metatable);
     lua_setmetatable(L, -2);
 
@@ -76,7 +77,8 @@ int luab_Parallax_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Parallax_userdata));
     check(ud != NULL, "Could not make Parralax userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Parallax_metatable);
     lua_setmetatable(L, -2);
 

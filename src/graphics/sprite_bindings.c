@@ -15,7 +15,8 @@ int luab_SpriteAnimation_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(SpriteAnimation_userdata));
     check(ud != NULL, "Could not make SpriteAnimation userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_SpriteAnimation_metatable);
     lua_setmetatable(L, -2);
 
@@ -83,7 +84,8 @@ int luab_Sprite_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Sprite_userdata));
     check(ud != NULL, "Could not make Sprite userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Sprite_metatable);
     lua_setmetatable(L, -2);
 

@@ -10,7 +10,12 @@ Music = BoundObject:extend({
 -- Hook Overloads
 
     realize = function(class, ...)
-        return class.lib.new(...)
+        local realized = class.lib.new(...)
+        if realized == nil then
+            error("Music: OGG file invalid or not found.", 3)
+        end
+
+        return realized
     end,
 
 -- Function Bindings

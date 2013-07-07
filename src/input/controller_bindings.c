@@ -10,7 +10,8 @@ int luab_Controller_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Controller_userdata));
     check(ud != NULL, "Could not make Controller userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Controller_metatable);
     lua_setmetatable(L, -2);
 

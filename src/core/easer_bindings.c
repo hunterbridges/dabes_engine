@@ -16,7 +16,8 @@ int luab_Easer_new(lua_State *L) {
     int length_ms = lua_tonumber(L, 1);
     ud = lua_newuserdata(L, sizeof(Easer_userdata));
     check(ud != NULL, "Could not make Easer userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Easer_metatable);
     lua_setmetatable(L, -2);
 

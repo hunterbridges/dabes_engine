@@ -17,7 +17,8 @@ int luab_Scene_new(lua_State *L) {
     Scene_userdata *scene_ud = lua_newuserdata(L, sizeof(Scene_userdata));
     Scene *scene = NULL;
     check(scene_ud != NULL, "Could not make scene userdata");
-
+    scene_ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Scene_metatable);
     lua_setmetatable(L, -2);
 

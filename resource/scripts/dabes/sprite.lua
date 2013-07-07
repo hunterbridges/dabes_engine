@@ -42,6 +42,10 @@ Sprite = BoundObject:extend({
 -- Hook Overloads
     realize = function(class, texname, cell_size, padding)
         local ret = class.lib.new(texname, cell_size, padding)
+        if ret == nil then
+            error("Sprite: Texture image invalid or not found.", 3)
+        end
+
         return ret
     end,
 

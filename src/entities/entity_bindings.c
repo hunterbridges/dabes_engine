@@ -14,7 +14,8 @@ int luab_Entity_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Entity_userdata));
     check(ud != NULL, "Could not make Entity userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Entity_metatable);
     lua_setmetatable(L, -2);
 

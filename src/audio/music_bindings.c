@@ -14,7 +14,8 @@ int luab_Music_new(lua_State *L) {
 
     music_ud = lua_newuserdata(L, sizeof(Music_userdata));
     check(music_ud != NULL, "Could not make music userdata");
-
+    music_ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Music_metatable);
     lua_setmetatable(L, -2);
 
@@ -26,9 +27,13 @@ int luab_Music_new(lua_State *L) {
     }
 
     Music *music = Audio_gen_music(engine->audio, c, files);
-  
     for (i = 0; i < c; i++) {
         free(files[i]);
+    }
+  
+    if (music == NULL) {
+      lua_pop(L, 1);
+      return 0;
     }
   
     luaL_register_ud(L, -1, (void **)&music_ud->p, music);

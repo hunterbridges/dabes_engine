@@ -17,9 +17,11 @@ Sfx *Sfx_load(char *filename) {
     alSourcei(sfx->source, AL_SOURCE_RELATIVE, AL_TRUE);
 
     sfx->ogg_stream = OggStream_create(filename, sfx->source);
+    check(sfx->ogg_stream != NULL, "Couldn't create Sfx OGG stream");
 
     return sfx;
 error:
+    if (sfx) Sfx_destroy(sfx);
     return NULL;
 }
 

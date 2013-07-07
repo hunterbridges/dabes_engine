@@ -17,7 +17,8 @@ int luab_Body_new(lua_State *L) {
 
     ud = lua_newuserdata(L, sizeof(Body_userdata));
     check(ud != NULL, "Could not make Body userdata");
-
+    ud->p = NULL;
+  
     luaL_getmetatable(L, luab_Body_metatable);
     lua_setmetatable(L, -2);
 

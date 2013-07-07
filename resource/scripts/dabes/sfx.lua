@@ -10,7 +10,12 @@ Sfx = BoundObject:extend({
 -- Hook Overloads
 
     realize = function(class, filename)
-        return class.lib.new(filename)
+        local realized = class.lib.new(filename)
+        if realized == nil then
+            error("Sfx: OGG file invalid or not found.", 3)
+        end
+
+        return realized
     end,
 
 -- Function Bindings

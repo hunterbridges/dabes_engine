@@ -6,7 +6,12 @@ ParallaxLayer = BoundObject:extend({
 -- Hook Overloads
 
     realize = function(class, texture)
-        return class.lib.new(texture)
+        local realized = class.lib.new(texture)
+        if realized == nil then
+            error("ParallaxLayer: Texture image invalid or not found.", 3)
+        end
+
+        return realized
     end,
 
 -- Function Bindings
