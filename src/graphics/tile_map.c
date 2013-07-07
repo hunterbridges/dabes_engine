@@ -228,7 +228,6 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
           tex_br.packed.y *= pot_scale.y;
       } else {
           glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS], 1, 1);
-          glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS], 0);
           glBindTexture(GL_TEXTURE_2D, 0);
       }
 

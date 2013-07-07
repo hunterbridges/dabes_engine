@@ -145,4 +145,32 @@ error: \
     return 0; \
 }
 
+#define Scripting_GfxSize_getter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE *s = ud->p; \
+    lua_newtable(L); \
+    lua_pushinteger(L, 1); \
+    lua_pushnumber(L, s->SPROP.w); \
+    lua_settable(L, -3); \
+    lua_pushinteger(L, 2); \
+    lua_pushnumber(L, s->SPROP.h); \
+    lua_settable(L, -3); \
+    return 1; \
+}
+
+#define Scripting_GfxSize_setter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE *s = ud->p; \
+    check(luaL_unpack_exact(L, 2), \
+            "Please provide 2 numbers to set " #STYPE "->" #SPROP ); \
+    GfxSize size = {lua_tonumber(L, -2), lua_tonumber(L, -1)}; \
+    lua_pop(L, 2); \
+    s->SPROP = size; \
+    return 1; \
+error: \
+    return 0; \
+}
+
 #endif

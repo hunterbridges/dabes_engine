@@ -9,7 +9,7 @@ Entity *Entity_create() {
     Entity *entity = calloc(1, sizeof(Entity));
     check(entity != NULL, "Failed to create entity");
 
-    entity->alpha = 1.f;
+    entity->alpha = 0.f;
     entity->z_index = 1;
 
     return entity;
@@ -36,12 +36,31 @@ VPoint Entity_center(Entity *entity) {
 
 VRect Entity_base_rect(Entity *entity) {
     Body *body = entity->body;
-    return body->_(gfx_rect)(body, entity->pixels_per_meter, 0);
+    if (body) {
+      return body->_(gfx_rect)(body, entity->pixels_per_meter, 0);
+    } else {
+      VRect base_rect =
+          VRect_from_xywh(entity->center.x - entity->size.w / 2.0,
+                          entity->center.y - entity->size.h / 2.0,
+                          entity->size.w,
+                          entity->size.h);
+      return base_rect;
+    }
 }
 
 VRect Entity_real_rect(Entity *entity) {
     Body *body = entity->body;
-    return body->_(gfx_rect)(body, entity->pixels_per_meter, 1);
+    if (body) {
+      return body->_(gfx_rect)(body, entity->pixels_per_meter, 1);
+    } else {
+      VRect base_rect =
+          VRect_from_xywh(entity->center.x - entity->size.w / 2.0,
+                          entity->center.y - entity->size.h / 2.0,
+                          entity->size.w,
+                          entity->size.h);
+      // TODO: Rotate
+      return base_rect;
+    }
 }
 
 VRect Entity_bounding_rect(Entity *entity) {
@@ -54,7 +73,10 @@ void Entity_render(Entity *entity, struct Engine *engine,
     Graphics *graphics = engine->graphics;
 
     VRect rect = Entity_base_rect(entity);
-    float rads = entity->body->_(get_angle)(entity->body);
+    float rads = 0;
+    if (entity->body) {
+      rads = entity->body->_(get_angle)(entity->body);
+    }
     float degrees = rads * 180.0 / M_PI;
     GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
 
@@ -88,3 +110,17 @@ int Entity_z_cmp(void **a, void **b) {
     return 0;
 }
 
+int Entity_set_center(Entity *entity, VPoint center) {
+    if (entity->body) {
+        entity->body->_(set_pos)(entity->body, center);
+    } else {
+        entity->center = center;
+    }
+    return 1;
+}
+
+int Entity_set_size(Entity *entity, GfxSize size) {
+    if (entity->body) return 0;
+    entity->size = size;
+    return 1;
+}

@@ -15,6 +15,7 @@ What is done:
     * Parallax layers
     * Sprite animations
     * Keyframe animations/Easer
+    * Static scenes
 * Physics engine:
     * Can use Chipmunk because writing a Physics engine is hard
     * Basic Hitboxes
@@ -34,7 +35,6 @@ What is not yet done:
     * Spatialization
 * Graphics engine:
     * HUD Layers
-    * Static scenes
 * Scripting engine:
     * Space bindings
     * Tile map bindings

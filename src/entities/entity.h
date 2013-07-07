@@ -23,7 +23,10 @@ typedef struct Entity {
 
     int pixels_per_meter;
     int z_index;
-  
+
+    VPoint center;
+    GfxSize size;
+
     int selected;
 } Entity;
 
@@ -41,5 +44,8 @@ VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
 void Entity_set_z_index(Entity *entity, int z_index);
 int Entity_z_cmp(void **a, void **b);
+
+int Entity_set_center(Entity *entity, VPoint center);
+int Entity_set_size(Entity *entity, GfxSize size);
 
 #endif

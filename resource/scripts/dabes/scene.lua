@@ -19,11 +19,12 @@ Scene = BoundObject:extend({
 -- Hook Overloads
 
     realize = function(class)
-        if class.kind ~= 'ortho_chipmunk' then
-            error("Invalid class kind `" .. class.kind .. "`")
+        local realized = class.lib.new(class.kind, class.pixels_per_meter)
+        if realized == nil then
+            error("Scene: Invalid .kind `" .. class.kind .. "`", 3)
         end
-       
-        return class.lib.new(class.kind, class.pixels_per_meter)
+
+        return realized
     end,
 
 -- Functions
@@ -101,6 +102,7 @@ Scene = BoundObject:extend({
 
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
         debug_camera = BoundObject.fwd_func("get_debug_camera"),
+        bg_color = BoundObject.fwd_func("get_bg_color"),
         cover_color = BoundObject.fwd_func("get_cover_color")
     },
 
@@ -110,6 +112,7 @@ Scene = BoundObject:extend({
         parallax = BoundObject.fwd_func("set_parallax"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
         debug_camera = BoundObject.fwd_func("set_debug_camera"),
+        bg_color = BoundObject.fwd_func("set_bg_color"),
         cover_color = BoundObject.fwd_func("set_cover_color")
     },
 
@@ -124,6 +127,12 @@ Scene = BoundObject:extend({
     -- If you want to do things that persist across restarts,
     -- do them in `init` (inherited from BoundObject)
     configure = function(self) end,
+
+    -- main
+    --
+    -- Hook called by the game engine once per frame, after any physics solving
+    -- and before the individual `main` functions on the Scene's Entities.
+    main = function(self) end,
 
     -- cleanup
     --

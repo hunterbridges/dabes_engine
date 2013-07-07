@@ -144,6 +144,42 @@ error:
     return 0;
 }
 
+Scripting_VPoint_getter(Entity, center);
+
+int luab_Entity_set_center(lua_State *L) {
+    Entity *entity = luaL_toentity(L, 1);
+    check(entity != NULL, "Entity required");
+    VPoint pos = luaL_tovpoint(L, 2);
+    Entity_set_center(entity, pos);
+
+    return 0;
+error:
+    return 0;
+}
+
+Scripting_GfxSize_getter(Entity, size);
+
+GfxSize luaL_togfxsize(lua_State *L, int idx) {
+    lua_pushvalue(L, idx);
+    check(luaL_unpack_exact(L, 2),
+            "Please provide 2 numbers to get a GfxSize. Returning GfxSizeZero.");
+    GfxSize size = {lua_tonumber(L, -2), lua_tonumber(L, -1)};
+    lua_pop(L, 3);
+    return size;
+error:
+    return GfxSizeZero;
+}
+
+int luab_Entity_set_size(lua_State *L) {
+    Entity *entity = luaL_toentity(L, 1);
+    check(entity != NULL, "Entity required");
+    GfxSize size = luaL_togfxsize(L, 2);
+    Entity_set_size(entity, size);
+
+    return 0;
+error:
+    return 0;
+}
 
 static const struct luaL_Reg luab_Entity_meths[] = {
     {"__gc", luab_Entity_close},
@@ -158,6 +194,10 @@ static const struct luaL_Reg luab_Entity_meths[] = {
     {"set_alpha", luab_Entity_set_alpha},
     {"get_z_index", luab_Entity_get_z_index},
     {"set_z_index", luab_Entity_set_z_index},
+    {"get_center", luab_Entity_get_center},
+    {"set_center", luab_Entity_set_center},
+    {"get_size", luab_Entity_get_size},
+    {"set_size", luab_Entity_set_size},
     {NULL, NULL}
 };
 

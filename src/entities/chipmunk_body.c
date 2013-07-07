@@ -104,7 +104,7 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
     return 1;
 }
 
-void body_clear_shapes(cpBody *cpBody, cpShape *shape, void *data) {
+void body_clear_shapes(cpBody *UNUSED(cpBody), cpShape *shape, void *data) {
     Body *body = data;
     if (shape->space_private) {
       cpSpaceRemoveShape(shape->space_private, shape);
@@ -116,13 +116,13 @@ void body_clear_shapes(cpBody *cpBody, cpShape *shape, void *data) {
 
 void ChipmunkBody_cleanup(Body *body) {
     cpBodyEachShape(body->cp_body, body_clear_shapes, body);
-  
+
     if (body->cp_shape) {
         cpShapeSetBody(body->cp_shape, NULL);
         cpShapeFree(body->cp_shape);
         body->cp_shape= NULL;
     }
-  
+
     if (body->cp_space) {
         if (!body->is_rogue)
             cpSpaceRemoveBody(body->cp_space, body->cp_body);
@@ -191,7 +191,7 @@ void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset) {
             cpSpaceRemoveShape(body->cp_space, body->cp_shape);
         }
     }
-  
+
     if (body->cp_shape) {
         cpShapeFree(body->cp_shape);
     }
@@ -215,6 +215,11 @@ void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset) {
     if (body->cp_space) {
         cpSpaceAddShape(body->cp_space, body->cp_shape);
     }
+
+    GfxSize sz = {.w = w, .h = h};
+    if (body->state.entity) {
+      body->state.entity->size = sz;
+    }
 }
 
 VPoint ChipmunkBody_get_pos(Body *body) {
@@ -222,7 +227,10 @@ VPoint ChipmunkBody_get_pos(Body *body) {
 }
 
 void ChipmunkBody_set_pos(Body *body, VPoint pos) {
-    return cpBodySetPos(body->cp_body, tocp(pos));
+    cpBodySetPos(body->cp_body, tocp(pos));
+    if (body->state.entity) {
+      body->state.entity->center = pos;
+    }
 }
 
 VPoint ChipmunkBody_get_velo(Body *body) {

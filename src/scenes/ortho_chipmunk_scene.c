@@ -32,7 +32,7 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     List_destroy(context->tile_shapes);
     free(context);
     scene->context = NULL;
-  
+
     DArray_destroy(scene->entities);
     scene->entities = NULL;
 
@@ -50,7 +50,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->world == NULL);
     assert(scene->entities == NULL);
     scene->entities = DArray_create(sizeof(Entity *), 8);
-  
+
     OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
     scene->context = context;
     context->tile_shapes = List_create();
@@ -61,10 +61,10 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     } else {
       // Need to do a graceful stop since user could have manipulated the scene
       // before the hook hit the error.
-      
+
       scene->started = 1;
       OrthoChipmunkScene_stop(scene, engine);
-      
+
       // Now scene->started is 0
     }
 }
@@ -154,83 +154,28 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
-    ////////////////////////////////////////////////////////////////////////////
-
-    // If the cover color is opaque, we don't need to render anything beneath.
-    if (scene->parallax) Parallax_render(scene->parallax, engine->graphics);
+    Scene_fill(scene, engine, scene->bg_color);
+  
+    if (scene->parallax) {
+        Parallax_render(scene->parallax, engine->graphics);
+    }
 
     Graphics_project_camera(graphics, scene->camera);
+    if (scene->tile_map) {
+        Graphics_use_shader(graphics, tshader);
+        TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
+    }
 
-    ////////////////////////////////////////////////////////////////////////
-
-    Graphics_use_shader(graphics, tshader);
-    TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
-
-    ////////////////////////////////////////////////////////////////////////
-
+    Scene_render_entities(scene, engine);
     Graphics_use_shader(graphics, dshader);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, graphics->projection_matrix.gl);
-
-    int i = 0;
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        Entity_render(entity, engine, dshader->draw_buffer);
-    }
-
-    DrawBuffer_draw(dshader->draw_buffer);
-    DrawBuffer_empty(dshader->draw_buffer);
-
-    ////////////////////////////////////////////////////////////////////////
-
-    if (scene->selection_mode != kSceneNotSelecting) {
-        int i = 0;
-        for (i = 0; i < DArray_count(scene->entities); i++) {
-            Entity *entity = DArray_get(scene->entities, i);
-            if (!entity) continue;
-          
-            VRect entity_rect = Entity_real_rect(entity);
-            GLfloat color[4] = {1, 1, 1, 0.5};
-            if (entity->selected) color[3] = 1.0;
-            Graphics_stroke_rect(graphics, entity_rect, color, 2, 0);
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-
-    if (scene->cover_color.rgba.a > 0.0) {
-        Graphics_use_shader(graphics, dshader);
-        Camera screen_cam = {
-          .focal = {0, 0},
-          .screen_size = scene->camera->screen_size,
-          .scale = 1,
-          .rotation_radians = 0,
-          .margin = scene->camera->margin,
-          .translation = {0, 0}
-        };
-        Graphics_reset_projection_matrix(graphics);
-        Graphics_reset_modelview_matrix(graphics);
-        Graphics_project_camera(graphics, &screen_cam);
-        VRect cover_rect = VRect_from_xywh(-screen_cam.screen_size.w / 2.0,
-                                           -screen_cam.screen_size.h / 2.0,
-                                           screen_cam.screen_size.w,
-                                           screen_cam.screen_size.h);
-        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX],
-                           1, GL_FALSE, graphics->projection_matrix.gl);
-        Graphics_draw_rect(graphics, NULL, cover_rect,
-                scene->cover_color.raw, NULL, VPointZero, GfxSizeZero,
-                0, 0);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    // Camera debug
-    if (scene->debug_camera)
+    Scene_render_selected_entities(scene, engine);
+    Scene_fill(scene, engine, scene->cover_color);
+    if (scene->debug_camera) {
         Camera_debug(scene->camera, engine->graphics);
-
-    // Draw the grid
-    if (scene->draw_grid && scene->world)
+    }
+    if (scene->draw_grid && scene->world) {
         Scene_draw_debug_grid(scene, graphics);
+    }
 }
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
@@ -369,7 +314,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     scene->space = cpSpaceNew();
     OrthoChipmunkSceneCtx *context = scene->context;
     context->space = scene->space;
-  
+
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
     scene->space->collisionSlop = 0.0;

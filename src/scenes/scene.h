@@ -52,6 +52,7 @@ typedef struct Scene {
     Parallax *parallax;
     TileMap *tile_map;
 
+    VVector4 bg_color;
     VVector4 cover_color;
 
     short int draw_grid;
@@ -60,7 +61,7 @@ typedef struct Scene {
     int started;
 
     int pixels_per_meter;
-  
+
     SceneEntitySelectionMode selection_mode;
     List *selected_entities;
 } Scene;
@@ -79,5 +80,11 @@ void Scene_control(Scene *scene, Engine *engine);
 
 void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
 int Scene_select_entities_at(Scene *scene, VPoint screen_point);
+
+// Rendering
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
+void Scene_render_entities(Scene *scene, Engine *engine);
+void Scene_render_selected_entities(Scene *scene, Engine *engine);
+
 
 #endif

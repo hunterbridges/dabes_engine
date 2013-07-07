@@ -78,8 +78,6 @@ error:
 void DrawBufferLayer_draw(DrawBufferLayer *layer) {
     int i = 0;
     
-    static int l_has_texture = -1;
-    
     for (i = 0; i < DArray_count(layer->textures); i++) {
         DrawBufferTexture *buftex = DArray_get(layer->textures, i);
         DArray *texshapes = Hashmap_get(layer->texture_buffers, buftex->key);
@@ -104,11 +102,9 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer) {
         }
         
         int has_texture = buftex->texture ? 1 : 0;
-        if (has_texture != l_has_texture) {
-            glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
-                        has_texture);
-            l_has_texture = has_texture;
-        }
+        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
+                    has_texture);
+      
         GLint gl_tex = 0;
         glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
         if (buftex->texture) {

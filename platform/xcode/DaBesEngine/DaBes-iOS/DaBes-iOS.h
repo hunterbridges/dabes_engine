@@ -318,6 +318,7 @@ typedef struct Music {
     List *ogg_streams;
     int playing;
     int ended;
+    int loop;
     ALuint source;
     OggStream *active_stream;
 
@@ -332,6 +333,7 @@ void Music_update(Music *music);
 void Music_pause(Music *music);
 void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
+void Music_set_loop(Music *music, int loop);
 
 #endif
 #ifndef __binding_macros_h
@@ -476,6 +478,34 @@ static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
         lua_tonumber(L, -2), lua_tonumber(L, -1)}}; \
     lua_pop(L, 4); \
     s->SPROP = vertex; \
+    return 1; \
+error: \
+    return 0; \
+}
+
+#define Scripting_GfxSize_getter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE *s = ud->p; \
+    lua_newtable(L); \
+    lua_pushinteger(L, 1); \
+    lua_pushnumber(L, s->SPROP.w); \
+    lua_settable(L, -3); \
+    lua_pushinteger(L, 2); \
+    lua_pushnumber(L, s->SPROP.h); \
+    lua_settable(L, -3); \
+    return 1; \
+}
+
+#define Scripting_GfxSize_setter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE *s = ud->p; \
+    check(luaL_unpack_exact(L, 2), \
+            "Please provide 2 numbers to set " #STYPE "->" #SPROP ); \
+    GfxSize size = {lua_tonumber(L, -2), lua_tonumber(L, -1)}; \
+    lua_pop(L, 2); \
+    s->SPROP = size; \
     return 1; \
 error: \
     return 0; \
@@ -1376,7 +1406,10 @@ typedef struct Entity {
 
     int pixels_per_meter;
     int z_index;
-  
+
+    VPoint center;
+    GfxSize size;
+
     int selected;
 } Entity;
 
@@ -1394,6 +1427,9 @@ VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
 void Entity_set_z_index(Entity *entity, int z_index);
 int Entity_z_cmp(void **a, void **b);
+
+int Entity_set_center(Entity *entity, VPoint center);
+int Entity_set_size(Entity *entity, GfxSize size);
 
 #endif
 #ifndef __entity_bindings_h
@@ -1723,6 +1759,7 @@ typedef struct Scene {
     Parallax *parallax;
     TileMap *tile_map;
 
+    VVector4 bg_color;
     VVector4 cover_color;
 
     short int draw_grid;
@@ -1731,7 +1768,7 @@ typedef struct Scene {
     int started;
 
     int pixels_per_meter;
-  
+
     SceneEntitySelectionMode selection_mode;
     List *selected_entities;
 } Scene;
@@ -1750,6 +1787,12 @@ void Scene_control(Scene *scene, Engine *engine);
 
 void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
 int Scene_select_entities_at(Scene *scene, VPoint screen_point);
+
+// Rendering
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
+void Scene_render_entities(Scene *scene, Engine *engine);
+void Scene_render_selected_entities(Scene *scene, Engine *engine);
+
 
 #endif
 #ifndef __gameobjects_h_
@@ -2185,5 +2228,11 @@ Scripting_caster_for(Scene, luaL_toscene);
 int luaopen_dabes_scene(lua_State *L);
 Scene *luaL_get_current_scene(lua_State *L);
 int luaL_flip_scene(lua_State *L);
+
+#endif
+#ifndef __static_scene_h
+#define __static_scene_h
+
+extern SceneProto StaticSceneProto;
 
 #endif

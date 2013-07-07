@@ -136,7 +136,6 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     texture->pot_size.w = pot_width;
     texture->pot_size.h = pot_height;
 
-    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &texture->gl_tex);
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     GLenum color_format = GL_RGBA;
@@ -386,7 +385,6 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
                     texture ? texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glActiveTexture(GL_TEXTURE0);
         glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
         if (texture) {
           glBindTexture(GL_TEXTURE_2D, texture->gl_tex);

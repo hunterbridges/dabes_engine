@@ -22,7 +22,9 @@ Entity = BoundObject:extend({
        sprite = BoundObject.fwd_func('get_sprite'),
        body = BoundObject.fwd_func('get_body'),
        alpha = BoundObject.fwd_func('get_alpha'),
-       z_index = BoundObject.fwd_func('get_z_index')
+       z_index = BoundObject.fwd_func('get_z_index'),
+       center = BoundObject.fwd_func('get_center'),
+       size = BoundObject.fwd_func('get_size')
    },
 
    _setters = {
@@ -31,7 +33,9 @@ Entity = BoundObject:extend({
        sprite = BoundObject.fwd_func('set_sprite'),
        body = BoundObject.fwd_func('set_body'),
        alpha = BoundObject.fwd_func('set_alpha'),
-       z_index = BoundObject.fwd_func('set_z_index')
+       z_index = BoundObject.fwd_func('set_z_index'),
+       center = BoundObject.fwd_func('set_center'),
+       size = BoundObject.fwd_func('set_size')
    },
 
 -- Hooks

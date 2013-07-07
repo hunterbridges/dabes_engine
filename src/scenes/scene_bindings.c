@@ -7,6 +7,7 @@
 #include "../graphics/parallax_bindings.h"
 #include "scene.h"
 #include "ortho_chipmunk_scene.h"
+#include "static_scene.h"
 
 const char *luab_Scene_lib = "dab_scene";
 const char *luab_Scene_metatable = "DaBes.scene";
@@ -18,7 +19,7 @@ int luab_Scene_new(lua_State *L) {
     Scene *scene = NULL;
     check(scene_ud != NULL, "Could not make scene userdata");
     scene_ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_Scene_metatable);
     lua_setmetatable(L, -2);
 
@@ -28,6 +29,9 @@ int luab_Scene_new(lua_State *L) {
     proto = lua_tostring(L, 1);
     if (streq(proto, "ortho_chipmunk")) {
         scene = Scene_create(engine, OrthoChipmunkSceneProto);
+        valid_proto = 1;
+    } else if (streq(proto, "static")) {
+        scene = Scene_create(engine, StaticSceneProto);
         valid_proto = 1;
     }
     check(valid_proto, "Invalid scene type: %s", proto);
@@ -198,6 +202,9 @@ Scripting_bool_setter(Scene, draw_grid);
 Scripting_bool_getter(Scene, debug_camera);
 Scripting_bool_setter(Scene, debug_camera);
 
+Scripting_VVector4_getter(Scene, bg_color);
+Scripting_VVector4_setter(Scene, bg_color);
+
 Scripting_VVector4_getter(Scene, cover_color);
 Scripting_VVector4_setter(Scene, cover_color);
 
@@ -216,6 +223,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"set_draw_grid", luab_Scene_set_draw_grid},
     {"get_debug_camera", luab_Scene_get_debug_camera},
     {"set_debug_camera", luab_Scene_set_debug_camera},
+    {"get_bg_color", luab_Scene_get_bg_color},
+    {"set_bg_color", luab_Scene_set_bg_color},
     {"get_cover_color", luab_Scene_get_cover_color},
     {"set_cover_color", luab_Scene_set_cover_color},
     {NULL, NULL}
@@ -247,7 +256,7 @@ Scene *luaL_get_current_scene(lua_State *L) {
         lua_pop(L, 1);
         return NULL;
     }
-  
+
     lua_getfield(L, -1, "current_scene");
     if (lua_isnil(L, -1)) {
         lua_pop(L, 2);
