@@ -63,6 +63,8 @@ Scripting_VPoint_setter(Camera, translation);
 Scripting_VPoint_getter(Camera, focal);
 Scripting_VPoint_setter(Camera, focal);
 
+Scripting_GfxSize_getter(Camera, screen_size);
+
 static const struct luaL_Reg luab_Camera_meths[] = {
     {"__gc", luab_Camera_close},
     {"track_entities", luab_Camera_track_entities},
@@ -80,6 +82,7 @@ static const struct luaL_Reg luab_Camera_meths[] = {
     {"set_translation", luab_Camera_set_translation},
     {"get_focal", luab_Camera_get_focal},
     {"set_focal", luab_Camera_set_focal},
+    {"get_screen_size", luab_Camera_get_screen_size},
     {NULL, NULL}
 };
 

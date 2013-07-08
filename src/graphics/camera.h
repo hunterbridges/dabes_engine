@@ -7,6 +7,8 @@ struct Entity;
 typedef struct Camera {
     VPoint focal;
     struct GfxSize screen_size;
+  
+    int has_scene_size;
     struct GfxSize scene_size;
 
     int num_entities;
@@ -23,6 +25,7 @@ typedef struct Camera {
 } Camera;
 
 Camera *Camera_create(int width, int height);
+void Camera_set_scene_size(Camera *camera, GfxSize scene_size);
 void Camera_track_entities(Camera *camera, int num_entities,
         struct Entity **entities);
 void Camera_track(Camera *camera);

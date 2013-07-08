@@ -40,6 +40,11 @@ error:
     return;
 }
 
+void Camera_set_scene_size(Camera *camera, GfxSize scene_size) {
+    camera->has_scene_size = 1;
+    camera->scene_size = scene_size;
+}
+
 void Camera_correct_scale(Camera *camera) {
     if (camera->min_scale > 0 ) {
         camera->scale = MAX(camera->scale, camera->min_scale);
@@ -167,6 +172,14 @@ static void Camera_track_multi(Camera *camera) {
 }
 
 void Camera_track(Camera *camera) {
+    if (!camera->has_scene_size) {
+        camera->scene_size = camera->screen_size;
+        VPoint center = {camera->screen_size.w / 2.0,
+                         camera->screen_size.h / 2.0};
+        camera->focal = center;
+        return;
+    }
+  
     if (camera->track_entities && camera->num_entities == 1) {
         Camera_track_single(camera);
     } else if (camera->track_entities && camera->num_entities > 0) {

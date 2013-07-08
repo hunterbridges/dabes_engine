@@ -6,6 +6,7 @@
 // Import all the bindings so we can load them into our scripting env.
 #include "../audio/music_bindings.h"
 #include "../audio/sfx_bindings.h"
+#include "../core/engine_bindings.h"
 #include "../core/easer_bindings.h"
 #include "../input/controller_bindings.h"
 #include "../entities/body_bindings.h"
@@ -24,6 +25,7 @@ const char *SCRIPTING_POINTER_MAP = "pointermap";
 const char *SCRIPTING_INSTANCE_MAP = "instances";
 
 void Scripting_load_engine_libs(Scripting *scripting) {
+    luaopen_dabes_engine(scripting->L);
     luaopen_dabes_music(scripting->L);
     luaopen_dabes_sfx(scripting->L);
     luaopen_dabes_easer(scripting->L);
@@ -58,9 +60,9 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     Scripting_load_engine_libs(scripting);
 
     Scripting_update_paths(scripting, engine);
-  
+
     lua_atpanic(L, Scripting_handle_panic);
-  
+
     // The pointer map is keyed by C object pointers and contains
     // userdata objects.
     luaL_createweakweaktable(L);
@@ -77,7 +79,7 @@ Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
     char *ppath = engine->project_path(boot_script);
     int status = luaL_dofile(L, ppath);
     free(ppath);
-  
+
     if (status) {
       fprintf(stderr, "Failed to run boot script: %s\n", lua_tostring(L, -1));
       free(scripting);
@@ -97,12 +99,12 @@ void Scripting_update_paths(Scripting *scripting, struct Engine *engine) {
     strcpy(path, rpath);
     path = strcat(path, ";");
     path = strcat(path, ppath);
-  
+
     lua_getglobal(scripting->L, "package");
     lua_pushstring(scripting->L, path);
     lua_setfield(scripting->L, -2, "path");
     lua_pop(scripting->L, 1);
-  
+
     free(rpath);
     free(ppath);
     free(path);
@@ -149,7 +151,7 @@ int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname) {
         lua_pop(L, 2);
         return 0;
     }
-  
+
     lua_pushvalue(L, -2);
     result = lua_pcall(L, 1, 0, 0);
     if (result != 0) {

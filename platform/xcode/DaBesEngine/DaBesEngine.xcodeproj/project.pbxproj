@@ -71,6 +71,10 @@
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
 		CA8B9864178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
+		CAAF8C85178A325000BBB143 /* engine_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAAF8C83178A325000BBB143 /* engine_bindings.c */; };
+		CAAF8C86178A325000BBB143 /* engine_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAAF8C83178A325000BBB143 /* engine_bindings.c */; };
+		CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAAF8C84178A325000BBB143 /* engine_bindings.h */; };
+		CAAF8C88178A325000BBB143 /* engine_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAAF8C84178A325000BBB143 /* engine_bindings.h */; };
 		CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
@@ -412,6 +416,8 @@
 		CA8B9860178A08BA00CA41B4 /* static_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_scene.h; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = camera.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CAAF8C83178A325000BBB143 /* engine_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = engine_bindings.c; sourceTree = "<group>"; };
+		CAAF8C84178A325000BBB143 /* engine_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine_bindings.h; sourceTree = "<group>"; };
 		CAC3820817861D660072E709 /* DABProjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DABProjectManager.h; path = DaBesEngine/DABProjectManager.h; sourceTree = "<group>"; };
 		CAC3820917861D660072E709 /* DABProjectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DABProjectManager.m; path = DaBesEngine/DABProjectManager.m; sourceTree = "<group>"; };
 		CAC581A917585FFD004A8161 /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body.c; sourceTree = "<group>"; };
@@ -574,6 +580,8 @@
 				CA5D22CB176ED86F0044793D /* easer.h */,
 				CA24C76516FC20900045D5DE /* engine.c */,
 				CA24C76616FC20900045D5DE /* engine.h */,
+				CAAF8C83178A325000BBB143 /* engine_bindings.c */,
+				CAAF8C84178A325000BBB143 /* engine_bindings.h */,
 				CA30660B17054AFE00629F80 /* base64.h */,
 				CA30660C17054B0900629F80 /* base64.c */,
 				CA30660E17054C0900629F80 /* gzip.h */,
@@ -868,6 +876,7 @@
 				CA51FC821783659A000C73E0 /* DABiOSEngineViewController.h in Headers */,
 				CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */,
 				CA8B9864178A08BA00CA41B4 /* static_scene.h in Headers */,
+				CAAF8C88178A325000BBB143 /* engine_bindings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -929,6 +938,7 @@
 				CAF42A3B1780F62500C3220A /* prefix.h in Headers */,
 				CAF42A3C1780F62500C3220A /* util.h in Headers */,
 				CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */,
+				CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1260,6 +1270,7 @@
 				CA51FC831783659A000C73E0 /* DABiOSEngineViewController.m in Sources */,
 				CAC3820D17861D670072E709 /* DABProjectManager.m in Sources */,
 				CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */,
+				CAAF8C86178A325000BBB143 /* engine_bindings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1318,6 +1329,7 @@
 				CACE2B3E178347DE00F36FA3 /* DABMacEngineViewController.m in Sources */,
 				CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */,
 				CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */,
+				CAAF8C85178A325000BBB143 /* engine_bindings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,7 +24,8 @@ Camera = BoundObject:extend({
         scale = BoundObject.fwd_func("get_scale"),
         rotation = BoundObject.fwd_func("get_rotation"),
         translation = BoundObject.fwd_func("get_translation"),
-        focal = BoundObject.fwd_func("get_focal")
+        focal = BoundObject.fwd_func("get_focal"),
+        screen_size = BoundObject.fwd_func("get_screen_size")
     },
 
     _setters = {
@@ -34,6 +35,7 @@ Camera = BoundObject:extend({
         scale = BoundObject.fwd_func("set_scale"),
         rotation = BoundObject.fwd_func("set_rotation"),
         translation = BoundObject.fwd_func("set_translation"),
-        focal = BoundObject.fwd_func("set_focal")
+        focal = BoundObject.fwd_func("set_focal"),
+        screen_size = BoundObject.readonly
     }
 })

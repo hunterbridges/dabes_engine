@@ -1150,6 +1150,18 @@ void Engine_log_iOS(char *fmt, ...);
 #endif
 
 #endif
+#ifndef __engine_bindings_h
+#define __engine_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Engine_lib;
+
+int luaopen_dabes_engine(lua_State *L);
+
+#endif
+
 #ifndef __gzip_h
 #define __gzip_h
 
@@ -1492,6 +1504,8 @@ struct Entity;
 typedef struct Camera {
     VPoint focal;
     struct GfxSize screen_size;
+  
+    int has_scene_size;
     struct GfxSize scene_size;
 
     int num_entities;
@@ -1508,6 +1522,7 @@ typedef struct Camera {
 } Camera;
 
 Camera *Camera_create(int width, int height);
+void Camera_set_scene_size(Camera *camera, GfxSize scene_size);
 void Camera_track_entities(Camera *camera, int num_entities,
         struct Entity **entities);
 void Camera_track(Camera *camera);

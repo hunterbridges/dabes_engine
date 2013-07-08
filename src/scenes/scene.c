@@ -12,7 +12,6 @@ Scene *Scene_create(Engine *engine, SceneProto proto) {
     scene->proto = proto;
     scene->camera = Camera_create(engine->graphics->screen_size.w,
                                   engine->graphics->screen_size.h);
-    scene->camera->scene_size = scene->camera->screen_size;
 
     VVector4 cover_color = {.raw = {0, 0, 0, 0}};
     scene->cover_color = cover_color;
@@ -85,8 +84,8 @@ void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
         TileMap_destroy(scene->tile_map);
     }
     scene->tile_map = tile_map;
-    scene->camera->scene_size =
-        TileMap_draw_size(scene->tile_map, scene->pixels_per_meter);
+    Camera_set_scene_size(scene->camera,
+        TileMap_draw_size(scene->tile_map, scene->pixels_per_meter));
     if(needs_restart) Scene_restart(scene, engine);
 }
 
