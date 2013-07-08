@@ -161,7 +161,7 @@ char *bundlePath__;
   if (!setjmp(panic_jmp_buf)) {
     Engine_regulate(self.engine);
     Input_touch(self.engine->input, self.touchInput);
-    Audio_stream(self.engine->audio);
+    Audio_stream(self.engine->audio, self.engine);
     
     if (self.engine->frame_now) {
       Engine_update_easers(self.engine);

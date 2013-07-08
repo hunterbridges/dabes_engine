@@ -31,5 +31,14 @@ Sfx = BoundObject:extend({
 
     _setters = {
         volume = BoundObject.fwd_func("set_volume")
-    }
+    },
+
+-- Hooks
+
+    -- ended
+    --
+    -- This will be called when the Sfx ends.
+
+    ended = function(self) end,
+
 })

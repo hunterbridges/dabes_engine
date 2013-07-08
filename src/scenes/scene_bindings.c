@@ -140,7 +140,7 @@ int luab_Scene_set_music(lua_State *L) {
 
     lua_pop(L, 3);
 
-    scene->music = music;
+    Scene_set_music(scene, music);
 error:
     return 0;
 }
@@ -208,6 +208,8 @@ Scripting_VVector4_setter(Scene, bg_color);
 Scripting_VVector4_getter(Scene, cover_color);
 Scripting_VVector4_setter(Scene, cover_color);
 
+Scripting_num_getter(Scene, started_at);
+
 static const struct luaL_Reg luab_Scene_meths[] = {
     {"__gc", luab_Scene_close},
     {"start", luab_Scene_start},
@@ -227,6 +229,7 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"set_bg_color", luab_Scene_set_bg_color},
     {"get_cover_color", luab_Scene_get_cover_color},
     {"set_cover_color", luab_Scene_set_cover_color},
+    {"get_started_at", luab_Scene_get_started_at},
     {NULL, NULL}
 };
 

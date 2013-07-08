@@ -21,7 +21,9 @@ typedef struct Audio {
 
 Audio *Audio_create();
 int Audio_check();
-void Audio_stream(Audio *audio);
+
+struct Engine;
+void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;

@@ -1,5 +1,6 @@
 #include "music.h"
 #include <stdlib.h>
+#include "../scenes/scene.h"
 
 Music *Music_load(int num_files, char *ogg_files[]) {
     Music *music = malloc(sizeof(Music) + num_files * sizeof(char *));
@@ -42,8 +43,9 @@ error:
 }
 
 void Music_end(Music *music) {
-    music->ended = 1;
+    if (music->ended) return;
     alSourceStop(music->source);
+    music->ended = 1;
 }
 
 void Music_destroy(Music *music) {

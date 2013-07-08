@@ -103,17 +103,19 @@ Scene = BoundObject:extend({
         draw_grid = BoundObject.fwd_func("get_draw_grid"),
         debug_camera = BoundObject.fwd_func("get_debug_camera"),
         bg_color = BoundObject.fwd_func("get_bg_color"),
-        cover_color = BoundObject.fwd_func("get_cover_color")
+        cover_color = BoundObject.fwd_func("get_cover_color"),
+        started_at = BoundObject.fwd_func("get_started_at")
     },
 
     _setters = {
         space = BoundObject.readonly,
-        music = BoundObject.fwd_func("set_music"),
+        music = BoundObject.fwd_zeroing_setter("set_music", "music"),
         parallax = BoundObject.fwd_func("set_parallax"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
         debug_camera = BoundObject.fwd_func("set_debug_camera"),
         bg_color = BoundObject.fwd_func("set_bg_color"),
-        cover_color = BoundObject.fwd_func("set_cover_color")
+        cover_color = BoundObject.fwd_func("set_cover_color"),
+        started_at = BoundObject.readonly
     },
 
 -- Hooks

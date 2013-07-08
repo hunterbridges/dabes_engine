@@ -212,7 +212,9 @@ typedef struct Audio {
 
 Audio *Audio_create();
 int Audio_check();
-void Audio_stream(Audio *audio);
+
+struct Engine;
+void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -296,7 +298,9 @@ typedef struct Audio {
 
 Audio *Audio_create();
 int Audio_check();
-void Audio_stream(Audio *audio);
+
+struct Engine;
+void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -313,6 +317,7 @@ void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 #include <lcthw/list.h>
 #include <OpenAL/al.h>
 
+struct Scene;
 typedef struct Music {
     double volume;
     List *ogg_streams;
@@ -321,7 +326,9 @@ typedef struct Music {
     int loop;
     ALuint source;
     OggStream *active_stream;
-
+  
+    struct Scene *scene;
+  
     int num_files;
     char *ogg_files[];
 } Music;
@@ -1781,6 +1788,7 @@ typedef struct Scene {
     short int debug_camera;
     short int render_mode;
     int started;
+    long int started_at;
 
     int pixels_per_meter;
 
@@ -1794,6 +1802,7 @@ void Scene_restart(Scene *scene, Engine *engine);
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path, float meters_per_tile);
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
+void Scene_set_music(Scene *scene, Music *music);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
 void Scene_reset_camera(Scene *scene, Engine *engine);
 void Scene_render(Scene *scene, Engine *engine);

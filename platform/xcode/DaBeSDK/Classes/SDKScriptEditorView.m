@@ -80,6 +80,12 @@
 + (NSNumber *)extractErrorLine:(NSString *)string
                       filename:(NSString **)filename
                        message:(NSString **)message {
+  NSRange colonRange = [string rangeOfString:@":"];
+  if (colonRange.location == NSNotFound) {
+    *message = string;
+    return nil;
+  }
+  
   NSCharacterSet *numberSet =
       [NSCharacterSet characterSetWithCharactersInString:@"1234567890"];
   NSScanner *scanner = [NSScanner scannerWithString:string];

@@ -59,6 +59,7 @@ typedef struct Scene {
     short int debug_camera;
     short int render_mode;
     int started;
+    long int started_at;
 
     int pixels_per_meter;
 
@@ -72,6 +73,7 @@ void Scene_restart(Scene *scene, Engine *engine);
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path, float meters_per_tile);
 void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
+void Scene_set_music(Scene *scene, Music *music);
 void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
 void Scene_reset_camera(Scene *scene, Engine *engine);
 void Scene_render(Scene *scene, Engine *engine);

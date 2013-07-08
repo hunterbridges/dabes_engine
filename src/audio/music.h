@@ -4,6 +4,7 @@
 #include "ogg_stream.h"
 #include <OpenAL/al.h>
 
+struct Scene;
 typedef struct Music {
     double volume;
     List *ogg_streams;
@@ -12,7 +13,9 @@ typedef struct Music {
     int loop;
     ALuint source;
     OggStream *active_stream;
-
+  
+    struct Scene *scene;
+  
     int num_files;
     char *ogg_files[];
 } Music;

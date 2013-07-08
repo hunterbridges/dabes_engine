@@ -38,7 +38,7 @@ BoundObject = Object:extend({
 
         bound.real = bound:realize(...)
         dab_registerinstance(bound.real, bound)
-        bound.born_at = os.time()
+        bound.born_at = dab_engine.ticks()
         bound:init()
 
         return bound
@@ -105,10 +105,38 @@ BoundObject = Object:extend({
             return fwded(self.real, member, ...)
         end
     end,
+    
+    -- fwd_zeroing
+    fwd_zeroing_setter = function(fname, pname)
+        return function(self, member, ...)
+            if not self.real then return nil end
+            local fwded = self.real[fname]
+
+            if member ~= nil then
+                if member._zeroable == nil then
+                    member._zeroable = {}
+                end
+
+                local lookup = {reffer = self, refname = pname}
+                table.insert(member._zeroable, lookup)
+
+                member._zero = function(mself)
+                    for i, v in ipairs(mself._zeroable) do
+                        local lookup = v
+                        print("Zeroing", lookup.reffer, " -> ", lookup.refname)
+                        lookup.reffer[lookup.refname] = nil
+                    end
+                    mself._zeroable = nil
+                end
+            end
+
+            return fwded(self.real, member, ...)
+        end
+    end,
 
     -- readonly
     readonly = function(self, key, val)
-        print(key.." is a readonly property")
+        error("Attempting to set a read only property", 3)
     end,
 
 -- Hooks

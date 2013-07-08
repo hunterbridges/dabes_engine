@@ -89,6 +89,10 @@ void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map) {
     if(needs_restart) Scene_restart(scene, engine);
 }
 
+void Scene_set_music(Scene *scene, Music *music) {
+    scene->music = music;
+}
+
 void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
                          int abs_path, float meters_per_tile) {
   TileMap *map = NULL;

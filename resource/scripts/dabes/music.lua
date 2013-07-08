@@ -43,5 +43,14 @@ Music = BoundObject:extend({
     _setters = {
         volume = BoundObject.fwd_func("set_volume"),
         loop = BoundObject.fwd_func("set_loop")
-    }
+    },
+    
+-- Hooks
+
+    -- ended
+    --
+    -- If the Music isn't looping, this will be called when it ends.
+
+    ended = function(self) end,
+
 })

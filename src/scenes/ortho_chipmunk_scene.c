@@ -58,6 +58,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     if (Scripting_call_hook(engine->scripting, scene, "configure")) {
       OrthoChipmunkScene_create_space(scene, engine);
       scene->started = 1;
+      scene->started_at = Engine_get_ticks(engine);
     } else {
       // Need to do a graceful stop since user could have manipulated the scene
       // before the hook hit the error.

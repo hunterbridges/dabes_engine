@@ -1,3 +1,5 @@
+#include "../scripting/scripting.h"
+#include "../core/engine.h"
 #include "audio.h"
 #include "music.h"
 #include "sfx.h"
@@ -57,7 +59,7 @@ error:
     return 0;
 }
 
-void Audio_stream(Audio *audio) {
+void Audio_stream(Audio *audio, Engine *engine) {
     ListNode *node = audio->musics->first;
     while (node != NULL) {
         Music *music = node->value;
@@ -65,6 +67,8 @@ void Audio_stream(Audio *audio) {
         if (music->ended) {
             ListNode *old = node;
             node = node->next;
+            Scripting_call_hook(engine->scripting, music, "ended");
+            Scripting_call_hook(engine->scripting, music, "_zero");
             List_remove(audio->musics, old);
             Music_destroy(music);
             continue;
@@ -81,6 +85,7 @@ void Audio_stream(Audio *audio) {
         if (sfx->ended) {
             ListNode *old = node;
             node = node->next;
+            Scripting_call_hook(engine->scripting, sfx, "ended");
             List_remove(audio->active_sfx, old);
             Sfx_destroy(sfx);
             continue;

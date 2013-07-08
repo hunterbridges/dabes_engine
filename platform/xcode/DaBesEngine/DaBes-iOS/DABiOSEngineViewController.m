@@ -230,7 +230,7 @@ char *bundlePath__;
   if (!self.engine) return;
   
   Engine_regulate(engine_);
-  Audio_stream(self.engine->audio);
+  Audio_stream(self.engine->audio, self.engine);
   Input_touch(engine_->input, touchInput_);
   
   scene_ = Engine_get_current_scene(engine_);
