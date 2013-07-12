@@ -60,6 +60,7 @@
 		CA8EC6501786310F00659757 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA8EC64E1786310F00659757 /* resource */; };
 		CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */; };
 		CAE807631787C2D700B0A213 /* SDKMenuOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE807621787C2D700B0A213 /* SDKMenuOutlineView.m */; };
+		CAEFD911178FABE900D19B4D /* NSString+Bytes.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD910178FABE900D19B4D /* NSString+Bytes.m */; };
 		CAF42A6F1780F6EA00C3220A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A6A1780F6EA00C3220A /* main.m */; };
 		CAF42A891780F7B700C3220A /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A741780F7B700C3220A /* FileSystemItem.m */; };
 		CAF42A8A1780F7B700C3220A /* NSView+Center.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF42A761780F7B700C3220A /* NSView+Center.m */; };
@@ -228,6 +229,8 @@
 		CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKProjectEngineViewController.m; sourceTree = "<group>"; };
 		CAE807611787C2D700B0A213 /* SDKMenuOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDKMenuOutlineView.h; path = DaBeSDK/SDKMenuOutlineView.h; sourceTree = SOURCE_ROOT; };
 		CAE807621787C2D700B0A213 /* SDKMenuOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDKMenuOutlineView.m; path = DaBeSDK/SDKMenuOutlineView.m; sourceTree = SOURCE_ROOT; };
+		CAEFD90F178FABE900D19B4D /* NSString+Bytes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Bytes.h"; sourceTree = "<group>"; };
+		CAEFD910178FABE900D19B4D /* NSString+Bytes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Bytes.m"; sourceTree = "<group>"; };
 		CAF42A6A1780F6EA00C3220A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CAF42A711780F79B00C3220A /* DaBeSDK.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DaBeSDK.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF42A731780F7B700C3220A /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
@@ -361,6 +364,8 @@
 			children = (
 				CAF42A751780F7B700C3220A /* NSView+Center.h */,
 				CAF42A761780F7B700C3220A /* NSView+Center.m */,
+				CAEFD90F178FABE900D19B4D /* NSString+Bytes.h */,
+				CAEFD910178FABE900D19B4D /* NSString+Bytes.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -778,6 +783,7 @@
 				CAF42A931780F7B700C3220A /* SDKScriptTabModel.m in Sources */,
 				CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */,
 				CAE807631787C2D700B0A213 /* SDKMenuOutlineView.m in Sources */,
+				CAEFD911178FABE900D19B4D /* NSString+Bytes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

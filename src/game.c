@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     while (engine->input->game_quit == 0) {
         Engine_regulate(engine);
         Input_poll(engine->input);
-        Audio_stream(engine->audio);
+        Audio_stream(engine->audio, engine);
 
         if (engine->frame_now) {
             Engine_update_easers(engine);

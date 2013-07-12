@@ -26,7 +26,7 @@ rawset(_injector, "__newindex", function(table, key, val)
     if _globalkeys[val] == nil then
         if (exists ~= nil and type(exists) == "table" and exists._isobject
             and exists._noinject ~= true) then
-            
+
             -- If it already exists, soft copy the members so they get
             -- injected into the existing instance's metatables
             for k, v in pairs(val) do
@@ -36,6 +36,11 @@ rawset(_injector, "__newindex", function(table, key, val)
             print("New val for key ", key)
             table._veil[key] = val
             _globalkeys[val] = key
+
+            -- Added this at 5 AM
+            if (type(val) == "table" and val._isobject) then
+                val["_is_"..key] = true
+            end
         end
     else
         if _globalkeys[val] ~= key then

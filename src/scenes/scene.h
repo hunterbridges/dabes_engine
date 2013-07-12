@@ -12,6 +12,7 @@
 #include "../graphics/tile_map.h"
 #include "../physics/world.h"
 #include "../math/vmatrix.h"
+#include "../recorder/recorder.h"
 
 struct Scene;
 typedef struct SceneProto {
@@ -23,6 +24,7 @@ typedef struct SceneProto {
     void (*control)(struct Scene *scene, Engine *engine);
     void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
     Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
+    Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
 } SceneProto;
 
 typedef enum {
@@ -32,7 +34,8 @@ typedef enum {
 
 typedef enum {
   kSceneNotSelecting = 0,
-  kSceneSelectingForCamera
+  kSceneSelectingForCamera = 1,
+  kSceneSelectingForRecorder = 2
 } SceneEntitySelectionMode;
 
 typedef struct Scene {

@@ -8,6 +8,7 @@
 
 #import <DaBes-Mac/DaBes-Mac.h>
 #import <Cocoa/Cocoa.h>
+#import "NSString+Bytes.h"
 #import "SDKMacAppDelegate.h"
 #import "SDKInspectorView.h"
 #import "SDKPanner.h"
@@ -30,12 +31,22 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 @property (nonatomic, strong) IBOutlet NSButton *cameraSnapSceneCheckbox;
 @property (nonatomic, strong) IBOutlet NSButton *cameraDebugCheckbox;
 @property (nonatomic, strong) IBOutlet NSButton *cameraTrackEntityButton;
+@property (nonatomic, strong) IBOutlet NSWindow *cameraTrackEntityTip;
 @property (nonatomic, assign) BOOL cameraEditingTracking;
+
+@property (nonatomic, assign) Recorder *debugRecorder;
+@property (nonatomic, weak) IBOutlet NSButton *recorderLinkEntityButton;
+@property (nonatomic, strong) IBOutlet NSWindow *recorderLinkEntityTip;
+@property (nonatomic, assign) BOOL recorderEditingLink;
+@property (nonatomic, weak) IBOutlet NSButton *recorderRecordButton;
+@property (nonatomic, weak) IBOutlet NSButton *recorderPlayButton;
+@property (nonatomic, weak) IBOutlet NSTextField *recorderKeyframeEveryField;
+@property (nonatomic, weak) IBOutlet NSTextField *recorderFramesCapturedField;
+@property (nonatomic, weak) IBOutlet NSTextField *recorderAvgSizeField;
+@property (nonatomic, weak) IBOutlet NSTextField *recorderTotalSizeField;
 
 @property (nonatomic, strong) NSMapTable *updateMap;
 @property (nonatomic, strong) NSMapTable *usingControls;
-
-@property (nonatomic, strong) IBOutlet NSWindow *cameraTrackEntityTip;
 
 @end
 
@@ -94,6 +105,7 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
                         change:(NSDictionary *)change
                        context:(void *)context {
   if (object == self.engineVC && [keyPath isEqualToString:@"scene"]) {
+    self.debugRecorder = NULL;
     [self updateAllLabels:YES];
     return;
   }
@@ -128,6 +140,22 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
       self.cameraEditingTracking = NO;
       [self.cameraTrackEntityTip close];
     }
+  } else if (self.engineVC.scene->selection_mode == kSceneSelectingForRecorder) {
+    Entity *entity = List_pop(self.engineVC.scene->selected_entities);
+    if (self.debugRecorder) {
+      self.debugRecorder->entity = entity;
+      self.debugRecorder->_(rewind)(self.debugRecorder);
+      self.debugRecorder->_(clear_frames)(self.debugRecorder);
+    } else {
+      self.debugRecorder = self.engineVC.scene->_(gen_recorder)(self.engineVC.scene, entity);
+    }
+    ChipmunkRecorderCtx *context = self.debugRecorder->context;
+    
+    self.recorderKeyframeEveryField.stringValue =
+        [NSString stringWithFormat:@"%d", context->keyframe_every];
+    Scene_set_selection_mode(self.engineVC.scene, kSceneNotSelecting);
+    self.recorderEditingLink = NO;
+    [self.recorderLinkEntityTip close];
   }
 }
 
@@ -144,6 +172,13 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
                      forKey:(id)self.cameraFocalPanner];
   [self.updateMap setObject:NSStringFromSelector(@selector(updateCameraOffsetLabel))
                      forKey:(id)self.cameraOffsetPanner];
+}
+
+- (void)stopPlayback {
+  Recorder_set_state(self.debugRecorder, RecorderStateIdle);
+  self.recorderPlayButton.state = NSOffState;
+  [self.recorderRecordButton setEnabled:YES];
+  [self.recorderKeyframeEveryField setEnabled:YES];
 }
 
 - (void)updateAllLabels:(BOOL)force {
@@ -169,6 +204,28 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
   self.cameraTrackEntityButton.state =
       hasEntities || self.cameraEditingTracking ? NSOnState : NSOffState;
   [self.cameraFocalPanner setEnabled:!hasEntities];
+  
+  if (self.debugRecorder) {
+    self.recorderAvgSizeField.stringValue =
+        [NSString stringFromBytes:self.debugRecorder->avg_frame_size];
+    self.recorderTotalSizeField.stringValue =
+        [NSString stringFromBytes:self.debugRecorder->total_frame_size];
+    self.recorderFramesCapturedField.stringValue =
+        [NSString stringWithFormat:@"%d", self.debugRecorder->num_frames];
+    
+    if (self.recorderPlayButton.state == NSOnState &&
+          self.debugRecorder->current_frame >= self.debugRecorder->num_frames) {
+        [self stopPlayback];
+    }
+  } else {
+    self.recorderAvgSizeField.stringValue = @"--";
+    self.recorderTotalSizeField.stringValue = @"--";
+    self.recorderFramesCapturedField.stringValue = @"--";
+    self.recorderKeyframeEveryField.stringValue = @"--";
+  }
+  [self.recorderPlayButton setEnabled:!!self.debugRecorder];
+  [self.recorderRecordButton setEnabled:!!self.debugRecorder];
+  [self.recorderKeyframeEveryField setEnabled:!!self.debugRecorder];
 }
 
 - (void)updateInt:(int *)outval withSlider:(NSSlider *)slider {
@@ -315,6 +372,67 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     
     Scene_set_selection_mode(self.engineVC.scene, kSceneSelectingForCamera);
   }
+}
+
+#pragma mark - Recorder Panel Actions
+
+- (IBAction)linkEntityClicked:(id)sender {
+  NSButton *button = sender;
+  if (!self.engineVC.scene) return;
+  if (button.state == NSOffState) {
+    self.recorderEditingLink = NO;
+    [self.recorderLinkEntityTip close];
+    Scene_set_selection_mode(self.engineVC.scene, kSceneNotSelecting);
+  } else {
+    // Track
+    NSWindow *mainWindow = [(SDKMacAppDelegate *)[NSApp delegate] engineWindow];
+    CGFloat titleHeight = mainWindow.frame.size.height -
+        ((NSView *)mainWindow.contentView).frame.size.height;
+    NSRect mainWindowRect = mainWindow.frame;
+    CGRect cgWinRect = NSRectToCGRect(mainWindowRect);
+    
+    [self.recorderLinkEntityTip makeKeyAndOrderFront:nil];
+    NSRect tipRect = self.recorderLinkEntityTip.frame;
+    tipRect.origin.x = CGRectGetMaxX(cgWinRect) - CGRectGetWidth(tipRect);
+    tipRect.origin.y =
+        CGRectGetMaxY(cgWinRect) - CGRectGetHeight(tipRect) - titleHeight;
+    [self.recorderLinkEntityTip setFrame:tipRect display:YES];
+    self.recorderEditingLink = YES;
+    
+    [mainWindow makeKeyAndOrderFront:nil];
+    
+    Scene_set_selection_mode(self.engineVC.scene, kSceneSelectingForRecorder);
+  }
+  
+}
+
+- (IBAction)recordClicked:(id)sender {
+  NSButton *button = sender;
+  if (button.state == NSOffState) {
+    Recorder_set_state(self.debugRecorder, RecorderStateIdle);
+    [self.recorderPlayButton setEnabled:YES];
+    [self.recorderKeyframeEveryField setEnabled:YES];
+  } else {
+    Recorder_set_state(self.debugRecorder, RecorderStateRecording);
+    [self.recorderPlayButton setEnabled:NO];
+    [self.recorderKeyframeEveryField setEnabled:NO];
+  }
+}
+
+- (IBAction)playClicked:(id)sender {
+  NSButton *button = sender;
+  if (button.state == NSOffState) {
+    [self stopPlayback];
+  } else {
+    Recorder_set_state(self.debugRecorder, RecorderStatePlaying);
+    [self.recorderRecordButton setEnabled:NO];
+    [self.recorderKeyframeEveryField setEnabled:NO];
+  }
+}
+
+- (IBAction)keyframeEveryChanged:(id)sender {
+  ChipmunkRecorderCtx *context = self.debugRecorder->context;
+  context->keyframe_every = MAX([sender intValue], 1);
 }
 
 @end

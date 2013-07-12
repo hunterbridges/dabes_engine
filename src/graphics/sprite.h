@@ -38,6 +38,7 @@ typedef struct Sprite {
 
     Hashmap *animations;
     SpriteAnimation *current_animation;
+    short int manual_frames;
 
     SpriteDirection direction;
     int current_frame;

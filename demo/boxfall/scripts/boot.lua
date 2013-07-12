@@ -1,9 +1,10 @@
 require 'dabes.scene_manager'
 require 'scenes.fat_map'
 require 'scenes.reasonable_map'
+require 'scenes.lonely_map'
 
 function boot()
-    local map = FatMap:new()
+    local map = ReasonableMap:new()
     scene_manager:push_scene(map)
 end
 

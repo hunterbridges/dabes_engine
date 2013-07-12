@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="30" height="20" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Tileset" tilewidth="32" tileheight="32">
+  <image source="../../../../../../Dropbox/Public/Tileset.png" width="160" height="160"/>
+ </tileset>
+ <layer name="Layer 0" width="30" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2U0QqAIAxFp8n6/z8OQSHGHVPbCqoD9009m+IKEZUP5i5+77u8qUV6E0gkUf1atc940Z2s3suMl5WMUOvLi15Pnn7fzdlr0b3c3N5ofZ+9rKyJQHoj3Wheyb+Rwb6r1HN3w9v79gw6V5sJ0TkA7lnfQGAJAAA=
+  </data>
+ </layer>
+ <objectgroup name="Layer 1" width="30" height="20">
+  <object name="P1" type="spawn" x="96" y="320">
+   <polygon points="0,0 32,0 32,32 0,32 0,0 32,0"/>
+  </object>
+ </objectgroup>
+</map>

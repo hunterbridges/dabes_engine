@@ -8,11 +8,14 @@
 #include "../graphics/draw_buffer.h"
 #include "ortho_chipmunk_scene.h"
 #include "../entities/entity.h"
+#include "../recorder/recorder.h"
+#include "../recorder/chipmunk_recorder.h"
 #include "scene.h"
 
 typedef struct OrthoChipmunkSceneCtx {
     List *tile_shapes;
     cpSpace *space;
+    DArray *recorders;
 } OrthoChipmunkSceneCtx;
 
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
@@ -24,6 +27,14 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     Scripting_call_hook(engine->scripting, scene, "cleanup");
 
     OrthoChipmunkSceneCtx *context = scene->context;
+
+    int i = 0;
+    for (i = 0; i < DArray_count(context->recorders); i++) {
+        Recorder *recorder = DArray_get(context->recorders, i);
+        Recorder_destroy(recorder);
+    }
+    DArray_destroy(context->recorders);
+
     LIST_FOREACH(context->tile_shapes, first, next, current) {
         cpShape *shape = current->value;
         cpSpaceRemoveShape(context->space, shape);
@@ -54,6 +65,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
     scene->context = context;
     context->tile_shapes = List_create();
+    context->recorders = DArray_create(sizeof(Recorder), 4);
 
     if (Scripting_call_hook(engine->scripting, scene, "configure")) {
       OrthoChipmunkScene_create_space(scene, engine);
@@ -76,6 +88,44 @@ error:
     return;
 }
 
+void OrthoChipmunkScene_record_recorders(Scene *scene, Engine *UNUSED(engine)) {
+    int i = 0;
+    OrthoChipmunkSceneCtx *context = scene->context;
+    for (i = 0; i < DArray_count(context->recorders); i++) {
+        Recorder *recorder = DArray_get(context->recorders, i);
+        if (recorder->state == RecorderStateRecording) {
+            size_t size;
+            void *frame = recorder->_(capture_frame)(recorder, &size);
+            Recorder_write_frame(recorder, frame, size);
+        }
+    }
+}
+
+void OrthoChipmunkScene_play_recorders(Scene *scene, Engine *UNUSED(engine)) {
+    int i = 0;
+    OrthoChipmunkSceneCtx *context = scene->context;
+    for (i = 0; i < DArray_count(context->recorders); i++) {
+        Recorder *recorder = DArray_get(context->recorders, i);
+        if (recorder->state == RecorderStatePlaying) {
+            void *frame = Recorder_read_frame(recorder);
+            if (frame) {
+                recorder->_(apply_frame)(recorder, frame);
+            } else {
+                // We are done playing.
+                Recorder_set_state(recorder, RecorderStateIdle);
+            }
+        }
+    }
+}
+
+Recorder *OrthoChipmunkScene_gen_recorder(Scene *scene, Entity *entity) {
+    Recorder *recorder = ChipmunkRecorder_create(5, FPS);
+    recorder->entity = entity;
+    OrthoChipmunkSceneCtx *context = (OrthoChipmunkSceneCtx *)scene->context;
+    DArray_push(context->recorders, recorder);
+    return recorder;
+};
+
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
@@ -87,9 +137,12 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     Stepper_update(engine->physics->stepper, phys_ticks);
 
     while (Stepper_pop(engine->physics->stepper)) {
-      cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
+        OrthoChipmunkScene_play_recorders(scene, engine);
+        cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
+        OrthoChipmunkScene_record_recorders(scene, engine);
     }
 }
+
 
 static void render_shape_iter(cpShape *shape, void *data) {
     cpPolyShape *pshape = (cpPolyShape *)shape;
@@ -156,7 +209,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
     Scene_fill(scene, engine, scene->bg_color);
-  
+
     if (scene->parallax) {
         Parallax_render(scene->parallax, engine->graphics);
     }
@@ -384,5 +437,6 @@ SceneProto OrthoChipmunkSceneProto = {
     .render = OrthoChipmunkScene_render,
     .control = OrthoChipmunkScene_control,
     .add_entity = OrthoChipmunkScene_add_entity,
-    .hit_test = OrthoChipmunkScene_hit_test
+    .hit_test = OrthoChipmunkScene_hit_test,
+    .gen_recorder = OrthoChipmunkScene_gen_recorder
 };

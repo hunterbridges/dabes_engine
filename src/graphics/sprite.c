@@ -82,6 +82,7 @@ error:
 
 void Sprite_update(Sprite *sprite, Engine *engine) {
     if (!sprite->current_animation) return;
+    if (sprite->manual_frames) return;
     SpriteAnimation *cur_anim = sprite->current_animation;
 
     int idx = -1;

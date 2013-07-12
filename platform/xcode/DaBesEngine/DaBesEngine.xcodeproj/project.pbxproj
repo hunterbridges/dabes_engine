@@ -83,6 +83,14 @@
 		CACE2B3C178347DE00F36FA3 /* DABMacEngineView.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B38178347DE00F36FA3 /* DABMacEngineView.m */; };
 		CACE2B3D178347DE00F36FA3 /* DABMacEngineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CACE2B39178347DE00F36FA3 /* DABMacEngineViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CACE2B3E178347DE00F36FA3 /* DABMacEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B3A178347DE00F36FA3 /* DABMacEngineViewController.m */; };
+		CAEFD8FF178FA5E600D19B4D /* chipmunk_recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD8F9178FA5E600D19B4D /* chipmunk_recorder.c */; };
+		CAEFD900178FA5E600D19B4D /* chipmunk_recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD8F9178FA5E600D19B4D /* chipmunk_recorder.c */; };
+		CAEFD901178FA5E600D19B4D /* chipmunk_recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD8FA178FA5E600D19B4D /* chipmunk_recorder.h */; };
+		CAEFD902178FA5E600D19B4D /* chipmunk_recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD8FA178FA5E600D19B4D /* chipmunk_recorder.h */; };
+		CAEFD905178FA5E600D19B4D /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD8FC178FA5E600D19B4D /* recorder.c */; };
+		CAEFD906178FA5E600D19B4D /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD8FC178FA5E600D19B4D /* recorder.c */; };
+		CAEFD907178FA5E600D19B4D /* recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD8FD178FA5E600D19B4D /* recorder.h */; };
+		CAEFD908178FA5E600D19B4D /* recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD8FD178FA5E600D19B4D /* recorder.h */; };
 		CAF429771780F36200C3220A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF429761780F36200C3220A /* Cocoa.framework */; };
 		CAF429811780F36300C3220A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CAF4297F1780F36300C3220A /* InfoPlist.strings */; };
 		CAF429851780F36300C3220A /* DaBes-Mac.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF429841780F36300C3220A /* DaBes-Mac.m */; };
@@ -455,6 +463,10 @@
 		CAEF197B1761BED100B3A3A1 /* sensor_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensor_bindings.h; sourceTree = "<group>"; };
 		CAEF197C1761BED100B3A3A1 /* sensor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sensor.c; sourceTree = "<group>"; };
 		CAEF197D1761BED100B3A3A1 /* sensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sensor.h; sourceTree = "<group>"; };
+		CAEFD8F9178FA5E600D19B4D /* chipmunk_recorder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chipmunk_recorder.c; sourceTree = "<group>"; };
+		CAEFD8FA178FA5E600D19B4D /* chipmunk_recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipmunk_recorder.h; sourceTree = "<group>"; };
+		CAEFD8FC178FA5E600D19B4D /* recorder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder.c; sourceTree = "<group>"; };
+		CAEFD8FD178FA5E600D19B4D /* recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = recorder.h; sourceTree = "<group>"; };
 		CAF429741780F36200C3220A /* DaBes-Mac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "DaBes-Mac.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF429761780F36200C3220A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		CAF429791780F36200C3220A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -556,6 +568,7 @@
 				CA24C77716FC20900045D5DE /* input */,
 				CA694523170FC4850021E89B /* math */,
 				CA24C78016FC20900045D5DE /* physics */,
+				CAEFD8F8178FA5E600D19B4D /* recorder */,
 				CA61B60B170FB3A600F1CC1A /* scenes */,
 				CAC581D11758607F004A8161 /* scripting */,
 				CA24C76016FC20900045D5DE /* constants.h */,
@@ -792,6 +805,18 @@
 			name = "Third Party";
 			sourceTree = "<group>";
 		};
+		CAEFD8F8178FA5E600D19B4D /* recorder */ = {
+			isa = PBXGroup;
+			children = (
+				CAEFD8F9178FA5E600D19B4D /* chipmunk_recorder.c */,
+				CAEFD8FA178FA5E600D19B4D /* chipmunk_recorder.h */,
+				CAEFD8FC178FA5E600D19B4D /* recorder.c */,
+				CAEFD8FD178FA5E600D19B4D /* recorder.h */,
+			);
+			name = recorder;
+			path = ../../../../src/recorder;
+			sourceTree = "<group>";
+		};
 		CAF429751780F36200C3220A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -877,6 +902,8 @@
 				CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */,
 				CA8B9864178A08BA00CA41B4 /* static_scene.h in Headers */,
 				CAAF8C88178A325000BBB143 /* engine_bindings.h in Headers */,
+				CAEFD902178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
+				CAEFD908178FA5E600D19B4D /* recorder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -939,6 +966,8 @@
 				CAF42A3C1780F62500C3220A /* util.h in Headers */,
 				CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */,
 				CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */,
+				CAEFD901178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
+				CAEFD907178FA5E600D19B4D /* recorder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1271,6 +1300,8 @@
 				CAC3820D17861D670072E709 /* DABProjectManager.m in Sources */,
 				CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */,
 				CAAF8C86178A325000BBB143 /* engine_bindings.c in Sources */,
+				CAEFD900178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
+				CAEFD906178FA5E600D19B4D /* recorder.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1330,6 +1361,8 @@
 				CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */,
 				CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */,
 				CAAF8C85178A325000BBB143 /* engine_bindings.c in Sources */,
+				CAEFD8FF178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
+				CAEFD905178FA5E600D19B4D /* recorder.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -187,6 +187,7 @@ void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode) {
 
 
         case kSceneSelectingForCamera:
+        case kSceneSelectingForRecorder:
         default:
             if (!scene->selected_entities) {
                 scene->selected_entities = List_create();

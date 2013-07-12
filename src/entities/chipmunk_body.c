@@ -74,17 +74,17 @@ cpShape *cpRoundBoxShapeNew(cpBody *body, float w, float h, float snip,
     return shape;
 }
 
-cpVect ccp(double x, double y) {
+static inline cpVect ccp(double x, double y) {
     cpVect cp = {x, y};
     return cp;
 }
 
-cpVect tocp(VPoint vp) {
+static inline cpVect tocp(VPoint vp) {
     cpVect cp = {vp.x, vp.y};
     return cp;
 }
 
-VPoint tovp(cpVect cp) {
+static inline VPoint tovp(cpVect cp) {
     VPoint vp = {.x = cp.x, .y = cp.y};
     return vp;
 }
