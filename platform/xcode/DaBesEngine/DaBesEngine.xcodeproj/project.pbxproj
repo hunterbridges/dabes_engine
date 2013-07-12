@@ -91,6 +91,10 @@
 		CAEFD906178FA5E600D19B4D /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD8FC178FA5E600D19B4D /* recorder.c */; };
 		CAEFD907178FA5E600D19B4D /* recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD8FD178FA5E600D19B4D /* recorder.h */; };
 		CAEFD908178FA5E600D19B4D /* recorder.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD8FD178FA5E600D19B4D /* recorder.h */; };
+		CAEFD9191790A56100D19B4D /* vpolygon.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD9171790A56100D19B4D /* vpolygon.c */; };
+		CAEFD91A1790A56100D19B4D /* vpolygon.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD9171790A56100D19B4D /* vpolygon.c */; };
+		CAEFD91B1790A56100D19B4D /* vpolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD9181790A56100D19B4D /* vpolygon.h */; };
+		CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD9181790A56100D19B4D /* vpolygon.h */; };
 		CAF429771780F36200C3220A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF429761780F36200C3220A /* Cocoa.framework */; };
 		CAF429811780F36300C3220A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CAF4297F1780F36300C3220A /* InfoPlist.strings */; };
 		CAF429851780F36300C3220A /* DaBes-Mac.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF429841780F36300C3220A /* DaBes-Mac.m */; };
@@ -467,6 +471,8 @@
 		CAEFD8FA178FA5E600D19B4D /* chipmunk_recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipmunk_recorder.h; sourceTree = "<group>"; };
 		CAEFD8FC178FA5E600D19B4D /* recorder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder.c; sourceTree = "<group>"; };
 		CAEFD8FD178FA5E600D19B4D /* recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = recorder.h; sourceTree = "<group>"; };
+		CAEFD9171790A56100D19B4D /* vpolygon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vpolygon.c; path = ../../../../src/math/vpolygon.c; sourceTree = "<group>"; };
+		CAEFD9181790A56100D19B4D /* vpolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vpolygon.h; path = ../../../../src/math/vpolygon.h; sourceTree = "<group>"; };
 		CAF429741780F36200C3220A /* DaBes-Mac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "DaBes-Mac.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF429761780F36200C3220A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		CAF429791780F36200C3220A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -734,6 +740,8 @@
 			children = (
 				CA694524170FC4B00021E89B /* vpoint.h */,
 				CA694525170FC52A0021E89B /* vpoint.c */,
+				CAEFD9171790A56100D19B4D /* vpolygon.c */,
+				CAEFD9181790A56100D19B4D /* vpolygon.h */,
 				CA694527170FC6E30021E89B /* vrect.c */,
 				CA694528170FC6E30021E89B /* vrect.h */,
 				CAE3234C171CFB0B00E7F7FB /* vmatrix.h */,
@@ -904,6 +912,7 @@
 				CAAF8C88178A325000BBB143 /* engine_bindings.h in Headers */,
 				CAEFD902178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
 				CAEFD908178FA5E600D19B4D /* recorder.h in Headers */,
+				CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -968,6 +977,7 @@
 				CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */,
 				CAEFD901178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
 				CAEFD907178FA5E600D19B4D /* recorder.h in Headers */,
+				CAEFD91B1790A56100D19B4D /* vpolygon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1302,6 +1312,7 @@
 				CAAF8C86178A325000BBB143 /* engine_bindings.c in Sources */,
 				CAEFD900178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
 				CAEFD906178FA5E600D19B4D /* recorder.c in Sources */,
+				CAEFD91A1790A56100D19B4D /* vpolygon.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1363,6 +1374,7 @@
 				CAAF8C85178A325000BBB143 /* engine_bindings.c in Sources */,
 				CAEFD8FF178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
 				CAEFD905178FA5E600D19B4D /* recorder.c in Sources */,
+				CAEFD9191790A56100D19B4D /* vpolygon.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -130,6 +130,11 @@ void TileMap_destroy(TileMap *map) {
     TileMapLayer_destroy(DArray_get(map->layers, i));
   }
   DArray_destroy(map->layers);
+
+  if (map->collision_shapes) {
+      DArray_clear_destroy(map->collision_shapes);
+  }
+
   free(map);
 }
 
@@ -188,12 +193,12 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
         rect.tl.y + h / 2
     };
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
-    
+
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX], 1,
                    GL_FALSE, graphics->modelview_matrix.gl);
-    
+
     int layer_idx = 0;
     for (layer_idx = 0; layer_idx < map->layers->end;
          layer_idx++) {

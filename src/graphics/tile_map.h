@@ -53,6 +53,7 @@ typedef struct TileMap {
   GfxSize tile_size;
   DArray *tilesets;
   DArray *layers;
+  DArray *collision_shapes;
   float meters_per_tile;
 } TileMap;
 

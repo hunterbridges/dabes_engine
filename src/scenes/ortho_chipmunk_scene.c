@@ -11,6 +11,7 @@
 #include "../recorder/recorder.h"
 #include "../recorder/chipmunk_recorder.h"
 #include "scene.h"
+#include "../math/vpolygon.h"
 
 typedef struct OrthoChipmunkSceneCtx {
     List *tile_shapes;
@@ -361,6 +362,69 @@ Entity *OrthoChipmunkScene_hit_test(Scene *scene, VPoint g_point) {
     return top;
 }
 
+void OrthoChipmunkScene_create_collision_shapes(Scene *scene,
+        Engine *UNUSED(engine)) {
+    OrthoChipmunkSceneCtx *context = scene->context;
+    if (scene->tile_map) {
+        TileMap *map = scene->tile_map;
+        if (map->collision_shapes) {
+            int i = 0;
+            cpBody *map_body = cpSpaceGetStaticBody(scene->space);
+            float grid_size = scene->tile_map->meters_per_tile;
+            for (i = 0; i < DArray_count(map->collision_shapes); i++) {
+                VPolygon *poly = DArray_get(map->collision_shapes, i);
+
+                // Turn it into something chipmunk likes
+                VPolygon_wind(poly, 0);
+                cpVect verts[poly->num_points];
+                int j = 0;
+                for (j = 0; j < poly->num_points; j++) {
+                    VPoint point = VPolygon_get_point(poly, j);
+                    cpVect cp_point = {point.x * grid_size,
+                                       point.y * grid_size};
+                    verts[j] = cp_point;
+                }
+                cpVect cp_origin = {poly->origin.x * grid_size,
+                                    poly->origin.y * grid_size};
+                cpShape *tile_shape =
+                    cpPolyShapeNew(map_body, poly->num_points, verts, cp_origin);
+                cpShapeSetFriction(tile_shape, 0.5);
+                tile_shape->collision_type = OCSCollisionTypeTile;
+                cpSpaceAddStaticShape(scene->space, tile_shape);
+                List_push(context->tile_shapes, tile_shape);
+            }
+        } else {
+            // Create a shape for each tile
+
+            TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);
+            cpBody *map_body = cpSpaceGetStaticBody(scene->space);
+            float grid_size = scene->tile_map->meters_per_tile;
+            int i = 0;
+            for (i = 0; i < base_layer->gid_count; i++) {
+                uint32_t gid = base_layer->tile_gids[i];
+                if (gid == 0) continue;
+
+                // TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
+                int col = i % scene->tile_map->cols;
+                int row = i / scene->tile_map->cols;
+                float corr = 0;
+                cpVect tile_verts[4] = {
+                  { grid_size * col + corr,             grid_size * row + grid_size - corr},
+                  { grid_size * col + grid_size - corr, grid_size * row + grid_size - corr},
+                  { grid_size * col + grid_size - corr, grid_size * row + corr},
+                  { grid_size * col + corr,             grid_size * row + corr},
+                };
+                cpShape *tile_shape = cpPolyShapeNew(map_body, 4, tile_verts,
+                                                    cpvzero);
+                cpShapeSetFriction(tile_shape, 0.5);
+                tile_shape->collision_type = OCSCollisionTypeTile;
+                cpSpaceAddStaticShape(scene->space, tile_shape);
+                List_push(context->tile_shapes, tile_shape);
+            }
+        }
+    }
+}
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(scene);
     check_mem(engine);
@@ -390,33 +454,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
                                sensor_sensor_coll_begin_cb, NULL,
                                NULL, sensor_sensor_coll_seperate_cb, NULL);
 
-    if (scene->tile_map) {
-        TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);
-        cpBody *map_body = cpSpaceGetStaticBody(scene->space);
-        float grid_size = scene->tile_map->meters_per_tile;
-        int i = 0;
-        for (i = 0; i < base_layer->gid_count; i++) {
-            uint32_t gid = base_layer->tile_gids[i];
-            if (gid == 0) continue;
-
-            // TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
-            int col = i % scene->tile_map->cols;
-            int row = i / scene->tile_map->cols;
-            float corr = 0;
-            cpVect tile_verts[4] = {
-              { grid_size * col + corr,             grid_size * row + grid_size - corr},
-              { grid_size * col + grid_size - corr, grid_size * row + grid_size - corr},
-              { grid_size * col + grid_size - corr, grid_size * row + corr},
-              { grid_size * col + corr,             grid_size * row + corr},
-            };
-            cpShape *tile_shape = cpPolyShapeNew(map_body, 4, tile_verts,
-                                                cpvzero);
-            cpShapeSetFriction(tile_shape, 0.5);
-            tile_shape->collision_type = OCSCollisionTypeTile;
-            cpSpaceAddStaticShape(scene->space, tile_shape);
-            List_push(context->tile_shapes, tile_shape);
-        }
-    }
+    OrthoChipmunkScene_create_collision_shapes(scene, engine);
 
     int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {

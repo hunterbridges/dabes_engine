@@ -23,7 +23,7 @@ Megaman = Entity:extend({
         body.elasticity = 0
         self.body = body
 
-        self.ground_sensor = Sensor:new(hbw * w - 0.2, 0.1,
+        self.ground_sensor = Sensor:new(hbw * w - 0.1, 0.1,
                                         {0, hbh / 2 * h - 0.04})
         body:add_sensor(self.ground_sensor)
 
