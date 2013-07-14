@@ -1,18 +1,24 @@
 #include "chipmunk_recorder.h"
 #include "../entities/entity.h"
 
+static const int CHIPMUNK_RECORDER_DEFAULT_KEYFRAME_FREQ = 120;
+
 void *ChipmunkRecorder_capture_frame(Recorder *recorder, size_t *size) {
     check(recorder != NULL, "No recorder to capture");
     check(recorder->entity != NULL, "No entity to capture recording of");
 
     ChipmunkRecorderFrame *frame = calloc(1, sizeof(ChipmunkRecorderFrame));
-    *size = sizeof(ChipmunkRecorderFrame);
     check(frame != NULL, "Couldn't create frame");
 
     // is this a keyframe?
     ChipmunkRecorderCtx *context = (ChipmunkRecorderCtx *)recorder->context;
     short int is_keyframe =
-        recorder->current_frame % context->keyframe_every == 0;
+        (recorder->current_frame % context->keyframe_every) == 0;
+    if (recorder->entity->force_keyframe) {
+        is_keyframe = 1;
+        recorder->entity->force_keyframe = 0;
+    }
+  
     frame->keyframe = is_keyframe;
 
     Body *body = recorder->entity->body;
@@ -23,8 +29,9 @@ void *ChipmunkRecorder_capture_frame(Recorder *recorder, size_t *size) {
         frame->sprite_frame = sprite->current_frame;
         frame->sprite_direction = sprite->direction;
         memcpy(&context->tracking_frame, frame, sizeof(ChipmunkRecorderFrame));
+        *size = sizeof(ChipmunkRecorderFrame);
     } else {
-        // Track the delta
+        size_t f_size = sizeof(unsigned char);
 
         VPoint posnow = body->_(get_pos)(body);
         VPointRel posrel = VPoint_rel(posnow, context->tracking_frame.pos);
@@ -32,6 +39,7 @@ void *ChipmunkRecorder_capture_frame(Recorder *recorder, size_t *size) {
             frame->has_delta_pos = 1;
             frame->pos = VPoint_subtract(posnow, context->tracking_frame.pos);
             context->tracking_frame.pos = posnow;
+            f_size += sizeof(VPoint);
         }
 
         VPoint velonow = body->_(get_velo)(body);
@@ -41,19 +49,24 @@ void *ChipmunkRecorder_capture_frame(Recorder *recorder, size_t *size) {
             frame->velo =
                 VPoint_subtract(velonow, context->tracking_frame.velo);
             context->tracking_frame.velo = velonow;
+            f_size += sizeof(VPoint);
         }
-
+      
         if (sprite->current_frame != context->tracking_frame.sprite_frame) {
             frame->has_sprite_frame = 1;
             frame->sprite_frame = sprite->current_frame;
             context->tracking_frame.sprite_frame = sprite->current_frame;
+            f_size += sizeof(int);
         }
 
         if (sprite->direction != context->tracking_frame.sprite_direction) {
             frame->has_sprite_direction = 1;
             frame->sprite_direction = sprite->direction;
             context->tracking_frame.sprite_direction = sprite->direction;
+            f_size += sizeof(int);
         }
+      
+        *size = f_size;
     }
 
     context->prev_frame = frame;
@@ -132,10 +145,153 @@ error:
 
 void ChipmunkRecorder_start_play_cb(struct Recorder *recorder) {
     recorder->entity->sprite->manual_frames = 1;
+    recorder->entity->auto_control = 1;
+    Body *body = recorder->entity->body;
+    body->_(set_is_rogue)(body, 1);
 }
 
 void ChipmunkRecorder_stop_play_cb(struct Recorder *recorder) {
     recorder->entity->sprite->manual_frames = 0;
+    recorder->entity->auto_control = 0;
+    Body *body = recorder->entity->body;
+    body->_(set_is_rogue)(body, 0);
+}
+
+void ChipmunkRecorder_pack(struct Recorder *recorder, unsigned char **buffer,
+                           size_t *size) {
+    check(recorder != NULL, "No recorder to pack");
+  
+    size_t bufcap = sizeof(ChipmunkRecorderCtx) +
+        recorder->num_frames * sizeof(ChipmunkRecorderFrame);
+    unsigned char *buf = malloc(bufcap);
+    check(buf != NULL, "Unable to create recorder pack buffer");
+  
+    unsigned char *run = buf;
+    size_t bufsize = 0;
+  
+    // First thing is copy over the context, this is our buffer header.
+    memcpy(run, recorder->context, sizeof(ChipmunkRecorderCtx));
+    run += sizeof(ChipmunkRecorderCtx);
+    bufsize += sizeof(ChipmunkRecorderCtx);
+  
+    int i = 0;
+    for (i = 0; i < recorder->num_frames && bufsize < bufcap; i++) {
+        ChipmunkRecorderFrame *frame = DArray_get(recorder->frames, i);
+      
+        uint8_t flags = 0;
+      
+        // Flags
+        // 00000000
+        // ^ ( << 7 ) keyframe
+        //  ^ ( << 6 ) has_delta_pos
+        //   ^ ( << 5 ) has_delta_velo
+        //    ^ ( << 4 ) has_sprite_frame
+        //     ^ ( << 3 ) has_sprite_direction
+        flags ^= frame->keyframe << 7;
+        flags ^= frame->has_delta_pos << 6;
+        flags ^= frame->has_delta_velo << 5;
+        flags ^= frame->has_sprite_frame << 4;
+        flags ^= frame->has_sprite_direction << 3;
+      
+        *run = flags;
+        run++;
+        bufsize++;
+      
+        if (frame->keyframe || frame->has_delta_pos) {
+            memcpy(run, &frame->pos, sizeof(VPoint));
+            run += sizeof(VPoint);
+            bufsize += sizeof(VPoint);
+        }
+      
+        if (frame->keyframe || frame->has_delta_velo) {
+            memcpy(run, &frame->velo, sizeof(VPoint));
+            run += sizeof(VPoint);
+            bufsize += sizeof(VPoint);
+        }
+      
+        if (frame->keyframe || frame->has_sprite_frame) {
+            memcpy(run, &frame->sprite_frame, sizeof(int));
+            run += sizeof(int);
+            bufsize += sizeof(int);
+        }
+      
+        if (frame->keyframe || frame->has_sprite_direction) {
+            memcpy(run, &frame->sprite_direction, sizeof(SpriteDirection));
+            run += sizeof(SpriteDirection);
+            bufsize += sizeof(SpriteDirection);
+        }
+    }
+  
+    buf = realloc(buf, bufsize);
+  
+    *buffer = buf;
+    *size = bufsize;
+  
+    return;
+error:
+    return;
+}
+
+void ChipmunkRecorder_unpack(struct Recorder *recorder, unsigned char *buffer,
+                             size_t size) {
+    check(recorder != NULL, "No recorder to pack");
+    check(buffer != NULL, "No buffer to unpack");
+    check(size > 0, "Buffer can not be empty");
+    recorder->_(clear_frames)(recorder);
+  
+    size_t has_read = 0;
+  
+    // Read out the buffer header
+    unsigned char *run = buffer;
+    memcpy(recorder->context, buffer, sizeof(ChipmunkRecorderCtx));
+    run += sizeof(ChipmunkRecorderCtx);
+    has_read += sizeof(ChipmunkRecorderCtx);
+  
+    while (has_read < size) {
+        size_t start_size = has_read;
+        ChipmunkRecorderFrame *frame = calloc(1, sizeof(ChipmunkRecorderFrame));
+      
+        // Read the flags
+        uint8_t flags = *run;
+        frame->keyframe             = (flags & 1 << 7) != 0;
+        frame->has_delta_pos        = (flags & 1 << 6) != 0;
+        frame->has_delta_velo       = (flags & 1 << 5) != 0;
+        frame->has_sprite_frame     = (flags & 1 << 4) != 0;
+        frame->has_sprite_direction = (flags & 1 << 3) != 0;
+        run++;
+        has_read++;
+      
+        if (frame->keyframe || frame->has_delta_pos) {
+            memcpy(&frame->pos, run, sizeof(VPoint));
+            run += sizeof(VPoint);
+            has_read += sizeof(VPoint);
+        }
+      
+        if (frame->keyframe || frame->has_delta_velo) {
+            memcpy(&frame->velo, run, sizeof(VPoint));
+            run += sizeof(VPoint);
+            has_read += sizeof(VPoint);
+        }
+      
+        if (frame->keyframe || frame->has_sprite_frame) {
+            memcpy(&frame->sprite_frame, run, sizeof(int));
+            run += sizeof(int);
+            has_read += sizeof(int);
+        }
+      
+        if (frame->keyframe || frame->has_sprite_direction) {
+            memcpy(&frame->sprite_direction, run, sizeof(SpriteDirection));
+            run += sizeof(SpriteDirection);
+            has_read += sizeof(SpriteDirection);
+        }
+      
+        Recorder_write_frame(recorder, frame, has_read - start_size);
+    }
+  
+    assert(has_read == size);
+    return;
+error:
+    return;
 }
 
 RecorderProto ChipmunkRecorderProto = {
@@ -144,7 +300,9 @@ RecorderProto ChipmunkRecorderProto = {
     .clear_frames = ChipmunkRecorder_clear_frames,
     .rewind = ChipmunkRecorder_rewind,
     .start_play_cb = ChipmunkRecorder_start_play_cb,
-    .stop_play_cb = ChipmunkRecorder_stop_play_cb
+    .stop_play_cb = ChipmunkRecorder_stop_play_cb,
+    .pack = ChipmunkRecorder_pack,
+    .unpack = ChipmunkRecorder_unpack
 };
 
 Recorder *ChipmunkRecorder_create(int preroll_ms, int fps) {
@@ -156,7 +314,7 @@ Recorder *ChipmunkRecorder_create(int preroll_ms, int fps) {
     check(recorder->context != NULL, "Couldn't create recorder context");
 
     ChipmunkRecorderCtx *context = recorder->context;
-    context->keyframe_every = 5;
+    context->keyframe_every = CHIPMUNK_RECORDER_DEFAULT_KEYFRAME_FREQ;
 
     return recorder;
 error:

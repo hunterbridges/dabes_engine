@@ -41,6 +41,7 @@ void Recorder_write_frame(Recorder *recorder, void *frame, size_t size) {
 
     recorder->total_frame_size += size;
     recorder->num_frames = DArray_count(recorder->frames);
+    recorder->current_frame = recorder->num_frames - 1;
 
     return;
 error:
@@ -67,6 +68,14 @@ void Recorder_set_state(Recorder *recorder, RecorderState state) {
 
     if (recorder->state == RecorderStatePlaying) {
         recorder->_(stop_play_cb)(recorder);
+    }
+    if (recorder->state == RecorderStateRecording) {
+        // This shouldn't mess anything up.
+        unsigned char *buf = NULL;
+        size_t sz = 0;
+        recorder->_(pack)(recorder, &buf, &sz);
+        recorder->_(unpack)(recorder, buf, sz);
+        free(buf);
     }
 
     recorder->state = state;

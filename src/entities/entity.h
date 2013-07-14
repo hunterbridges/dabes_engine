@@ -16,6 +16,9 @@ typedef enum {
 struct Scene;
 typedef struct Entity {
     Controller *controller;
+    short int auto_control;
+    short int force_keyframe;
+  
     Sprite *sprite;
     Body *body;
     struct Scene *scene;

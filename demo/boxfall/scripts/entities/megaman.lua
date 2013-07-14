@@ -107,6 +107,7 @@ Megaman = Entity:extend({
 
     control = function(self)
         if self.opening then return end
+        if self.auto_control then return end
 
         local on_ground = self.ground_sensor.on_static
         local velo = self.body.velo
@@ -142,11 +143,13 @@ Megaman = Entity:extend({
                 jump_sound:play()
 
                 velo[2] = self.motion.jump_velo_hi
+                self.force_keyframe = true
             end
         else
             if not on_ground then
                 if velo[2] < self.motion.jump_velo_low then
                     velo[2] = self.motion.jump_velo_low
+                    self.force_keyframe = true
                 end
             end
         end

@@ -63,6 +63,11 @@ error:
     return 0;
 }
 
+Scripting_bool_getter(Entity, auto_control);
+Scripting_bool_setter(Entity, auto_control);
+Scripting_bool_getter(Entity, force_keyframe);
+Scripting_bool_setter(Entity, force_keyframe);
+
 int luab_Entity_get_scene(lua_State *L) {
     Entity *entity = luaL_toentity(L, 1);
     check(entity != NULL, "Entity required");
@@ -185,6 +190,10 @@ static const struct luaL_Reg luab_Entity_meths[] = {
     {"__gc", luab_Entity_close},
     {"get_controller", luab_Entity_get_controller},
     {"set_controller", luab_Entity_set_controller},
+    {"get_auto_control", luab_Entity_get_auto_control},
+    {"set_auto_control", luab_Entity_set_auto_control},
+    {"get_force_keyframe", luab_Entity_get_force_keyframe},
+    {"set_force_keyframe", luab_Entity_set_force_keyframe},
     {"get_scene", luab_Entity_get_scene},
     {"get_sprite", luab_Entity_get_sprite},
     {"set_sprite", luab_Entity_set_sprite},

@@ -12,7 +12,7 @@ typedef struct ChipmunkRecorderFrame {
 
     short int has_delta_velo;
     VPoint velo;
-
+  
     short int has_sprite_frame;
     int sprite_frame;
 

@@ -180,7 +180,7 @@ static void render_shape_iter(cpShape *shape, void *data) {
         shape_verts[i].y = vert->y * iter_data->scene->pixels_per_meter;
     }
     Graphics_stroke_poly(iter_data->engine->graphics, pshape->numVerts,
-            shape_verts, vcenter, color, 0, rot);
+            shape_verts, vcenter, color, 1, rot);
 }
 
 void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
@@ -435,8 +435,8 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
 
     cpVect gravity = {0, 9.8};
     cpSpaceSetGravity(scene->space, gravity);
-    scene->space->collisionSlop = 0.0;
-    scene->space->collisionBias = 0.1;
+    cpSpaceSetCollisionSlop(scene->space, 0.0);
+    cpSpaceSetCollisionBias(scene->space, 0.1);
     cpSpaceSetSleepTimeThreshold(scene->space, 0.4);
     cpSpaceSetIdleSpeedThreshold(scene->space, 1.0);
 

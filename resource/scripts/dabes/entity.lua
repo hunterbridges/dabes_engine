@@ -18,6 +18,8 @@ Entity = BoundObject:extend({
 -- Function Bindings
    _getters = {
        controller = BoundObject.fwd_func('get_controller'),
+       auto_control = BoundObject.fwd_func('get_auto_control'),
+       force_keyframe = BoundObject.fwd_func('get_force_keyframe'),
        scene = BoundObject.fwd_func('get_scene'),
        sprite = BoundObject.fwd_func('get_sprite'),
        body = BoundObject.fwd_func('get_body'),
@@ -29,6 +31,8 @@ Entity = BoundObject:extend({
 
    _setters = {
        controller = BoundObject.fwd_func('set_controller'),
+       auto_control = BoundObject.fwd_func('set_auto_control'),
+       force_keyframe = BoundObject.fwd_func('set_force_keyframe'),
        scene = BoundObject.readonly,
        sprite = BoundObject.fwd_func('set_sprite'),
        body = BoundObject.fwd_func('set_body'),
