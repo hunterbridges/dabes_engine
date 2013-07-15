@@ -3,6 +3,7 @@
 #import <DaBes-Mac/DaBes-Mac.h>
 
 extern NSString *kFrameEndNotification;
+extern NSString *kRestartSceneNotification;
 extern NSString *kNewSceneNotification;
 extern NSString *kEntitySelectedNotification;
 extern NSString *kEngineReadyForScriptNotification;

@@ -6,6 +6,7 @@
 
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kNewSceneNotification =  @"kNewSceneNotification";
+NSString *kRestartSceneNotification =  @"kRestartSceneNotification";
 NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
@@ -208,7 +209,11 @@ char *bundlePath__;
   Scene *new = Engine_get_current_scene(self.engine);
   if (old == new) {
     if (self.needsRestart) {
+      
       Scene_restart(self.scene, self.engine);
+      [[NSNotificationCenter defaultCenter]
+          postNotificationName:kRestartSceneNotification
+          object:self];
       self.needsRestart = NO;
     }
   } else {

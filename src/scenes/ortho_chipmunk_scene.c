@@ -191,19 +191,10 @@ void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
     Graphics_use_shader(graphics, dshader);
     OCSIterData iter_data = {scene, engine};
     cpSpaceEachShape(scene->space, render_shape_iter, &iter_data);
-
-    // Camera debug
-    if (scene->debug_camera)
-        Camera_debug(scene->camera, engine->graphics);
 }
 
 void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
-    if (scene->render_mode == kSceneRenderModePhysicsDebug) {
-        OrthoChipmunkScene_render_physdebug(scene, engine);
-        return;
-    }
-
     Graphics *graphics = ((Engine *)engine)->graphics;
 
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
@@ -231,6 +222,10 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     if (scene->draw_grid && scene->world) {
         Scene_draw_debug_grid(scene, graphics);
     }
+    if (scene->render_mode == kSceneRenderModePhysicsDebug) {
+        OrthoChipmunkScene_render_physdebug(scene, engine);
+    }
+
 }
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {

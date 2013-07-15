@@ -44,6 +44,7 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 @property (nonatomic, weak) IBOutlet NSTextField *recorderFramesCapturedField;
 @property (nonatomic, weak) IBOutlet NSTextField *recorderAvgSizeField;
 @property (nonatomic, weak) IBOutlet NSTextField *recorderTotalSizeField;
+@property (nonatomic, weak) IBOutlet NSTextField *recorderDurationField;
 
 @property (nonatomic, strong) NSMapTable *updateMap;
 @property (nonatomic, strong) NSMapTable *usingControls;
@@ -75,6 +76,11 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
       addObserver:self
       selector:@selector(handleFrameEndNotification:)
       name:kFrameEndNotification
+      object:nil];
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+      selector:@selector(handleRestartSceneNotification:)
+      name:kRestartSceneNotification
       object:nil];
   [[NSNotificationCenter defaultCenter]
       addObserver:self
@@ -119,6 +125,14 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 
 - (void)handleFrameEndNotification:(NSNotification *)notif {
   // TODO: Hmm... maybe should not force every frame
+  [self updateAllLabels:YES];
+}
+
+- (void)handleRestartSceneNotification:(NSNotification *)notif {
+  self.debugRecorder = NULL;
+  self.recorderLinkEntityButton.state = NSOffState;
+  self.recorderRecordButton.state = NSOffState;
+  self.recorderPlayButton.state = NSOffState;
   [self updateAllLabels:YES];
 }
 
@@ -213,6 +227,14 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     self.recorderFramesCapturedField.stringValue =
         [NSString stringWithFormat:@"%d", self.debugRecorder->num_frames];
     
+    NSDate *durationDate =
+        [NSDate dateWithTimeIntervalSince1970:floor(self.debugRecorder->num_frames / 60.0)];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *components = [gregorian components:(NSMinuteCalendarUnit | NSSecondCalendarUnit)
+                                                fromDate:durationDate];
+    self.recorderDurationField.stringValue =
+        [NSString stringWithFormat:@"%02ld:%02ld", [components minute], [components second]];
+    
     if (self.recorderPlayButton.state == NSOnState &&
           self.debugRecorder->current_frame >= self.debugRecorder->num_frames) {
         [self stopPlayback];
@@ -222,6 +244,7 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     self.recorderTotalSizeField.stringValue = @"--";
     self.recorderFramesCapturedField.stringValue = @"--";
     self.recorderKeyframeEveryField.stringValue = @"--";
+    self.recorderDurationField.stringValue = @"--";
   }
   [self.recorderPlayButton setEnabled:!!self.debugRecorder];
   [self.recorderRecordButton setEnabled:!!self.debugRecorder];
