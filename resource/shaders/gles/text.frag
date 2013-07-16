@@ -11,4 +11,3 @@ void main()
   vec4 mixed = glyphColor * colorVarying;
   gl_FragColor = mixed;
 }
-

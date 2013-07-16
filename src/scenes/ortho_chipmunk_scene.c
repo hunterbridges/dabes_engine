@@ -199,6 +199,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
+    GfxShader *txshader = Graphics_get_shader(graphics, "text");
 
     Scene_fill(scene, engine, scene->bg_color);
 
@@ -226,11 +227,12 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
         OrthoChipmunkScene_render_physdebug(scene, engine);
     }
 
+    Graphics_use_shader(graphics, txshader);
     Graphics_project_screen_camera(graphics, scene->camera);
     Graphics_reset_modelview_matrix(graphics);
     GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
     VPoint offset = {20, 20};
-    Graphics_draw_string(engine->graphics, "Hello World", engine->graphics->debug_font,
+    Graphics_draw_string(engine->graphics, "BOXFALL", engine->graphics->debug_font,
         white, offset);
 }
 

@@ -62,7 +62,7 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
 #pragma mark - GfxTexture
 
 static inline int data_potize(unsigned char **data, int width, int height,
-                              int *pot_width, int *pot_height) {
+                              int *pot_width, int *pot_height, int components) {
   int pot_w = 2;
   int pot_h = 2;
   while (pot_w < width) pot_w <<= 1;
@@ -81,18 +81,18 @@ static inline int data_potize(unsigned char **data, int width, int height,
   *pot_width = pot_d;
   *pot_height = pot_d;
 
-  int last_orig_index = (width * height - 1) * 4;
+  int last_orig_index = (width * height - 1) * components;
   int i = 0;
-  for (i = last_orig_index; i >= 0; i -= 4) {
-    int idx = i / 4;
+  for (i = last_orig_index; i >= 0; i -= components) {
+    int idx = i / components;
     int old_col = idx % width;
     int old_row = idx / width;
-    int new_index = old_row * pot_d + old_col;
+    int new_index = (old_row * pot_d + old_col) * 4;
 
-    new_data[new_index * 4] = new_data[i];         // R
-    new_data[new_index * 4 + 1] = new_data[i + 1]; // G
-    new_data[new_index * 4 + 2] = new_data[i + 2]; // B
-    new_data[new_index * 4 + 3] = new_data[i + 3]; // A
+    new_data[new_index] = new_data[i];         // R
+    if (components > 1) new_data[new_index + 1] = new_data[i + 1]; // G
+    if (components > 2) new_data[new_index + 2] = new_data[i + 2]; // B
+    if (components > 3) new_data[new_index + 3] = new_data[i + 3]; // A
   }
 
   return 1;
@@ -108,7 +108,13 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     texture->size.h = height;
 
     int pot_width, pot_height;
-    int rc = data_potize(data, width, height, &pot_width, &pot_height);
+    int num_components = 4;
+    if (source_format == GL_RED) {
+      num_components = 1;
+    } else if (source_format == GL_RGB) {
+      num_components = 3;
+    }
+    int rc = data_potize(data, width, height, &pot_width, &pot_height, num_components);
     check(rc == 1, "Could not potize data");
 
     texture->pot_size.w = pot_width;
@@ -201,7 +207,7 @@ GfxFont *GfxFont_create(Graphics *graphics, const char *font_name, int px_size) 
 
     int rc = FT_New_Face(graphics->ft, font_name, 0, &font->face);
     check(rc == 0, "Could not open font");
-  
+
     FT_Set_Pixel_Sizes(font->face, 0, px_size);
     font->px_size = px_size;
     font->name = calloc(strlen(font_name) + 1, sizeof(char));
@@ -482,7 +488,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
     char *c = text;
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-  
+
     float xo = 0;
     while (*c != '\0') {
         GfxFontChar *fontchar = GfxFont_get_char(font, *c);
@@ -490,7 +496,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
           c++;
           continue;
         }
-      
+
         GfxTexture *texture = fontchar->texture;
 
         VRect tex_rect = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
@@ -513,21 +519,21 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         VMatrix tmvm = graphics->modelview_matrix;
 
         VVector4 vertices[7 * 6] = {
-            {.raw = {origin.x + xo, origin.y, 0, 1}},
+            {.raw = {origin.x + xo, origin.y - texture->size.h, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + texture->size.w + xo, origin.y, 0, 1}},
+            {.raw = {origin.x + texture->size.w + xo, origin.y - texture->size.h, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + texture->size.w + xo, origin.y + texture->size.h, 0, 1}},
+            {.raw = {origin.x + texture->size.w + xo, origin.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
                 tmvm.v[0],
@@ -535,21 +541,21 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
                 tmvm.v[2],
                 tmvm.v[3],
 
-            {.raw = {origin.x + texture->size.w + xo, origin.y + texture->size.h, 0, 1}},
+            {.raw = {origin.x + texture->size.w + xo, origin.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + xo, origin.y + texture->size.h, 0, 1}},
+            {.raw = {origin.x + xo, origin.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + xo, origin.y, 0, 1}},
+            {.raw = {origin.x + xo, origin.y - texture->size.h, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
                 tmvm.v[0],
@@ -1050,7 +1056,7 @@ Graphics *Graphics_create(Engine *engine) {
     graphics->sprites = Hashmap_create(NULL, Hashmap_fnv1a_hash);
 
     char *fontpath = engine->resource_path("fonts/uni.ttf");
-    graphics->debug_font = GfxFont_create(graphics, fontpath, 10);
+    graphics->debug_font = GfxFont_create(graphics, fontpath, 24);
     free(fontpath);
 
     return graphics;
