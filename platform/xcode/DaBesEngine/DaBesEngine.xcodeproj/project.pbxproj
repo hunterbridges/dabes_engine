@@ -67,6 +67,8 @@
 		CA705C27178355EF00D2C6E4 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B8172F85E000ED1135 /* Ogg.framework */; };
 		CA705C28178355EF00D2C6E4 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B9172F85E000ED1135 /* Vorbis.framework */; };
 		CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CA705C291783566C00D2C6E4 /* DaBes-iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA72C4201795210300255691 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C3231794FBBD00255691 /* libFreetype2.a */; };
+		CA72C4231795211100255691 /* libFreetype2-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C41D179520F600255691 /* libFreetype2-Mac.a */; };
 		CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
@@ -306,6 +308,34 @@
 			remoteGlobalIDString = CABF2BD316FC2ECF0012C3C7;
 			remoteInfo = lcthw;
 		};
+		CA72C3221794FBBD00255691 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6382B1B10FB0FC5100ECAC02;
+			remoteInfo = Freetype2;
+		};
+		CA72C41C179520F600255691 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CA72C41A179520BF00255691;
+			remoteInfo = "Freetype2-Mac";
+		};
+		CA72C41E179520FE00255691 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6382B1B00FB0FC5100ECAC02;
+			remoteInfo = Freetype2;
+		};
+		CA72C4211795210A00255691 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CA72C32C179520BF00255691;
+			remoteInfo = "Freetype2-Mac";
+		};
 		CAF429EB1780F45500C3220A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
@@ -424,6 +454,7 @@
 		CA7241B31730E55300255032 /* music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music.h; sourceTree = "<group>"; };
 		CA7241B41730E55300255032 /* ogg_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_stream.c; sourceTree = "<group>"; };
 		CA7241B51730E55300255032 /* ogg_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_stream.h; sourceTree = "<group>"; };
+		CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = freetype2.xcodeproj; path = "../../../submodules/freetype2-ios/freetype2.xcodeproj"; sourceTree = "<group>"; };
 		CA8B985F178A08BA00CA41B4 /* static_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = static_scene.c; sourceTree = "<group>"; };
 		CA8B9860178A08BA00CA41B4 /* static_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_scene.h; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
@@ -494,6 +525,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA72C4201795210300255691 /* libFreetype2.a in Frameworks */,
 				CA705BEA1783505B00D2C6E4 /* libChipmunk-iPhone.a in Frameworks */,
 				CA705BEB1783505B00D2C6E4 /* liblcthw.a in Frameworks */,
 				CA705BEC1783505B00D2C6E4 /* liblua.a in Frameworks */,
@@ -507,6 +539,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA72C4231795211100255691 /* libFreetype2-Mac.a in Frameworks */,
 				CA27888B1780FDC4005A242D /* libz.dylib in Frameworks */,
 				CA2788891780FDBF005A242D /* libxml2.dylib in Frameworks */,
 				CA2788871780FDB6005A242D /* OpenGL.framework in Frameworks */,
@@ -759,6 +792,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CA72C31F1794FBBD00255691 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA72C3231794FBBD00255691 /* libFreetype2.a */,
+				CA72C41D179520F600255691 /* libFreetype2-Mac.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CAC3820317861D250072E709 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -804,6 +846,7 @@
 		CAEF1957175DA98F00B3A3A1 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */,
 				CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */,
 				CA1D745917702B6500712C8D /* Ogg.xcodeproj */,
 				CA65C6EA1729B72800A7D4E5 /* lua.xcodeproj */,
@@ -1000,6 +1043,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CA72C41F179520FE00255691 /* PBXTargetDependency */,
 				CA705BE31783502F00D2C6E4 /* PBXTargetDependency */,
 				CA705BE71783502F00D2C6E4 /* PBXTargetDependency */,
 				CA705BE91783502F00D2C6E4 /* PBXTargetDependency */,
@@ -1022,6 +1066,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CA72C4221795210A00255691 /* PBXTargetDependency */,
 				CAF429EC1780F45500C3220A /* PBXTargetDependency */,
 				CAF429EE1780F45500C3220A /* PBXTargetDependency */,
 				CAF429F01780F45500C3220A /* PBXTargetDependency */,
@@ -1056,6 +1101,10 @@
 				{
 					ProductGroup = CA5E5E9217211BF900CAF6A2 /* Products */;
 					ProjectRef = CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */;
+				},
+				{
+					ProductGroup = CA72C31F1794FBBD00255691 /* Products */;
+					ProjectRef = CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */;
 				},
 				{
 					ProductGroup = CA63D7C2170F60B300EE59CA /* Products */;
@@ -1165,6 +1214,20 @@
 			fileType = archive.ar;
 			path = liblua.a;
 			remoteRef = CA65C6EE1729B72800A7D4E5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA72C3231794FBBD00255691 /* libFreetype2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFreetype2.a;
+			remoteRef = CA72C3221794FBBD00255691 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CA72C41D179520F600255691 /* libFreetype2-Mac.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libFreetype2-Mac.a";
+			remoteRef = CA72C41C179520F600255691 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1396,6 +1459,16 @@
 			name = lcthw;
 			targetProxy = CA705BE81783502F00D2C6E4 /* PBXContainerItemProxy */;
 		};
+		CA72C41F179520FE00255691 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Freetype2;
+			targetProxy = CA72C41E179520FE00255691 /* PBXContainerItemProxy */;
+		};
+		CA72C4221795210A00255691 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Freetype2-Mac";
+			targetProxy = CA72C4211795210A00255691 /* PBXContainerItemProxy */;
+		};
 		CAF429EC1780F45500C3220A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Vorbis;
@@ -1531,6 +1604,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-iOS/DaBes-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
@@ -1559,6 +1633,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-iOS/DaBes-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
@@ -1588,6 +1663,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-Mac/DaBes-Mac-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -1619,6 +1695,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-Mac/DaBes-Mac-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;

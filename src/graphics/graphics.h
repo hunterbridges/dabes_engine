@@ -9,6 +9,11 @@
 #include <SDL/SDL_ttf.h>
 #endif
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+struct Graphics;
+
 int Graphics_init_GL(int swidth, int sheight);
 
 typedef struct GfxSize {
@@ -19,7 +24,7 @@ typedef struct GfxSize {
 static const GfxSize GfxSizeZero = {0,0};
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
-// GfxSize load_image_dimensions_from_image(char *filename);
+////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GfxTexture {
     const char *name;
@@ -32,6 +37,29 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
         GLenum source_format);
 GfxTexture *GfxTexture_from_image(const char *image_name);
 void GfxTexture_destroy(GfxTexture *texture);
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct GfxFontChar {
+    GfxTexture *texture;
+    FT_Vector advance;
+} GfxFontChar;
+
+GfxFontChar *GfxFontChar_create(FT_GlyphSlot g);
+void GfxFontChar_destroy(GfxFontChar *fontchar);
+
+typedef struct GfxFont {
+    FT_Face face;
+    char *name;
+    int px_size;
+    Hashmap *char_textures;
+} GfxFont;
+
+GfxFont *GfxFont_create(struct Graphics *graphics, const char *font_name, int px_size);
+void GfxFont_destroy(GfxFont *font);
+GfxFontChar *GfxFont_get_char(GfxFont *font, char c);
+
+////////////////////////////////////////////////////////////////////////////////
 
 enum {
     UNIFORM_DECAL_PROJECTION_MATRIX,
@@ -54,6 +82,8 @@ enum {
     UNIFORM_PARALLAX_CAMERA_POS,
     UNIFORM_PARALLAX_FACTOR,
     UNIFORM_PARALLAX_TEX_SCALE,
+    UNIFORM_TEXT_PROJECTION_MATRIX,
+    UNIFORM_TEXT_TEXTURE,
     NUM_UNIFORMS
 } UNIFORMS;
 
@@ -66,6 +96,10 @@ enum {
     ATTRIB_TILEMAP_TEXTURE,
     ATTRIB_PARALLAX_VERTEX,
     ATTRIB_PARALLAX_TEXTURE,
+    ATTRIB_TEXT_VERTEX,
+    ATTRIB_TEXT_COLOR,
+    ATTRIB_TEXT_TEX_POS,
+    ATTRIB_TEXT_MODELVIEW_MATRIX,
 	NUM_ATTRIBUTES
 } ATTRIBS;
 
@@ -91,17 +125,16 @@ typedef struct GfxShader {
 
 void GfxShader_destroy(GfxShader *shader, struct Graphics *graphics);
 
-///////////
+////////////////////////////////////////////////////////////////////////////////
 
 typedef struct Graphics {
     struct Engine *engine;
-  
+
+    FT_Library ft;
+
     GfxSize screen_size;
-    GLuint debug_text_texture;
     GfxShader *current_shader;
-#ifdef DABES_SDL
-    TTF_Font *debug_text_font;
-#endif
+    GfxFont *debug_font;
     GLuint array_buffer;
 
     VMatrix projection_matrix;
@@ -121,7 +154,7 @@ typedef struct Graphics {
 struct Engine;
 Graphics *Graphics_create(struct Engine *engine);
 void Graphics_destroy(Graphics *graphics);
-  
+
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
@@ -129,6 +162,8 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
         GfxSize textureSize, double rotation, int z_index);
+void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
+        GLfloat color[4], VPoint origin);
 void Graphics_draw_debug_text(Graphics *graphics,
         int ticks_since_last);
 

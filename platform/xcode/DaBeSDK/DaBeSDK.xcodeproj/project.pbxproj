@@ -56,8 +56,8 @@
 		CA705D1817835ECF00D2C6E4 /* InterfaceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1717835ECF00D2C6E4 /* InterfaceViewController.m */; };
 		CA705D1D17835EE200D2C6E4 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */; };
 		CA705D1E17835EE200D2C6E4 /* UIColor+LuaHighlighting.m in Sources */ = {isa = PBXBuildFile; fileRef = CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */; };
-		CA8EC64F1786310F00659757 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA8EC64E1786310F00659757 /* resource */; };
-		CA8EC6501786310F00659757 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA8EC64E1786310F00659757 /* resource */; };
+		CA72C436179522B900255691 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA72C435179522B900255691 /* resource */; };
+		CA72C437179522B900255691 /* resource in Resources */ = {isa = PBXBuildFile; fileRef = CA72C435179522B900255691 /* resource */; };
 		CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */; };
 		CAE807631787C2D700B0A213 /* SDKMenuOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE807621787C2D700B0A213 /* SDKMenuOutlineView.m */; };
 		CAEFD911178FABE900D19B4D /* NSString+Bytes.m in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD910178FABE900D19B4D /* NSString+Bytes.m */; };
@@ -224,7 +224,7 @@
 		CA705D1A17835EE200D2C6E4 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Hex.m"; path = "DaBeSDK-iOS/UIColor+Hex.m"; sourceTree = SOURCE_ROOT; };
 		CA705D1B17835EE200D2C6E4 /* UIColor+LuaHighlighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+LuaHighlighting.h"; path = "DaBeSDK-iOS/UIColor+LuaHighlighting.h"; sourceTree = SOURCE_ROOT; };
 		CA705D1C17835EE200D2C6E4 /* UIColor+LuaHighlighting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+LuaHighlighting.m"; path = "DaBeSDK-iOS/UIColor+LuaHighlighting.m"; sourceTree = SOURCE_ROOT; };
-		CA8EC64E1786310F00659757 /* resource */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resource; path = ../../../resource; sourceTree = "<group>"; };
+		CA72C435179522B900255691 /* resource */ = {isa = PBXFileReference; lastKnownFileType = folder; name = resource; path = ../../../resource; sourceTree = "<group>"; };
 		CACE2B3F1783484600F36FA3 /* SDKProjectEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKProjectEngineViewController.h; sourceTree = "<group>"; };
 		CACE2B401783484600F36FA3 /* SDKProjectEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKProjectEngineViewController.m; sourceTree = "<group>"; };
 		CAE807611787C2D700B0A213 /* SDKMenuOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDKMenuOutlineView.h; path = DaBeSDK/SDKMenuOutlineView.h; sourceTree = SOURCE_ROOT; };
@@ -499,7 +499,7 @@
 		CAF42A3D1780F67700C3220A = {
 			isa = PBXGroup;
 			children = (
-				CA8EC64E1786310F00659757 /* resource */,
+				CA72C435179522B900255691 /* resource */,
 				CA45C887178631A500B995CC /* demo */,
 				CAF42AB21780F95400C3220A /* Dependencies */,
 				CAF42A721780F7B700C3220A /* OS X */,
@@ -727,8 +727,8 @@
 				CA51FC5A17835FBA000C73E0 /* Icon.png in Resources */,
 				CA51FC5B17835FBA000C73E0 /* Icon@2x.png in Resources */,
 				CA51FC5C17835FBA000C73E0 /* Inconsolata.otf in Resources */,
-				CA8EC6501786310F00659757 /* resource in Resources */,
 				CA45C888178631A500B995CC /* demo in Resources */,
+				CA72C437179522B900255691 /* resource in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -740,7 +740,7 @@
 				CAF42A9D1780F88C00C3220A /* InfoPlist.strings in Resources */,
 				CAF42A9E1780F88C00C3220A /* MainMenu.xib in Resources */,
 				CAF42A9F1780F88C00C3220A /* ScriptEditor.xib in Resources */,
-				CA8EC64F1786310F00659757 /* resource in Resources */,
+				CA72C436179522B900255691 /* resource in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -870,8 +870,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK-iOS/DaBeSDK-iOS-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK-iOS/DaBeSDK-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
@@ -900,8 +901,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK-iOS/DaBeSDK-iOS-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK-iOS/DaBeSDK-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
@@ -986,8 +988,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -1005,8 +1008,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"/Users/hbridges/Coding/dabes_engine/include/**",
+					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";

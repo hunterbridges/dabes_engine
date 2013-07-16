@@ -289,7 +289,7 @@ VRect Camera_project_rect(Camera *camera, VRect rect, int translation) {
   return new;
 }
 
-void Camera_debug(Camera *camera, Graphics *graphics) {
+void Graphics_project_screen_camera(Graphics *graphics, Camera *camera) {
     Camera screen_cam = {
       .focal = {0, 0},
       .screen_size = camera->screen_size,
@@ -297,9 +297,22 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
       .rotation_radians = 0,
       .margin = camera->margin
     };
-    Graphics_reset_modelview_matrix(graphics);
+  
     Graphics_reset_projection_matrix(graphics);
     Graphics_project_camera(graphics, &screen_cam);
+}
+
+void Camera_debug(Camera *camera, Graphics *graphics) {
+    Graphics_project_screen_camera(graphics, camera);
+    Graphics_reset_modelview_matrix(graphics);
+  
+    Camera screen_cam = {
+      .focal = {0, 0},
+      .screen_size = camera->screen_size,
+      .scale = 1,
+      .rotation_radians = 0,
+      .margin = camera->margin
+    };
     GLfloat cam_color[4] = {1, 0, 0, 1};
     VRect track_rect = Camera_tracking_rect(&screen_cam);
     track_rect = VRect_move(track_rect, VPoint_scale(camera->translation, -camera->scale));

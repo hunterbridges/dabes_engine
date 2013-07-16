@@ -2,5 +2,6 @@
 -Wextra
 -Iinclude
 -I/usr/include/libxml2
+-I/usr/local/include/freetype2
 -Llib
 

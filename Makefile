@@ -1,5 +1,5 @@
-CFLAGS=-Wall -Wextra -Isrc -DDEBUG $(OPTFLAGS) -g -Iinclude -I/usr/include/libxml2 -D__ASSERTMACROS__
-LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer -Llib -llcthw -lz -lxml2 -lchipmunk -llua -lopenal -lvorbis -lvorbisfile -logg
+CFLAGS=-Wall -Wextra -Isrc -DDEBUG $(OPTFLAGS) -g -Iinclude -I/usr/include/libxml2 -I/usr/local/include/freetype2 -D__ASSERTMACROS__
+LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer -Llib -llcthw -lz -lxml2 -lchipmunk -llua -lopenal -lvorbis -lvorbisfile -logg -lfreetype
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
 

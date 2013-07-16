@@ -226,6 +226,12 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
         OrthoChipmunkScene_render_physdebug(scene, engine);
     }
 
+    Graphics_project_screen_camera(graphics, scene->camera);
+    Graphics_reset_modelview_matrix(graphics);
+    GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
+    VPoint offset = {20, 20};
+    Graphics_draw_string(engine->graphics, "Hello World", engine->graphics->debug_font,
+        white, offset);
 }
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {

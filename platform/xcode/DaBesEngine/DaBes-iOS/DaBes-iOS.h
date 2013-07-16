@@ -1389,6 +1389,7 @@ typedef struct Sprite {
 
     Hashmap *animations;
     SpriteAnimation *current_animation;
+    short int manual_frames;
 
     SpriteDirection direction;
     int current_frame;
@@ -1418,6 +1419,9 @@ typedef enum {
 struct Scene;
 typedef struct Entity {
     Controller *controller;
+    short int auto_control;
+    short int force_keyframe;
+  
     Sprite *sprite;
     Body *body;
     struct Scene *scene;
@@ -1632,6 +1636,7 @@ typedef struct TileMap {
   GfxSize tile_size;
   DArray *tilesets;
   DArray *layers;
+  DArray *collision_shapes;
   float meters_per_tile;
 } TileMap;
 
@@ -1737,6 +1742,52 @@ VRect World_left_wall_box(World *world);
 VRect World_right_wall_box(World *world);
 
 #endif
+#ifndef __recorder_h
+#define __recorder_h
+#include <lcthw/darray.h>
+
+struct Recorder;
+typedef struct RecorderProto {
+    void *(*capture_frame)(struct Recorder *recorder, size_t *size);
+    void (*apply_frame)(struct Recorder *recorder, void *frame);
+    void (*clear_frames)(struct Recorder *recorder);
+    void (*rewind)(struct Recorder *recorder);
+    void (*start_play_cb)(struct Recorder *recorder);
+    void (*stop_play_cb)(struct Recorder *recorder);
+    void (*pack)(struct Recorder *recorder, unsigned char **buffer,
+                 size_t *size);
+    void (*unpack)(struct Recorder *recorder, unsigned char *buffer,
+                   size_t size);
+} RecorderProto;
+
+typedef enum {
+    RecorderStateIdle = 0,
+    RecorderStateRecording = 1,
+    RecorderStatePlaying = 2
+} RecorderState;
+
+typedef struct Recorder {
+    RecorderProto proto;
+    Entity *entity;
+    DArray *frames;
+
+    void *context;
+
+    int current_frame;
+    RecorderState state;
+
+    int num_frames;
+    double avg_frame_size;
+    size_t total_frame_size;
+} Recorder;
+
+Recorder *Recorder_create(RecorderProto proto, int preroll_ms, int fps);
+void Recorder_destroy(Recorder *recorder);
+void Recorder_write_frame(Recorder *recorder, void *frame, size_t size);
+void *Recorder_read_frame(Recorder *recorder);
+void Recorder_set_state(Recorder *recorder, RecorderState state);
+
+#endif
 #ifndef __scene_h
 #define __scene_h
 #include <chipmunk/chipmunk.h>
@@ -1752,6 +1803,7 @@ typedef struct SceneProto {
     void (*control)(struct Scene *scene, Engine *engine);
     void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
     Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
+    Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
 } SceneProto;
 
 typedef enum {
@@ -1761,7 +1813,8 @@ typedef enum {
 
 typedef enum {
   kSceneNotSelecting = 0,
-  kSceneSelectingForCamera
+  kSceneSelectingForCamera = 1,
+  kSceneSelectingForRecorder = 2
 } SceneEntitySelectionMode;
 
 typedef struct Scene {
@@ -2215,6 +2268,55 @@ typedef Scripting_userdata_for(Controller) Controller_userdata;
 Scripting_caster_for(Controller, luaL_tocontroller);
 
 int luaopen_dabes_controller(lua_State *L);
+
+#endif
+#ifndef __vpolygon_h
+#define __vpolygon_h
+
+typedef struct VPolygon {
+    VPoint origin;
+    int num_points;
+    VPoint points[];
+} VPolygon;
+
+VPolygon *VPolygon_create(int num_points, VPoint *points);
+VPolygon *VPolygon_from_rect(VRect rect);
+void VPolygon_destroy(VPolygon *poly);
+void VPolygon_set_point(VPolygon *poly, int i, VPoint point);
+VPoint VPolygon_get_point(VPolygon *poly, int i);
+void VPolygon_wind(VPolygon *poly, short int clockwise);
+int VPolygon_is_clockwise(VPolygon *poly);
+
+#endif
+#ifndef __chipmunk_recorder_h
+#define __chipmunk_recorder_h
+#include <chipmunk/chipmunk.h>
+
+typedef struct ChipmunkRecorderFrame {
+    short int keyframe;
+
+    short int has_delta_pos;
+    VPoint pos;
+
+    short int has_delta_velo;
+    VPoint velo;
+  
+    short int has_sprite_frame;
+    int sprite_frame;
+
+    short int has_sprite_direction;
+    SpriteDirection sprite_direction;
+} ChipmunkRecorderFrame;
+
+typedef struct ChipmunkRecorderCtx {
+    int keyframe_every;
+    ChipmunkRecorderFrame *prev_frame;
+    ChipmunkRecorderFrame tracking_frame;
+} ChipmunkRecorderCtx;
+
+extern RecorderProto ChipmunkRecorderProto;
+
+Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
 
 #endif
 #ifndef __ortho_chipmunk_scene_h

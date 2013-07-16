@@ -4,6 +4,8 @@
 #ifdef DABES_MAC
 #include <OpenGL/glext.h>
 #endif
+
+#include <lcthw/hashmap_algos.h>
 #include <lcthw/bstrlib.h>
 #include "draw_buffer.h"
 #include "graphics.h"
@@ -16,16 +18,16 @@ GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
 int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
     GLenum error = glGetError();
-  
+
     glEnable(GL_BLEND);
     error = glGetError();
-  
+
 #if defined(DABES_MAC) || defined(DABES_SDL)
     glEnable(GL_MULTISAMPLE);
 #endif
     glDisable(GL_DEPTH_TEST);
     error = glGetError();
-  
+
     error = glGetError();
     check(error == GL_NO_ERROR, "OpenGL init error...");
     return 1;
@@ -35,34 +37,6 @@ error:
 #endif
     return 0;
 }
-
-/*
-GfxSize load_image_dimensions_from_image(char *image_name) {
-  GfxSize dimensions = {0,0};
-#if defined(DABES_IOS) || defined(DABES_MAC)
-  unsigned char *data = NULL;
-  GLint size = 0;
-  Engine_read_file(image_name, &data, &size);
-  CFDataRef cf_data = CFDataCreate(NULL, (uint8_t *)data, size);
-  free(data);
-  CGDataProviderRef provider = CGDataProviderCreateWithCFData(cf_data);
-  CGImageRef cg_image =
-      CGImageCreateWithPNGDataProvider(provider, NULL, true,
-                                       kCGRenderingIntentDefault);
-  CGDataProviderRelease(provider);
-  CFRelease(cf_data);
-  dimensions.w = CGImageGetWidth(cg_image);
-  dimensions.h = CGImageGetHeight(cg_image);
-  CGImageRelease(cg_image);
-#else
-  SDL_Surface *image = IMG_Load(image_name);
-  dimensions.w = image->w;
-  dimensions.h = image->h;
-  SDL_FreeSurface(image);
-#endif
-  return dimensions;
-}
- */
 
 // GFX
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
@@ -83,13 +57,17 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     return VRect_from_xywh(x, y, w, h);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+#pragma mark - GfxTexture
+
 static inline int data_potize(unsigned char **data, int width, int height,
                               int *pot_width, int *pot_height) {
   int pot_w = 2;
   int pot_h = 2;
   while (pot_w < width) pot_w <<= 1;
   while (pot_h < height) pot_h <<= 1;
-  
+
   int pot_d = MAX(pot_h, pot_w);
 
   unsigned char *old_data = *data;
@@ -179,21 +157,122 @@ void GfxTexture_destroy(GfxTexture *texture) {
   free(texture);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+#pragma mark - GfxFont
+
+GfxFontChar *GfxFontChar_create(FT_GlyphSlot g) {
+    GfxFontChar *fontchar = NULL;
+    check(g != NULL, "GlyphSlot required");
+    fontchar = calloc(1, sizeof(GfxFontChar));
+    check(fontchar != NULL, "Couldn't create fontchar");
+
+    size_t sz = g->bitmap.width * g->bitmap.rows * sizeof(uint8_t);
+    uint8_t *buf = calloc(1, sz);
+    memcpy(buf, g->bitmap.buffer, sz);
+    fontchar->texture =
+        GfxTexture_from_data(&buf, g->bitmap.width, g->bitmap.rows, GL_RED);
+
+    fontchar->advance = g->advance;
+
+    return fontchar;
+error:
+    if (fontchar) free(fontchar);
+    return NULL;
+}
+
+void GfxFontChar_destroy(GfxFontChar *fontchar) {
+    check(fontchar != NULL, "No fontchar to destroy");
+
+    GfxTexture_destroy(fontchar->texture);
+    free(fontchar);
+
+error:
+    return;
+}
+
+GfxFont *GfxFont_create(Graphics *graphics, const char *font_name, int px_size) {
+    GfxFont *font = NULL;
+    check(graphics != NULL, "Graphics required");
+    check(graphics->ft != NULL, "FreeType required");
+
+    font = calloc(1, sizeof(GfxFont));
+    check(font != NULL, "Couldn't create font");
+
+    int rc = FT_New_Face(graphics->ft, font_name, 0, &font->face);
+    check(rc == 0, "Could not open font");
+  
+    FT_Set_Pixel_Sizes(font->face, 0, px_size);
+    font->px_size = px_size;
+    font->name = calloc(strlen(font_name) + 1, sizeof(char));
+    strcpy(font->name, font_name);
+
+    font->char_textures = Hashmap_create(NULL, Hashmap_fnv1a_hash);
+
+    return font;
+error:
+    if (font) free(font);
+    return NULL;
+}
+
+void GfxFont_destroy(GfxFont *font) {
+    check(font != NULL, "No font to destroy");
+
+    Hashmap_destroy(font->char_textures,
+                    (Hashmap_destroy_func)GfxFontChar_destroy);
+    FT_Done_Face(font->face);
+    free(font->name);
+    free(font);
+
+    return;
+error:
+    return;
+}
+
+GfxFontChar *GfxFont_get_char(GfxFont *font, char c) {
+    check(font != NULL, "No font to get char in");
+
+    char str[2] = {c, '\0'};
+    bstring bstr = bfromcstr(str);
+    GfxFontChar *fontchar = Hashmap_get(font->char_textures, bstr);
+    if (fontchar) {
+        free(bstr);
+        return fontchar;
+    }
+
+    int rc = FT_Load_Char(font->face, (long unsigned)c, FT_LOAD_RENDER);
+    check(rc == 0, "Could not load char %c", c);
+
+    FT_GlyphSlot g = font->face->glyph;
+    fontchar = GfxFontChar_create(g);
+    Hashmap_set(font->char_textures, bstr, fontchar);
+
+    return fontchar;
+error:
+    return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#pragma mark - GfxShader
+
 void GfxShader_destroy(GfxShader *shader, Graphics *graphics) {
   check(shader != NULL, "No shader to destroy");
-  
+
   graphics->del_vao(1, &shader->gl_vertex_array);
   glDeleteProgram(shader->gl_program);
   if (shader->draw_buffer) {
       DrawBuffer_destroy(shader->draw_buffer);
   }
-  
+
   free(shader);
-  
+
   return;
 error:
   return;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation) {
@@ -398,6 +477,99 @@ error:
     return;
 }
 
+void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
+        GLfloat color[4], VPoint origin) {
+    char *c = text;
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX], 1,
+                       GL_FALSE, graphics->projection_matrix.gl);
+  
+    float xo = 0;
+    while (*c != '\0') {
+        GfxFontChar *fontchar = GfxFont_get_char(font, *c);
+        if (fontchar == NULL) {
+          c++;
+          continue;
+        }
+      
+        GfxTexture *texture = fontchar->texture;
+
+        VRect tex_rect = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+        VPoint pot_scale = {1, 1};
+        if (texture) {
+            pot_scale.x = texture->size.w / texture->pot_size.w;
+            pot_scale.y = texture->size.h / texture->pot_size.h;
+
+            int i = 0;
+            for (i = 0; i < 4; i++) {
+                VPoint vertex = VRect_vertex(tex_rect, i);
+                vertex = VPoint_multiply(vertex, pot_scale);
+                VRect_set_vertex(&tex_rect, i, vertex);
+            }
+        }
+
+        VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
+
+        // Transpose modelview matrix because attribute reads columns, not rows.
+        VMatrix tmvm = graphics->modelview_matrix;
+
+        VVector4 vertices[7 * 6] = {
+            {.raw = {origin.x + xo, origin.y, 0, 1}},
+                cVertex,
+                {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
+                tmvm.v[0],
+                tmvm.v[1],
+                tmvm.v[2],
+                tmvm.v[3],
+            {.raw = {origin.x + texture->size.w + xo, origin.y, 0, 1}},
+                cVertex,
+                {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
+                tmvm.v[0],
+                tmvm.v[1],
+                tmvm.v[2],
+                tmvm.v[3],
+            {.raw = {origin.x + texture->size.w + xo, origin.y + texture->size.h, 0, 1}},
+                cVertex,
+                {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
+                tmvm.v[0],
+                tmvm.v[1],
+                tmvm.v[2],
+                tmvm.v[3],
+
+            {.raw = {origin.x + texture->size.w + xo, origin.y + texture->size.h, 0, 1}},
+                cVertex,
+                {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
+                tmvm.v[0],
+                tmvm.v[1],
+                tmvm.v[2],
+                tmvm.v[3],
+            {.raw = {origin.x + xo, origin.y + texture->size.h, 0, 1}},
+                cVertex,
+                {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
+                tmvm.v[0],
+                tmvm.v[1],
+                tmvm.v[2],
+                tmvm.v[3],
+            {.raw = {origin.x + xo, origin.y, 0, 1}},
+                cVertex,
+                {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
+                tmvm.v[0],
+                tmvm.v[1],
+                tmvm.v[2],
+                tmvm.v[3],
+        };
+
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+        glUniform1i(GfxShader_uniforms[UNIFORM_TEXT_TEXTURE], 0);
+        glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        xo += texture->size.w + fontchar->advance.x / 64.0;
+        c++;
+    }
+
+    return;
+}
+
 void Graphics_draw_debug_text(Graphics *UNUSED(graphics),
         int UNUSED(ticks_since_last)) {
     return;
@@ -483,6 +655,8 @@ void Graphics_translate_modelview_matrix(Graphics *graphics,
         VMatrix_translate(graphics->modelview_matrix, x, y, z);
 }
 
+#pragma mark - Decal Shader
+
 void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
     graphics->bind_vao(shader->gl_vertex_array);
 
@@ -550,7 +724,7 @@ void Graphics_build_decal_shader(Graphics *graphics) {
     check(rc == 1, "Could not build decal shader");
     Hashmap_set(graphics->shaders, bfromcstr("decal"), shader);
     List_push(graphics->shader_list, shader);
-  
+
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE] =
         glGetUniformLocation(program, "hasTexture");
@@ -577,6 +751,8 @@ error:
     if (shader) free(shader);
     return;
 }
+
+#pragma mark - Tilemap Shader
 
 void set_up_tilemap_shader(GfxShader *shader, Graphics *graphics) {
     graphics->bind_vao(shader->gl_vertex_array);
@@ -611,7 +787,7 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
     check(rc == 1, "Could not build tilemap shader");
     Hashmap_set(graphics->shaders, bfromcstr("tilemap"), shader);
     List_push(graphics->shader_list, shader);
-  
+
     GLuint program = shader->gl_program;
     GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX] =
         glGetUniformLocation(program, "modelView");
@@ -644,6 +820,8 @@ error:
     if (shader) free(shader);
     return;
 }
+
+#pragma mark - Parallax Shader
 
 void set_up_parallax_shader(GfxShader *shader, Graphics *graphics) {
     graphics->bind_vao(shader->gl_vertex_array);
@@ -714,16 +892,109 @@ error:
     return;
 }
 
+#pragma mark - Text Shader
+
+void set_up_text_shader(GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_VERTEX]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_COLOR]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_TEX_POS]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 1);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 2);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 3);
+
+    // Position, color, texture, modelView * 4
+    int v_size = sizeof(VVector4) * 7;
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_VERTEX], 4,
+                          GL_FLOAT, GL_FALSE, v_size, 0);
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_COLOR], 4,
+                          GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 1));
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_TEX_POS], 4,
+                          GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 2));
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX],
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 3));
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 1,
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 4));
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 2,
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 5));
+
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 3,
+                          4, GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 6));
+
+    graphics->bind_vao(0);
+}
+
+void tear_down_text_shader(GfxShader *shader, Graphics *graphics) {
+    graphics->bind_vao(shader->gl_vertex_array);
+
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_VERTEX]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_COLOR]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_TEX_POS]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 1);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 2);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 3);
+
+    graphics->bind_vao(0);
+}
+
+void Graphics_build_text_shader(Graphics *graphics) {
+    GfxShader *shader = calloc(1, sizeof(GfxShader));
+    check(shader != NULL, "Could not alloc text shader");
+
+    int rc = Graphics_load_shader(graphics, shader_path("text.vert"),
+        shader_path("text.frag"), &shader->gl_program);
+    check(rc == 1, "Could not build text shader");
+    Hashmap_set(graphics->shaders, bfromcstr("text"), shader);
+    List_push(graphics->shader_list, shader);
+
+    GLuint program = shader->gl_program;
+    GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX] =
+        glGetUniformLocation(program, "projection");
+    GfxShader_uniforms[UNIFORM_TEXT_TEXTURE] =
+        glGetUniformLocation(program, "texture");
+    GfxShader_attributes[ATTRIB_TEXT_VERTEX] =
+        glGetAttribLocation(program, "position");
+    GfxShader_attributes[ATTRIB_TEXT_COLOR] =
+        glGetAttribLocation(program, "color");
+    GfxShader_attributes[ATTRIB_TEXT_TEX_POS] =
+        glGetAttribLocation(program, "texPos");
+    GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] =
+        glGetAttribLocation(program, "modelView");
+
+    graphics->gen_vao(1, &shader->gl_vertex_array);
+
+    set_up_text_shader(shader, graphics);
+    shader->set_up = &set_up_text_shader;
+    shader->tear_down = &tear_down_text_shader;
+
+    shader->draw_buffer = DrawBuffer_create();
+    return;
+error:
+    if (shader) free(shader);
+    return;
+}
+
 Graphics *Graphics_create(Engine *engine) {
     Graphics *graphics = calloc(1, sizeof(Graphics));
     check(graphics != NULL, "Couldn't create graphics");
-  
+
     graphics->engine = engine;
-  
-#ifdef DABES_SDL
-    graphics->debug_text_font = TTF_OpenFont("media/fonts/uni.ttf", 8);
-#endif
-    graphics->debug_text_texture = 0;
+
     graphics->screen_size.w = SCREEN_WIDTH;
     graphics->screen_size.h = SCREEN_HEIGHT;
     glGenBuffers(1, &graphics->array_buffer);
@@ -732,7 +1003,7 @@ Graphics *Graphics_create(Engine *engine) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     graphics->current_shader = NULL;
-    graphics->shaders = Hashmap_create(NULL, NULL);
+    graphics->shaders = Hashmap_create(NULL, Hashmap_fnv1a_hash);
     graphics->shader_list = List_create();
 
     graphics->gl_vao_enabled = 0;
@@ -767,22 +1038,30 @@ Graphics *Graphics_create(Engine *engine) {
     Graphics_build_decal_shader(graphics);
     Graphics_build_tilemap_shader(graphics);
     Graphics_build_parallax_shader(graphics);
+    Graphics_build_text_shader(graphics);
 
-    graphics->textures = Hashmap_create(NULL, NULL);
-    graphics->sprites = Hashmap_create(NULL, NULL);
+    FT_Library ft = NULL;
+    if (FT_Init_FreeType(&ft)) {
+        fprintf(stderr, "Could not init freetype library\n");
+    }
+    graphics->ft = ft;
+
+    graphics->textures = Hashmap_create(NULL, Hashmap_fnv1a_hash);
+    graphics->sprites = Hashmap_create(NULL, Hashmap_fnv1a_hash);
+
+    char *fontpath = engine->resource_path("fonts/uni.ttf");
+    graphics->debug_font = GfxFont_create(graphics, fontpath, 10);
+    free(fontpath);
 
     return graphics;
 error:
     return NULL;
 }
 
-void nulldestroy(void *obj) { }
+void nulldestroy(void *UNUSED(obj)) { }
 
 void Graphics_destroy(Graphics *graphics) {
-#ifdef DABES_SDL
-    TTF_CloseFont(graphics->debug_text_font);
-#endif
-  
+    GfxFont_destroy(graphics->debug_font);
     Hashmap_destroy(graphics->shaders, nulldestroy);
     LIST_FOREACH(graphics->shader_list, first, next, current) {
         GfxShader *shader = current->value;
@@ -792,12 +1071,10 @@ void Graphics_destroy(Graphics *graphics) {
 
     Hashmap_destroy(graphics->textures,
                     (Hashmap_destroy_func)GfxTexture_destroy);
-  
+
     Hashmap_destroy(graphics->sprites,
                     (Hashmap_destroy_func)Sprite_destroy);
-  
-    GLuint textures[] = {graphics->debug_text_texture};
-    glDeleteTextures(1, textures);
+
     free(graphics);
 }
 
@@ -846,7 +1123,7 @@ GLuint Graphics_load_shader(Graphics *graphics, char *vert_name,
     glDetachShader(program, fragment_shader);
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-  
+
     //if(strcmp(vert_name, shader_path("decal.vert")) == 0) return 1;
     *compiled_program = program;
     return 1;

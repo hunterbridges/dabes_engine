@@ -31,6 +31,7 @@ void Camera_track_entities(Camera *camera, int num_entities,
 void Camera_track(Camera *camera);
 void Camera_destroy(Camera *camera);
 void Graphics_project_camera(Graphics *graphics, Camera *camera);
+void Graphics_project_screen_camera(Graphics *graphics, Camera *camera);
 VRect Camera_base_rect(Camera *camera);
 VRect Camera_visible_rect(Camera *camera);
 VRect Camera_tracking_rect(Camera *camera);

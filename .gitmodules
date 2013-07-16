@@ -11,3 +11,6 @@
 [submodule "submodules/PSMTabBarControl"]
 	path = submodules/PSMTabBarControl
 	url = git@github.com:hunterbridges/PSMTabBarControl.git
+[submodule "submodules/freetype2-ios"]
+	path = submodules/freetype2-ios
+	url = git@github.com:hunterbridges/freetype2-ios.git
