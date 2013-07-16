@@ -1047,8 +1047,6 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         GfxSize textureSize, double rotation, int z_index);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin);
-void Graphics_draw_debug_text(Graphics *graphics,
-        int ticks_since_last);
 
 // Projection matrix
 void Graphics_reset_projection_matrix(Graphics *graphics);

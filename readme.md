@@ -16,10 +16,12 @@ What is done:
     * Sprite animations
     * Keyframe animations/Easer
     * Static scenes
+    * Can use Freetype to render strings with TTF and OTF fonts
 * Physics engine:
-    * Can use Chipmunk because writing a Physics engine is hard
+    * Integration with Chipmunk 2D physics engine
     * Basic Hitboxes
     * Collision Sensors
+    * Entity recording and playback
 * Audio engine:
     * OGG support
     * Seamless music queueing and looping
@@ -42,7 +44,6 @@ What is not yet done:
     * Entity inspector
 
 Bugs:
-* Debug text currently dead
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating

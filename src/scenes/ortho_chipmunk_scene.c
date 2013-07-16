@@ -193,6 +193,25 @@ void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
     cpSpaceEachShape(scene->space, render_shape_iter, &iter_data);
 }
 
+void OrthoChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
+    Graphics_project_screen_camera(engine->graphics, scene->camera);
+    Graphics_reset_modelview_matrix(engine->graphics);
+    GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
+  
+    char *dTxt = malloc(256 * sizeof(char));
+    sprintf(dTxt, "FPS CAP: %d", FPS);
+    VPoint offset = {-scene->camera->screen_size.w / 2.0 + 10,
+                     -scene->camera->screen_size.h / 2.0 + engine->graphics->debug_font->face->height / 64};
+    Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
+        white, offset);
+  
+    VPoint line = {0, engine->graphics->debug_font->px_size};
+    offset = VPoint_add(offset, line);
+    sprintf(dTxt, "ACTUAL: %.02f", 1000.0 / engine->frame_ticks);
+    Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
+        white, offset);
+}
+
 void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
     Graphics *graphics = ((Engine *)engine)->graphics;
@@ -228,12 +247,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     }
 
     Graphics_use_shader(graphics, txshader);
-    Graphics_project_screen_camera(graphics, scene->camera);
-    Graphics_reset_modelview_matrix(graphics);
-    GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
-    VPoint offset = {20, 20};
-    Graphics_draw_string(engine->graphics, "BOXFALL", engine->graphics->debug_font,
-        white, offset);
+    OrthoChipmunkScene_render_debug_text(scene, engine);
 }
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {

@@ -569,46 +569,11 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        xo += texture->size.w + fontchar->advance.x / 64.0;
+        xo += fontchar->advance.x / 64.0;
         c++;
     }
 
     return;
-}
-
-void Graphics_draw_debug_text(Graphics *UNUSED(graphics),
-        int UNUSED(ticks_since_last)) {
-    return;
-#if 0
-    Graphics_reset_projection_matrix(graphics);
-    GLuint textures[] = {graphics->debug_text_texture};
-    if (graphics->debug_text_texture != 0) glDeleteTextures(1, textures);
-    graphics->debug_text_texture = 0;
-
-    SDL_Rect debugRect = {0, 0, 160, 10};
-
-    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, debugRect.w,
-            debugRect.h, 32, rmask, gmask, bmask, amask);
-
-    Uint32 uBlack = SDL_MapRGBA(surface->format, 0, 0, 0, 255);
-    SDL_FillRect(surface, &debugRect, uBlack);
-
-    SDL_Color txtBlack = {255,255,255,255};
-    char *dTxt = malloc(256 * sizeof(char));
-    sprintf(dTxt, "FPS CAP: %d           ACTUAL: %d", FPS,
-            (int)ceil(1000.0 / ticks_since_last));
-    SDL_Surface *debugText = TTF_RenderText_Solid(graphics->debug_text_font,
-            dTxt, txtBlack);
-    free(dTxt);
-
-    SDL_BlitSurface(debugText, NULL, surface, &debugRect);
-    SDL_FreeSurface(debugText);
-    graphics->debug_text_texture = load_surface_as_texture(surface);
-
-    VRect rect = VRect_from_SDL_Rect(debugRect);
-    GLfloat glBlack[4] = {0,0,0,255};
-    Graphics_draw_rect(graphics, rect, glBlack, graphics->debug_text_texture, 0);
-#endif
 }
 
 void Graphics_reset_projection_matrix(Graphics *graphics) {
@@ -1056,7 +1021,7 @@ Graphics *Graphics_create(Engine *engine) {
     graphics->sprites = Hashmap_create(NULL, Hashmap_fnv1a_hash);
 
     char *fontpath = engine->resource_path("fonts/uni.ttf");
-    graphics->debug_font = GfxFont_create(graphics, fontpath, 24);
+    graphics->debug_font = GfxFont_create(graphics, fontpath, 8);
     free(fontpath);
 
     return graphics;
