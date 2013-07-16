@@ -5,6 +5,8 @@
 #include <OpenGL/glext.h>
 #endif
 
+#include <freetype/ftglyph.h>
+#include <freetype/ftstroke.h>
 #include <lcthw/hashmap_algos.h>
 #include <lcthw/bstrlib.h>
 #include "draw_buffer.h"
@@ -12,6 +14,8 @@
 #include "stb_image.h"
 #include "sprite.h"
 #include "../core/engine.h"
+
+GLfloat GfxGLClearColor[4] = {0.0, 0.0, 0.0, 0.0};
 
 GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
@@ -167,19 +171,19 @@ void GfxTexture_destroy(GfxTexture *texture) {
 
 #pragma mark - GfxFont
 
-GfxFontChar *GfxFontChar_create(FT_GlyphSlot g) {
+GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance) {
     GfxFontChar *fontchar = NULL;
-    check(g != NULL, "GlyphSlot required");
+    check(bitmap != NULL, "Bitmap required");
     fontchar = calloc(1, sizeof(GfxFontChar));
     check(fontchar != NULL, "Couldn't create fontchar");
 
-    size_t sz = g->bitmap.width * g->bitmap.rows * sizeof(uint8_t);
+    size_t sz = bitmap->width * bitmap->rows * sizeof(uint8_t);
     uint8_t *buf = calloc(1, sz);
-    memcpy(buf, g->bitmap.buffer, sz);
+    memcpy(buf, bitmap->buffer, sz);
     fontchar->texture =
-        GfxTexture_from_data(&buf, g->bitmap.width, g->bitmap.rows, GL_RED);
+        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_RED);
 
-    fontchar->advance = g->advance;
+    fontchar->advance = advance;
 
     return fontchar;
 error:
@@ -235,10 +239,13 @@ error:
     return;
 }
 
-GfxFontChar *GfxFont_get_char(GfxFont *font, char c) {
+GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
+                              Graphics *graphics) {
     check(font != NULL, "No font to get char in");
 
-    char str[2] = {c, '\0'};
+    char str[12] = {c};
+    sprintf(str + 1, "%010d", stroke);
+    str[11] = '\0';
     bstring bstr = bfromcstr(str);
     GfxFontChar *fontchar = Hashmap_get(font->char_textures, bstr);
     if (fontchar) {
@@ -248,10 +255,29 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c) {
 
     int rc = FT_Load_Char(font->face, (long unsigned)c, FT_LOAD_RENDER);
     check(rc == 0, "Could not load char %c", c);
-
+  
     FT_GlyphSlot g = font->face->glyph;
-    fontchar = GfxFontChar_create(g);
-    Hashmap_set(font->char_textures, bstr, fontchar);
+    FT_Glyph glyph;
+    FT_Stroker  stroker = NULL;
+    if (stroke) {
+      FT_Stroker_New(graphics->ft, &stroker);
+      FT_Stroker_Set(stroker, stroke, FT_STROKER_LINECAP_ROUND,
+                     FT_STROKER_LINEJOIN_ROUND, 0);
+      FT_Get_Glyph(g, &glyph);
+      FT_Glyph_Stroke(&glyph, stroker, 1);
+      FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 1);
+      FT_BitmapGlyph bit_glyph = (FT_BitmapGlyph)glyph;
+      
+      fontchar = GfxFontChar_create(&bit_glyph->bitmap, g->advance);
+      
+      FT_Done_Glyph(glyph);
+      FT_Stroker_Done(stroker);
+    } else {
+      fontchar = GfxFontChar_create(&g->bitmap, g->advance);
+    }
+  
+    if (fontchar) Hashmap_set(font->char_textures, bstr, fontchar);
+    else bdestroy(bstr);
 
     return fontchar;
 error:
@@ -484,14 +510,41 @@ error:
 }
 
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
-        GLfloat color[4], VPoint origin) {
+        GLfloat color[4], VPoint origin, GfxTextAlign align,
+        GLfloat shadow_color[4], VPoint shadow_offset) {
+  
+    if (shadow_color[3] > 0.0 &&
+            VPoint_rel(shadow_offset, VPointZero) != VPointRelWithin) {
+        // This is totally lazy and could be optimized.
+        VPoint so = VPoint_add(origin, shadow_offset);
+        Graphics_draw_string(graphics, text, font, shadow_color, so,
+                             align, GfxGLClearColor, VPointZero);
+    }
+  
     char *c = text;
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
 
+    // Unfortunately we need to do a pre-pass for right and center.
+    float line_width = 0;
+    if (align != GfxTextAlignLeft) {
+      while (*c != '\0') {
+          GfxFontChar *fontchar = GfxFont_get_char(font, *c, 0, graphics);
+          if (fontchar == NULL) {
+            c++;
+            continue;
+          }
+        
+          line_width += fontchar->advance.x / 64.0;
+          c++;
+      }
+      line_width = floorf(line_width);
+    }
+  
+    c = text;
     float xo = 0;
     while (*c != '\0') {
-        GfxFontChar *fontchar = GfxFont_get_char(font, *c);
+        GfxFontChar *fontchar = GfxFont_get_char(font, *c, 0, graphics);
         if (fontchar == NULL) {
           c++;
           continue;
@@ -517,23 +570,49 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
 
         // Transpose modelview matrix because attribute reads columns, not rows.
         VMatrix tmvm = graphics->modelview_matrix;
+      
+        VRect glyph_rect = VRectZero;
+        switch (align) {
+          case GfxTextAlignRight: {
+            glyph_rect = VRect_from_xywh(origin.x - line_width + xo,
+                                         origin.y - texture->size.h,
+                                         texture->size.w,
+                                         texture->size.h);
+          } break;
+          
+          case GfxTextAlignCenter: {
+            glyph_rect = VRect_from_xywh(origin.x - line_width / 2 + xo,
+                                         origin.y - texture->size.h,
+                                         texture->size.w,
+                                         texture->size.h);
+          } break;
+            
+          case GfxTextAlignLeft:
+          default: {
+            glyph_rect = VRect_from_xywh(origin.x + xo,
+                                         origin.y - texture->size.h,
+                                         texture->size.w,
+                                         texture->size.h);
+          } break;
+            
+        }
 
         VVector4 vertices[7 * 6] = {
-            {.raw = {origin.x + xo, origin.y - texture->size.h, 0, 1}},
+            {.raw = {glyph_rect.tl.x, glyph_rect.tl.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + texture->size.w + xo, origin.y - texture->size.h, 0, 1}},
+            {.raw = {glyph_rect.tr.x, glyph_rect.tr.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + texture->size.w + xo, origin.y, 0, 1}},
+            {.raw = {glyph_rect.br.x, glyph_rect.br.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
                 tmvm.v[0],
@@ -541,21 +620,21 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
                 tmvm.v[2],
                 tmvm.v[3],
 
-            {.raw = {origin.x + texture->size.w + xo, origin.y, 0, 1}},
+            {.raw = {glyph_rect.br.x, glyph_rect.br.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + xo, origin.y, 0, 1}},
+            {.raw = {glyph_rect.bl.x, glyph_rect.bl.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
                 tmvm.v[0],
                 tmvm.v[1],
                 tmvm.v[2],
                 tmvm.v[3],
-            {.raw = {origin.x + xo, origin.y - texture->size.h, 0, 1}},
+            {.raw = {glyph_rect.tl.x, glyph_rect.tl.y, 0, 1}},
                 cVertex,
                 {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
                 tmvm.v[0],
@@ -1021,7 +1100,7 @@ Graphics *Graphics_create(Engine *engine) {
     graphics->sprites = Hashmap_create(NULL, Hashmap_fnv1a_hash);
 
     char *fontpath = engine->resource_path("fonts/uni.ttf");
-    graphics->debug_font = GfxFont_create(graphics, fontpath, 8);
+    graphics->debug_font = GfxFont_create(graphics, fontpath, 24);
     free(fontpath);
 
     return graphics;

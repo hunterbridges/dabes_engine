@@ -200,16 +200,23 @@ void OrthoChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
   
     char *dTxt = malloc(256 * sizeof(char));
     sprintf(dTxt, "FPS CAP: %d", FPS);
-    VPoint offset = {-scene->camera->screen_size.w / 2.0 + 10,
-                     -scene->camera->screen_size.h / 2.0 + engine->graphics->debug_font->face->height / 64};
+    VPoint offset = {0,
+                     -scene->camera->screen_size.h / 2.0 + engine->graphics->debug_font->face->height * 2 / 64};
+  
+    GfxFont *font = engine->graphics->debug_font;
+    GLfloat black[4] = {0, 0, 0, 1};
+    float shagnitude = MAX(font->px_size / 12, 1);
+    VPoint shadow_offset = {shagnitude, shagnitude};
     Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
-        white, offset);
+        white, offset, GfxTextAlignCenter, black, shadow_offset);
   
     VPoint line = {0, engine->graphics->debug_font->px_size};
     offset = VPoint_add(offset, line);
     sprintf(dTxt, "ACTUAL: %.02f", 1000.0 / engine->frame_ticks);
     Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
-        white, offset);
+        white, offset, GfxTextAlignCenter, black, shadow_offset);
+  
+    free(dTxt);
 }
 
 void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {

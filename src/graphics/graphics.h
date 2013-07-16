@@ -12,6 +12,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+extern GLfloat GfxGLClearColor[4];
+
 struct Graphics;
 
 int Graphics_init_GL(int swidth, int sheight);
@@ -40,12 +42,18 @@ void GfxTexture_destroy(GfxTexture *texture);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+typedef enum {
+    GfxTextAlignLeft = 0,
+    GfxTextAlignRight = 1,
+    GfxTextAlignCenter = 2
+} GfxTextAlign;
+
 typedef struct GfxFontChar {
     GfxTexture *texture;
     FT_Vector advance;
 } GfxFontChar;
 
-GfxFontChar *GfxFontChar_create(FT_GlyphSlot g);
+GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance);
 void GfxFontChar_destroy(GfxFontChar *fontchar);
 
 typedef struct GfxFont {
@@ -57,7 +65,8 @@ typedef struct GfxFont {
 
 GfxFont *GfxFont_create(struct Graphics *graphics, const char *font_name, int px_size);
 void GfxFont_destroy(GfxFont *font);
-GfxFontChar *GfxFont_get_char(GfxFont *font, char c);
+GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
+                              struct Graphics *graphics);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -163,7 +172,8 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
         GfxSize textureSize, double rotation, int z_index);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
-        GLfloat color[4], VPoint origin);
+        GLfloat color[4], VPoint origin, GfxTextAlign align,
+        GLfloat shadow_color[4], VPoint shadow_offset);
 
 // Projection matrix
 void Graphics_reset_projection_matrix(Graphics *graphics);
