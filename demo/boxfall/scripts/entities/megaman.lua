@@ -90,6 +90,8 @@ Megaman = Entity:extend({
             projectile.body.elasticity = 0.1
             projectile.body.mass = 1000
             self.scene:add_entity(projectile)
+            self.scene.camera:track_entities(self, projectile)
+            Sfx:new("media/sfx/blast.ogg"):play()
         end
 
         self:control()

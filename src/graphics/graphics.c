@@ -1100,7 +1100,7 @@ Graphics *Graphics_create(Engine *engine) {
     graphics->sprites = Hashmap_create(NULL, Hashmap_fnv1a_hash);
 
     char *fontpath = engine->resource_path("fonts/uni.ttf");
-    graphics->debug_font = GfxFont_create(graphics, fontpath, 24);
+    graphics->debug_font = GfxFont_create(graphics, fontpath, 16);
     free(fontpath);
 
     return graphics;
