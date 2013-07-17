@@ -3,6 +3,7 @@
 #include "../core/engine.h"
 #include "scene.h"
 #include "../graphics/draw_buffer.h"
+#include "overlay.h"
 
 Scene *Scene_create(Engine *engine, SceneProto proto) {
     Scene *scene = calloc(1, sizeof(Scene));
@@ -122,6 +123,11 @@ void Scene_update(Scene *scene, Engine *engine) {
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
         Entity_update(entity, engine);
+    }
+
+    for (i = 0; i < DArray_count(scene->overlays); i++) {
+        Overlay *overlay = DArray_get(scene->overlays, i);
+        if (overlay) Overlay_update(overlay, engine);
     }
 
     Camera_track(scene->camera);
@@ -275,5 +281,29 @@ void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
         Graphics_draw_rect(engine->graphics, NULL, cover_rect,
                 color.raw, NULL, VPointZero, GfxSizeZero,
                 0, 0);
+    }
+}
+
+void Scene_render_overlays(Scene *scene, Engine *engine) {
+    int i = 0;
+    for (i = 0; i < DArray_count(scene->overlays); i++) {
+        Overlay *overlay = DArray_get(scene->overlays, i);
+        if (overlay) Overlay_render(overlay, engine);
+    }
+}
+
+void Scene_add_overlay(Scene *scene, Overlay *overlay) {
+    // TODO: Sort by z index
+    DArray_push(scene->overlays, overlay);
+    overlay->scene = scene;
+}
+
+void Scene_remove_overlay(Scene *scene, Overlay *overlay) {
+    int i = 0;
+    for (i = 0; i < DArray_count(scene->overlays); i++) {
+        if (DArray_get(scene->overlays, i) == overlay) {
+            DArray_remove(scene->overlays, i);
+            break;
+        }
     }
 }

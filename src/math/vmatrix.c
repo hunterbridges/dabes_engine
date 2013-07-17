@@ -10,6 +10,8 @@ const VMatrix VMatrixIdentity = {.gl = {
   0, 0, 0, 1
 }};
 
+const VVector4 VVector4Zero = {.raw = {0, 0, 0, 0}};
+
 // this file sucks
 
 VVector3 VVector3_normalize(VVector3 vector) {

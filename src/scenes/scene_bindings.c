@@ -8,6 +8,7 @@
 #include "scene.h"
 #include "ortho_chipmunk_scene.h"
 #include "static_scene.h"
+#include "overlay_bindings.h"
 
 const char *luab_Scene_lib = "dab_scene";
 const char *luab_Scene_metatable = "DaBes.scene";
@@ -116,6 +117,30 @@ error:
     return 0;
 }
 
+int luab_Scene_add_overlay(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    lua_getfield(L, 2, "real");
+    Overlay *overlay = luaL_tooverlay(L, -1);
+    Scene_add_overlay(scene, overlay);
+
+    return 0;
+error:
+    return 0;
+}
+
+int luab_Scene_remove_overlay(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    lua_getfield(L, 2, "real");
+    Overlay *overlay = luaL_tooverlay(L, -1);
+    Scene_remove_overlay(scene, overlay);
+
+    return 0;
+error:
+    return 0;
+}
+
 int luab_Scene_get_music(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
@@ -215,6 +240,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"start", luab_Scene_start},
     {"stop", luab_Scene_stop},
     {"add_entity", luab_Scene_add_entity},
+    {"add_overlay", luab_Scene_add_overlay},
+    {"remove_overlay", luab_Scene_remove_overlay},
     {"load_map", luab_Scene_load_map},
     {"get_music", luab_Scene_get_music},
     {"set_music", luab_Scene_set_music},

@@ -12,6 +12,7 @@
 #include "../recorder/chipmunk_recorder.h"
 #include "scene.h"
 #include "../math/vpolygon.h"
+#include "overlay.h"
 
 typedef struct OrthoChipmunkSceneCtx {
     List *tile_shapes;
@@ -48,6 +49,9 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     DArray_destroy(scene->entities);
     scene->entities = NULL;
 
+    DArray_destroy(scene->overlays);
+    scene->overlays = NULL;
+
     if (scene->space) {
       cpSpaceFree(scene->space);
       scene->space = NULL;
@@ -62,6 +66,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->world == NULL);
     assert(scene->entities == NULL);
     scene->entities = DArray_create(sizeof(Entity *), 8);
+    scene->overlays = DArray_create(sizeof(Overlay *), 8);
 
     OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
     scene->context = context;
@@ -197,25 +202,25 @@ void OrthoChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
     Graphics_project_screen_camera(engine->graphics, scene->camera);
     Graphics_reset_modelview_matrix(engine->graphics);
     GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
-  
+
     char *dTxt = malloc(256 * sizeof(char));
     sprintf(dTxt, "FPS CAP: %d", FPS);
     VPoint offset = {0,
                      -scene->camera->screen_size.h / 2.0 + engine->graphics->debug_font->face->height * 2 / 64};
-  
+
     GfxFont *font = engine->graphics->debug_font;
     GLfloat black[4] = {0, 0, 0, 1};
     float shagnitude = MAX(font->px_size / 12, 1);
     VPoint shadow_offset = {shagnitude, shagnitude};
     Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
         white, offset, GfxTextAlignCenter, black, shadow_offset);
-  
+
     VPoint line = {0, engine->graphics->debug_font->px_size};
     offset = VPoint_add(offset, line);
     sprintf(dTxt, "ACTUAL: %.02f", 1000.0 / engine->frame_ticks);
     Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
         white, offset, GfxTextAlignCenter, black, shadow_offset);
-  
+
     free(dTxt);
 }
 
@@ -240,6 +245,7 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     }
 
     Scene_render_entities(scene, engine);
+    Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_render_selected_entities(scene, engine);
     Scene_fill(scene, engine, scene->cover_color);
@@ -252,9 +258,10 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     if (scene->render_mode == kSceneRenderModePhysicsDebug) {
         OrthoChipmunkScene_render_physdebug(scene, engine);
     }
-
-    Graphics_use_shader(graphics, txshader);
-    OrthoChipmunkScene_render_debug_text(scene, engine);
+    if (scene->draw_debug_text) {
+        Graphics_use_shader(graphics, txshader);
+        OrthoChipmunkScene_render_debug_text(scene, engine);
+    }
 }
 
 void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {

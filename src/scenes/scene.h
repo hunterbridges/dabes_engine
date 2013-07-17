@@ -46,6 +46,7 @@ typedef struct Scene {
     GfxTexture *bg_texture; // deprecated
 
     DArray *entities;
+    DArray *overlays;
     Music *music;
     Camera *camera;
     union {
@@ -58,6 +59,7 @@ typedef struct Scene {
     VVector4 bg_color;
     VVector4 cover_color;
 
+    short int draw_debug_text;
     short int draw_grid;
     short int debug_camera;
     short int render_mode;
@@ -90,6 +92,11 @@ int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
 void Scene_render_entities(Scene *scene, Engine *engine);
 void Scene_render_selected_entities(Scene *scene, Engine *engine);
+void Scene_render_overlays(Scene *scene, Engine *engine);
+
+struct Overlay;
+void Scene_add_overlay(Scene *scene, struct Overlay *overlay);
+void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
 
 
 #endif

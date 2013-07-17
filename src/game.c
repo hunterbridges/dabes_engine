@@ -40,9 +40,6 @@ int main(int argc, char *argv[]) {
                     Scene_render(scene, engine);
                 }
             }
-#ifdef DEBUG
-            Graphics_draw_debug_text(engine->graphics, engine->frame_ticks);
-#endif
             SDL_GL_SwapBuffers();
 
             if (engine->input->game_quit) break;

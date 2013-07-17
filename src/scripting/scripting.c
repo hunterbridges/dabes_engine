@@ -13,6 +13,7 @@
 #include "../entities/entity_bindings.h"
 #include "../entities/sensor_bindings.h"
 #include "../scenes/scene_bindings.h"
+#include "../scenes/overlay_bindings.h"
 #include "../graphics/camera_bindings.h"
 #include "../graphics/parallax_bindings.h"
 #include "../graphics/sprite_bindings.h"
@@ -34,6 +35,7 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_entity(scripting->L);
     luaopen_dabes_sensor(scripting->L);
     luaopen_dabes_scene(scripting->L);
+    luaopen_dabes_overlay(scripting->L);
     luaopen_dabes_camera(scripting->L);
     luaopen_dabes_parallax(scripting->L);
     luaopen_dabes_sprite(scripting->L);
@@ -361,3 +363,16 @@ int luaL_pushvpoint(lua_State *L, VPoint point) {
     lua_settable(L, -3);
     return 1;
 }
+
+VVector4 luaL_tovvector4(lua_State *L, int idx) {
+    lua_pushvalue(L, idx);
+    check(luaL_unpack_exact(L, 4),
+        "Please provide 4 numbers to get a VVector4. Returning VVector4Zero.");
+    VVector4 vec = {.raw = {lua_tonumber(L, -4), lua_tonumber(L, -3),
+                            lua_tonumber(L, -2), lua_tonumber(L, -1)}};
+    lua_pop(L, 5);
+    return vec;
+error:
+    return VVector4Zero;
+}
+

@@ -85,6 +85,16 @@ Scene = BoundObject:extend({
     -- Adds an Entity to the Scene.
     add_entity = BoundObject.fwd_adder("add_entity"),
 
+    -- add_overlay(self, overlay)
+    --
+    -- Adds an Overlay to the Scene.
+    add_overlay = BoundObject.fwd_adder("add_overlay"),
+
+    -- remove_overlay(self, overlay)
+    --
+    -- Removes an Overlay from the Scene.
+    remove_overlay = BoundObject.fwd_remover("remove_overlay"),
+
     _getters = {
         space = BoundObject.fwd_func("get_space"),
         music = BoundObject.fwd_func("get_music"),

@@ -557,6 +557,79 @@ static inline void VPoint_debug(VPoint point, char *msg) {
 }
 
 #endif
+#ifndef __vmatrix_h
+#define __vmatrix_h
+
+#ifdef DABES_IOS
+#include <GLKit/GLKMath.h>
+#include <OpenGLES/ES2/gl.h>
+#include <QuartzCore/CoreAnimation.h>
+#endif
+#ifdef DABES_MAC
+#include <OpenGL/OpenGL.h>
+#include <GLKit/GLKMath.h>
+#include <QuartzCore/CATransform3D.h>
+#endif
+
+typedef union VVector3 {
+  struct { float x, y, z; };
+  struct { float r, g, b; };
+  struct { float s, t, p; };
+  float v[3];
+} VVector3;
+
+VVector3 VVector3_normalize(VVector3 vector);
+float VVector3_length(VVector3 vector);
+
+typedef union VVector4 {
+  struct {
+    float x;
+    float y;
+    float z;
+    float w;
+  } packed;
+  struct {
+    float r;
+    float g;
+    float b;
+    float a;
+  } rgba;
+  float raw[4];
+} VVector4;
+
+extern const VVector4 VVector4Zero;
+
+typedef union VMatrix {
+    struct {
+      float m11, m12, m13, m14;
+      float m21, m22, m23, m24;
+      float m31, m32, m33, m34;
+      float m41, m42, m43, m44;
+    } gfx;
+    float gl[16];
+    VVector4 v[4];
+#if defined(DABES_IOS) || defined(DABES_MAC)
+    CATransform3D ca;
+#endif
+#ifdef DABES_IOS
+    GLKMatrix4 glk;
+#endif
+} VMatrix;
+
+extern const VMatrix VMatrixIdentity;
+
+VMatrix VMatrix_multiply(VMatrix a, VMatrix b);
+VMatrix VMatrix_transpose(VMatrix m);
+VMatrix VMatrix_scale(VMatrix matrix, double x, double y, double z);
+VMatrix VMatrix_make_rotation(float radians, float x, float y, float z);
+VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,
+                       double z);
+VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz);
+VMatrix VMatrix_make_ortho(float left, float right, float top,
+                           float bottom, float near, float far);
+int VMatrix_is_equal(VMatrix a, VMatrix b);
+
+#endif
 #ifndef __scripting_h
 #define __scripting_h
 #include <lua/lua.h>
@@ -599,6 +672,8 @@ int luaL_unpack_exact (lua_State *L, int count);
 
 VPoint luaL_tovpoint(lua_State *L, int idx);
 int luaL_pushvpoint(lua_State *L, VPoint point);
+
+VVector4 luaL_tovvector4(lua_State *L, int idx);
 
 #define Scripting_bail(L, MSG) { \
     fprintf(stderr, "%s: %s\n", MSG, lua_tostring(L, -1)); \
@@ -744,77 +819,6 @@ void Input_destroy(Input *input);
 void Input_poll(Input *input);
 void Input_touch(Input *input, Input *touch_input);
 void Input_reset(Input *input);
-
-#endif
-#ifndef __vmatrix_h
-#define __vmatrix_h
-
-#ifdef DABES_IOS
-#include <GLKit/GLKMath.h>
-#include <OpenGLES/ES2/gl.h>
-#include <QuartzCore/CoreAnimation.h>
-#endif
-#ifdef DABES_MAC
-#include <OpenGL/OpenGL.h>
-#include <GLKit/GLKMath.h>
-#include <QuartzCore/CATransform3D.h>
-#endif
-
-typedef union VVector3 {
-  struct { float x, y, z; };
-  struct { float r, g, b; };
-  struct { float s, t, p; };
-  float v[3];
-} VVector3;
-
-VVector3 VVector3_normalize(VVector3 vector);
-float VVector3_length(VVector3 vector);
-
-typedef union VVector4 {
-  struct {
-    float x;
-    float y;
-    float z;
-    float w;
-  } packed;
-  struct {
-    float r;
-    float g;
-    float b;
-    float a;
-  } rgba;
-  float raw[4];
-} VVector4;
-
-typedef union VMatrix {
-    struct {
-      float m11, m12, m13, m14;
-      float m21, m22, m23, m24;
-      float m31, m32, m33, m34;
-      float m41, m42, m43, m44;
-    } gfx;
-    float gl[16];
-    VVector4 v[4];
-#if defined(DABES_IOS) || defined(DABES_MAC)
-    CATransform3D ca;
-#endif
-#ifdef DABES_IOS
-    GLKMatrix4 glk;
-#endif
-} VMatrix;
-
-extern const VMatrix VMatrixIdentity;
-
-VMatrix VMatrix_multiply(VMatrix a, VMatrix b);
-VMatrix VMatrix_transpose(VMatrix m);
-VMatrix VMatrix_scale(VMatrix matrix, double x, double y, double z);
-VMatrix VMatrix_make_rotation(float radians, float x, float y, float z);
-VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,
-                       double z);
-VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz);
-VMatrix VMatrix_make_ortho(float left, float right, float top,
-                           float bottom, float near, float far);
-int VMatrix_is_equal(VMatrix a, VMatrix b);
 
 #endif
 #ifndef __vrect_h
@@ -1869,6 +1873,7 @@ typedef struct Scene {
     GfxTexture *bg_texture; // deprecated
 
     DArray *entities;
+    DArray *overlays;
     Music *music;
     Camera *camera;
     union {
@@ -1881,6 +1886,7 @@ typedef struct Scene {
     VVector4 bg_color;
     VVector4 cover_color;
 
+    short int draw_debug_text;
     short int draw_grid;
     short int debug_camera;
     short int render_mode;
@@ -1913,6 +1919,11 @@ int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
 void Scene_render_entities(Scene *scene, Engine *engine);
 void Scene_render_selected_entities(Scene *scene, Engine *engine);
+void Scene_render_overlays(Scene *scene, Engine *engine);
+
+struct Overlay;
+void Scene_add_overlay(Scene *scene, struct Overlay *overlay);
+void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
 
 
 #endif
@@ -2380,6 +2391,37 @@ typedef enum {
 } OCSCollisionType;
 
 extern SceneProto OrthoChipmunkSceneProto;
+
+#endif
+#ifndef __overlay_h
+#define __overlay_h
+
+typedef struct Overlay {
+    Scene *scene;
+    GfxFont *font;
+    Entity *track_entity;
+    int z_index;
+} Overlay;
+
+Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
+void Overlay_destroy(Overlay *overlay);
+void Overlay_update(Overlay *overlay, Engine *engine);
+void Overlay_render(Overlay *overlay, Engine *engine);
+
+#endif
+#ifndef __overlay_bindings_h
+#define __overlay_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Overlay_lib;
+extern const char *luab_Overlay_metatable;
+typedef Scripting_userdata_for(Overlay) Overlay_userdata;
+Scripting_caster_for(Overlay, luaL_tooverlay);
+
+int luaopen_dabes_overlay(lua_State *L);
+
 
 #endif
 #ifndef __scene_bindings_h

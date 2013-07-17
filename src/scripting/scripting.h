@@ -6,6 +6,7 @@
 #include "../prefix.h"
 #include "binding_macros.h"
 #include "../math/vpoint.h"
+#include "../math/vmatrix.h"
 
 extern const char *SCRIPTING_CL_ENTITY_CONFIG;
 extern const char *SCRIPTING_CL_PARALLAX;
@@ -43,6 +44,8 @@ int luaL_unpack_exact (lua_State *L, int count);
 
 VPoint luaL_tovpoint(lua_State *L, int idx);
 int luaL_pushvpoint(lua_State *L, VPoint point);
+
+VVector4 luaL_tovvector4(lua_State *L, int idx);
 
 #define Scripting_bail(L, MSG) { \
     fprintf(stderr, "%s: %s\n", MSG, lua_tostring(L, -1)); \

@@ -69,6 +69,14 @@
 		CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CA705C291783566C00D2C6E4 /* DaBes-iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA72C4201795210300255691 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C3231794FBBD00255691 /* libFreetype2.a */; };
 		CA72C4231795211100255691 /* libFreetype2-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C41D179520F600255691 /* libFreetype2-Mac.a */; };
+		CA72C44A1796739A00255691 /* overlay_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4461796739A00255691 /* overlay_bindings.c */; };
+		CA72C44B1796739A00255691 /* overlay_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4461796739A00255691 /* overlay_bindings.c */; };
+		CA72C44C1796739A00255691 /* overlay_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4471796739A00255691 /* overlay_bindings.h */; };
+		CA72C44D1796739A00255691 /* overlay_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4471796739A00255691 /* overlay_bindings.h */; };
+		CA72C44E1796739A00255691 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4481796739A00255691 /* overlay.c */; };
+		CA72C44F1796739A00255691 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4481796739A00255691 /* overlay.c */; };
+		CA72C4501796739A00255691 /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4491796739A00255691 /* overlay.h */; };
+		CA72C4511796739A00255691 /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4491796739A00255691 /* overlay.h */; };
 		CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
@@ -455,6 +463,10 @@
 		CA7241B41730E55300255032 /* ogg_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_stream.c; sourceTree = "<group>"; };
 		CA7241B51730E55300255032 /* ogg_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_stream.h; sourceTree = "<group>"; };
 		CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = freetype2.xcodeproj; path = "../../../submodules/freetype2-ios/freetype2.xcodeproj"; sourceTree = "<group>"; };
+		CA72C4461796739A00255691 /* overlay_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay_bindings.c; sourceTree = "<group>"; };
+		CA72C4471796739A00255691 /* overlay_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = overlay_bindings.h; sourceTree = "<group>"; };
+		CA72C4481796739A00255691 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
+		CA72C4491796739A00255691 /* overlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = overlay.h; sourceTree = "<group>"; };
 		CA8B985F178A08BA00CA41B4 /* static_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = static_scene.c; sourceTree = "<group>"; };
 		CA8B9860178A08BA00CA41B4 /* static_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_scene.h; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
@@ -739,6 +751,10 @@
 			children = (
 				CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */,
 				CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */,
+				CA72C4461796739A00255691 /* overlay_bindings.c */,
+				CA72C4471796739A00255691 /* overlay_bindings.h */,
+				CA72C4481796739A00255691 /* overlay.c */,
+				CA72C4491796739A00255691 /* overlay.h */,
 				CA61B60F170FB3A600F1CC1A /* scene.c */,
 				CA61B610170FB3A600F1CC1A /* scene.h */,
 				CA65C6F7172B127400A7D4E5 /* scene_bindings.c */,
@@ -956,6 +972,8 @@
 				CAEFD902178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
 				CAEFD908178FA5E600D19B4D /* recorder.h in Headers */,
 				CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */,
+				CA72C44D1796739A00255691 /* overlay_bindings.h in Headers */,
+				CA72C4511796739A00255691 /* overlay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1021,6 +1039,8 @@
 				CAEFD901178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
 				CAEFD907178FA5E600D19B4D /* recorder.h in Headers */,
 				CAEFD91B1790A56100D19B4D /* vpolygon.h in Headers */,
+				CA72C44C1796739A00255691 /* overlay_bindings.h in Headers */,
+				CA72C4501796739A00255691 /* overlay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1376,6 +1396,8 @@
 				CAEFD900178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
 				CAEFD906178FA5E600D19B4D /* recorder.c in Sources */,
 				CAEFD91A1790A56100D19B4D /* vpolygon.c in Sources */,
+				CA72C44B1796739A00255691 /* overlay_bindings.c in Sources */,
+				CA72C44F1796739A00255691 /* overlay.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1438,6 +1460,8 @@
 				CAEFD8FF178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
 				CAEFD905178FA5E600D19B4D /* recorder.c in Sources */,
 				CAEFD9191790A56100D19B4D /* vpolygon.c in Sources */,
+				CA72C44A1796739A00255691 /* overlay_bindings.c in Sources */,
+				CA72C44E1796739A00255691 /* overlay.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

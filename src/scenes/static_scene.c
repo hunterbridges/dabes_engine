@@ -9,6 +9,7 @@
 #include "ortho_chipmunk_scene.h"
 #include "../entities/entity.h"
 #include "scene.h"
+#include "overlay.h"
 
 void StaticScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
@@ -17,6 +18,9 @@ void StaticScene_stop(struct Scene *scene, Engine *engine) {
 
     DArray_destroy(scene->entities);
     scene->entities = NULL;
+
+    DArray_destroy(scene->overlays);
+    scene->overlays = NULL;
 
     Stepper_reset(engine->physics->stepper);
     scene->started = 0;
@@ -27,6 +31,7 @@ void StaticScene_start(struct Scene *scene, Engine *engine) {
     assert(scene->world == NULL);
     assert(scene->entities == NULL);
     scene->entities = DArray_create(sizeof(Entity *), 8);
+    scene->overlays = DArray_create(sizeof(Overlay *), 8);
 
     if (Scripting_call_hook(engine->scripting, scene, "configure")) {
       scene->started = 1;
@@ -60,9 +65,9 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
 
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
-
-    Scene_fill(scene, engine, scene->bg_color);
   
+    Scene_fill(scene, engine, scene->bg_color);
+
     if (scene->parallax) {
         Parallax_render(scene->parallax, engine->graphics);
     }
@@ -74,6 +79,7 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
     }
 
     Scene_render_entities(scene, engine);
+    Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_render_selected_entities(scene, engine);
     Scene_fill(scene, engine, scene->cover_color);

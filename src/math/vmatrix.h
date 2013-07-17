@@ -38,6 +38,8 @@ typedef union VVector4 {
   float raw[4];
 } VVector4;
 
+extern const VVector4 VVector4Zero;
+
 typedef union VMatrix {
     struct {
       float m11, m12, m13, m14;

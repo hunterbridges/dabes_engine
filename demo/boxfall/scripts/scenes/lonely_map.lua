@@ -2,6 +2,7 @@ require 'dabes.controller'
 require 'dabes.scene'
 require 'entities.megaman'
 require 'entities.door'
+require 'overlays.test_overlay'
 
 LonelyMap = Scene:extend({
     kind = "ortho_chipmunk",
@@ -33,5 +34,8 @@ LonelyMap = Scene:extend({
         self.camera.snap_to_scene = true
 
         self.bg_color = {0.3, 0.3, 0.3, 1.0};
+
+        local test_overlay = TestOverlay:new()
+        self:add_overlay(test_overlay)
     end
 })
