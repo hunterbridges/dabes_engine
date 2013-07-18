@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA253FB81797B1FE008F00D2 /* DebugMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CA253FB71797B1FE008F00D2 /* DebugMenu.xib */; };
 		CA45C888178631A500B995CC /* demo in Resources */ = {isa = PBXBuildFile; fileRef = CA45C887178631A500B995CC /* demo */; };
 		CA51FC5917835FBA000C73E0 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5517835FBA000C73E0 /* blueprint.jpg */; };
 		CA51FC5A17835FBA000C73E0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5617835FBA000C73E0 /* Icon.png */; };
@@ -165,6 +166,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA253FB71797B1FE008F00D2 /* DebugMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DebugMenu.xib; path = "DaBeSDK-iOS/DebugMenu.xib"; sourceTree = SOURCE_ROOT; };
 		CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PSMTabBarControl.xcodeproj; path = ../../../submodules/PSMTabBarControl/PSMTabBarControl.xcodeproj; sourceTree = "<group>"; };
 		CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Fragaria.xcodeproj; path = ../../../submodules/Fragaria/Fragaria.xcodeproj; sourceTree = "<group>"; };
 		CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DaBesEngine.xcodeproj; path = ../../xcode/DaBesEngine/DaBesEngine.xcodeproj; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 				CA705CFF17835E6100D2C6E4 /* ConsoleView.m */,
 				CA705D0417835E8400D2C6E4 /* DebugMenuViewController.h */,
 				CA705D0517835E8400D2C6E4 /* DebugMenuViewController.m */,
+				CA253FB71797B1FE008F00D2 /* DebugMenu.xib */,
 			);
 			name = Views;
 			path = ../../DaBesEngine/DaBesEngine;
@@ -729,6 +732,7 @@
 				CA51FC5C17835FBA000C73E0 /* Inconsolata.otf in Resources */,
 				CA45C888178631A500B995CC /* demo in Resources */,
 				CA72C437179522B900255691 /* resource in Resources */,
+				CA253FB81797B1FE008F00D2 /* DebugMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -860,7 +864,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Hunter Bridges (57CLLPJ7F6)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: HUNTER Bridges (TASZLG5LU9)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -879,7 +883,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDABES_IOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "A0561BA6-F786-45EB-9A38-DCED559A82D3";
+				PROVISIONING_PROFILE = "E5C3978F-BE99-4659-A96B-A6D91635CCED";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = armv7;
@@ -891,7 +895,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Hunter Bridges (57CLLPJ7F6)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: HUNTER Bridges (TASZLG5LU9)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -912,7 +916,7 @@
 					"-DDABES_IOS",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "A0561BA6-F786-45EB-9A38-DCED559A82D3";
+				PROVISIONING_PROFILE = "E5C3978F-BE99-4659-A96B-A6D91635CCED";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

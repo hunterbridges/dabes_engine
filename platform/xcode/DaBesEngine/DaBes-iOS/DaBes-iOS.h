@@ -557,6 +557,79 @@ static inline void VPoint_debug(VPoint point, char *msg) {
 }
 
 #endif
+#ifndef __vmatrix_h
+#define __vmatrix_h
+
+#ifdef DABES_IOS
+#include <GLKit/GLKMath.h>
+#include <OpenGLES/ES2/gl.h>
+#include <QuartzCore/CoreAnimation.h>
+#endif
+#ifdef DABES_MAC
+#include <OpenGL/OpenGL.h>
+#include <GLKit/GLKMath.h>
+#include <QuartzCore/CATransform3D.h>
+#endif
+
+typedef union VVector3 {
+  struct { float x, y, z; };
+  struct { float r, g, b; };
+  struct { float s, t, p; };
+  float v[3];
+} VVector3;
+
+VVector3 VVector3_normalize(VVector3 vector);
+float VVector3_length(VVector3 vector);
+
+typedef union VVector4 {
+  struct {
+    float x;
+    float y;
+    float z;
+    float w;
+  } packed;
+  struct {
+    float r;
+    float g;
+    float b;
+    float a;
+  } rgba;
+  float raw[4];
+} VVector4;
+
+extern const VVector4 VVector4Zero;
+
+typedef union VMatrix {
+    struct {
+      float m11, m12, m13, m14;
+      float m21, m22, m23, m24;
+      float m31, m32, m33, m34;
+      float m41, m42, m43, m44;
+    } gfx;
+    float gl[16];
+    VVector4 v[4];
+#if defined(DABES_IOS) || defined(DABES_MAC)
+    CATransform3D ca;
+#endif
+#ifdef DABES_IOS
+    GLKMatrix4 glk;
+#endif
+} VMatrix;
+
+extern const VMatrix VMatrixIdentity;
+
+VMatrix VMatrix_multiply(VMatrix a, VMatrix b);
+VMatrix VMatrix_transpose(VMatrix m);
+VMatrix VMatrix_scale(VMatrix matrix, double x, double y, double z);
+VMatrix VMatrix_make_rotation(float radians, float x, float y, float z);
+VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,
+                       double z);
+VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz);
+VMatrix VMatrix_make_ortho(float left, float right, float top,
+                           float bottom, float near, float far);
+int VMatrix_is_equal(VMatrix a, VMatrix b);
+
+#endif
 #ifndef __scripting_h
 #define __scripting_h
 #include <lua/lua.h>
@@ -599,6 +672,8 @@ int luaL_unpack_exact (lua_State *L, int count);
 
 VPoint luaL_tovpoint(lua_State *L, int idx);
 int luaL_pushvpoint(lua_State *L, VPoint point);
+
+VVector4 luaL_tovvector4(lua_State *L, int idx);
 
 #define Scripting_bail(L, MSG) { \
     fprintf(stderr, "%s: %s\n", MSG, lua_tostring(L, -1)); \
@@ -746,77 +821,6 @@ void Input_touch(Input *input, Input *touch_input);
 void Input_reset(Input *input);
 
 #endif
-#ifndef __vmatrix_h
-#define __vmatrix_h
-
-#ifdef DABES_IOS
-#include <GLKit/GLKMath.h>
-#include <OpenGLES/ES2/gl.h>
-#include <QuartzCore/CoreAnimation.h>
-#endif
-#ifdef DABES_MAC
-#include <OpenGL/OpenGL.h>
-#include <GLKit/GLKMath.h>
-#include <QuartzCore/CATransform3D.h>
-#endif
-
-typedef union VVector3 {
-  struct { float x, y, z; };
-  struct { float r, g, b; };
-  struct { float s, t, p; };
-  float v[3];
-} VVector3;
-
-VVector3 VVector3_normalize(VVector3 vector);
-float VVector3_length(VVector3 vector);
-
-typedef union VVector4 {
-  struct {
-    float x;
-    float y;
-    float z;
-    float w;
-  } packed;
-  struct {
-    float r;
-    float g;
-    float b;
-    float a;
-  } rgba;
-  float raw[4];
-} VVector4;
-
-typedef union VMatrix {
-    struct {
-      float m11, m12, m13, m14;
-      float m21, m22, m23, m24;
-      float m31, m32, m33, m34;
-      float m41, m42, m43, m44;
-    } gfx;
-    float gl[16];
-    VVector4 v[4];
-#if defined(DABES_IOS) || defined(DABES_MAC)
-    CATransform3D ca;
-#endif
-#ifdef DABES_IOS
-    GLKMatrix4 glk;
-#endif
-} VMatrix;
-
-extern const VMatrix VMatrixIdentity;
-
-VMatrix VMatrix_multiply(VMatrix a, VMatrix b);
-VMatrix VMatrix_transpose(VMatrix m);
-VMatrix VMatrix_scale(VMatrix matrix, double x, double y, double z);
-VMatrix VMatrix_make_rotation(float radians, float x, float y, float z);
-VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,
-                       double z);
-VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz);
-VMatrix VMatrix_make_ortho(float left, float right, float top,
-                           float bottom, float near, float far);
-int VMatrix_is_equal(VMatrix a, VMatrix b);
-
-#endif
 #ifndef __vrect_h
 #define __vrect_h
 
@@ -892,6 +896,13 @@ VPointRel VPoint_rect_rel(VPoint point, VRect rect);
 #include <SDL/SDL_ttf.h>
 #endif
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+extern GLfloat GfxGLClearColor[4];
+
+struct Graphics;
+
 int Graphics_init_GL(int swidth, int sheight);
 
 typedef struct GfxSize {
@@ -902,7 +913,7 @@ typedef struct GfxSize {
 static const GfxSize GfxSizeZero = {0,0};
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size);
 
-// GfxSize load_image_dimensions_from_image(char *filename);
+////////////////////////////////////////////////////////////////////////////////
 
 typedef struct GfxTexture {
     const char *name;
@@ -915,6 +926,36 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
         GLenum source_format);
 GfxTexture *GfxTexture_from_image(const char *image_name);
 void GfxTexture_destroy(GfxTexture *texture);
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef enum {
+    GfxTextAlignLeft = 0,
+    GfxTextAlignRight = 1,
+    GfxTextAlignCenter = 2
+} GfxTextAlign;
+
+typedef struct GfxFontChar {
+    GfxTexture *texture;
+    FT_Vector advance;
+} GfxFontChar;
+
+GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance);
+void GfxFontChar_destroy(GfxFontChar *fontchar);
+
+typedef struct GfxFont {
+    FT_Face face;
+    char *name;
+    int px_size;
+    Hashmap *char_textures;
+} GfxFont;
+
+GfxFont *GfxFont_create(struct Graphics *graphics, const char *font_name, int px_size);
+void GfxFont_destroy(GfxFont *font);
+GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
+                              struct Graphics *graphics);
+
+////////////////////////////////////////////////////////////////////////////////
 
 enum {
     UNIFORM_DECAL_PROJECTION_MATRIX,
@@ -937,6 +978,8 @@ enum {
     UNIFORM_PARALLAX_CAMERA_POS,
     UNIFORM_PARALLAX_FACTOR,
     UNIFORM_PARALLAX_TEX_SCALE,
+    UNIFORM_TEXT_PROJECTION_MATRIX,
+    UNIFORM_TEXT_TEXTURE,
     NUM_UNIFORMS
 } UNIFORMS;
 
@@ -949,6 +992,10 @@ enum {
     ATTRIB_TILEMAP_TEXTURE,
     ATTRIB_PARALLAX_VERTEX,
     ATTRIB_PARALLAX_TEXTURE,
+    ATTRIB_TEXT_VERTEX,
+    ATTRIB_TEXT_COLOR,
+    ATTRIB_TEXT_TEX_POS,
+    ATTRIB_TEXT_MODELVIEW_MATRIX,
 	NUM_ATTRIBUTES
 } ATTRIBS;
 
@@ -974,17 +1021,16 @@ typedef struct GfxShader {
 
 void GfxShader_destroy(GfxShader *shader, struct Graphics *graphics);
 
-///////////
+////////////////////////////////////////////////////////////////////////////////
 
 typedef struct Graphics {
     struct Engine *engine;
-  
+
+    FT_Library ft;
+
     GfxSize screen_size;
-    GLuint debug_text_texture;
     GfxShader *current_shader;
-#ifdef DABES_SDL
-    TTF_Font *debug_text_font;
-#endif
+    GfxFont *debug_font;
     GLuint array_buffer;
 
     VMatrix projection_matrix;
@@ -1004,7 +1050,7 @@ typedef struct Graphics {
 struct Engine;
 Graphics *Graphics_create(struct Engine *engine);
 void Graphics_destroy(Graphics *graphics);
-  
+
 void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
@@ -1012,8 +1058,9 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
         GfxSize textureSize, double rotation, int z_index);
-void Graphics_draw_debug_text(Graphics *graphics,
-        int ticks_since_last);
+void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
+        GLfloat color[4], VPoint origin, GfxTextAlign align,
+        GLfloat shadow_color[4], VPoint shadow_offset);
 
 // Projection matrix
 void Graphics_reset_projection_matrix(Graphics *graphics);
@@ -1539,6 +1586,7 @@ void Camera_track_entities(Camera *camera, int num_entities,
 void Camera_track(Camera *camera);
 void Camera_destroy(Camera *camera);
 void Graphics_project_camera(Graphics *graphics, Camera *camera);
+void Graphics_project_screen_camera(Graphics *graphics, Camera *camera);
 VRect Camera_base_rect(Camera *camera);
 VRect Camera_visible_rect(Camera *camera);
 VRect Camera_tracking_rect(Camera *camera);
@@ -1825,6 +1873,7 @@ typedef struct Scene {
     GfxTexture *bg_texture; // deprecated
 
     DArray *entities;
+    DArray *overlays;
     Music *music;
     Camera *camera;
     union {
@@ -1837,6 +1886,7 @@ typedef struct Scene {
     VVector4 bg_color;
     VVector4 cover_color;
 
+    short int draw_debug_text;
     short int draw_grid;
     short int debug_camera;
     short int render_mode;
@@ -1869,6 +1919,11 @@ int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
 void Scene_render_entities(Scene *scene, Engine *engine);
 void Scene_render_selected_entities(Scene *scene, Engine *engine);
+void Scene_render_overlays(Scene *scene, Engine *engine);
+
+struct Overlay;
+void Scene_add_overlay(Scene *scene, struct Overlay *overlay);
+void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
 
 
 #endif
@@ -2336,6 +2391,37 @@ typedef enum {
 } OCSCollisionType;
 
 extern SceneProto OrthoChipmunkSceneProto;
+
+#endif
+#ifndef __overlay_h
+#define __overlay_h
+
+typedef struct Overlay {
+    Scene *scene;
+    GfxFont *font;
+    Entity *track_entity;
+    int z_index;
+} Overlay;
+
+Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
+void Overlay_destroy(Overlay *overlay);
+void Overlay_update(Overlay *overlay, Engine *engine);
+void Overlay_render(Overlay *overlay, Engine *engine);
+
+#endif
+#ifndef __overlay_bindings_h
+#define __overlay_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Overlay_lib;
+extern const char *luab_Overlay_metatable;
+typedef Scripting_userdata_for(Overlay) Overlay_userdata;
+Scripting_caster_for(Overlay, luaL_tooverlay);
+
+int luaopen_dabes_overlay(lua_State *L);
+
 
 #endif
 #ifndef __scene_bindings_h

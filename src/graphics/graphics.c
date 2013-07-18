@@ -22,7 +22,6 @@ GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
 int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
     GLenum error = glGetError();
-
     glEnable(GL_BLEND);
     error = glGetError();
 
@@ -113,7 +112,7 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
 
     int pot_width, pot_height;
     int num_components = 4;
-    if (source_format == GL_RED) {
+    if (source_format == GL_LUMINANCE) {
       num_components = 1;
     } else if (source_format == GL_RGB) {
       num_components = 3;
@@ -131,12 +130,11 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, source_format, pot_width,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pot_width,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
     GLenum er = glGetError();
     if (er != GL_NO_ERROR) {
-        printf("%d\n", GL_MAX_TEXTURE_SIZE);
         debug("breakpoint here");
     }
     check(er == GL_NO_ERROR, "Error loading texture: %d", er);
@@ -181,7 +179,7 @@ GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance) {
     uint8_t *buf = calloc(1, sz);
     memcpy(buf, bitmap->buffer, sz);
     fontchar->texture =
-        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_RED);
+        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_LUMINANCE);
 
     fontchar->advance = advance;
 

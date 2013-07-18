@@ -255,9 +255,6 @@ char *bundlePath__;
   
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Scene_render(scene_, engine_);
-#ifdef DEBUG
-  Graphics_draw_debug_text(engine_->graphics, engine_->frame_ticks);
-#endif
 }
 
 - (void)didEnterBackground {

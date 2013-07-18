@@ -18,9 +18,9 @@ typedef enum {
 @interface DebugMenuViewController : UIViewController
 
 @property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, strong) SDKiOSProjectEngineViewController *engineVC;
+@property (nonatomic, assign) Input *touchInput;
 
-- (id)initWithEngineVC:(SDKiOSProjectEngineViewController *)engineVC
-        withTouchInput:(Input *)touchInput;
 - (CGFloat)height;
 - (int)pages;
 - (void)log:(NSString *)fmt arguments:(va_list)arguments;

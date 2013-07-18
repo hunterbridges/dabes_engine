@@ -4,8 +4,8 @@
   UILabel *consoleLabel_;
 }
 
-- (id)initWithFrame:(CGRect)frame {
-  self = [super initWithFrame:frame];
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
   if (self) {
     consoleLabel_ = [[UILabel alloc] init];
     consoleLabel_.autoresizingMask = (UIViewAutoresizingFlexibleHeight |

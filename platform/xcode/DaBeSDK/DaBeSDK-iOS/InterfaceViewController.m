@@ -33,18 +33,11 @@
   
   self.view.backgroundColor = [UIColor colorWithWhite:0.65 alpha:1];
   
-  UIImageView *blueprint =
-      [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"blueprint.jpg"]];
-  blueprint.frame = self.view.bounds;
-  blueprint.autoresizingMask = (UIViewAutoresizingFlexibleHeight |
-                                UIViewAutoresizingFlexibleWidth);
-  blueprint.contentMode = UIViewContentModeScaleAspectFill;
-  [self.view addSubview:blueprint];
-  
   self.engineVC = [[SDKiOSProjectEngineViewController alloc] initWithTouchInput:_touchInput];
   self.debugMenu =
-      [[DebugMenuViewController alloc] initWithEngineVC:self.engineVC
-                                         withTouchInput:_touchInput];
+      [[DebugMenuViewController alloc] initWithNibName:@"DebugMenu" bundle:nil];
+  self.debugMenu.engineVC = self.engineVC;
+  self.debugMenu.touchInput = _touchInput;
   self.debugMenu.view.frame = CGRectMake(0, 0, self.view.bounds.size.width,
                                          self.debugMenu.height);
   
@@ -116,6 +109,8 @@
 }
 
 - (void)viewDidLayoutSubviews {
+  self.debugMenu.view.frame = CGRectMake(0, 0, self.view.bounds.size.width,
+                                         self.debugMenu.height);
   self.debugMenu.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width,
                                                      self.debugMenu.height *
                                                          self.debugMenu.pages);
@@ -154,23 +149,31 @@
 - (void)showMenu {
   if (self.showingMenu) return;
   if (self.showingScriptEditor) return;
+  [self.debugMenu viewWillAppear:YES];
   [UIView animateWithDuration:0.5
        animations:^{
          self.engineVC.view.frame = CGRectMake(0, self.debugMenu.height,
                                                self.view.bounds.size.width,
                                                self.view.bounds.size.height
                                                    - self.debugMenu.height);
+       }
+       completion:^(BOOL finished) {
+         [self.debugMenu viewDidAppear:YES];
        }];
   self.showingMenu = YES;
 }
 
 - (void)hideMenu {
   if (!self.showingMenu) return;
+  [self.debugMenu viewWillDisappear:YES];
   [UIView animateWithDuration:0.5
        animations:^{
          self.engineVC.view.frame = CGRectMake(0, 0,
                                                self.view.bounds.size.width,
                                                self.view.bounds.size.height);
+       }
+       completion:^(BOOL finished) {
+         [self.debugMenu viewDidDisappear:YES];
        }];
   self.showingMenu = NO;
 }
