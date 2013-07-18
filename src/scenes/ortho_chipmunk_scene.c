@@ -245,9 +245,9 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
     }
 
     Scene_render_entities(scene, engine);
+    Scene_render_selected_entities(scene, engine);
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
-    Scene_render_selected_entities(scene, engine);
     Scene_fill(scene, engine, scene->cover_color);
     if (scene->debug_camera) {
         Camera_debug(scene->camera, engine->graphics);

@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <DaBes-iOS/DaBes-iOS.h>
+#import <GameKit/GameKit.h>
 
 typedef enum {
   GraphicalResourceKindSprite = 0,
@@ -16,6 +17,7 @@ typedef enum {
 
 @class SDKiOSProjectEngineViewController;
 @interface DebugMenuViewController : UIViewController
+    <GKMatchmakerViewControllerDelegate, GKMatchDelegate>
 
 @property (nonatomic, strong, readonly) UIScrollView *scrollView;
 @property (nonatomic, strong) SDKiOSProjectEngineViewController *engineVC;

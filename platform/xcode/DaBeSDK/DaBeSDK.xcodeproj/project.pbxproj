@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CA253FB81797B1FE008F00D2 /* DebugMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CA253FB71797B1FE008F00D2 /* DebugMenu.xib */; };
+		CA253FBA1797CB52008F00D2 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA253FB91797CB52008F00D2 /* GameKit.framework */; };
 		CA45C888178631A500B995CC /* demo in Resources */ = {isa = PBXBuildFile; fileRef = CA45C887178631A500B995CC /* demo */; };
 		CA51FC5917835FBA000C73E0 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5517835FBA000C73E0 /* blueprint.jpg */; };
 		CA51FC5A17835FBA000C73E0 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5617835FBA000C73E0 /* Icon.png */; };
@@ -167,6 +168,7 @@
 
 /* Begin PBXFileReference section */
 		CA253FB71797B1FE008F00D2 /* DebugMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DebugMenu.xib; path = "DaBeSDK-iOS/DebugMenu.xib"; sourceTree = SOURCE_ROOT; };
+		CA253FB91797CB52008F00D2 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
 		CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PSMTabBarControl.xcodeproj; path = ../../../submodules/PSMTabBarControl/PSMTabBarControl.xcodeproj; sourceTree = "<group>"; };
 		CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Fragaria.xcodeproj; path = ../../../submodules/Fragaria/Fragaria.xcodeproj; sourceTree = "<group>"; };
 		CA2788521780FA15005A242D /* DaBesEngine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DaBesEngine.xcodeproj; path = ../../xcode/DaBesEngine/DaBesEngine.xcodeproj; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA253FBA1797CB52008F00D2 /* GameKit.framework in Frameworks */,
 				CA51FC7C178362ED000C73E0 /* QuartzCore.framework in Frameworks */,
 				CA51FC7A1783611D000C73E0 /* CoreText.framework in Frameworks */,
 				CA51FC7817836114000C73E0 /* libz.dylib in Frameworks */,
@@ -384,6 +387,7 @@
 		CA51FC7F17836389000C73E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA253FB91797CB52008F00D2 /* GameKit.framework */,
 				CA51FC7B178362ED000C73E0 /* QuartzCore.framework */,
 				CA51FC791783611D000C73E0 /* CoreText.framework */,
 				CA51FC7717836114000C73E0 /* libz.dylib */,
@@ -879,7 +883,7 @@
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK-iOS/DaBeSDK-iOS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDABES_IOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -910,7 +914,7 @@
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK-iOS/DaBeSDK-iOS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-DDABES_IOS",

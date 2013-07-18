@@ -3,8 +3,10 @@
 #import "DABProjectManager.h"
 
 NSTimeInterval kBufferRefreshDelay = 0.01;
+NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
+NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
 
 char *iOS_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
@@ -55,6 +57,7 @@ char *bundlePath__;
 @property (nonatomic, strong) GLKView *glkView;
 @property (nonatomic, assign) Engine *engine;
 @property (nonatomic, assign) Scene *scene;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -114,6 +117,14 @@ char *bundlePath__;
   jumpGesture_.minimumPressDuration=0.05;
   jumpGesture_.delegate = self;
   [self.view addGestureRecognizer:jumpGesture_];
+  
+  self.tapGesture =
+      [[UITapGestureRecognizer alloc]
+          initWithTarget:self
+          action:@selector(handleTap:)];
+  self.tapGesture.numberOfTouchesRequired = 1;
+  self.tapGesture.delegate = self;
+  [self.view addGestureRecognizer:self.tapGesture];
 
   [self setupGL];
   if (!engine_) [self initEngine];
@@ -157,6 +168,21 @@ char *bundlePath__;
       controller->jump = 0;
   } else {
       controller->jump = 1;
+  }
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)gesture {
+  Scene *scene = self.scene;
+  if (!scene) return;
+  
+  CGPoint loc = [gesture locationInView:self.view];
+  VPoint screen_point = {loc.x, loc.y};
+  int selected = Scene_select_entities_at(scene, screen_point);
+  if (selected) {
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kEntitySelectedNotification
+        object:self
+        userInfo:nil];
   }
 }
 
@@ -245,6 +271,9 @@ char *bundlePath__;
         object:self];
     
     Engine_frame_end(engine_);
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kFrameEndNotification
+        object:self];
   }
 }
 

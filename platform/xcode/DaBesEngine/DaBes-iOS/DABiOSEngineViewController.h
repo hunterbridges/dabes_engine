@@ -2,7 +2,9 @@
 #import <GLKit/GLKit.h>
 #import <DaBes-iOS/DaBes-iOS.h>
 
+extern NSString *kFrameEndNotification;
 extern NSString *kEngineReadyForScriptNotification;
+extern NSString *kEntitySelectedNotification;
 
 @interface DABiOSEngineViewController : GLKViewController <UIGestureRecognizerDelegate,
                                               GLKViewDelegate>
