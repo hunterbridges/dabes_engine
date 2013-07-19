@@ -68,6 +68,30 @@ BoundObject = Object:extend({
             return self.real[name](self.real, map_real(...))
         end
     end,
+    
+    -- fwd_opts
+    --
+    -- Used to set up a forwarding that maps opts into ordered arguments.
+    fwd_func_opts = function(name, keys, defaults)
+        return function(self, opts)
+            if not self.real then return nil end
+            local fwded = self.real[name]
+            
+            local args = nil
+            if defaults == nil then
+                args = copy(opts)
+            else
+                args = merge(defaults, opts)
+            end
+            
+            local ordered = {}
+            for i, v in ipairs(keys) do
+                ordered[i] = args[v]
+            end
+            
+            return fwded(self.real, unpack(ordered))
+        end
+    end,
 
     -- fwd_adder
     --

@@ -51,9 +51,11 @@ typedef enum {
 typedef struct GfxFontChar {
     GfxTexture *texture;
     FT_Vector advance;
+    float bitmap_top;
 } GfxFontChar;
 
-GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance);
+GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance,
+                                float bitmap_top);
 void GfxFontChar_destroy(GfxFontChar *fontchar);
 
 typedef struct GfxFont {

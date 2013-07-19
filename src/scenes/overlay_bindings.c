@@ -1,4 +1,6 @@
 #include "overlay_bindings.h"
+#include "../graphics/sprite_bindings.h"
+#include "../math/vrect.h"
 
 const char *luab_Overlay_lib = "dab_overlay";
 const char *luab_Overlay_metatable = "DaBes.overlay";
@@ -59,8 +61,58 @@ int luab_Overlay_draw_string(lua_State *L) {
 
     GfxShader *txshader = Graphics_get_shader(engine->graphics, "text");
     Graphics_use_shader(engine->graphics, txshader);
+    Graphics_reset_modelview_matrix(engine->graphics);
     Graphics_draw_string(engine->graphics, (char *)str, overlay->font,
             color.raw, origin, text_align, shadow_color.raw, shadow_offset);
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Overlay_draw_sprite(lua_State *L) {
+    Overlay *overlay = luaL_tooverlay(L, 1);
+    check(overlay != NULL, "Overlay required");
+
+    Sprite *sprite = luaL_tosprite(L, 2);
+    VVector4 color = luaL_tovvector4(L, 3);
+    VPoint center = luaL_tovpoint(L, 4);
+    float rotation = lua_tonumber(L, 5);
+    VPoint scale = {1, 1};
+    if (lua_type(L, 6) == LUA_TTABLE) {
+      scale = luaL_tovpoint(L, 6);
+    } else if (lua_type(L, 6) == LUA_TNUMBER) {
+      float s = lua_tonumber(L, 6);
+      scale.x = s;
+      scale.y = s;
+    }
+  
+    Engine *engine = luaL_get_engine(L);
+
+    VRect rect = VRect_from_xywh(center.x - scale.x * sprite->cell_size.w / 2.0,
+                                 center.y - scale.y * sprite->cell_size.h / 2.0,
+                                 sprite->cell_size.w * scale.x,
+                                 sprite->cell_size.h * scale.y);
+    GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
+    Graphics_use_shader(engine->graphics, dshader);
+    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
+                       GL_FALSE, engine->graphics->projection_matrix.gl);
+    Graphics_draw_sprite(engine->graphics, sprite, NULL,
+            rect, color.raw, rotation, 0);
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Overlay_get_scene(lua_State *L) {
+    Overlay *overlay = luaL_tooverlay(L, 1);
+    check(overlay != NULL, "Overlay required");
+    if (overlay->scene == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+    luaL_lookup_instance(L, overlay->scene);
 
     return 1;
 error:
@@ -70,6 +122,8 @@ error:
 static const struct luaL_Reg luab_Overlay_meths[] = {
     {"__gc", luab_Overlay_close},
     {"draw_string", luab_Overlay_draw_string},
+    {"draw_sprite", luab_Overlay_draw_sprite},
+    {"get_scene", luab_Overlay_get_scene},
     {NULL, NULL}
 };
 

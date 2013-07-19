@@ -169,7 +169,7 @@ void GfxTexture_destroy(GfxTexture *texture) {
 
 #pragma mark - GfxFont
 
-GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance) {
+GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance, float bitmap_top) {
     GfxFontChar *fontchar = NULL;
     check(bitmap != NULL, "Bitmap required");
     fontchar = calloc(1, sizeof(GfxFontChar));
@@ -182,6 +182,7 @@ GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance) {
         GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_LUMINANCE);
 
     fontchar->advance = advance;
+    fontchar->bitmap_top = bitmap_top;
 
     return fontchar;
 error:
@@ -266,16 +267,21 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
       FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 1);
       FT_BitmapGlyph bit_glyph = (FT_BitmapGlyph)glyph;
       
-      fontchar = GfxFontChar_create(&bit_glyph->bitmap, g->advance);
+      fontchar = GfxFontChar_create(&bit_glyph->bitmap, g->advance, g->bitmap_top);
       
       FT_Done_Glyph(glyph);
       FT_Stroker_Done(stroker);
     } else {
-      fontchar = GfxFontChar_create(&g->bitmap, g->advance);
+      FT_Get_Glyph(g, &glyph);
+      fontchar = GfxFontChar_create(&g->bitmap, g->advance, g->bitmap_top);
+      FT_Done_Glyph(glyph);
     }
   
-    if (fontchar) Hashmap_set(font->char_textures, bstr, fontchar);
-    else bdestroy(bstr);
+    if (fontchar) {
+      Hashmap_set(font->char_textures, bstr, fontchar);
+    } else {
+      bdestroy(bstr);
+    }
 
     return fontchar;
 error:
@@ -573,14 +579,14 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         switch (align) {
           case GfxTextAlignRight: {
             glyph_rect = VRect_from_xywh(origin.x - line_width + xo,
-                                         origin.y - texture->size.h,
+                                         origin.y - fontchar->bitmap_top,
                                          texture->size.w,
                                          texture->size.h);
           } break;
           
           case GfxTextAlignCenter: {
             glyph_rect = VRect_from_xywh(origin.x - line_width / 2 + xo,
-                                         origin.y - texture->size.h,
+                                         origin.y - fontchar->bitmap_top,
                                          texture->size.w,
                                          texture->size.h);
           } break;
@@ -588,7 +594,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
           case GfxTextAlignLeft:
           default: {
             glyph_rect = VRect_from_xywh(origin.x + xo,
-                                         origin.y - texture->size.h,
+                                         origin.y - fontchar->bitmap_top,
                                          texture->size.w,
                                          texture->size.h);
           } break;

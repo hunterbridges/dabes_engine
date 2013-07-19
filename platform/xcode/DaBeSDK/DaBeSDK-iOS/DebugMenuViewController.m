@@ -363,15 +363,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
   [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindPlayers:(NSArray *)playerIDs {
-  
-  
-}
-
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didReceiveAcceptFromHostedPlayer:(NSString *)playerID {
-  
-}
-
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindMatch:(GKMatch *)match {
   [self dismissViewControllerAnimated:YES completion:nil];
   self.match = match;
@@ -382,10 +373,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 #pragma mark - Match Delegate
-
-- (void)match:(GKMatch *)match player:(NSString *)playerID didChangeState:(GKPlayerConnectionState)state {
-  
-}
 
 - (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {
   if (self.debugRecorder) {

@@ -2,12 +2,35 @@
 --
 -- Making the Lua global env do weird stuff
 
+require 'lib.inspect'
+
 math.randomseed(os.time())
 
 function newweaktable()
   local newtable = {}
   setmetatable(newtable, {__mode = "k"})
   return newtable
+end
+
+function copy(t)
+    if t == nil then return nil end
+
+    local t2 = {}
+    for k,v in pairs(t) do
+      t2[k] = v
+    end
+    return t2
+end
+
+function merge(a, b)
+    if a == nil then return b end
+    if b == nil then return a end
+
+    local merged = copy(a)
+    for k,v in pairs(b) do
+        merged[k] = v
+    end
+    return merged
 end
 
 _veil = {}
