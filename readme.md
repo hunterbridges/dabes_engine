@@ -3,20 +3,19 @@ DaBes Engine
 
 _"I'm da besssss"_
 
-What is done:
+Features:
 * Build targets:
     * Desktop (SDL, tested on OSX)
     * iOS
 * Graphics engine:
-    * Can load shaders and draw with them
-    * Can load SDL surfaces into OpenGL textures
-    * Camera tracking (Static, single entity, multi entity)
-    * Can render TMX tile maps
+    * Render TMX tile maps
     * Parallax layers
+    * Camera tracking (Static, single entity, multi entity)
     * Sprite animations
     * Keyframe animations/Easer
     * Static scenes
-    * Can use Freetype to render strings with TTF and OTF fonts
+    * Use Freetype to render strings with TTF and OTF fonts
+    * Overlay layers
 * Physics engine:
     * Integration with Chipmunk 2D physics engine
     * Basic Hitboxes
@@ -27,30 +26,20 @@ What is done:
     * Seamless music queueing and looping
     * Sound effects
 * Scripting engine:
-    * Entity control scripts
-    * Interaction scripts
-    * Scene scripts
-    * Scene Manager
+    * Lua scripting interface for most engine features
+    * Scene manager
 
-What is not yet done:
-* Audio engine:
-    * Spatialization
-* Graphics engine:
-    * HUD Layers
-* Scripting engine:
-    * Space bindings
-    * Tile map bindings
-* Debug tools:
-    * Entity inspector
+TODOs:
+* Audio - spatialization/panning
+* Scripting - space bindings
+* Scripting - tile map bindings
+* Overlay - entity tracking
 
 Bugs:
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
 * SFX playback sometimes choppy
-
-Code Gripes:
-* Too many cpp directives, not enough platform specific modules
 
 ```
 # Ya gonna need dis stuf!
@@ -70,9 +59,13 @@ make submodules
 ```
 
 Acknowledgements:
-[Learn C the Hard Way](http://c.learncodethehardway.org/book/) by Zed Shaw,
-[Chipmunk Physics](http://chipmunk-physics.net/) by Howling Moon Software,
+
+[Learn C the Hard Way](http://c.learncodethehardway.org/book/) by Zed Shaw
+
+[Chipmunk Physics](http://chipmunk-physics.net/) by Howling Moon Software
+
 [Lua 5.2.1](http://www.lua.org/) by PUC-Rio
+
 
 
 Asset Copyrights:
@@ -80,3 +73,4 @@ Asset Copyrights:
 * Ice Cap Zone is property of SEGA
 * All other included graphics are public domain and are free for reuse
 * All included music is Copyrighted to me, Hunter Bridges, and is not available for reuse
+
