@@ -1,3 +1,0 @@
-/Users/hbridges/Downloads/Chipmunk-6.1.4/src/CMakeFiles/chipmunk.dir
-/Users/hbridges/Downloads/Chipmunk-6.1.4/Demo/CMakeFiles/chipmunk_demos.dir
-/Users/hbridges/Downloads/Chipmunk-6.1.4/src/CMakeFiles/chipmunk_static.dir
