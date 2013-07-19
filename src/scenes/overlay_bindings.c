@@ -19,9 +19,14 @@ int luab_Overlay_new(lua_State *L) {
     luaL_getmetatable(L, luab_Overlay_metatable);
     lua_setmetatable(L, -2);
 
-    char *font_name = engine->project_path(fname);
-    Overlay *overlay = Overlay_create(engine, font_name, px_size);
-    free(font_name);
+    Overlay *overlay = NULL;
+    if (fname) {
+        char *font_name = engine->project_path(fname);
+        overlay = Overlay_create(engine, font_name, px_size);
+        free(font_name);
+    } else {
+        overlay = Overlay_create(engine, NULL, 0);
+    }
     luaL_register_ud(L, -1, (void **)&ud->p, overlay);
     return 1;
 error:
@@ -53,7 +58,7 @@ int luab_Overlay_draw_string(lua_State *L) {
 
     VVector4 shadow_color = VVector4Zero;
     if (!lua_isnoneornil(L, 6)) shadow_color = luaL_tovvector4(L, 6);
-  
+
     VPoint shadow_offset = VPointZero;
     if (!lua_isnoneornil(L, 7)) shadow_offset = luaL_tovpoint(L, 7);
 
@@ -86,7 +91,7 @@ int luab_Overlay_draw_sprite(lua_State *L) {
       scale.x = s;
       scale.y = s;
     }
-  
+
     Engine *engine = luaL_get_engine(L);
 
     VRect rect = VRect_from_xywh(center.x - scale.x * sprite->cell_size.w / 2.0,
@@ -119,11 +124,16 @@ error:
     return 0;
 }
 
+Scripting_num_getter(Overlay, z_index);
+Scripting_num_setter(Overlay, z_index);
+
 static const struct luaL_Reg luab_Overlay_meths[] = {
     {"__gc", luab_Overlay_close},
     {"draw_string", luab_Overlay_draw_string},
     {"draw_sprite", luab_Overlay_draw_sprite},
     {"get_scene", luab_Overlay_get_scene},
+    {"get_z_index", luab_Overlay_get_z_index},
+    {"set_z_index", luab_Overlay_set_z_index},
     {NULL, NULL}
 };
 

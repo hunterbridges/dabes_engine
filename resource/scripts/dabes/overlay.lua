@@ -29,11 +29,13 @@ Overlay = BoundObject:extend({
         {color = {0, 0, 0, 0}, center = {0, 0}, rotation = 0, scale = {1, 1}}),
 
     _getters = {
-        scene = BoundObject.fwd_func("get_scene")
+        scene = BoundObject.fwd_func("get_scene"),
+        z_index = BoundObject.fwd_func("get_z_index")
     },
 
     _setters = {
-        scene = BoundObject.readonly
+        scene = BoundObject.readonly,
+        z_index = BoundObject.fwd_func("set_z_index")
     },
 
 -- Hooks

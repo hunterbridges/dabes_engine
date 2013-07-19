@@ -3,6 +3,7 @@ require 'dabes.scene'
 require 'entities.megaman'
 require 'entities.door'
 require 'overlays.test_overlay'
+require 'overlays.another_overlay'
 
 LonelyMap = Scene:extend({
     kind = "ortho_chipmunk",
@@ -36,6 +37,11 @@ LonelyMap = Scene:extend({
         self.bg_color = {0.3, 0.3, 0.3, 1.0};
 
         local test_overlay = TestOverlay:new()
+        test_overlay.z_index = 2
         self:add_overlay(test_overlay)
+
+        local another_overlay = AnotherOverlay:new()
+        another_overlay.z_index = 1
+        self:add_overlay(another_overlay)
     end
 })

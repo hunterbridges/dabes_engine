@@ -1,3 +1,4 @@
+#include <lcthw/darray_algos.h>
 #include <math.h>
 #include "../graphics/tile_map_parse.h"
 #include "../core/engine.h"
@@ -292,10 +293,19 @@ void Scene_render_overlays(Scene *scene, Engine *engine) {
     }
 }
 
+static inline int overlay_z_cmp(Overlay **a, Overlay **b) {
+    Overlay *oa = (Overlay *)*a;
+    Overlay *ob = (Overlay *)*b;
+    if (oa->z_index > ob->z_index) return 1;
+    if (oa->z_index < ob->z_index) return -1;
+    return 0;
+}
+
 void Scene_add_overlay(Scene *scene, Overlay *overlay) {
-    // TODO: Sort by z index
     DArray_push(scene->overlays, overlay);
     overlay->scene = scene;
+  
+    DArray_mergesort(scene->overlays, (DArray_compare)overlay_z_cmp);
 }
 
 void Scene_remove_overlay(Scene *scene, Overlay *overlay) {
