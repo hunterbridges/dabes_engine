@@ -7,6 +7,13 @@ TestOverlay = Overlay:extend({
 
     init = function(self)
    		self.timer = 0
+   		self.megaspin = Sprite:new("media/sprites/megaman_spin.png", {32, 32}, 0)
+   		
+   		local spinning = SpriteAnimation:new(0, 1, 2, 3)
+   		spinning.fps = 8
+   		self.megaspin:add_animation(spinning, "spinning")
+   		self.megaspin:use_animation("spinning")
+   		self:add_sprite(self.megaspin)
     end,
 
     update = function(self)
@@ -40,16 +47,23 @@ TestOverlay = Overlay:extend({
             align = "center"
         })
 
-        o[1] = -screen_size[1] / 2 + 10
-        o[2] = screen_size[2] / 2 - 10
+        o[1] = -screen_size[1] / 2 + 48
+        o[2] = screen_size[2] / 2 - 22
 
         self:draw_string({
-            string = "LIVES x 1",
+            string = "x 1",
             color = {1, 1, 1, 1},
             origin = o,
             shadow_color = {0, 0, 0, 0.5},
             shadow_offset = {2, 2},
             align = "left"
+        })
+        
+        o[1] = o[1] - 20
+        o[2] = o[2] - 4
+        self:draw_sprite({
+        	sprite = self.megaspin.real,
+        	center = o
         })
     end
 })

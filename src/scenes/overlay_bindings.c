@@ -127,6 +127,18 @@ error:
 Scripting_num_getter(Overlay, z_index);
 Scripting_num_setter(Overlay, z_index);
 
+int luab_Overlay_add_sprite(lua_State *L) {
+    Overlay *overlay = luaL_tooverlay(L, 1);
+    check(overlay != NULL, "Overlay required");
+    lua_getfield(L, 2, "real");
+    Sprite *sprite = luaL_tosprite(L, -1);
+    Overlay_add_sprite(overlay, sprite);
+
+    return 0;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Overlay_meths[] = {
     {"__gc", luab_Overlay_close},
     {"draw_string", luab_Overlay_draw_string},
@@ -134,6 +146,7 @@ static const struct luaL_Reg luab_Overlay_meths[] = {
     {"get_scene", luab_Overlay_get_scene},
     {"get_z_index", luab_Overlay_get_z_index},
     {"set_z_index", luab_Overlay_set_z_index},
+    {"add_sprite", luab_Overlay_add_sprite},
     {NULL, NULL}
 };
 

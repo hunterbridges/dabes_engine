@@ -372,6 +372,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
   }];
 }
 
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
+                didFailWithError:(NSError *)error {
+  [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - Match Delegate
 
 - (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {

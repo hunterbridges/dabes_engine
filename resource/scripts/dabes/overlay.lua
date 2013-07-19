@@ -20,6 +20,8 @@ Overlay = BoundObject:extend({
     end,
 
 -- Function Bindings
+    add_sprite = BoundObject.fwd_adder("add_sprite"),
+
     draw_string = BoundObject.fwd_func_opts( "draw_string",
         {"string", "color", "origin", "align", "shadow_color", "shadow_offset"},
         {align = "left", color = {1, 1, 1, 1}, origin = {0, 0}}),
