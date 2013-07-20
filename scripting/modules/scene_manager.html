@@ -33,14 +33,15 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Properties">Properties </a></li>
-<li><a href="#Hooks">Hooks </a></li>
 <li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
 <li><a href="#Globals">Globals </a></li>
 </ul>
 
 
 <h2>Modules</h2>
 <ul>
+  <li><a href="../modules/body.html">body</a></li>
   <li><a href="../modules/bound_object.html">bound_object</a></li>
   <li><a href="../modules/object.html">object</a></li>
   <li><strong>scene_manager</strong></li>
@@ -71,19 +72,19 @@
 	<td class="summary">??? instance that is being transitioned to.</td>
 	</tr>
 </table>
-<h2><a href="#Hooks">Hooks </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#flip_scene">flip_scene&nbsp;(self)</a></td>
-	<td class="summary">Called at the end of a frame.</td>
-	</tr>
-</table>
 <h2><a href="#Instance_Methods">Instance Methods </a></h2>
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#scene_manager:push_scene">scene_manager:push_scene&nbsp;(scene)</a></td>
 	<td class="summary">Enqueues a ??? that will be transitioned to at the
  end of the current frame.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#flip_scene">flip_scene&nbsp;(self)</a></td>
+	<td class="summary">Called at the end of a frame.</td>
 	</tr>
 </table>
 <h2><a href="#Globals">Globals </a></h2>
@@ -129,32 +130,6 @@
 
 </dd>
 </dl>
-    <h2><a name="Hooks"></a>Hooks </h2>
-        Hooks.
- Callbacks implemented in subclasses to customize behavior. Hooks are called
- on individual instances.
-    <dl class="function">
-    <dt>
-    <a name = "flip_scene"></a>
-    <strong>flip_scene&nbsp;(self)</strong>
-    </dt>
-    <dd>
-    Called at the end of a frame.  This is responsible for
- transitioning to the <a href="../modules/scene_manager.html#queued_scene">queued_scene</a> .
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">self</span>
-            <span class="types"><span class="type">SceneManager</span></span>
-         The <code>SceneManager</code> instance</li>
-    </ul>
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Instance_Methods"></a>Instance Methods </h2>
         Instance Methods.
  Must be called on an instance of <code>Class</code>.
@@ -173,6 +148,32 @@
         <li><span class="parameter">scene</span>
             <span class="types"><span class="type">Scene</span></span>
          The scene to transition to</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "flip_scene"></a>
+    <strong>flip_scene&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called at the end of a frame.  This is responsible for
+ transitioning to the <a href="../modules/scene_manager.html#queued_scene">queued_scene</a> .
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">SceneManager</span></span>
+         The <code>SceneManager</code> instance</li>
     </ul>
 
 

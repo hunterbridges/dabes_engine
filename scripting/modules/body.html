@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><strong>body</strong></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>body</code></h1>
+
+<p>A <code>Body</code> is the representation of an <a href="../modules/body.html#entity">Entity</a> in physics space.</p>
+<p> As such, it is only relevant in ??? driven by physics engines.</p>
+
+<p> The <code>Body</code> is used to represent the <code>Entity</code> in the physical space.
+ The ??? represents it in the graphical space. The <code>Body</code>
+ dimensions, rotation, and position determine how the <code>Sprite</code> is drawn.</p>
+
+<p> If you need to set a collision area that is smaller than the <code>Sprite</code>'s
+ cell size, use <code>set_hit_box</code>.</p>
+
+<p>  <a href="../modules/body.html#">Body</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#angle">angle</a></td>
+	<td class="summary">The current rotation of the <code>Body</code> in <strong>radians</strong></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#can_rotate">can_rotate</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether the <code>Body</code> can rotate on its own.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#elasticity">elasticity</a></td>
+	<td class="summary">Elasticity factor, on a scale of 0.0 (Not bouncy) to 1.0 (Perfectly
+ bouncy).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#entity">entity</a></td>
+	<td class="summary"><em>(read only)</em> The <a href="../modules/body.html#entity">Entity</a> the <code>Body</code> is attached to.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#force">force</a></td>
+	<td class="summary">The current amount of force being applied to <code>Body</code> in Newtons.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#friction">friction</a></td>
+	<td class="summary">Coefficient of friction, on a scale of 0.0 (Smooth) to 1.0 (Sticky).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#is_rogue">is_rogue</a></td>
+	<td class="summary"><strong>(bool)</strong> If <code>true</code>, then <code>Body</code> is not modified by the physics
+solver.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#is_static">is_static</a></td>
+	<td class="summary"><strong>(bool)</strong> If <code>true</code>, then <code>Body</code> does not collide with other
+ objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mass">mass</a></td>
+	<td class="summary">Mass in kg</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pos">pos</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the <code>Body</code>'s center in the physics space <em>(in
+ meters)</em>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#velo">velo</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the <code>Body</code>'s velocity <em>(in meters per
+ second)</em>.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Body:new">Body:new&nbsp;(proto, width, height, mass, can_rotate)</a></td>
+	<td class="summary">Create a new <code>Body</code></td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#body:apply_force">body:apply_force&nbsp;(force, offset)</a></td>
+	<td class="summary">Apply a force on the next solve.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#body:set_hit_box">body:set_hit_box&nbsp;(width, height, offset)</a></td>
+	<td class="summary">Set the <code>Body</code>'s collision box in relation to the <code>Body</code>'s dimensions.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#body:add_sensor">body:add_sensor&nbsp;(sensor)</a></td>
+	<td class="summary">Add a ??? to the <code>Body</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#body:remove_sensor">body:remove_sensor&nbsp;(sensor)</a></td>
+	<td class="summary">Remove a ??? from the <code>Body</code>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "angle"></a>
+    <strong>angle</strong>
+    </dt>
+    <dd>
+    The current rotation of the <code>Body</code> in <strong>radians</strong>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "can_rotate"></a>
+    <strong>can_rotate</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether the <code>Body</code> can rotate on its own.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "elasticity"></a>
+    <strong>elasticity</strong>
+    </dt>
+    <dd>
+    Elasticity factor, on a scale of 0.0 (Not bouncy) to 1.0 (Perfectly
+ bouncy).
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "entity"></a>
+    <strong>entity</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> The <a href="../modules/body.html#entity">Entity</a> the <code>Body</code> is attached to.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "force"></a>
+    <strong>force</strong>
+    </dt>
+    <dd>
+    The current amount of force being applied to <code>Body</code> in Newtons.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "friction"></a>
+    <strong>friction</strong>
+    </dt>
+    <dd>
+    Coefficient of friction, on a scale of 0.0 (Smooth) to 1.0 (Sticky).
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "is_rogue"></a>
+    <strong>is_rogue</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> If <code>true</code>, then <code>Body</code> is not modified by the physics
+solver. </p>
+
+<p> This could be useful for something like a gate or moving platform.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "is_static"></a>
+    <strong>is_static</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> If <code>true</code>, then <code>Body</code> does not collide with other
+ objects.  ??? attached to <code>Body</code> will still work.</p>
+
+<p> This could be useful for something like a door or switch.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mass"></a>
+    <strong>mass</strong>
+    </dt>
+    <dd>
+    Mass in kg
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pos"></a>
+    <strong>pos</strong>
+    </dt>
+    <dd>
+
+<p>An <code>{x, y}</code> vector of the <code>Body</code>'s center in the physics space <em>(in
+ meters)</em>. </p>
+
+<p> <strong>Warning:</strong> You must set the property explicitly for changes to take
+ apply. Like this:</p>
+<pre><code>  body.pos = {10, 11}
+</code></pre>
+<p> <strong>Not</strong> this:</p>
+<pre><code>  body.pos[1] = 10
+</code></pre>
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "velo"></a>
+    <strong>velo</strong>
+    </dt>
+    <dd>
+
+<p>An <code>{x, y}</code> vector of the <code>Body</code>'s velocity <em>(in meters per
+ second)</em>. </p>
+
+<p> <strong>Warning:</strong> You must set the property explicitly for changes to take
+ apply. Like this:</p>
+<pre><code>  body.velo = {5, 0}
+</code></pre>
+<p> <strong>Not</strong> this:</p>
+<pre><code>  body.velo[1] = 5
+</code></pre>
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Body:new"></a>
+    <strong>Body:new&nbsp;(proto, width, height, mass, can_rotate)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Body</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">proto</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The <code>Body</code> prototype. Currently, the only valid</li>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         The width of the body in meters.</li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         The height of the body in meters.</li>
+        <li><span class="parameter">mass</span>
+            <span class="types"><span class="type">number</span></span>
+         The mass of the body in kg.</li>
+        <li><span class="parameter">can_rotate</span>
+            <span class="types"><span class="type">boolean</span></span>
+         Whether the <code>Body</code> can rotate or not
+ option is <code>"chipmunk"</code></li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "body:apply_force"></a>
+    <strong>body:apply_force&nbsp;(force, offset)</strong>
+    </dt>
+    <dd>
+    Apply a force on the next solve.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">force</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         An <code>{x, y}</code> vector of the force in Newtons
+ (kg * m / s ^ 2).</li>
+        <li><span class="parameter">offset</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         An <code>{x, y}</code> vector of the offset from center
+ the force is applied to (in respect to rotation).</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">body:apply_force({<span class="number">100</span>, <span class="number">0</span>}, {<span class="number">0</span>, <span class="number">0</span>}) -- Push right</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "body:set_hit_box"></a>
+    <strong>body:set_hit_box&nbsp;(width, height, offset)</strong>
+    </dt>
+    <dd>
+    Set the <code>Body</code>'s collision box in relation to the <code>Body</code>'s dimensions.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         The width of the hitbox, as a coefficient of the
+ <code>Body</code>'s width.</li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         The height of the hitbox, as a coefficient of the
+ <code>Body</code>'s height.</li>
+        <li><span class="parameter">offset</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         An <code>{x, y}</code> vector of the hitbox center in relation
+ to the <code>Body</code>'s center in meters.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">body:set_hit_box(<span class="number">0.5</span>, <span class="number">0.5</span>, {<span class="number">0</span>, <span class="number">10</span>}) -- A hitbox half the size</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "body:add_sensor"></a>
+    <strong>body:add_sensor&nbsp;(sensor)</strong>
+    </dt>
+    <dd>
+    Add a ??? to the <code>Body</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sensor</span>
+            <span class="types"><span class="type">Sensor</span></span>
+         The sensor to add to <code>Body</code></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "body:remove_sensor"></a>
+    <strong>body:remove_sensor&nbsp;(sensor)</strong>
+    </dt>
+    <dd>
+    Remove a ??? from the <code>Body</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sensor</span>
+            <span class="types"><span class="type">Sensor</span></span>
+         The sensor to remove from <code>Body</code></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

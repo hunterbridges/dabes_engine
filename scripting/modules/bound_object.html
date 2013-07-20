@@ -32,16 +32,17 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Configuration">Configuration </a></li>
 <li><a href="#Properties">Properties </a></li>
-<li><a href="#Helpers">Helpers </a></li>
 <li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Configuration">Configuration </a></li>
 <li><a href="#Hooks">Hooks </a></li>
+<li><a href="#Helpers">Helpers </a></li>
 </ul>
 
 
 <h2>Modules</h2>
 <ul>
+  <li><a href="../modules/body.html">body</a></li>
   <li><strong>bound_object</strong></li>
   <li><a href="../modules/object.html">object</a></li>
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
@@ -62,6 +63,21 @@
 <p>  <a href="../modules/bound_object.html#">BoundObject</a> extends <a href="../modules/object.html#">Object</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#real">real</a></td>
+	<td class="summary">The userdata that represents an instance inside of the game
+ engine.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject:new">BoundObject:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new instance of <code>BoundObject</code>.</td>
+	</tr>
+</table>
 <h2><a href="#Configuration">Configuration </a></h2>
 <table class="function_list">
 	<tr>
@@ -70,12 +86,15 @@
  calls are forwarded to.</td>
 	</tr>
 </table>
-<h2><a href="#Properties">Properties </a></h2>
+<h2><a href="#Hooks">Hooks </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#real">real</a></td>
-	<td class="summary">The userdata that represents an instance inside of the game
- engine.</td>
+	<td class="name" nowrap><a href="#realize">realize&nbsp;(self, ...)</a></td>
+	<td class="summary">Responsible for interacting with the <a href="../modules/bound_object.html#lib">lib</a>  and returning a userdata.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#init">init&nbsp;(self, ...)</a></td>
+	<td class="summary">Called immediately after <a href="../modules/bound_object.html#realize">realize</a> .</td>
 	</tr>
 </table>
 <h2><a href="#Helpers">Helpers </a></h2>
@@ -115,29 +134,66 @@
  setter forwarding.</td>
 	</tr>
 </table>
-<h2><a href="#Class_Methods">Class Methods </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#BoundObject:new">BoundObject:new&nbsp;(...)</a></td>
-	<td class="summary">Create a new instance of <code>BoundObject</code>.</td>
-	</tr>
-</table>
-<h2><a href="#Hooks">Hooks </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#realize">realize&nbsp;(self, ...)</a></td>
-	<td class="summary">Responsible for interacting with the <a href="../modules/bound_object.html#lib">lib</a>  and returning a userdata.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#init">init&nbsp;(self, ...)</a></td>
-	<td class="summary">Called immediately after <a href="../modules/bound_object.html#realize">realize</a> .</td>
-	</tr>
-</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "real"></a>
+    <strong>real</strong>
+    </dt>
+    <dd>
+    The userdata that represents an instance inside of the game
+ engine.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "BoundObject:new"></a>
+    <strong>BoundObject:new&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Create a new instance of <code>BoundObject</code>. </p>
+
+<p> This is the external method used to create a bound object.
+ It calls the <a href="../modules/bound_object.html#realize">realize</a>  hook, then the <a href="../modules/bound_object.html#init">init</a>  hook.</p>
+
+<p> <code>new</code> should not be overloaded by a subclass. Implement the <a href="../modules/bound_object.html#init">init</a>
+ hook if you want to perform actions when the object is created.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         Constructor parameters. These are sent to <a href="../modules/bound_object.html#realize">realize</a>  and <a href="../modules/bound_object.html#init">init</a> </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">BoundObject</span></span>
+        A new instance of <code>BoundObject</code>
+    </ol>
+
+
+
+
+</dd>
+</dl>
     <h2><a name="Configuration"></a>Configuration </h2>
         Configuration.
  Required by subclass declarations. Used when instantiating
@@ -158,18 +214,58 @@
 
 </dd>
 </dl>
-    <h2><a name="Properties"></a>Properties </h2>
-        Properties.
- Significant fields on an instance.
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
     <dl class="function">
     <dt>
-    <a name = "real"></a>
-    <strong>real</strong>
+    <a name = "realize"></a>
+    <strong>realize&nbsp;(self, ...)</strong>
     </dt>
     <dd>
-    The userdata that represents an instance inside of the game
- engine.
+    Responsible for interacting with the <a href="../modules/bound_object.html#lib">lib</a>  and returning a userdata. </p>
 
+<p> This hook is <strong>required</strong>. A <code>BoundObject</code> will not function without
+ an implementation of <a href="../modules/bound_object.html#realize">realize</a> .
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">BoundObject</span></span>
+         An instance in the throws of instantiation</li>
+        <li><span class="parameter">...</span>
+         Any arguments passed to <a href="../modules/bound_object.html#BoundObject:new">new</a></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">userdata</span></span>
+        The userdata that will be set to <a href="../modules/bound_object.html#real">real</a>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "init"></a>
+    <strong>init&nbsp;(self, ...)</strong>
+    </dt>
+    <dd>
+    Called immediately after <a href="../modules/bound_object.html#realize">realize</a> . </p>
+
+<p> This is only called once in the <code>BoundObject</code>'s lifecycle.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">BoundObject</span></span>
+         The realized instance</li>
+        <li><span class="parameter">...</span>
+         Any arguments passed to <a href="../modules/bound_object.html#BoundObject:new">new</a></li>
+    </ul>
 
 
 
@@ -395,101 +491,6 @@
 
 
     </ol>
-
-
-
-
-</dd>
-</dl>
-    <h2><a name="Class_Methods"></a>Class Methods </h2>
-        Class Methods.
- Must be called on <code>Class</code>, with a capital leading character.
- e.g. <code>Class:method("foo")</code>
-    <dl class="function">
-    <dt>
-    <a name = "BoundObject:new"></a>
-    <strong>BoundObject:new&nbsp;(...)</strong>
-    </dt>
-    <dd>
-    Create a new instance of <code>BoundObject</code>. </p>
-
-<p> This is the external method used to create a bound object.
- It calls the <a href="../modules/bound_object.html#realize">realize</a>  hook, then the <a href="../modules/bound_object.html#init">init</a>  hook.</p>
-
-<p> <code>new</code> should not be overloaded by a subclass. Implement the <a href="../modules/bound_object.html#init">init</a>
- hook if you want to perform actions when the object is created.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">...</span>
-         Constructor parameters. These are sent to <a href="../modules/bound_object.html#realize">realize</a>  and <a href="../modules/bound_object.html#init">init</a> </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">BoundObject</span></span>
-        A new instance of <code>BoundObject</code>
-    </ol>
-
-
-
-
-</dd>
-</dl>
-    <h2><a name="Hooks"></a>Hooks </h2>
-        Hooks.
- Callbacks implemented in subclasses to customize behavior. Hooks are called
- on individual instances.
-    <dl class="function">
-    <dt>
-    <a name = "realize"></a>
-    <strong>realize&nbsp;(self, ...)</strong>
-    </dt>
-    <dd>
-    Responsible for interacting with the <a href="../modules/bound_object.html#lib">lib</a>  and returning a userdata. </p>
-
-<p> This hook is <strong>required</strong>. A <code>BoundObject</code> will not function without
- an implementation of <a href="../modules/bound_object.html#realize">realize</a> .
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">self</span>
-            <span class="types"><span class="type">BoundObject</span></span>
-         An instance in the throws of instantiation</li>
-        <li><span class="parameter">...</span>
-         Any arguments passed to <a href="../modules/bound_object.html#BoundObject:new">new</a></li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">userdata</span></span>
-        The userdata that will be set to <a href="../modules/bound_object.html#real">real</a>
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "init"></a>
-    <strong>init&nbsp;(self, ...)</strong>
-    </dt>
-    <dd>
-    Called immediately after <a href="../modules/bound_object.html#realize">realize</a> . </p>
-
-<p> This is only called once in the <code>BoundObject</code>'s lifecycle.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">self</span>
-            <span class="types"><span class="type">BoundObject</span></span>
-         The realized instance</li>
-        <li><span class="parameter">...</span>
-         Any arguments passed to <a href="../modules/bound_object.html#BoundObject:new">new</a></li>
-    </ul>
-
 
 
 

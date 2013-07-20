@@ -32,14 +32,15 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Configuration">Configuration </a></li>
 <li><a href="#Properties">Properties </a></li>
 <li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Configuration">Configuration </a></li>
 </ul>
 
 
 <h2>Modules</h2>
 <ul>
+  <li><a href="../modules/body.html">body</a></li>
   <li><a href="../modules/bound_object.html">bound_object</a></li>
   <li><strong>object</strong></li>
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
@@ -56,19 +57,6 @@
 <p> <a href="../modules/object.html#">Object</a></p>
 
 
-<h2><a href="#Configuration">Configuration </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#_getters">_getters</a></td>
-	<td class="summary">A table of functions that can be used to intercept read access to
- fields of an instance.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#_setters">_setters</a></td>
-	<td class="summary">A table of functions that can be used to intercept write access to
- fields of an instance.</td>
-	</tr>
-</table>
 <h2><a href="#Properties">Properties </a></h2>
 <table class="function_list">
 	<tr>
@@ -88,65 +76,24 @@
 	<td class="summary">Create a new class by extending <code>Object</code></td>
 	</tr>
 </table>
+<h2><a href="#Configuration">Configuration </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#_getters">_getters</a></td>
+	<td class="summary">A table of functions that can be used to intercept read access to
+ fields of an instance.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#_setters">_setters</a></td>
+	<td class="summary">A table of functions that can be used to intercept write access to
+ fields of an instance.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
-    <h2><a name="Configuration"></a>Configuration </h2>
-        Configuration.
- Required by subclass declarations. Used when instantiating
- concrete subclasses.
-    <dl class="function">
-    <dt>
-    <a name = "_getters"></a>
-    <strong>_getters</strong>
-    </dt>
-    <dd>
-    A table of functions that can be used to intercept read access to
- fields of an instance. </p>
-
-<p> The functions should take two arguments, <code>self</code> and <code>key</code>.</p>
-
-<p> When <code>instance.foo</code> is accessed, <a href="../modules/object.html#_getters">_getters</a>  is checked for the
- field <code>foo</code>. If a function is stored there, it is called, and the
- return value is passed up. This works via the <code>__index</code> metamethod.</p>
-
-<p> Under the hood, this: <code>instance.foo</code></p>
-
-<p> Turns into something like <code>instance._getters.foo(instance, foo)</code>
-
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "_setters"></a>
-    <strong>_setters</strong>
-    </dt>
-    <dd>
-    A table of functions that can be used to intercept write access to
- fields of an instance. </p>
-
-<p> The functions should take three arguments, <code>self</code>, <code>key</code>, and <code>val</code>.</p>
-
-<p> When <code>instance.foo</code> is assigned to, <a href="../modules/object.html#_setters">_setters</a>  is checked for the
- field <code>foo</code>. If a function is stored there, it is called, and the
- return value is passed up. This works via the <code>__newindex</code> metamethod.</p>
-
-<p> Under the hood, this: <code>instance.foo = "bar"</code></p>
-
-<p> Turns into something like <code>instance._setters.foo(instance, foo, "bar")</code>
-
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Properties"></a>Properties </h2>
         Properties.
  Significant fields on an instance.
@@ -215,6 +162,60 @@
           <span class="types"><span class="type">Object</span></span>
         A new class with the extended properties.
     </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Configuration"></a>Configuration </h2>
+        Configuration.
+ Required by subclass declarations. Used when instantiating
+ concrete subclasses.
+    <dl class="function">
+    <dt>
+    <a name = "_getters"></a>
+    <strong>_getters</strong>
+    </dt>
+    <dd>
+    A table of functions that can be used to intercept read access to
+ fields of an instance. </p>
+
+<p> The functions should take two arguments, <code>self</code> and <code>key</code>.</p>
+
+<p> When <code>instance.foo</code> is accessed, <a href="../modules/object.html#_getters">_getters</a>  is checked for the
+ field <code>foo</code>. If a function is stored there, it is called, and the
+ return value is passed up. This works via the <code>__index</code> metamethod.</p>
+
+<p> Under the hood, this: <code>instance.foo</code></p>
+
+<p> Turns into something like <code>instance._getters.foo(instance, foo)</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "_setters"></a>
+    <strong>_setters</strong>
+    </dt>
+    <dd>
+    A table of functions that can be used to intercept write access to
+ fields of an instance. </p>
+
+<p> The functions should take three arguments, <code>self</code>, <code>key</code>, and <code>val</code>.</p>
+
+<p> When <code>instance.foo</code> is assigned to, <a href="../modules/object.html#_setters">_setters</a>  is checked for the
+ field <code>foo</code>. If a function is stored there, it is called, and the
+ return value is passed up. This works via the <code>__newindex</code> metamethod.</p>
+
+<p> Under the hood, this: <code>instance.foo = "bar"</code></p>
+
+<p> Turns into something like <code>instance._setters.foo(instance, foo, "bar")</code>
+
+
 
 
 
