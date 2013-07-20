@@ -1,4 +1,8 @@
 --- Assorted utility functions
+-- @module util
+
+--- Global Functions.
+-- @section functions
 
 --- Creates a new weak-keyed table
 -- @return A new weak-keyed table

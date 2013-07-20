@@ -2,6 +2,7 @@
 --
 -- @{object|Object}
 --
+-- @module object
 -- @type Object
 
 require 'dabes.global'
@@ -23,6 +24,8 @@ end
 Object = {
 
 --- Configuration.
+-- Required by subclass declarations. Used when instantiating
+-- concrete subclasses.
 -- @section configuration
 
     --- A table of functions that can be used to intercept read access to
@@ -54,6 +57,8 @@ Object = {
     _setters = nil,
 
 --- Class Methods.
+-- Must be called on `Class`, with a capital leading character.
+-- e.g. `Class:method("foo")`
 -- @section classmethods
 
     --- Create a new instance of `Object`
@@ -113,7 +118,8 @@ Object = {
         return sub
     end,
 
---- Properties
+--- Properties.
+-- Significant fields on an instance.
 -- @section properties
 
     --- General identity property for ```Object```
@@ -122,5 +128,6 @@ Object = {
 
     -- Added this at 5 AM
     istypeof = typeof
+
 }
 Object.__index = Object

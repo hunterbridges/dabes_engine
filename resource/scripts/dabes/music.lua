@@ -1,6 +1,9 @@
--- Music
+--- A controllable OGG Vorbis audio stream.
 --
--- This BoundObject represents a Music (music.h)
+-- @{music|Music} extends @{bound_object|BoundObject}
+--
+-- @module music
+-- @type Music
 
 require 'dabes.bound_object'
 
@@ -44,7 +47,7 @@ Music = BoundObject:extend({
         volume = BoundObject.fwd_func("set_volume"),
         loop = BoundObject.fwd_func("set_loop")
     },
-    
+
 -- Hooks
 
     -- ended

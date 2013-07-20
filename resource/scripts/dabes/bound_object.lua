@@ -4,6 +4,7 @@
 --
 --  @{bound_object|BoundObject} extends @{object|Object}
 --
+-- @module bound_object
 -- @type BoundObject
 
 require 'dabes.object'
@@ -26,6 +27,59 @@ BoundObject = Object:extend({
     --- The userdata that represents an instance inside of the game
     -- engine.
     real = nil,
+
+--- Class Methods.
+-- Must be called on `Class`, with a capital leading character.
+-- e.g. `Class:method("foo")`
+-- @section classmethods
+
+    --- Create a new instance of `BoundObject`.
+    --
+    -- This is the external method used to create a bound object.
+    -- It calls the `realize` hook, then the `init` hook.
+    --
+    -- `new` should not be overloaded by a subclass. Implement the `init`
+    -- hook if you want to perform actions when the object is created.
+    --
+    -- @name BoundObject:new
+    -- @param ... Constructor parameters. These are sent to `realize` and `init`
+    -- @treturn BoundObject A new instance of `BoundObject`
+    new = function(class, ...)
+        local bound = Object:new()
+        local meta = getmetatable(bound)
+        setmetatable(meta, class)
+
+        bound.real = bound:realize(...)
+        dab_registerinstance(bound.real, bound)
+        bound.born_at = dab_engine.ticks()
+        bound:init(...)
+
+        return bound
+    end,
+
+--- Hooks.
+-- Callbacks implemented in subclasses to customize behavior. Hooks are called
+-- on individual instances.
+-- @section hooks
+
+    --- Responsible for interacting with the `lib` and returning a userdata.
+    --
+    -- This hook is **required**. A `BoundObject` will not function without
+    -- an implementation of `realize`.
+    --
+    -- @name realize
+    -- @tparam BoundObject self An instance in the throws of instantiation
+    -- @param ... Any arguments passed to @{BoundObject:new|new}
+    -- @treturn userdata The userdata that will be set to `real`
+    realize = function(self, ...) end,
+
+    --- Called immediately after `realize`.
+    --
+    -- This is only called once in the `BoundObject`'s lifecycle.
+    --
+    -- @tparam BoundObject self The realized instance
+    -- @param ... Any arguments passed to @{BoundObject:new|new}
+    init = function(self, ...) end,
 
 --- Helpers.
 -- Utility functions stored on a class. Called using dot syntax.
@@ -186,58 +240,7 @@ BoundObject = Object:extend({
     -- @treturn function
     readonly = function(self, key, val)
         error("Attempting to set a read only property", 3)
-    end,
+    end
 
---- Class Methods.
--- Must be called on `Class`, with a capital leading character.
--- e.g. `Class:method("foo")`
--- @section classmethods
-
-    --- Create a new instance of `BoundObject`.
-    --
-    -- This is the external method used to create a bound object.
-    -- It calls the `realize` hook, then the `init` hook.
-    --
-    -- `new` should not be overloaded by a subclass. Implement the `init`
-    -- hook if you want to perform actions when the object is created.
-    --
-    -- @name BoundObject:new
-    -- @param ... Constructor parameters. These are sent to `realize` and `init`
-    -- @treturn BoundObject A new instance of `BoundObject`
-    new = function(class, ...)
-        local bound = Object:new()
-        local meta = getmetatable(bound)
-        setmetatable(meta, class)
-
-        bound.real = bound:realize(...)
-        dab_registerinstance(bound.real, bound)
-        bound.born_at = dab_engine.ticks()
-        bound:init(...)
-
-        return bound
-    end,
-
---- Hooks.
--- Callbacks implemented in subclasses to customize behavior. Hooks are called
--- on individual instances.
--- @section hooks
-
-    --- Responsible for interacting with the `lib` and returning a userdata.
-    --
-    -- This hook is **required**. A `BoundObject` will not function without
-    -- an implementation of `realize`.
-    --
-    -- @name realize
-    -- @tparam BoundObject self An instance in the throws of instantiation
-    -- @param ... Any arguments passed to @{BoundObject:new|new}
-    -- @treturn userdata The userdata that will be set to `real`
-    realize = function(self, ...) end,
-
-    --- Called immediately after `realize`.
-    --
-    -- This is only called once in the `BoundObject`'s lifecycle.
-    --
-    -- @tparam BoundObject self The realized instance
-    -- @param ... Any arguments passed to @{BoundObject:new|new}
-    init = function(self, ...) end
 })
+

@@ -5,7 +5,6 @@ require 'scenes.lonely_map'
 
 function boot()
     local map = LonelyMap:new()
-    print(inspect(scene_manager))
     scene_manager:push_scene(map)
 end
 

@@ -1,6 +1,9 @@
--- Sfx
+--- A one-shot OGG Vorbis audio sample.
 --
--- This BoundObject represents a Sfx (sfx.h)
+-- @{sfx|Sfx} extends @{bound_object|BoundObject}
+--
+-- @module sfx
+-- @type Sfx
 
 require 'dabes.bound_object'
 

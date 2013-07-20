@@ -1,3 +1,10 @@
+--- A layer that sprites or text can manually be drawn in.
+--
+-- @{overlay|Overlay} extends @{bound_object|BoundObject}
+--
+-- @module overlay
+-- @type Overlay
+
 require 'dabes.bound_object'
 
 Overlay = BoundObject:extend({

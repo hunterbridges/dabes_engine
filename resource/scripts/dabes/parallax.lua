@@ -1,3 +1,11 @@
+--- A repeating background that features proportional scrolling in
+-- relation to a @{scene|Scene}'s @{camera|Camera}.
+--
+-- @{parallax|Parallax} extends @{bound_object|BoundObject}
+--
+-- @module parallax
+-- @type Parallax
+
 require 'dabes.bound_object'
 
 ParallaxLayer = BoundObject:extend({

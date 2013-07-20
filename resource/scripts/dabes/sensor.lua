@@ -1,6 +1,12 @@
--- Sensor
+--- Adds qualitative collision detection to a @{body|Body}.
 --
--- This BoundObject represents a Sensor (sensor.h)
+-- `Sensor`s can detect the other `Sensor`s they are overlapping. They can
+-- also detect whether they are overlapping the map.
+--
+-- @{sensor|Sensor} extends @{bound_object|BoundObject}
+--
+-- @module sensor
+-- @type Sensor
 
 require 'dabes.bound_object'
 

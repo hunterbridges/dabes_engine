@@ -1,6 +1,12 @@
--- Entity
+--- The logical encapsulation of a single game object within a @{scene|Scene}.
 --
--- This BoundObject represents an Entity (entity.h)
+-- `Entity` is responsible for many of the behavioral hooks that define a
+-- game object.
+--
+-- @{entity|Entity} extends @{bound_object|BoundObject}
+--
+-- @module entity
+-- @type Entity
 
 require 'dabes.bound_object'
 

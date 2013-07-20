@@ -1,6 +1,9 @@
--- Sprite
+--- A drawable graphic with multiple frames determined by a sprite sheet.
 --
--- This BoundObject represents a Sprite (sprite.h)
+-- @{sprite|Sprite} extends @{bound_object|BoundObject}
+--
+-- @module sprite
+-- @type Sprite
 
 require 'dabes.bound_object'
 

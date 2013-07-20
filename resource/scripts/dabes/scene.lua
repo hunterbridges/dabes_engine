@@ -1,6 +1,12 @@
--- Scene
+--- The logical encapsulation of a single game space and everything in it.
 --
--- This BoundObject represents a Scene (scene.h)
+-- `Scene` is comparable to the idea of a "level" or "screen", but could be
+-- either of the two.
+--
+-- @{scene|Scene} extends @{bound_object|BoundObject}
+--
+-- @module scene
+-- @type Scene
 
 require 'dabes.bound_object'
 require 'dabes.camera'

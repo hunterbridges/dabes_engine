@@ -1,14 +1,48 @@
--- SceneManager
+--- A global object that creates an entry and transition point for
+-- @{scene|Scenes}.
+--
+--  Subclass at your own risk.
+--
+--  @{scene_manager|SceneManager} extends @{object|Object}
+--
+-- @module scene_manager
+-- @type SceneManager
 require 'dabes.object'
 
 SceneManager = Object:extend({
+
+--- Properties.
+-- Significant fields on an instance.
+-- @section properties
+
+    --- @{scene|Scene} instance the game engine is currently running.
     current_scene = nil,
+
+    --- @{scene|Scene} instance that is being transitioned to.
     queued_scene = nil,
 
+--- Instance Methods.
+-- Must be called on an instance of `Class`.
+-- e.g. `instance:method("foo")`
+-- @section instancemethods
+
+    --- Enqueues a @{scene|Scene} that will be transitioned to at the
+    -- end of the current frame.
+    -- @name scene_manager:push_scene
+    -- @tparam Scene scene The scene to transition to
     push_scene = function(self, scene)
         self.queued_scene = scene
     end,
 
+--- Hooks.
+-- Callbacks implemented in subclasses to customize behavior. Hooks are called
+-- on individual instances.
+-- @section hooks
+
+    --- Called at the end of a frame. This is responsible for
+    -- transitioning to the `queued_scene`.
+    -- @name scene_manager.flip_scene
+    -- @tparam SceneManager self The `SceneManager` instance
     flip_scene = function(self)
         if self.queued_scene == nil then return end
 
@@ -33,4 +67,15 @@ SceneManager = Object:extend({
 
     _noinject = true
 })
+
+--- Globals.
+-- Variables that are stored in the global namespace, usually for special
+-- purposes.
+-- @section globals
+
+--- The "singleton" instance of `SceneManager`.
+--
+-- The game engine is aware of this instance and calls the `flip_scene` hook
+-- on it. Be aware that modifying `flip_scene` could have adverse effects on
+-- the game's ability to function.
 scene_manager = SceneManager:new()
