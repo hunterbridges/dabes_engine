@@ -1,0 +1,507 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Configuration">Configuration </a></li>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Helpers">Helpers </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><strong>bound_object</strong></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>bound_object</code></h1>
+
+<p><a href="../modules/bound_object.html#">BoundObject</a> extends <a href="../modules/object.html#">Object</a></p>
+
+<p> Some weird meta stuff that lets us create a nice object oriented interface
+ around the C bindings.</p>
+<p> This is mostly used internally, but the <a href="../modules/bound_object.html#init">init</a>
+ hook is useful for custom objects.</p>
+
+
+<h2><a href="#Configuration">Configuration </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#lib">lib</a></td>
+	<td class="summary">The Lua library provided by the game engine that instance method
+ calls are forwarded to.</td>
+	</tr>
+</table>
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#real">real</a></td>
+	<td class="summary">The userdata that represents an instance inside of the game
+ engine.</td>
+	</tr>
+</table>
+<h2><a href="#Helpers">Helpers </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.fwd_func">BoundObject.fwd_func&nbsp;(name)</a></td>
+	<td class="summary">Generate a method that performs one-to-one argument forwarding
+ to <a href="../modules/bound_object.html#lib">lib</a> </td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.fwd_func_real">BoundObject.fwd_func_real&nbsp;(name)</a></td>
+	<td class="summary">Generate a method that performs one-to-one argument forwarding,
+ replacing each argument with <code>arg.real</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.fwd_func_opts">BoundObject.fwd_func_opts&nbsp;(name, keys, defaults)</a></td>
+	<td class="summary">Generate a method that performs key-mapped argument forwarding.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.fwd_adder">BoundObject.fwd_adder&nbsp;(name)</a></td>
+	<td class="summary">Generate a <a href="../modules/bound_object.html#lib">lib</a>  forwarded method intended to add an object to a
+ collection.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.fwd_remover">BoundObject.fwd_remover&nbsp;(name)</a></td>
+	<td class="summary">Generate a <a href="../modules/bound_object.html#lib">lib</a>  forwarded method intended to remove an object from a
+ collection.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.fwd_zeroing_setter">BoundObject.fwd_zeroing_setter&nbsp;(fname, pname)</a></td>
+	<td class="summary">Generate a <a href="../modules/bound_object.html#lib">lib</a>  forwarded setter that enables the corresponding
+ property to be set to <code>nil</code> by the game engine.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject.readonly">BoundObject.readonly&nbsp;()</a></td>
+	<td class="summary">A function that throws a "read only" error, intended for
+ setter forwarding.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BoundObject:new">BoundObject:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new instance of <code>BoundObject</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#realize">realize&nbsp;(self, ...)</a></td>
+	<td class="summary">Responsible for interacting with the <a href="../modules/bound_object.html#lib">lib</a>  and returning a userdata.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#init">init&nbsp;(self, ...)</a></td>
+	<td class="summary">Called immediately after <a href="../modules/bound_object.html#realize">realize</a> .</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Configuration"></a>Configuration </h2>
+        Configuration.
+ Required by subclass declarations. Used when instantiating
+ concrete subclasses.
+    <dl class="function">
+    <dt>
+    <a name = "lib"></a>
+    <strong>lib</strong>
+    </dt>
+    <dd>
+    The Lua library provided by the game engine that instance method
+ calls are forwarded to.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "real"></a>
+    <strong>real</strong>
+    </dt>
+    <dd>
+    The userdata that represents an instance inside of the game
+ engine.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Helpers"></a>Helpers </h2>
+        Helpers.
+ Utility functions stored on a class. Called using dot syntax.
+ e.g. <code>Class.helper("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "BoundObject.fwd_func"></a>
+    <strong>BoundObject.fwd_func&nbsp;(name)</strong>
+    </dt>
+    <dd>
+    Generate a method that performs one-to-one argument forwarding
+ to <a href="../modules/bound_object.html#lib">lib</a>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the <a href="../modules/bound_object.html#lib">lib</a>  function</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BoundObject.fwd_func_real"></a>
+    <strong>BoundObject.fwd_func_real&nbsp;(name)</strong>
+    </dt>
+    <dd>
+    Generate a method that performs one-to-one argument forwarding,
+ replacing each argument with <code>arg.real</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the <a href="../modules/bound_object.html#lib">lib</a>  function</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BoundObject.fwd_func_opts"></a>
+    <strong>BoundObject.fwd_func_opts&nbsp;(name, keys, defaults)</strong>
+    </dt>
+    <dd>
+    Generate a method that performs key-mapped argument forwarding. </p>
+
+<p> This will generate a method that accepts one argument, an <code>opts</code>
+ table.</p>
+
+<p> The values of the <code>opts</code> table are sent to the <a href="../modules/bound_object.html#lib">lib</a>  function specified
+ by <code>name</code>. They are arranged in the order that the table keys
+ appear in the <code>keys</code> list. Any keys not specified in the <code>keys</code> list
+ are ignored.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the <a href="../modules/bound_object.html#lib">lib</a>  function</li>
+        <li><span class="parameter">keys</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         The ordered list of keys to be mapped to the <a href="../modules/bound_object.html#lib">lib</a>
+ function</li>
+        <li><span class="parameter">defaults</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         An optional defaults table</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BoundObject.fwd_adder"></a>
+    <strong>BoundObject.fwd_adder&nbsp;(name)</strong>
+    </dt>
+    <dd>
+    Generate a <a href="../modules/bound_object.html#lib">lib</a>  forwarded method intended to add an object to a
+ collection. </p>
+
+<p> This performs some caching in the Lua VM so added objects don't get
+ collected by the GC.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the <a href="../modules/bound_object.html#lib">lib</a>  function</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BoundObject.fwd_remover"></a>
+    <strong>BoundObject.fwd_remover&nbsp;(name)</strong>
+    </dt>
+    <dd>
+    Generate a <a href="../modules/bound_object.html#lib">lib</a>  forwarded method intended to remove an object from a
+ collection. </p>
+
+<p> This performs some caching in the Lua VM so removed objects can get
+ collected by the GC.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the <a href="../modules/bound_object.html#lib">lib</a>  function</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BoundObject.fwd_zeroing_setter"></a>
+    <strong>BoundObject.fwd_zeroing_setter&nbsp;(fname, pname)</strong>
+    </dt>
+    <dd>
+    Generate a <a href="../modules/bound_object.html#lib">lib</a>  forwarded setter that enables the corresponding
+ property to be set to <code>nil</code> by the game engine. </p>
+
+<p> This implements an ad-hoc hook called <code>_zero</code> which is called by the
+ engine when the object has been destroyed. An example of this behavior
+ is how a ${music|Music} instance is destroyed when it is finished
+ playing.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the <a href="../modules/bound_object.html#lib">lib</a>  function</li>
+        <li><span class="parameter">pname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The name of the corresponding property</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BoundObject.readonly"></a>
+    <strong>BoundObject.readonly&nbsp;()</strong>
+    </dt>
+    <dd>
+    A function that throws a "read only" error, intended for
+ setter forwarding.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">function</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "BoundObject:new"></a>
+    <strong>BoundObject:new&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Create a new instance of <code>BoundObject</code>. </p>
+
+<p> This is the external method used to create a bound object.
+ It calls the <a href="../modules/bound_object.html#realize">realize</a>  hook, then the <a href="../modules/bound_object.html#init">init</a>  hook.</p>
+
+<p> <code>new</code> should not be overloaded by a subclass. Implement the <a href="../modules/bound_object.html#init">init</a>
+ hook if you want to perform actions when the object is created.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         Constructor parameters. These are sent to <a href="../modules/bound_object.html#realize">realize</a>  and <a href="../modules/bound_object.html#init">init</a> </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">BoundObject</span></span>
+        A new instance of <code>BoundObject</code>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "realize"></a>
+    <strong>realize&nbsp;(self, ...)</strong>
+    </dt>
+    <dd>
+    Responsible for interacting with the <a href="../modules/bound_object.html#lib">lib</a>  and returning a userdata. </p>
+
+<p> This hook is <strong>required</strong>. A <code>BoundObject</code> will not function without
+ an implementation of <a href="../modules/bound_object.html#realize">realize</a> .
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">BoundObject</span></span>
+         An instance in the throws of instantiation</li>
+        <li><span class="parameter">...</span>
+         Any arguments passed to <a href="../modules/bound_object.html#BoundObject:new">new</a></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">userdata</span></span>
+        The userdata that will be set to <a href="../modules/bound_object.html#real">real</a>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "init"></a>
+    <strong>init&nbsp;(self, ...)</strong>
+    </dt>
+    <dd>
+    Called immediately after <a href="../modules/bound_object.html#realize">realize</a> . </p>
+
+<p> This is only called once in the <code>BoundObject</code>'s lifecycle.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">BoundObject</span></span>
+         The realized instance</li>
+        <li><span class="parameter">...</span>
+         Any arguments passed to <a href="../modules/bound_object.html#BoundObject:new">new</a></li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
