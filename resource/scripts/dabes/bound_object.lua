@@ -1,8 +1,9 @@
----  @{bound_object|BoundObject} extends @{object|Object}
---
--- Some weird meta stuff that lets us create a nice object oriented interface
+--- Some weird meta stuff that lets us create a nice object oriented interface
 -- around the C bindings. This is mostly used internally, but the `init`
 -- hook is useful for custom objects.
+--
+--  @{bound_object|BoundObject} extends @{object|Object}
+--
 -- @type BoundObject
 
 require 'dabes.object'

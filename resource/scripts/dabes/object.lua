@@ -1,6 +1,7 @@
---- @{object|Object}
+--- The base class for all objects.
 --
--- The base class for all objects.
+-- @{object|Object}
+--
 -- @type Object
 
 require 'dabes.global'
@@ -59,7 +60,7 @@ Object = {
     -- @param ... Constructor parameters
     -- @name Object:new
     -- @treturn Object A new instance of `Object`
-    new = function(...)
+    new = function(class, ...)
         local minstance = {
             __index = function(self, key)
                 local meta = getmetatable(self)
