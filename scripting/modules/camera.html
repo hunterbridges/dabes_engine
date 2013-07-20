@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><strong>camera</strong></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>camera</code></h1>
+
+<p>An interface for modifying how a <a href="../modules/scene.html#">Scene</a> is projected to the player.</p>
+<p> A <code>Camera</code> is an implicit property of <a href="../modules/scene.html#">Scene</a>. You shouldn't have
+ to create one yourself.</p>
+
+<p> <a href="../modules/camera.html#">Camera</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#focal">focal</a></td>
+	<td class="summary">An <code>{x, y}</code> vector for the tracking center of the camera in pixels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#max_scale">max_scale</a></td>
+	<td class="summary">Maximum scale the camera will zoom in to.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#min_scale">min_scale</a></td>
+	<td class="summary">Minimum scale a camera will zoom out to.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rotation">rotation</a></td>
+	<td class="summary">The angle of the <code>Camera</code> in radians.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scale">scale</a></td>
+	<td class="summary">The zoom factor of the <code>Camera</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#screen_size">screen_size</a></td>
+	<td class="summary"><em>(read only)</em> An <code>{x, y}</code> vector of the screen size in pixels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#snap_to_scene">snap_to_scene</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether the camera should stop panning at the edge of the
+ <code>Scene</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#translation">translation</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the translation offset from <a href="../modules/camera.html#focal">focal</a>  in pixels.</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#camera:track_entities">camera:track_entities&nbsp;(...)</a></td>
+	<td class="summary">Provide a list of <a href="../modules/entity.html#">Entities</a> for the camera to track.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "focal"></a>
+    <strong>focal</strong>
+    </dt>
+    <dd>
+    An <code>{x, y}</code> vector for the tracking center of the camera in pixels.
+ This is set automatically in single and multiple mode.
+
+
+
+
+    <h3>see also:</h3>
+    <ul>
+         <a href="../modules/camera.html#camera:track_entities">camera:track_entities</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "max_scale"></a>
+    <strong>max_scale</strong>
+    </dt>
+    <dd>
+    Maximum scale the camera will zoom in to.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "min_scale"></a>
+    <strong>min_scale</strong>
+    </dt>
+    <dd>
+    Minimum scale a camera will zoom out to.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rotation"></a>
+    <strong>rotation</strong>
+    </dt>
+    <dd>
+    The angle of the <code>Camera</code> in radians. </p>
+
+<p> A positive value rotates it clockwise, a negative value
+ counterclockwise. Remember that this is the camera's rotation,
+ so the <a href="../modules/scene.html#">Scene</a> will appear to rotate in the opposite
+ direction.</p>
+
+<p> Default is <code>0</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scale"></a>
+    <strong>scale</strong>
+    </dt>
+    <dd>
+    The zoom factor of the <code>Camera</code>. </p>
+
+<p> 1 means 1:1 pixel ratio with the screen.
+ Greater than 1.0 means zoom in.
+ Less than 1.0 means zoom out.</p>
+
+<p> Minimum is 0. Default is <code>1</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "screen_size"></a>
+    <strong>screen_size</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> An <code>{x, y}</code> vector of the screen size in pixels.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "snap_to_scene"></a>
+    <strong>snap_to_scene</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether the camera should stop panning at the edge of the
+ <code>Scene</code>. </p>
+
+<p> Default is <code>true</code></p>
+
+<p> <strong>Warning:</strong> This is ignored in multiple mode.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "translation"></a>
+    <strong>translation</strong>
+    </dt>
+    <dd>
+    An <code>{x, y}</code> vector of the translation offset from <a href="../modules/camera.html#focal">focal</a>  in pixels. </p>
+
+<p> This is completely independent of <a href="../modules/camera.html#focal">focal</a> . For example, it could
+ be animated with an <a href="../modules/easer.html#">Easer</a> to create an earthquake effect.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "camera:track_entities"></a>
+    <strong>camera:track_entities&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Provide a list of <a href="../modules/entity.html#">Entities</a> for the camera to track. </p>
+
+<p> This works in three modes:</p>
+
+<p> <code>nil</code> - Free mode. The camera does not move unless controlled manually.</p>
+
+<p> <code>Entity</code> - Single mode. The camera pans to keep <a href="../modules/entity.html#">entity</a>  in view.</p>
+
+<p> <code>Entity</code>, <code>Entity</code>, ... - Multiple mode. The camera pans and zooms
+ to keep them all in view.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         The <a href="../modules/entity.html#">Entities</a> to track, or <code>nil</code></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

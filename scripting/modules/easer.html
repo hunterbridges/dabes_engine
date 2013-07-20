@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><strong>easer</strong></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>easer</code></h1>
+
+<p>An object for modifying values over time.</p>
+<p> An <code>Easer</code> starts advancing through time on the frame following its creation.</p>
+
+<p> <a href="../modules/easer.html#">Easer</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#value">value</a></td>
+	<td class="summary">A value from <code>0</code> to <code>1</code> indicating the progress of the <code>Easer</code>,
+ with the easing curve applied.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#time_scale">time_scale</a></td>
+	<td class="summary">Coefficient of how the advance of time affects the progress of
+ the <code>Easer</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Easer:new">Easer:new&nbsp;(length_ms)</a></td>
+	<td class="summary">Create a new <code>Easer</code></td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#update">update&nbsp;(self)</a></td>
+	<td class="summary">Called every frame after <a href="../modules/easer.html#value">value</a>  has updated.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#finish">finish&nbsp;(self)</a></td>
+	<td class="summary">Called when the <code>Easer</code> has completed.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "value"></a>
+    <strong>value</strong>
+    </dt>
+    <dd>
+    A value from <code>0</code> to <code>1</code> indicating the progress of the <code>Easer</code>,
+ with the easing curve applied.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "time_scale"></a>
+    <strong>time_scale</strong>
+    </dt>
+    <dd>
+    Coefficient of how the advance of time affects the progress of
+ the <code>Easer</code>. </p>
+
+<p> Default is <code>1</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Easer:new"></a>
+    <strong>Easer:new&nbsp;(length_ms)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Easer</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">length_ms</span>
+            <span class="types"><span class="type">number</span></span>
+         Duration of the <code>Easer</code> in milliseconds.</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "update"></a>
+    <strong>update&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called every frame after <a href="../modules/easer.html#value">value</a>  has updated.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Easer</span></span>
+         The <code>Easer</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "finish"></a>
+    <strong>finish&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the <code>Easer</code> has completed.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Easer</span></span>
+         The <code>Easer</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -42,8 +42,19 @@
 <ul>
   <li><strong>body</strong></li>
   <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
   <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
   <li><a href="../modules/util.html">util</a></li>
 </ul>
 
@@ -53,11 +64,11 @@
 
 <h1>Module <code>body</code></h1>
 
-<p>A <code>Body</code> is the representation of an <a href="../modules/body.html#entity">Entity</a> in physics space.</p>
-<p> As such, it is only relevant in ??? driven by physics engines.</p>
+<p>A <code>Body</code> is the representation of an <a href="../modules/entity.html#">Entity</a> in physics space.</p>
+<p> As such, it is only relevant in <a href="../modules/scene.html#">Scenes</a> driven by physics engines.</p>
 
 <p> The <code>Body</code> is used to represent the <code>Entity</code> in the physical space.
- The ??? represents it in the graphical space. The <code>Body</code>
+ The <a href="../modules/sprite.html#">Sprite</a> represents it in the graphical space. The <code>Body</code>
  dimensions, rotation, and position determine how the <code>Sprite</code> is drawn.</p>
 
 <p> If you need to set a collision area that is smaller than the <code>Sprite</code>'s
@@ -83,7 +94,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#entity">entity</a></td>
-	<td class="summary"><em>(read only)</em> The <a href="../modules/body.html#entity">Entity</a> the <code>Body</code> is attached to.</td>
+	<td class="summary"><em>(read only)</em> The <a href="../modules/entity.html#">Entity</a> the <code>Body</code> is attached to.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#force">force</a></td>
@@ -137,11 +148,11 @@ solver.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#body:add_sensor">body:add_sensor&nbsp;(sensor)</a></td>
-	<td class="summary">Add a ??? to the <code>Body</code>.</td>
+	<td class="summary">Add a <a href="../modules/sensor.html#">Sensor</a> to the <code>Body</code>.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#body:remove_sensor">body:remove_sensor&nbsp;(sensor)</a></td>
-	<td class="summary">Remove a ??? from the <code>Body</code>.</td>
+	<td class="summary">Remove a <a href="../modules/sensor.html#">Sensor</a> from the <code>Body</code>.</td>
 	</tr>
 </table>
 
@@ -198,7 +209,7 @@ solver.</td>
     <strong>entity</strong>
     </dt>
     <dd>
-    <em>(read only)</em> The <a href="../modules/body.html#entity">Entity</a> the <code>Body</code> is attached to.
+    <em>(read only)</em> The <a href="../modules/entity.html#">Entity</a> the <code>Body</code> is attached to.
 
 
 
@@ -254,7 +265,7 @@ solver. </p>
     </dt>
     <dd>
     <strong>(bool)</strong> If <code>true</code>, then <code>Body</code> does not collide with other
- objects.  ??? attached to <code>Body</code> will still work.</p>
+ objects.  <a href="../modules/sensor.html#">Sensors</a> attached to <code>Body</code> will still work.</p>
 
 <p> This could be useful for something like a door or switch.
 
@@ -450,7 +461,7 @@ solver. </p>
     <strong>body:add_sensor&nbsp;(sensor)</strong>
     </dt>
     <dd>
-    Add a ??? to the <code>Body</code>.
+    Add a <a href="../modules/sensor.html#">Sensor</a> to the <code>Body</code>.
 
     <h3>Parameters:</h3>
     <ul>
@@ -477,7 +488,7 @@ solver. </p>
     <strong>body:remove_sensor&nbsp;(sensor)</strong>
     </dt>
     <dd>
-    Remove a ??? from the <code>Body</code>.
+    Remove a <a href="../modules/sensor.html#">Sensor</a> from the <code>Body</code>.
 
     <h3>Parameters:</h3>
     <ul>

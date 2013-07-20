@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Global_Functions">Global Functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><strong>controller</strong></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>controller</code></h1>
+
+<p>An interface for receiving input from the player.</p>
+<p> Use <a href="../modules/controller.html#get_controller">get_controller</a>  to obtain controller instances that receive data from
+ the game engine.</p>
+
+<p> <a href="../modules/controller.html#">Controller</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#up">up</a></td>
+	<td class="summary"><strong>(bool)</strong> <em>(read only)</em> Up direction is pressed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#down">down</a></td>
+	<td class="summary"><strong>(bool)</strong> <em>(read only)</em> Down direction is pressed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#left">left</a></td>
+	<td class="summary"><strong>(bool)</strong> <em>(read only)</em> Left direction is pressed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#right">right</a></td>
+	<td class="summary"><strong>(bool)</strong> <em>(read only)</em> Right direction is pressed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#a_button">a_button</a></td>
+	<td class="summary"><strong>(bool)</strong> <em>(read only)</em> A button is pressed.</td>
+	</tr>
+</table>
+<h2><a href="#Global_Functions">Global Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#get_controller">get_controller&nbsp;(i)</a></td>
+	<td class="summary">Obtain a controller instance that is registered to receive data from the
+ game engine.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "up"></a>
+    <strong>up</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> <em>(read only)</em> Up direction is pressed.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "down"></a>
+    <strong>down</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> <em>(read only)</em> Down direction is pressed.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "left"></a>
+    <strong>left</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> <em>(read only)</em> Left direction is pressed.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "right"></a>
+    <strong>right</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> <em>(read only)</em> Right direction is pressed.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "a_button"></a>
+    <strong>a_button</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> <em>(read only)</em> A button is pressed.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Global_Functions"></a>Global Functions </h2>
+        Global Functions.
+    <dl class="function">
+    <dt>
+    <a name = "get_controller"></a>
+    <strong>get_controller&nbsp;(i)</strong>
+    </dt>
+    <dd>
+    Obtain a controller instance that is registered to receive data from the
+ game engine.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">number</span></span>
+         Which controller slot to grab. Currently supports <code>1</code> - <code>4</code></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">`Controller`</span></span>
+        the registered instance
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
