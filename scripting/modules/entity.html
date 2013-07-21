@@ -30,6 +30,12 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -65,11 +71,322 @@
 <p> <a href="../modules/entity.html#">Entity</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#alpha">alpha</a></td>
+	<td class="summary">The fill opacity of the <code>Entity</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#auto_control">auto_control</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether the entity is being controlled by the system and
+ should ignore user input.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#body">body</a></td>
+	<td class="summary">The <a href="../modules/body.html#">Body</a> that represents <code>Entity</code> in physics space.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#center">center</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the Entity's center in meters.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#controller">controller</a></td>
+	<td class="summary">The <a href="../modules/controller.html#">Controller</a> that is controlling <code>Entity</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#force_keyframe">force_keyframe</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether to force a recorder keyframe this frame.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene">scene</a></td>
+	<td class="summary"><em>(read only)</em> The <a href="../modules/scene.html#">Scene</a> that contains <code>Entity</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#size">size</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the Entity's size in meters.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sprite">sprite</a></td>
+	<td class="summary">The <a href="../modules/sprite.html#">Sprite</a> linked with the <code>Entity</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#z_index">z_index</a></td>
+	<td class="summary">Just like in CSS, the highest <a href="../modules/entity.html#z_index">z_index</a>  gets drawn on top.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Entity:new">Entity:new&nbsp;()</a></td>
+	<td class="summary">Create a new <code>Entity</code></td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#spawn">spawn&nbsp;(self)</a></td>
+	<td class="summary">Called when the entity is first added to a Scene.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#main">main&nbsp;(self)</a></td>
+	<td class="summary">Called once every frame.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#presolve">presolve&nbsp;(self)</a></td>
+	<td class="summary">Called before the physics solve step.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "alpha"></a>
+    <strong>alpha</strong>
+    </dt>
+    <dd>
+    The fill opacity of the <code>Entity</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "auto_control"></a>
+    <strong>auto_control</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether the entity is being controlled by the system and
+ should ignore user input.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "body"></a>
+    <strong>body</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/body.html#">Body</a> that represents <code>Entity</code> in physics space. </p>
+
+<p> Not necessary for static scenes.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "center"></a>
+    <strong>center</strong>
+    </dt>
+    <dd>
+    An <code>{x, y}</code> vector of the Entity's center in meters. </p>
+
+<p> If <code>Entity</code> has a <a href="../modules/body.html#">body</a> , this command forwards to
+ <a href="../modules/body.html#pos">body.pos</a>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "controller"></a>
+    <strong>controller</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/controller.html#">Controller</a> that is controlling <code>Entity</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "force_keyframe"></a>
+    <strong>force_keyframe</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether to force a recorder keyframe this frame.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene"></a>
+    <strong>scene</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> The <a href="../modules/scene.html#">Scene</a> that contains <code>Entity</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "size"></a>
+    <strong>size</strong>
+    </dt>
+    <dd>
+    An <code>{x, y}</code> vector of the Entity's size in meters. </p>
+
+<p> This can be set in <code>static</code> Scenes. Setting this in Physics
+ scenes will have no effect.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sprite"></a>
+    <strong>sprite</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/sprite.html#">Sprite</a> linked with the <code>Entity</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "z_index"></a>
+    <strong>z_index</strong>
+    </dt>
+    <dd>
+    Just like in CSS, the highest <a href="../modules/entity.html#z_index">z_index</a>  gets drawn on top.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Entity:new"></a>
+    <strong>Entity:new&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a new <code>Entity</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Entity</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "spawn"></a>
+    <strong>spawn&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the entity is first added to a Scene. </p>
+
+<p> The Scene may not be started.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Entity</span></span>
+         The instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "main"></a>
+    <strong>main&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called once every frame. </p>
+
+<p> The Scene is guaranteed to be started.</p>
+
+<p> If Entity is in a physics Scene, main is called after the engine's
+ solve step.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Entity</span></span>
+         The instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "presolve"></a>
+    <strong>presolve&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called before the physics solve step. </p>
+
+<p> The Scene is guaranteed to be started.</p>
+
+<p> If Entity is not in a physics Scene, presolve is not called.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Entity</span></span>
+         The instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
