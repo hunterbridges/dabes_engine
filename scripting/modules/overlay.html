@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
-    <title>DaBes Engine Scripting Reference</title>
+    <title>DaBes Engine Scripting API Reference</title>
     <link rel="stylesheet" href="../ldoc.css" type="text/css" />
 </head>
 <body>
@@ -30,6 +30,14 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Configuration">Configuration </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -62,11 +70,364 @@
 <p> <a href="../modules/overlay.html#">Overlay</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#scene">scene</a></td>
+	<td class="summary"><em>(read only)</em> The <a href="../modules/scene.html#">Scene</a> that contains <code>Overlay</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#z_index">z_index</a></td>
+	<td class="summary">Just like in CSS, the highest <a href="../modules/overlay.html#z_index">z_index</a>  gets drawn in front.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Overlay:new">Overlay:new&nbsp;()</a></td>
+	<td class="summary">Create a new <code>Overlay</code></td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#overlay:add_sprite">overlay:add_sprite&nbsp;(sprite)</a></td>
+	<td class="summary">Add a <a href="../modules/sprite.html#">Sprite</a> to the <code>Overlay</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overlay:draw_string">overlay:draw_string&nbsp;(opts)</a></td>
+	<td class="summary">Draw a string to <code>Overlay</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overlay:draw_sprite">overlay:draw_sprite&nbsp;(opts)</a></td>
+	<td class="summary">Draw a <a href="../modules/sprite.html#">Sprite</a> to <code>Overlay</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Configuration">Configuration </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#font_name">font_name</a></td>
+	<td class="summary">The file name of the TTF or OTF font to use when drawing strings.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#font_size">font_size</a></td>
+	<td class="summary">The font size in pixels to use when drawing strings.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#update">update&nbsp;(self)</a></td>
+	<td class="summary">Called once each frame during the Scene's update cycle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#render">render&nbsp;(self)</a></td>
+	<td class="summary">Called once each frame during the Scene's render cycle.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "scene"></a>
+    <strong>scene</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> The <a href="../modules/scene.html#">Scene</a> that contains <code>Overlay</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "z_index"></a>
+    <strong>z_index</strong>
+    </dt>
+    <dd>
+    Just like in CSS, the highest <a href="../modules/overlay.html#z_index">z_index</a>  gets drawn in front. </p>
+
+<p> Overlays are always drawn in front of <a href="../modules/entity.html#">Entities</a>.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Overlay:new"></a>
+    <strong>Overlay:new&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a new <code>Overlay</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Overlay</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "overlay:add_sprite"></a>
+    <strong>overlay:add_sprite&nbsp;(sprite)</strong>
+    </dt>
+    <dd>
+    Add a <a href="../modules/sprite.html#">Sprite</a> to the <code>Overlay</code>. </p>
+
+<p> The main reason for this is so <a href="../modules/sprite.html#">sprite</a>  can be updated.
+ If you do not do this, ??? will not
+ advance.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sprite</span>
+            <span class="types"><span class="type">Sprite</span></span>
+         The sprite to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overlay:draw_string"></a>
+    <strong>overlay:draw_string&nbsp;(opts)</strong>
+    </dt>
+    <dd>
+
+<p>Draw a string to <code>Overlay</code>. </p>
+
+<p> This function is called with an "<code>opts</code>" parameter table. The parameters
+ do not have to be in order.</p>
+
+<p> <strong>Valid Options:</strong></p>
+
+<ul>
+    <li><p><a href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a>  = The string to draw. <em>(required)</em></p></li>
+    <li><p><code>color</code> = <code>{r, g, b, a}</code> vector representing the text color.
+    Default <code>{1, 1, 1, 1}</code> (white).</p></li>
+    <li><p><code>origin</code> = <code>{x, y}</code> baseline origin point relative to the
+    center of the screen in pixels. Default <code>{0, 0}</code></p></li>
+    <li><p><code>align</code> = The text alignment. Can be <code>"left"</code>, <code>"right"</code> or
+    <code>"center"</code>. Default <code>"left"</code></p></li>
+    <li><p><code>shadow_color</code> = <code>{r, g, b, a}</code> vector representing the shadow
+    color. Default <code>nil</code>.</p></li>
+    <li><p><code>shadow_offset</code> = <code>{x, y}</code> vector representing the shadow
+    offset in pixels. Default <code>nil</code></p></li>
+</ul>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">opts</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         The named parameters.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="comment">-- Red text with a white shadow, drawn in the center of the screen.
+</span> overlay:draw_string({
+     <span class="global">string</span> = <span class="string">"Hello World!"</span>,
+     align = <span class="string">"center"</span>,
+     color = {<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>},
+     origin = {<span class="number">0</span>, <span class="number">0</span>},
+     shadow_color = {<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>},
+     shadow_offset = {<span class="number">0</span>, <span class="number">0</span>}
+ })</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "overlay:draw_sprite"></a>
+    <strong>overlay:draw_sprite&nbsp;(opts)</strong>
+    </dt>
+    <dd>
+
+<p>Draw a <a href="../modules/sprite.html#">Sprite</a> to <code>Overlay</code>. </p>
+
+<p> This function is called with an "<code>opts</code>" parameter table. The parameters
+ do not have to be in order.</p>
+
+<p> <strong>Valid Options:</strong></p>
+
+<ul>
+    <li><p><a href="../modules/sprite.html#">sprite</a>  = The <a href="../modules/sprite.html#">Sprite</a> to draw. <em>(required)</em></p></li>
+    <li><p><code>color</code> = <code>{r, g, b, a}</code> vector representing the background color.
+    Default <code>{0, 0, 0, 0}</code> (clear).</p></li>
+    <li><p><code>center</code> = <code>{x, y}</code> point relative to the center of the screen in
+    pixels. Default <code>{0, 0}</code></p></li>
+    <li><p><code>rotation</code> = The angle of the sprite in <strong>degrees</strong>. Default <code>0</code></p></li>
+    <li><p><code>scale</code> = Either a number or an <code>{x, y}</code> vector representing a scale
+    factor. Default <code>1</code></p></li>
+</ul>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">opts</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         The named parameters.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> mysprite = MySprite:new()
+ overlay:draw_sprite({
+     sprite = mysprite,
+     center = {<span class="number">0</span>, -<span class="number">100</span>},
+     rotation = <span class="number">180</span>,
+     scale = {<span class="number">2</span>, <span class="number">1</span>}
+ })</pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2><a name="Configuration"></a>Configuration </h2>
+        Configuration.
+ Required by subclass declarations. Used when instantiating
+ concrete subclasses.
+    <dl class="function">
+    <dt>
+    <a name = "font_name"></a>
+    <strong>font_name</strong>
+    </dt>
+    <dd>
+    The file name of the TTF or OTF font to use when drawing strings. </p>
+
+<p> Defaults to <code>nil</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "font_size"></a>
+    <strong>font_size</strong>
+    </dt>
+    <dd>
+    The font size in pixels to use when drawing strings. </p>
+
+<p> Defaults to <code>0</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "update"></a>
+    <strong>update&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called once each frame during the Scene's update cycle.  Modify values to
+ display in this hook.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Overlay</span></span>
+         The <code>Overlay</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "render"></a>
+    <strong>render&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called once each frame during the Scene's render cycle.  Perform draw
+ calls in this hook.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Overlay</span></span>
+         The <code>Overlay</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
-    <title>DaBes Engine Scripting Reference</title>
+    <title>DaBes Engine Scripting API Reference</title>
     <link rel="stylesheet" href="../ldoc.css" type="text/css" />
 </head>
 <body>
@@ -30,6 +30,13 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -62,11 +69,218 @@
 <p> <a href="../modules/music.html#">Music</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#volume">volume</a></td>
+	<td class="summary">Minimum <code>0</code>, maximum <code>1</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#loop">loop</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether the music should loop.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Music:new">Music:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new <code>Music</code> instance</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#music:play">music:play&nbsp;()</a></td>
+	<td class="summary">Play the <code>Music</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#music:pause">music:pause&nbsp;()</a></td>
+	<td class="summary">Pause the <code>Music</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#music:stop">music:stop&nbsp;()</a></td>
+	<td class="summary">Stop the <code>Music</code> and rewind</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ended">ended&nbsp;(self)</a></td>
+	<td class="summary">Called when the music ends.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "volume"></a>
+    <strong>volume</strong>
+    </dt>
+    <dd>
+    Minimum <code>0</code>, maximum <code>1</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "loop"></a>
+    <strong>loop</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether the music should loop.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Music:new"></a>
+    <strong>Music:new&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Music</code> instance
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         A variable list of OGG files to load as a sequence.
+ The music will play starting from the first file. The last file will be
+ looped if <a href="../modules/music.html#loop">loop</a>  is <code>true</code>.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Music</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">scene.music = Music:new(<span class="string">"media/music/intro.ogg"</span>,
+                        <span class="string">"media/music/loop.ogg"</span>)</pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "music:play"></a>
+    <strong>music:play&nbsp;()</strong>
+    </dt>
+    <dd>
+    Play the <code>Music</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "music:pause"></a>
+    <strong>music:pause&nbsp;()</strong>
+    </dt>
+    <dd>
+    Pause the <code>Music</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "music:stop"></a>
+    <strong>music:stop&nbsp;()</strong>
+    </dt>
+    <dd>
+    Stop the <code>Music</code> and rewind
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "ended"></a>
+    <strong>ended&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the music ends. </p>
+
+<p> This is only called if <a href="../modules/music.html#loop">loop</a>  is <code>false</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Music</span></span>
+         The instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
