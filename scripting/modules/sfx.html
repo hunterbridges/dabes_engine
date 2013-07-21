@@ -30,6 +30,13 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -64,11 +71,142 @@
 <p> <a href="../modules/sfx.html#">Sfx</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#volume">volume</a></td>
+	<td class="summary">Minimum <code>0</code>, maximum <code>1</code></td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Sfx:new">Sfx:new&nbsp;(filename)</a></td>
+	<td class="summary">Create a new <code>Sfx</code> by loading an OGG file</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#sfx:play">sfx:play&nbsp;()</a></td>
+	<td class="summary">Play the <code>Sfx</code></td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ended">ended&nbsp;(self)</a></td>
+	<td class="summary">Called when the <code>Music</code> ends.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "volume"></a>
+    <strong>volume</strong>
+    </dt>
+    <dd>
+    Minimum <code>0</code>, maximum <code>1</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Sfx:new"></a>
+    <strong>Sfx:new&nbsp;(filename)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Sfx</code> by loading an OGG file
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filename</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The filename of the OGG file</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Sfx</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "sfx:play"></a>
+    <strong>sfx:play&nbsp;()</strong>
+    </dt>
+    <dd>
+    Play the <code>Sfx</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "ended"></a>
+    <strong>ended&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the <code>Music</code> ends.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Music</span></span>
+         The instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

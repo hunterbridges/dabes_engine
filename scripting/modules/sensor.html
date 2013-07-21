@@ -30,6 +30,11 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -61,17 +66,129 @@
 <h1>Module <code>sensor</code></h1>
 
 <p>Adds qualitative collision detection to a <a href="../modules/body.html#">Body</a>.</p>
-<p> <code>Sensor</code>s can detect the other <code>Sensor</code>s they are overlapping. They can
- also detect whether they are overlapping the map.</p>
+<p> A <code>Sensor</code> is simply a rectangular area that is attached to and moves with a
+ <a href="../modules/body.html#">Body</a>, but does not affect the physics of it. <code>Sensors</code> can detect
+ other <code>Sensors</code> they are overlapping. They can also detect whether they are
+ overlapping the map.</p>
 
 <p> <a href="../modules/sensor.html#">Sensor</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#on_static">on_static</a></td>
+	<td class="summary"><strong>(bool)</strong> <em>(read only)</em> Whether the <code>Sensor</code> is currently
+ overlapping the map.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#on_sensors">on_sensors</a></td>
+	<td class="summary"><em>(read only)</em> A list of other <code>Sensors</code> this <code>Sensor</code> is currently
+ overlapping with.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#body">body</a></td>
+	<td class="summary"><em>(read only)</em> The <code>Body</code> this <code>Sensor</code> is attached to.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Sensor:new">Sensor:new&nbsp;(width, height, offset)</a></td>
+	<td class="summary">Create a new <code>Sensor</code></td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "on_static"></a>
+    <strong>on_static</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> <em>(read only)</em> Whether the <code>Sensor</code> is currently
+ overlapping the map.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "on_sensors"></a>
+    <strong>on_sensors</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> A list of other <code>Sensors</code> this <code>Sensor</code> is currently
+ overlapping with.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "body"></a>
+    <strong>body</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> The <code>Body</code> this <code>Sensor</code> is attached to.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Sensor:new"></a>
+    <strong>Sensor:new&nbsp;(width, height, offset)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Sensor</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">number</span></span>
+         The width of the sensor in meters</li>
+        <li><span class="parameter">height</span>
+            <span class="types"><span class="type">number</span></span>
+         The height of the sensor in meters</li>
+        <li><span class="parameter">offset</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         An <code>{x, y}</code> vector of the offset from the center
+   of the <a href="../modules/body.html#">Body</a> to which <code>Sensor</code> is attached. In meters.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Sensor</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

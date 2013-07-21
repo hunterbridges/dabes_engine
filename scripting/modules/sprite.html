@@ -30,6 +30,12 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -64,11 +70,212 @@
 <p> <a href="../modules/sprite.html#">Sprite</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#current_animation">current_animation</a></td>
+	<td class="summary"><em>(read only)</em> The current <code>SpriteAnimation</code> that is playing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#direction">direction</a></td>
+	<td class="summary">A number representing the current direction the sprite is facing.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Sprite:new">Sprite:new&nbsp;(file_name, cell_size, padding)</a></td>
+	<td class="summary">Create a new <code>Sprite</code> from a sprite sheet.</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#sprite:add_animation">sprite:add_animation&nbsp;(animation, name)</a></td>
+	<td class="summary">Adds a <a href="../modules/sprite_animation.html#">SpriteAnimation</a> to <code>Sprite</code> with the
+ given <code>name</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sprite:get_animation">sprite:get_animation&nbsp;(name)</a></td>
+	<td class="summary">Find the <a href="../modules/sprite_animation.html#">SpriteAnimation</a> with the given <code>name</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sprite:use_animation">sprite:use_animation&nbsp;(name)</a></td>
+	<td class="summary">Use the animation named <code>name</code>.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "current_animation"></a>
+    <strong>current_animation</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> The current <code>SpriteAnimation</code> that is playing.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "direction"></a>
+    <strong>direction</strong>
+    </dt>
+    <dd>
+    A number representing the current direction the sprite is facing.
+ Can be <code>0</code> (right) or <code>180</code> (left). A value of <code>180</code> will flip
+ the sprite horizontally.</p>
+
+<p> Default <code>0</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Sprite:new"></a>
+    <strong>Sprite:new&nbsp;(file_name, cell_size, padding)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Sprite</code> from a sprite sheet.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">file_name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The file name of the sprite sheet image to load.</li>
+        <li><span class="parameter">cell_size</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         An <code>{x, y}</code> vector representing the size of a
+ single frame in pixels.</li>
+        <li><span class="parameter">padding</span>
+            <span class="types"><span class="type">number</span></span>
+         The amount of padding between each cell in pixels.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Sprite</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "sprite:add_animation"></a>
+    <strong>sprite:add_animation&nbsp;(animation, name)</strong>
+    </dt>
+    <dd>
+    Adds a <a href="../modules/sprite_animation.html#">SpriteAnimation</a> to <code>Sprite</code> with the
+ given <code>name</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">animation</span>
+            <span class="types"><span class="type">SpriteAnimation</span></span>
+         The animation to add</li>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The name for the animation.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sprite:get_animation"></a>
+    <strong>sprite:get_animation&nbsp;(name)</strong>
+    </dt>
+    <dd>
+    Find the <a href="../modules/sprite_animation.html#">SpriteAnimation</a> with the given <code>name</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The name of the animation to retrieve.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">SpriteAnimation</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sprite:use_animation"></a>
+    <strong>sprite:use_animation&nbsp;(name)</strong>
+    </dt>
+    <dd>
+    Use the animation named <code>name</code>.  If that is already the current
+ animation or the animation is not found, nothing happens.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The name of the animation to use.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

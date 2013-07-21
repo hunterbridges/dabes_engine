@@ -30,6 +30,12 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -64,11 +70,154 @@
 <p> <a href="../modules/sprite_animation.html#">SpriteAnimation</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#current_index">current_index</a></td>
+	<td class="summary">The current frame index of the animation.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fps">fps</a></td>
+	<td class="summary">The rate the animation advances in frames per second.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#repeats">repeats</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether the animation should repeat.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#SpriteAnimation:new">SpriteAnimation:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new <code>SpriteAnimation</code> from a sequence of frames.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#complete">complete&nbsp;(self)</a></td>
+	<td class="summary">Called when <code>SpriteAnimation</code> reaches the end.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "current_index"></a>
+    <strong>current_index</strong>
+    </dt>
+    <dd>
+    The current frame index of the animation.  This is relative to
+ the animation, not the sprite.</p>
+
+<p> Index <code>0</code> is the first frame in the animation.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fps"></a>
+    <strong>fps</strong>
+    </dt>
+    <dd>
+    The rate the animation advances in frames per second.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "repeats"></a>
+    <strong>repeats</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether the animation should repeat. </p>
+
+<p> Default <code>true</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "SpriteAnimation:new"></a>
+    <strong>SpriteAnimation:new&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Create a new <code>SpriteAnimation</code> from a sequence of frames.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">number</span></span>
+         A variable list of <a href="../modules/sprite.html#">Sprite</a> frames to
+ compose the animation with.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">SpriteAnimation</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> anim = SpriteAnimation:new(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>) -- Walking</pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "complete"></a>
+    <strong>complete&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when <code>SpriteAnimation</code> reaches the end. </p>
+
+<p> This is not called if <a href="../modules/sprite_animation.html#repeats">repeats</a>  is <code>true</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">SpriteAnimation</span></span>
+         The <code>SpriteAnimation</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
