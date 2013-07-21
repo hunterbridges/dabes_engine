@@ -55,3 +55,9 @@ function map_real(...)
     return unpack(uds)
 end
 
+--- Returns the number of milliseconds since the engine booted.
+-- @treturn number
+function ticks()
+    return dab_engine.ticks()
+end
+

@@ -104,6 +104,7 @@ Body = BoundObject:extend({
     -- @tparam number mass The mass of the body in kg.
     -- @tparam boolean can_rotate Whether the `Body` can rotate or not
     -- option is `"chipmunk"`
+    -- @treturn Body
     realize = function(class, proto, w, h, m, can_rotate)
         return class.lib.new(proto, w, h, m, can_rotate)
     end,

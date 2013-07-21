@@ -13,62 +13,103 @@ require 'dabes.bound_object'
 Entity = BoundObject:extend({
     lib = dab_entity,
 
--- Default Configuration
+--- Properties.
+-- Significant fields on an instance.
+-- @section properties
 
--- Hook Overloads
+   _getters = {
+       --- The fill opacity of the `Entity`
+       alpha = BoundObject.fwd_func('get_alpha'),
 
+       --- **(bool)** Whether the entity is being controlled by the system and
+       -- should ignore user input.
+       auto_control = BoundObject.fwd_func('get_auto_control'),
+
+       --- The @{body|Body} that represents `Entity` in physics space.
+       --
+       -- Not necessary for static scenes.
+       body = BoundObject.fwd_func('get_body'),
+
+       --- An `{x, y}` vector of the Entity's center in meters.
+       --
+       -- If `Entity` has a `body`, this command forwards to
+       -- @{body.pos|body.pos}.
+       center = BoundObject.fwd_func('get_center'),
+
+       --- The @{controller|Controller} that is controlling `Entity`
+       controller = BoundObject.fwd_func('get_controller'),
+
+       --- **(bool)** Whether to force a recorder keyframe this frame.
+       force_keyframe = BoundObject.fwd_func('get_force_keyframe'),
+
+       --- *(read only)* The @{scene|Scene} that contains `Entity`
+       scene = BoundObject.fwd_func('get_scene'),
+
+       --- An `{x, y}` vector of the Entity's size in meters.
+       --
+       -- This can be set in `static` Scenes. Setting this in Physics
+       -- scenes will have no effect.
+       size = BoundObject.fwd_func('get_size'),
+
+       --- The @{sprite|Sprite} linked with the `Entity`
+       sprite = BoundObject.fwd_func('get_sprite'),
+
+       --- Just like in CSS, the highest `z_index` gets drawn in front.
+       z_index = BoundObject.fwd_func('get_z_index'),
+   },
+
+   _setters = {
+       alpha = BoundObject.fwd_func('set_alpha'),
+       auto_control = BoundObject.fwd_func('set_auto_control'),
+       body = BoundObject.fwd_func('set_body'),
+       center = BoundObject.fwd_func('set_center'),
+       controller = BoundObject.fwd_func('set_controller'),
+       force_keyframe = BoundObject.fwd_func('set_force_keyframe'),
+       scene = BoundObject.readonly,
+       size = BoundObject.fwd_func('set_size'),
+       sprite = BoundObject.fwd_func('set_sprite'),
+       z_index = BoundObject.fwd_func('set_z_index'),
+   },
+
+--- Class Methods.
+-- Must be called on `Class`, with a capital leading character.
+-- e.g. `Class:method("foo")`
+-- @section classmethods
+
+    --- Create a new `Entity`
+    --
+    -- @name Entity:new
+    -- @treturn Entity
     realize = function(class)
         return class.lib.new()
     end,
 
--- Function Bindings
-   _getters = {
-       controller = BoundObject.fwd_func('get_controller'),
-       auto_control = BoundObject.fwd_func('get_auto_control'),
-       force_keyframe = BoundObject.fwd_func('get_force_keyframe'),
-       scene = BoundObject.fwd_func('get_scene'),
-       sprite = BoundObject.fwd_func('get_sprite'),
-       body = BoundObject.fwd_func('get_body'),
-       alpha = BoundObject.fwd_func('get_alpha'),
-       z_index = BoundObject.fwd_func('get_z_index'),
-       center = BoundObject.fwd_func('get_center'),
-       size = BoundObject.fwd_func('get_size')
-   },
+--- Hooks.
+-- Callbacks implemented in subclasses to customize behavior. Hooks are called
+-- on individual instances.
+-- @section hooks
 
-   _setters = {
-       controller = BoundObject.fwd_func('set_controller'),
-       auto_control = BoundObject.fwd_func('set_auto_control'),
-       force_keyframe = BoundObject.fwd_func('set_force_keyframe'),
-       scene = BoundObject.readonly,
-       sprite = BoundObject.fwd_func('set_sprite'),
-       body = BoundObject.fwd_func('set_body'),
-       alpha = BoundObject.fwd_func('set_alpha'),
-       z_index = BoundObject.fwd_func('set_z_index'),
-       center = BoundObject.fwd_func('set_center'),
-       size = BoundObject.fwd_func('set_size')
-   },
-
--- Hooks
-
-    -- spawn
+    --- Called when the entity is first added to a Scene.
     --
-    -- Hook called when the entity is first added to a Scene.
-    -- The Scene is not guaranteed to be started.
+    -- The Scene may not be started.
+    -- @tparam Entity self The instance
     spawn = function(self) end,
 
-    -- main
+    --- Called once every frame.
     --
-    -- Hook called once every frame.
+    -- The Scene is guaranteed to be started.
     --
     -- If Entity is in a physics Scene, main is called after the engine's
     -- solve step.
+    -- @tparam Entity self The instance
     main = function(self) end,
 
-    -- presolve
+    --- Called before the physics solve step.
     --
-    -- Hook called before the physics solve step.
+    -- The Scene is guaranteed to be started.
     --
     -- If Entity is not in a physics Scene, presolve is not called.
+    -- @tparam Entity self The instance
     presolve = function(self) end
 
 })
