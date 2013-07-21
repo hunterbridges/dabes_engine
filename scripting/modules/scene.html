@@ -30,6 +30,14 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Configuration">Configuration </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -64,14 +72,717 @@
 <p> <code>Scene</code> is comparable to the idea of a "level" or "screen", but could be
  either of the two.</p>
 
+<p> The <code>Scene</code> renders its contents in a certain order, back to front:</p>
+
+<ol>
+    <li><p><a href="../modules/scene.html#bg_color">bg_color</a> </p></li>
+    <li><p><a href="../modules/parallax.html#">parallax</a> </p></li>
+    <li><p>Tile Map</p></li>
+    <li><p>Added <a href="../modules/entity.html#">Entities</a>, ordered by <code>z_index</code></p></li>
+    <li><p>Debug rendering</p></li>
+    <li><p>Added <a href="../modules/overlay.html#">Overlays</a>, ordered by <code>z_index</code></p></li>
+    <li><p><a href="../modules/scene.html#cover_color">cover_color</a> </p></li>
+</ol>
+
 <p> <a href="../modules/scene.html#">Scene</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#bg_color">bg_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector of the background color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#camera">camera</a></td>
+	<td class="summary"><em>(read only)</em> The <code>Scene</code>'s <a href="../modules/camera.html#">Camera</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#debug_camera">debug_camera</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether to render camera debug outlines.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#draw_grid">draw_grid</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether to render a debug wireframe tile grid.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cover_color">cover_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector of the background color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#music">music</a></td>
+	<td class="summary">The <a href="../modules/music.html#">Music</a> bound to the <code>Scene</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#parallax">parallax</a></td>
+	<td class="summary">A <a href="../modules/parallax.html#">Parallax</a> that is rendered with the <code>Scene</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#started_at">started_at</a></td>
+	<td class="summary">When the <code>Scene</code> started, in "ticks" (milliseconds since the
+ engine booted).</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Scene:new">Scene:new&nbsp;()</a></td>
+	<td class="summary">Create a new <code>Scene</code></td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#scene:fade_in">scene:fade_in&nbsp;(more_update, completion)</a></td>
+	<td class="summary">Perform a 500ms fade-in transition.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:fade_out">scene:fade_out&nbsp;(more_update, completion)</a></td>
+	<td class="summary">Perform a 500ms fade-out transition</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:start">scene:start&nbsp;()</a></td>
+	<td class="summary">Start the scene.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:stop">scene:stop&nbsp;()</a></td>
+	<td class="summary">Stop the scene.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:load_map">scene:load_map&nbsp;(map, meters_per_tile)</a></td>
+	<td class="summary">Load a TMX tile map.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:add_entity">scene:add_entity&nbsp;(entity)</a></td>
+	<td class="summary">Add an <a href="../modules/entity.html#">Entity</a> to the <code>Scene</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:add_overlay">scene:add_overlay&nbsp;(overlay)</a></td>
+	<td class="summary">Add an <a href="../modules/overlay.html#">Overlay</a> to the <code>Scene</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scene:remove_overlay">scene:remove_overlay&nbsp;(overlay)</a></td>
+	<td class="summary">Remove an <a href="../modules/overlay.html#">Overlay</a> from the <code>Scene</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Configuration">Configuration </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#kind">kind</a></td>
+	<td class="summary">The <code>Scene</code> prototype to use.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pixels_per_meter">pixels_per_meter</a></td>
+	<td class="summary">The ratio by which the screen space (pixels) relates to the
+ physics space (meters).</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#configure">configure&nbsp;(self)</a></td>
+	<td class="summary">Called by the game engine when the scene starts.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#main">main&nbsp;(self)</a></td>
+	<td class="summary">Called by the game engine once per frame, after any physics solving
+ and before the individual <a href="../modules/scene.html#main">main</a>  functions on <a href="../modules/entity.html#">Entities</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cleanup">cleanup&nbsp;(self)</a></td>
+	<td class="summary">Called by the game engine when the scene stops.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#reset_camera">reset_camera&nbsp;(self)</a></td>
+	<td class="summary">Called by the game engine when the scene needs to reset its camera.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fade_in_effect">fade_in_effect&nbsp;(scene, easer)</a></td>
+	<td class="summary">Called every update during a <code>fade_in</code> transition.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fade_out_effect">fade_out_effect&nbsp;(scene, easer)</a></td>
+	<td class="summary">Called every update during a <code>fade_out</code> transition.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "bg_color"></a>
+    <strong>bg_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector of the background color. </p>
+
+<p> Default <code>{0, 0, 0, 1}</code> (solid black)
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "camera"></a>
+    <strong>camera</strong>
+    </dt>
+    <dd>
+    <em>(read only)</em> The <code>Scene</code>'s <a href="../modules/camera.html#">Camera</a>.  This is implicit
+ (constructed automatically).
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "debug_camera"></a>
+    <strong>debug_camera</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether to render camera debug outlines.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "draw_grid"></a>
+    <strong>draw_grid</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether to render a debug wireframe tile grid.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cover_color"></a>
+    <strong>cover_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector of the background color. </p>
+
+<p> Modified by <code>fade_in</code> and <code>fade_out</code></p>
+
+<p> Default <code>{0, 0, 0, 0}</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "music"></a>
+    <strong>music</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/music.html#">Music</a> bound to the <code>Scene</code>.  Use this property
+ if you want the <code>Music</code> to be managed along with the <code>Scene</code>.
+ e.g. Stop the music automatically when the <code>Scene</code> disappears.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "parallax"></a>
+    <strong>parallax</strong>
+    </dt>
+    <dd>
+    A <a href="../modules/parallax.html#">Parallax</a> that is rendered with the <code>Scene</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "started_at"></a>
+    <strong>started_at</strong>
+    </dt>
+    <dd>
+    When the <code>Scene</code> started, in "ticks" (milliseconds since the
+ engine booted).
+
+
+
+
+    <h3>see also:</h3>
+    <ul>
+         <a href="../modules/util.html#ticks">util.ticks</a>
+    </ul>
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Scene:new"></a>
+    <strong>Scene:new&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a new <code>Scene</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Scene</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "scene:fade_in"></a>
+    <strong>scene:fade_in&nbsp;(more_update, completion)</strong>
+    </dt>
+    <dd>
+    Perform a 500ms fade-in transition. </p>
+
+<p> This actually just animates the <code>cover</code> from <code>{0, 0, 0, 1}</code> (black)
+ to <code>{0, 0, 0, 0}</code> (clear).
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">more_update</span>
+            <span class="types"><span class="type">function</span></span>
+         An update callback, of type
+ <code>function(Scene, Easer)</code></li>
+        <li><span class="parameter">completion</span>
+            <span class="types"><span class="type">function</span></span>
+         A completion callback of type
+ <code>function(Scene)</code></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:fade_out"></a>
+    <strong>scene:fade_out&nbsp;(more_update, completion)</strong>
+    </dt>
+    <dd>
+    Perform a 500ms fade-out transition  This actually just animates the <code>cover</code> from <code>{0, 0, 0, 0}</code> (clear)
+ to <code>{0, 0, 0, 1}</code> (black).
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">more_update</span>
+            <span class="types"><span class="type">function</span></span>
+         An update callback, of type
+ <code>function(Scene, Easer)</code></li>
+        <li><span class="parameter">completion</span>
+            <span class="types"><span class="type">function</span></span>
+         A completion callback of type
+ <code>function(Scene)</code></li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:start"></a>
+    <strong>scene:start&nbsp;()</strong>
+    </dt>
+    <dd>
+    Start the scene.  Usually called automatically by
+ <a href="../modules/scene_manager.html#">SceneManager</a>.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:stop"></a>
+    <strong>scene:stop&nbsp;()</strong>
+    </dt>
+    <dd>
+    Stop the scene.  Usually called automatically by
+ <a href="../modules/scene_manager.html#">SceneManager</a>.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:load_map"></a>
+    <strong>scene:load_map&nbsp;(map, meters_per_tile)</strong>
+    </dt>
+    <dd>
+    Load a TMX tile map.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">map</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The filename of the <code>.tmx</code> file</li>
+        <li><span class="parameter">meters_per_tile</span>
+            <span class="types"><span class="type">number</span></span>
+         Length of the edge of a single tile in
+ meters</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:add_entity"></a>
+    <strong>scene:add_entity&nbsp;(entity)</strong>
+    </dt>
+    <dd>
+    Add an <a href="../modules/entity.html#">Entity</a> to the <code>Scene</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">entity</span>
+            <span class="types"><span class="type">Entity</span></span>
+         The entity to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:add_overlay"></a>
+    <strong>scene:add_overlay&nbsp;(overlay)</strong>
+    </dt>
+    <dd>
+    Add an <a href="../modules/overlay.html#">Overlay</a> to the <code>Scene</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">overlay</span>
+            <span class="types"><span class="type">Overlay</span></span>
+         The overlay to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scene:remove_overlay"></a>
+    <strong>scene:remove_overlay&nbsp;(overlay)</strong>
+    </dt>
+    <dd>
+    Remove an <a href="../modules/overlay.html#">Overlay</a> from the <code>Scene</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">overlay</span>
+            <span class="types"><span class="type">Overlay</span></span>
+         The overlay to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Configuration"></a>Configuration </h2>
+        Configuration.
+ Required by subclass declarations. Used when instantiating
+ concrete subclasses.
+    <dl class="function">
+    <dt>
+    <a name = "kind"></a>
+    <strong>kind</strong>
+    </dt>
+    <dd>
+    The <code>Scene</code> prototype to use. </p>
+
+<p> Must be one of these values:</p>
+
+<ul>
+    <li><p><code>"static"</code> - A scene not backed by a physics engine. Any updates
+    happen purely in script hooks.</p></li>
+    <li><p><code>"ortho_chipmunk"</code> - A scene backed by the Chipmunk physics engine.
+    It behaves in a side-scroller style like Mario or Sonic.</p></li>
+</ul>
+
+<p> Default <code>"static"</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pixels_per_meter"></a>
+    <strong>pixels_per_meter</strong>
+    </dt>
+    <dd>
+    The ratio by which the screen space (pixels) relates to the
+ physics space (meters).  Units are important!</p>
+
+<p> Default <code>32</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "configure"></a>
+    <strong>configure&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called by the game engine when the scene starts.  Overload this to
+ do things like add entities, parallax layers, maps, etc.</p>
+
+<p> Configure may be called multiple times in the Scene's lifecycle.
+ If you want to create objects that persist across stopping and starting,
+ create them in <a href="../modules/bound_object.html#init">init</a>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Scene</span></span>
+         The <code>Scene</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "main"></a>
+    <strong>main&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called by the game engine once per frame, after any physics solving
+ and before the individual <a href="../modules/scene.html#main">main</a>  functions on <a href="../modules/entity.html#">Entities</a>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Scene</span></span>
+         The <code>Scene</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cleanup"></a>
+    <strong>cleanup&nbsp;(self)</strong>
+    </dt>
+    <dd>
+
+<p>Called by the game engine when the scene stops. </p>
+
+<p> This has a default implementation. If you overload this, call the
+ <code>Scene</code> implementation explicitly:</p>
+<pre><code> Scene.cleanup(scene)
+</code></pre>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Scene</span></span>
+         The <code>Scene</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "reset_camera"></a>
+    <strong>reset_camera&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called by the game engine when the scene needs to reset its camera. </p>
+
+<p> This has a default implementation, but if you overload it you
+ are not required to call the default implementation.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Scene</span></span>
+         The <code>Scene</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fade_in_effect"></a>
+    <strong>fade_in_effect&nbsp;(scene, easer)</strong>
+    </dt>
+    <dd>
+    Called every update during a <code>fade_in</code> transition. </p>
+
+<p> This can be used to add more effects to a fade in.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scene</span>
+            <span class="types"><span class="type">Scene</span></span>
+         The <code>Scene</code> instance</li>
+        <li><span class="parameter">easer</span>
+            <span class="types"><span class="type">Easer</span></span>
+         The <code>Easer</code> controlling the transition</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fade_out_effect"></a>
+    <strong>fade_out_effect&nbsp;(scene, easer)</strong>
+    </dt>
+    <dd>
+    Called every update during a <code>fade_out</code> transition. </p>
+
+<p> This can be used to add more effects to a fade out.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scene</span>
+            <span class="types"><span class="type">Scene</span></span>
+         The <code>Scene</code> instance</li>
+        <li><span class="parameter">easer</span>
+            <span class="types"><span class="type">Easer</span></span>
+         The <code>Easer</code> controlling the transition</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
