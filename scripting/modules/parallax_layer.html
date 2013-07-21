@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting API Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><strong>parallax_layer</strong></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>parallax_layer</code></h1>
+
+<p>A single layer of a <a href="../modules/parallax.html#">Parallax</a>.</p>
+<p> <a href="../modules/parallax.html#">ParallaxLayer</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#p_factor">p_factor</a></td>
+	<td class="summary">The proportion by which to scroll the <code>x</code> axis against
+ the <a href="../modules/camera.html#focal">camera.focal</a> <code>x</code> position.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#offset">offset</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the layer's offset in pixels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#y_wiggle">y_wiggle</a></td>
+	<td class="summary">The pixel range across which to translate the <code>ParallaxLayer</code>
+ against the <a href="../modules/camera.html#focal">camera.focal</a> <code>y</code> position.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ParallaxLayer:new">ParallaxLayer:new&nbsp;(image)</a></td>
+	<td class="summary">Create a new <code>ParallaxLayer</code> by loading an image.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "p_factor"></a>
+    <strong>p_factor</strong>
+    </dt>
+    <dd>
+    The proportion by which to scroll the <code>x</code> axis against
+ the <a href="../modules/camera.html#focal">camera.focal</a> <code>x</code> position. </p>
+
+<p> A positive <a href="../modules/parallax_layer.html#p_factor">p_factor</a>  means that <code>ParallaxLayer</code> will scroll
+ opposite the <code>Camera</code> (camera goes right, layer goes left).
+ If abs(<a href="../modules/parallax_layer.html#p_factor">p_factor</a> ) &lt; <code>1</code>, it will scroll slower than the
+ camera. Usually a positive <a href="../modules/parallax_layer.html#p_factor">p_factor</a>  between <code>0</code> and <code>1</code> is
+ what you want.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "offset"></a>
+    <strong>offset</strong>
+    </dt>
+    <dd>
+
+<p>An <code>{x, y}</code> vector of the layer's offset in pixels. </p>
+
+<p> <code>{0, 0}</code> aligns the top edge of the layer with the
+ <a href="../modules/parallax.html#sea_level">sea_level</a>. The <code>y</code> offset is arguably
+ more useful than <code>x</code>. The <code>x</code> value simply changes the phase of
+ the <code>x</code> repeat.</p>
+
+<p> <strong>Warning:</strong> You must set the property explicitly for changes to take
+ apply. Like this:</p>
+<pre><code>  layer.offset = {10, 11}
+</code></pre>
+<p> <strong>Not</strong> this:</p>
+<pre><code>  layer.offset[2] = 11
+</code></pre>
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "y_wiggle"></a>
+    <strong>y_wiggle</strong>
+    </dt>
+    <dd>
+    The pixel range across which to translate the <code>ParallaxLayer</code>
+ against the <a href="../modules/camera.html#focal">camera.focal</a> <code>y</code> position. </p>
+
+<p> A positive <a href="../modules/parallax_layer.html#y_wiggle">y_wiggle</a>  means that <code>ParallaxLayer</code> will translate
+ opposite the <code>Camera</code> (camera goes down, parallax goes up).
+ Can be positive or negative.</p>
+
+<p> The parent <a href="../modules/parallax.html#y_wiggle">parallax.y_wiggle</a> combines with this
+ one.</p>
+
+<p> Default <code>0</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "ParallaxLayer:new"></a>
+    <strong>ParallaxLayer:new&nbsp;(image)</strong>
+    </dt>
+    <dd>
+    Create a new <code>ParallaxLayer</code> by loading an image.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">image</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The file name of the image to load.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">ParallaxLayer</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

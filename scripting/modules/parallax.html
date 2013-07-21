@@ -30,6 +30,12 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -44,11 +50,13 @@
   <li><a href="../modules/object.html">object</a></li>
   <li><a href="../modules/overlay.html">overlay</a></li>
   <li><strong>parallax</strong></li>
+  <li><a href="../modules/parallax_layer.html">parallax_layer</a></li>
   <li><a href="../modules/scene.html">scene</a></li>
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
   <li><a href="../modules/sensor.html">sensor</a></li>
   <li><a href="../modules/sfx.html">sfx</a></li>
   <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
   <li><a href="../modules/util.html">util</a></li>
 </ul>
 
@@ -60,14 +68,258 @@
 
 <p>A repeating background that features proportional scrolling in
  relation to a <a href="../modules/scene.html#">Scene</a>'s <a href="../modules/camera.html#">Camera</a>.</p>
+<p> <code>Parallax</code> repeats <a href="../modules/parallax_layer.html#">ParallaxLayers</a> through the <code>x</code> axis.
+ When the <a href="../modules/camera.html#">Camera</a> pans along the <code>x</code> axis, the layers scroll
+ proportionately according to <a href="../modules/parallax_layer.html#p_factor">p_factor</a>.
+ Stacking layers back-to-front with an increasing <code>p_factor</code> can create
+ the illusion of 3D depth in 2D.</p>
+
+<p> <code>Parallax</code> also offers the ability to react to <code>y</code> axis panning. Using
+ <a href="../modules/parallax.html#y_wiggle">y_wiggle</a>  and <a href="../modules/parallax.html#sea_level">sea_level</a> , you can create the illusion of altitude.
+ Layers do not repeat through the <code>y</code> axis.</p>
+
 <p> <a href="../modules/parallax.html#">Parallax</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#sky_color">sky_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector that represents the background color
+ for the top of the <code>Parallax</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sea_color">sea_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector that represents the background color
+ for the bottom of the <code>Parallax</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#y_wiggle">y_wiggle</a></td>
+	<td class="summary">The pixel range across which to translate the <code>Parallax</code> against
+ the <a href="../modules/camera.html#focal">camera.focal</a> <code>y</code> position.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sea_level">sea_level</a></td>
+	<td class="summary">The percentage across the <code>Scene</code> <code>y</code> axis where the <code>Parallax</code>
+ considered to be "flat" when simulating altitude effects.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Parallax:new">Parallax:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new <code>Parallax</code></td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#parallax:add_layer">parallax:add_layer&nbsp;(layer)</a></td>
+	<td class="summary">Add a <a href="../modules/parallax_layer.html#">ParallaxLayer</a> to <code>Parallax</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#parallax:add_layers">parallax:add_layers&nbsp;(...)</a></td>
+	<td class="summary">Add a variable list of <a href="../modules/parallax_layer.html#">ParallaxLayers</a> to <code>Parallax</code></td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "sky_color"></a>
+    <strong>sky_color</strong>
+    </dt>
+    <dd>
+
+<p>An <code>{r, g, b, a}</code> vector that represents the background color
+ for the top of the <code>Parallax</code>. </p>
+
+<p> The height of the "sky" is (screen height * <a href="../modules/parallax.html#sea_level">sea_level</a> )</p>
+
+<p> Default <code>{0, 0, 1, 1}</code> (solid blue)</p>
+
+<p> <strong>Warning:</strong> You must set the property explicitly for changes to take
+ apply. Like this:</p>
+<pre><code>  parallax.sky_color = {0.5, 0, 0, 1}
+</code></pre>
+<p> <strong>Not</strong> this:</p>
+<pre><code>  parallax.sky_color[1] = 0.5
+</code></pre>
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sea_color"></a>
+    <strong>sea_color</strong>
+    </dt>
+    <dd>
+
+<p>An <code>{r, g, b, a}</code> vector that represents the background color
+ for the bottom of the <code>Parallax</code>. </p>
+
+<p> The height of the "sea" is (screen height * (1 - <a href="../modules/parallax.html#sea_level">sea_level</a> ))</p>
+
+<p> Default <code>{0, 1, 0, 1}</code> (solid green)</p>
+
+<p> <strong>Warning:</strong> You must set the property explicitly for changes to take
+ apply. Like this:</p>
+<pre><code>  parallax.sea_color = {0.5, 0, 0, 1}
+</code></pre>
+<p> <strong>Not</strong> this:</p>
+<pre><code>  parallax.sea_color[1] = 0.5
+</code></pre>
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "y_wiggle"></a>
+    <strong>y_wiggle</strong>
+    </dt>
+    <dd>
+    The pixel range across which to translate the <code>Parallax</code> against
+ the <a href="../modules/camera.html#focal">camera.focal</a> <code>y</code> position. </p>
+
+<p> A positive <a href="../modules/parallax.html#y_wiggle">y_wiggle</a>  means that <code>Parallax</code> will translate
+ opposite the <code>Camera</code> (camera goes down, parallax goes up).
+ Can be positive or negative.</p>
+
+<p> Default <code>0</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sea_level"></a>
+    <strong>sea_level</strong>
+    </dt>
+    <dd>
+    The percentage across the <code>Scene</code> <code>y</code> axis where the <code>Parallax</code>
+ considered to be "flat" when simulating altitude effects.  This
+ might be <code>0.0</code> if you are creating overhead clouds, or <code>1.0</code> if you
+ are creating an ocean.</p>
+
+<p> Default <code>0.5</code>
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Parallax:new"></a>
+    <strong>Parallax:new&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Parallax</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">ParallaxLayer</span></span>
+         A variable list of
+ <a href="../modules/parallax_layer.html#">ParallaxLayers</a> to add upon creation.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Parallax</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "parallax:add_layer"></a>
+    <strong>parallax:add_layer&nbsp;(layer)</strong>
+    </dt>
+    <dd>
+    Add a <a href="../modules/parallax_layer.html#">ParallaxLayer</a> to <code>Parallax</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">layer</span>
+            <span class="types"><span class="type">ParallaxLayer</span></span>
+         The layer to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "parallax:add_layers"></a>
+    <strong>parallax:add_layers&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Add a variable list of <a href="../modules/parallax_layer.html#">ParallaxLayers</a> to <code>Parallax</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">ParallaxLayer</span></span>
+         The layers to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
