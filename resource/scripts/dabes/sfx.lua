@@ -10,8 +10,29 @@ require 'dabes.bound_object'
 Sfx = BoundObject:extend({
     lib = dab_sfx,
 
--- Hook Overloads
+--- Properties.
+-- Significant fields on an instance.
+-- @section properties
 
+    _getters = {
+        --- Minimum `0`, maximum `1`
+        volume = BoundObject.fwd_func("get_volume")
+    },
+
+    _setters = {
+        volume = BoundObject.fwd_func("set_volume")
+    },
+
+--- Class Methods.
+-- Must be called on `Class`, with a capital leading character.
+-- e.g. `Class:method("foo")`
+-- @section classmethods
+
+    --- Create a new `Sfx` by loading an OGG file
+    --
+    -- @function Sfx:new
+    -- @tparam string filename The filename of the OGG file
+    -- @treturn Sfx
     realize = function(class, filename)
         local realized = class.lib.new(filename)
         if realized == nil then
@@ -21,27 +42,24 @@ Sfx = BoundObject:extend({
         return realized
     end,
 
--- Function Bindings
+--- Instance Methods.
+-- Must be called on an instance of `Class`.
+-- e.g. `instance:method("foo")`
+-- @section instancemethods
 
-    -- play(self)
+    --- Play the `Sfx`
     --
-    -- Plays the music
+    -- @function sfx:play
+    -- @treturn nil
     play = BoundObject.fwd_func('play'),
 
-    _getters = {
-        volume = BoundObject.fwd_func("get_volume")
-    },
+--- Hooks.
+-- Callbacks implemented in subclasses to customize behavior. Hooks are called
+-- on individual instances.
+-- @section hooks
 
-    _setters = {
-        volume = BoundObject.fwd_func("set_volume")
-    },
-
--- Hooks
-
-    -- ended
-    --
-    -- This will be called when the Sfx ends.
-
+    --- Called when the `Music` ends.
+    -- @tparam Music self The instance
     ended = function(self) end,
 
 })

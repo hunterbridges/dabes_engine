@@ -201,8 +201,6 @@ Scene = BoundObject:extend({
         scene._fade_out_easer = easer
     end,
 
--- Function Bindings
-
     --- Start the scene. Usually called automatically by
     -- @{scene_manager|SceneManager}.
     --

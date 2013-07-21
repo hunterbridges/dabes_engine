@@ -11,7 +11,40 @@ require 'dabes.sprite_animation'
 Sprite = BoundObject:extend({
     lib = dab_sprite,
 
--- Hook Overloads
+--- Properties.
+-- Significant fields on an instance.
+-- @section properties
+
+    _getters = {
+        --- *(read only)* The current `SpriteAnimation` that is playing.
+        current_animation = BoundObject.fwd_func('get_current_animation'),
+
+        --- A number representing the current direction the sprite is facing.
+        -- Can be `0` (right) or `180` (left). A value of `180` will flip
+        -- the sprite horizontally.
+        --
+        -- Default `0`
+        direction = BoundObject.fwd_func('get_direction')
+    },
+
+    _setters = {
+        current_animation = BoundObject.readonly,
+        direction = BoundObject.fwd_func('set_direction')
+    },
+
+--- Class Methods.
+-- Must be called on `Class`, with a capital leading character.
+-- e.g. `Class:method("foo")`
+-- @section classmethods
+
+    --- Create a new `Sprite` from a sprite sheet.
+    --
+    -- @function Sprite:new
+    -- @tparam string file_name The file name of the sprite sheet image to load.
+    -- @tparam table cell_size An `{x, y}` vector representing the size of a
+    -- single frame in pixels.
+    -- @tparam number padding The amount of padding between each cell in pixels.
+    -- @treturn Sprite
     realize = function(class, texname, cell_size, padding)
         local ret = class.lib.new(texname, cell_size, padding)
         if ret == nil then
@@ -21,31 +54,33 @@ Sprite = BoundObject:extend({
         return ret
     end,
 
--- Bound Functions
+--- Instance Methods.
+-- Must be called on an instance of `Class`.
+-- e.g. `instance:method("foo")`
+-- @section instancemethods
 
-    -- add_animation(sprite, animation, name)
+    --- Adds a @{sprite_animation|SpriteAnimation} to `Sprite` with the
+    -- given `name`.
     --
-    -- Adds a SpriteAnimation as the given `name`
+    -- @function sprite:add_animation
+    -- @tparam SpriteAnimation animation The animation to add
+    -- @tparam string name The name for the animation.
+    -- @treturn nil
     add_animation = BoundObject.fwd_adder("add_animation"),
 
-    -- get_animation(sprite, name)
+    --- Find the @{sprite_animation|SpriteAnimation} with the given `name`
     --
-    -- Gets SpriteAnimation with the given `name`
+    -- @function sprite:get_animation
+    -- @tparam string name The name of the animation to retrieve.
+    -- @treturn SpriteAnimation
     get_animation = BoundObject.fwd_func("get_animation"),
 
-    -- use_animation(sprite, name)
+    --- Use the animation named `name`. If that is already the current
+    -- animation or the animation is not found, nothing happens.
     --
-    -- Use the animation registered as `name`. If that is already the current
-    -- animation, nothing happens.
+    -- @function sprite:use_animation
+    -- @tparam string name The name of the animation to use.
+    -- @treturn nil
     use_animation = BoundObject.fwd_func('use_animation'),
 
-    _getters = {
-        current_animation = BoundObject.fwd_func('get_current_animation'),
-        direction = BoundObject.fwd_func('get_direction')
-    },
-
-    _setters = {
-        current_animation = BoundObject.readonly,
-        direction = BoundObject.fwd_func('set_direction')
-    }
 })

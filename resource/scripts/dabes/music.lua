@@ -75,7 +75,7 @@ Music = BoundObject:extend({
 -- on individual instances.
 -- @section hooks
 
-    --- Called when the music ends.
+    --- Called when the `Music` ends.
     --
     -- This is only called if `loop` is `false`
     --
