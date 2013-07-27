@@ -252,8 +252,10 @@ error:
 
 int luaL_lookup_instance(lua_State *L, void *val) {
     int top = lua_gettop(L);
-    check(luaL_lookup_ud(L, val),
-            "Couldn't find Userdata in pointer map");
+  
+    int rc = luaL_lookup_ud(L, val);
+    if (rc == 0) return 0;
+  
     lua_getglobal(L, SCRIPTING_INSTANCE_MAP);
     lua_pushvalue(L, -2);
     lua_gettable(L, -2);

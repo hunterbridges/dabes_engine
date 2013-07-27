@@ -219,7 +219,8 @@ Scene = BoundObject:extend({
     --- Load a TMX tile map.
     --
     -- @function scene:load_map
-    -- @tparam string map The filename of the `.tmx` file
+    -- @tparam string map The filename of the `.tmx` file. **Map must be
+    -- base64/gzip encoded!**
     -- @tparam number meters_per_tile Length of the edge of a single tile in
     -- meters
     -- @treturn nil
@@ -259,7 +260,7 @@ Scene = BoundObject:extend({
     -- create them in @{bound_object.init|init}
     --
     -- @tparam Scene self The `Scene` instance
-    configure = function(self) end,
+    started = function(self) end,
 
     --- Called by the game engine once per frame, after any physics solving
     -- and before the individual `main` functions on @{entity|Entities}.

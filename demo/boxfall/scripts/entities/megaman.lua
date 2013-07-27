@@ -75,13 +75,7 @@ Megaman = Entity:extend({
             end
         end
 
-        local old_hup = self.holding_up
-        if self.controller.up then
-            self.holding_up = true
-        else
-            self.holding_up = false
-        end
-        if old_hup ~= self.holding_up and self.holding_up == true then
+        if self.controller.released.up then
             local projectile = Box:new()
             local ppos = self.body.pos
             ppos[2] = ppos[2] - 1.0

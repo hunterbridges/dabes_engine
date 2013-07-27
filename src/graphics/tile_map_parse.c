@@ -282,7 +282,7 @@ TileMapParseStatus TileMap_parse_objectgroup(xmlTextReaderPtr reader, TileMap *m
             }
 
             VPoint origin = {x, y};
-            if (w >= 0 && h >= 0) {
+            if (w >= 0 || h >= 0) {
                 // Rect
                 VRect rect = VRect_from_xywh(0, 0, w, h);
                 poly = VPolygon_from_rect(rect);

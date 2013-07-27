@@ -33,7 +33,7 @@ void StaticScene_start(struct Scene *scene, Engine *engine) {
     scene->entities = DArray_create(sizeof(Entity *), 8);
     scene->overlays = DArray_create(sizeof(Overlay *), 8);
 
-    if (Scripting_call_hook(engine->scripting, scene, "configure")) {
+    if (Scripting_call_hook(engine->scripting, scene, "started")) {
       scene->started = 1;
       scene->started_at = Engine_get_ticks(engine);
     } else {

@@ -115,12 +115,17 @@ void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
 void Scene_update(Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
     Scene_control(scene, engine);
+  
+    int i = 0;
+    for (i = 0; i < INPUT_NUM_CONTROLLERS; i++) {
+        Scripting_call_hook(engine->scripting, engine->input->controllers[i],
+                            "update");
+    }
 
     if (scene->proto.update != NULL) scene->_(update)(scene, engine);
 
     Scripting_call_hook(engine->scripting, scene, "main");
 
-    int i = 0;
     for (i = 0; i < DArray_count(scene->entities); i++) {
         Entity *entity = DArray_get(scene->entities, i);
         Entity_update(entity, engine);

@@ -23,7 +23,7 @@ ReasonableMap = Scene:extend({
         scene.music.volume = (1.0 - e.value) * scene.music_volume
     end,
 
-    configure = function(self)
+    started = function(self)
         -- Music
         local music = Music:new(
             "media/music/Sneak.ogg"

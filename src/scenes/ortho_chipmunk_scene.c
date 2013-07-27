@@ -73,7 +73,7 @@ void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
     context->tile_shapes = List_create();
     context->recorders = DArray_create(sizeof(Recorder), 4);
 
-    if (Scripting_call_hook(engine->scripting, scene, "configure")) {
+    if (Scripting_call_hook(engine->scripting, scene, "started")) {
       OrthoChipmunkScene_create_space(scene, engine);
       scene->started = 1;
       scene->started_at = Engine_get_ticks(engine);

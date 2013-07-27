@@ -800,8 +800,10 @@ extern Object ControllerProto;
 #ifndef __input_h
 #define __input_h
 
+#define INPUT_NUM_CONTROLLERS 4
+
 typedef struct Input {
-    Controller *controllers[4];
+    Controller *controllers[INPUT_NUM_CONTROLLERS];
     int game_quit;
     int debug_scene_draw_grid;
     int cam_reset;

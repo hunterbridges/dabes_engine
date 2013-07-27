@@ -44,6 +44,7 @@
   
   [self.treeView reloadData];
   [self.treeView expandItem:self.rootFileSystemItem];
+  [self.treeView setDoubleAction:@selector(doubleClickedItem:)];
   
   [self addNewTab:self withPath:nil];
   
@@ -501,6 +502,12 @@
                       contextInfo:(__bridge void *)fsItem];
 }
 
+- (void)openExternalFile:(id)sender {
+  NSMenuItem *menuItem = sender;
+  FileSystemItem *fsItem = menuItem.representedObject;
+  [[NSWorkspace sharedWorkspace] openFile:fsItem.fullPath];
+}
+
 #pragma mark - Outline View Data Source
 
 - (NSMenu *)outlineView:(SDKMenuOutlineView *)outlineView menuForItem:(id)item {
@@ -524,6 +531,9 @@
     return dirActions;
   } else {
     NSMenu *fileActions = [[NSMenu alloc] init];
+    [fileActions addItemWithTitle:@"Open File in External Editor"
+                           action:@selector(openExternalFile:)
+                    keyEquivalent:@""];
     [fileActions addItemWithTitle:@"Delete"
                            action:@selector(deleteFile:)
                     keyEquivalent:@""];
@@ -540,7 +550,7 @@
 - (FileSystemItem *)rootFileSystemItem {
   if (_rootFileSystemItem) return _rootFileSystemItem;
   
-  NSString *path = [[DABProjectManager sharedInstance].projectDir stringByAppendingPathComponent:@"scripts"];
+  NSString *path = [DABProjectManager sharedInstance].projectDir;
   _rootFileSystemItem = [[FileSystemItem alloc] initWithPath:path
                                                       parent:nil];
   return _rootFileSystemItem;
@@ -565,9 +575,24 @@
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
   if ([item numberOfChildren] == -1) {
-    [self openPath:[item fullPath] andSelect:YES];
+    if ([[[item fullPath] pathExtension] compare:@"lua"
+                                         options:NSCaseInsensitiveSearch] == 0) {
+      [self openPath:[item fullPath] andSelect:YES];
+    }
   }
+  
   return YES;
+}
+
+- (void)doubleClickedItem:(SDKMenuOutlineView *)outlineView {
+  NSInteger idx = outlineView.selectedRow;
+  FileSystemItem *item = [outlineView itemAtRow:idx];
+  if ([item numberOfChildren] == -1) {
+    if ([[[item fullPath] pathExtension] compare:@"lua"
+                                         options:NSCaseInsensitiveSearch] != 0) {
+      [[NSWorkspace sharedWorkspace] openFile:item.fullPath];
+    }
+  }
 }
 
 - (void)outlineView:(NSOutlineView *)outlineView

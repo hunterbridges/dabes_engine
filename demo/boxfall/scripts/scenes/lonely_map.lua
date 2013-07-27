@@ -21,7 +21,7 @@ LonelyMap = Scene:extend({
         scene.camera.scale = 1.0 - e.value
     end,
 
-    configure = function(self)
+    started = function(self)
         -- Entities
         local num_boxes = 15
         local xo = 6.0 / 2
