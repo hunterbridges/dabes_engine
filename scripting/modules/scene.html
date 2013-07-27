@@ -180,7 +180,7 @@
 <h2><a href="#Hooks">Hooks </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#configure">configure&nbsp;(self)</a></td>
+	<td class="name" nowrap><a href="#started">started&nbsp;(self)</a></td>
 	<td class="summary">Called by the game engine when the scene starts.</td>
 	</tr>
 	<tr>
@@ -488,7 +488,8 @@
     <ul>
         <li><span class="parameter">map</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         The filename of the <code>.tmx</code> file</li>
+         The filename of the <code>.tmx</code> file. <strong>Map must be
+ base64/gzip encoded!</strong></li>
         <li><span class="parameter">meters_per_tile</span>
             <span class="types"><span class="type">number</span></span>
          Length of the edge of a single tile in
@@ -642,8 +643,8 @@
  on individual instances.
     <dl class="function">
     <dt>
-    <a name = "configure"></a>
-    <strong>configure&nbsp;(self)</strong>
+    <a name = "started"></a>
+    <strong>started&nbsp;(self)</strong>
     </dt>
     <dd>
     Called by the game engine when the scene starts.  Overload this to
