@@ -124,10 +124,17 @@ Scene = BoundObject:extend({
     },
 
     _collections = {
+        --- The @{collection|Collection} of the Scene's @{entity|Entities}
+        -- @class field
+        -- @name entities
         entities = {
             adder = BoundObject.fwd_func("add_entity"),
             remover = BoundObject.fwd_func("remove_entity")
         },
+
+        --- The @{collection|Collection} of the Scene's @{overlay|Overlays}
+        -- @class field
+        -- @name overlays
         overlays = {
             adder = BoundObject.fwd_func("add_overlay"),
             remover = BoundObject.fwd_func("remove_overlay")

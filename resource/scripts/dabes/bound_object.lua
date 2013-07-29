@@ -8,33 +8,7 @@
 -- @type BoundObject
 
 require 'dabes.object'
-
-Collection = Object:extend({
-
-    new = function(class, owner)
-        local instance = Object:new()
-        local meta = getmetatable(instance)
-        setmetatable(meta, class)
-
-        instance.owner = owner
-
-        return instance
-    end,
-
-    add = function(self, member, ...)
-        if self.adder == nil then return end
-        self._cache[member] = true
-        return self.adder(self.owner, member, ...)
-    end,
-
-    remove = function(self, member, ...)
-        if self.remover == nil then return end
-        local rc = self.remover(self.owner, member, ...)
-        self._cache[member] = nil
-        return rc
-    end
-
-})
+require 'dabes.collection'
 
 BoundObject = Object:extend({
 

@@ -34,7 +34,6 @@ TODOs:
 * Scripting - space bindings
 * Scripting - tile map bindings
 * Overlay - entity tracking
-* Scripting docs for collections
 
 Bugs:
 * Tile maps should be disposed of more thoroughly (destroy is leaking)

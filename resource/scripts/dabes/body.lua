@@ -91,6 +91,9 @@ Body = BoundObject:extend({
     },
 
     _collections = {
+        --- The @{collection|Collection} of the Body's @{sensor|Sensors}
+        -- @class field
+        -- @name sensors
         sensors = {
             adder = BoundObject.fwd_func("add_sensor"),
             remover = BoundObject.fwd_func("remove_sensor")
