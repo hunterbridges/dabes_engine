@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting API Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><strong>collection</strong></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/parallax_layer.html">parallax_layer</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>collection</code></h1>
+
+<p>An interface for managing groups of objects that belong to a parent.</p>
+<p>  <a href="../modules/collection.html#">Collection</a> extends <a href="../modules/object.html#">Object</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#owner">owner</a></td>
+	<td class="summary">The parent object of the collection.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Collection:new">Collection:new&nbsp;(owner)</a></td>
+	<td class="summary">Create a new <code>Collection</code></td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#collection:add">collection:add&nbsp;(member, ...)</a></td>
+	<td class="summary">Add a member to the <code>Collection</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collection:remove">collection:remove&nbsp;(member, ...)</a></td>
+	<td class="summary">Remove a member from the <code>Collection</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#adder">adder&nbsp;(owner, member, ...)</a></td>
+	<td class="summary">Called when a member is added to the collection.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#remover">remover&nbsp;(owner, member, ...)</a></td>
+	<td class="summary">Called when a member is removed from the collection.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "owner"></a>
+    <strong>owner</strong>
+    </dt>
+    <dd>
+    The parent object of the collection.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Collection:new"></a>
+    <strong>Collection:new&nbsp;(owner)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Collection</code>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">owner</span>
+            <span class="types"><span class="type">Object</span></span>
+         The <a href="../modules/collection.html#owner">owner</a> </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Collection</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "collection:add"></a>
+    <strong>collection:add&nbsp;(member, ...)</strong>
+    </dt>
+    <dd>
+    Add a member to the <code>Collection</code>.  This caches the member
+ so it doesn't get garbage collected prematurely. It also calls the
+ <a href="../modules/collection.html#adder">adder</a>  hook with any variable arguments.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">member</span>
+         The member to add to the collection</li>
+        <li><span class="parameter">...</span>
+         Arguments to be passed to <a href="../modules/collection.html#adder">adder</a> </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Whatever</span></span>
+        <a href="../modules/collection.html#adder">adder</a>  returns
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collection:remove"></a>
+    <strong>collection:remove&nbsp;(member, ...)</strong>
+    </dt>
+    <dd>
+    Remove a member from the <code>Collection</code>.  This removes the
+ member from the cache so it can get garbage collected. It also calls
+ the <code>remove</code> hook with any variable arguments.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">member</span>
+         The member to remove the collection</li>
+        <li><span class="parameter">...</span>
+         Arguments to be passed to <a href="../modules/collection.html#remover">remover</a> </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Whatever</span></span>
+        <a href="../modules/collection.html#remover">remover</a>  returns
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "adder"></a>
+    <strong>adder&nbsp;(owner, member, ...)</strong>
+    </dt>
+    <dd>
+    Called when a member is added to the collection.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">owner</span>
+         The owner of the collection</li>
+        <li><span class="parameter">member</span>
+         The member being added</li>
+        <li><span class="parameter">...</span>
+         Any other arguments passed to <a href="../modules/collection.html#collection:add">collection:add</a> </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "remover"></a>
+    <strong>remover&nbsp;(owner, member, ...)</strong>
+    </dt>
+    <dd>
+    Called when a member is removed from the collection.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">owner</span>
+         The owner of the collection</li>
+        <li><span class="parameter">member</span>
+         The member being removed</li>
+        <li><span class="parameter">...</span>
+         Any other arguments passed to <a href="../modules/collection.html#collection:remove">collection:remove</a> </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

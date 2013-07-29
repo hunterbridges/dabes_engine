@@ -45,6 +45,7 @@
   <li><a href="../modules/body.html">body</a></li>
   <li><a href="../modules/bound_object.html">bound_object</a></li>
   <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/collection.html">collection</a></li>
   <li><a href="../modules/controller.html">controller</a></li>
   <li><a href="../modules/easer.html">easer</a></li>
   <li><a href="../modules/entity.html">entity</a></li>
@@ -122,6 +123,14 @@
 	<td class="summary">When the <code>Scene</code> started, in "ticks" (milliseconds since the
  engine booted).</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#entities">entities</a></td>
+	<td class="summary">The <a href="../modules/collection.html#">Collection</a> of the Scene's <a href="../modules/entity.html#">Entities</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#overlays">overlays</a></td>
+	<td class="summary">The <a href="../modules/collection.html#">Collection</a> of the Scene's <a href="../modules/overlay.html#">Overlays</a></td>
+	</tr>
 </table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
 <table class="function_list">
@@ -151,18 +160,6 @@
 	<tr>
 	<td class="name" nowrap><a href="#scene:load_map">scene:load_map&nbsp;(map, meters_per_tile)</a></td>
 	<td class="summary">Load a TMX tile map.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#scene:add_entity">scene:add_entity&nbsp;(entity)</a></td>
-	<td class="summary">Add an <a href="../modules/entity.html#">Entity</a> to the <code>Scene</code>.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#scene:add_overlay">scene:add_overlay&nbsp;(overlay)</a></td>
-	<td class="summary">Add an <a href="../modules/overlay.html#">Overlay</a> to the <code>Scene</code>.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#scene:remove_overlay">scene:remove_overlay&nbsp;(overlay)</a></td>
-	<td class="summary">Remove an <a href="../modules/overlay.html#">Overlay</a> from the <code>Scene</code>.</td>
 	</tr>
 </table>
 <h2><a href="#Configuration">Configuration </a></h2>
@@ -332,6 +329,32 @@
 
 
 </dd>
+    <dt>
+    <a name = "entities"></a>
+    <strong>entities</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/collection.html#">Collection</a> of the Scene's <a href="../modules/entity.html#">Entities</a>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "overlays"></a>
+    <strong>overlays</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/collection.html#">Collection</a> of the Scene's <a href="../modules/overlay.html#">Overlays</a>
+
+
+
+
+
+
+</dd>
 </dl>
     <h2><a name="Class_Methods"></a>Class Methods </h2>
         Class Methods.
@@ -494,87 +517,6 @@
             <span class="types"><span class="type">number</span></span>
          Length of the edge of a single tile in
  meters</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
-
-
-
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "scene:add_entity"></a>
-    <strong>scene:add_entity&nbsp;(entity)</strong>
-    </dt>
-    <dd>
-    Add an <a href="../modules/entity.html#">Entity</a> to the <code>Scene</code>.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">entity</span>
-            <span class="types"><span class="type">Entity</span></span>
-         The entity to add</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
-
-
-
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "scene:add_overlay"></a>
-    <strong>scene:add_overlay&nbsp;(overlay)</strong>
-    </dt>
-    <dd>
-    Add an <a href="../modules/overlay.html#">Overlay</a> to the <code>Scene</code>.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">overlay</span>
-            <span class="types"><span class="type">Overlay</span></span>
-         The overlay to add</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
-
-
-
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "scene:remove_overlay"></a>
-    <strong>scene:remove_overlay&nbsp;(overlay)</strong>
-    </dt>
-    <dd>
-    Remove an <a href="../modules/overlay.html#">Overlay</a> from the <code>Scene</code>.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">overlay</span>
-            <span class="types"><span class="type">Overlay</span></span>
-         The overlay to add</li>
     </ul>
 
     <h3>Returns:</h3>

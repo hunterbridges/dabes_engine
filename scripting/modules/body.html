@@ -43,6 +43,7 @@
   <li><strong>body</strong></li>
   <li><a href="../modules/bound_object.html">bound_object</a></li>
   <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/collection.html">collection</a></li>
   <li><a href="../modules/controller.html">controller</a></li>
   <li><a href="../modules/easer.html">easer</a></li>
   <li><a href="../modules/entity.html">entity</a></li>
@@ -130,6 +131,10 @@ solver.</td>
 	<td class="summary">An <code>{x, y}</code> vector of the <code>Body</code>'s velocity <em>(in meters per
  second)</em>.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sensors">sensors</a></td>
+	<td class="summary">The <a href="../modules/collection.html#">Collection</a> of the Body's <a href="../modules/sensor.html#">Sensors</a></td>
+	</tr>
 </table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
 <table class="function_list">
@@ -147,14 +152,6 @@ solver.</td>
 	<tr>
 	<td class="name" nowrap><a href="#body:set_hit_box">body:set_hit_box&nbsp;(width, height, offset)</a></td>
 	<td class="summary">Set the <code>Body</code>'s collision box in relation to the <code>Body</code>'s dimensions.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#body:add_sensor">body:add_sensor&nbsp;(sensor)</a></td>
-	<td class="summary">Add a <a href="../modules/sensor.html#">Sensor</a> to the <code>Body</code>.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#body:remove_sensor">body:remove_sensor&nbsp;(sensor)</a></td>
-	<td class="summary">Remove a <a href="../modules/sensor.html#">Sensor</a> from the <code>Body</code>.</td>
 	</tr>
 </table>
 
@@ -338,6 +335,19 @@ solver. </p>
 
 
 </dd>
+    <dt>
+    <a name = "sensors"></a>
+    <strong>sensors</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/collection.html#">Collection</a> of the Body's <a href="../modules/sensor.html#">Sensors</a>
+
+
+
+
+
+
+</dd>
 </dl>
     <h2><a name="Class_Methods"></a>Class Methods </h2>
         Class Methods.
@@ -464,60 +474,6 @@ solver. </p>
     <ul>
         <pre class="example">body:set_hit_box(<span class="number">0.5</span>, <span class="number">0.5</span>, {<span class="number">0</span>, <span class="number">10</span>}) -- A hitbox half the size</pre>
     </ul>
-
-</dd>
-    <dt>
-    <a name = "body:add_sensor"></a>
-    <strong>body:add_sensor&nbsp;(sensor)</strong>
-    </dt>
-    <dd>
-    Add a <a href="../modules/sensor.html#">Sensor</a> to the <code>Body</code>.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">sensor</span>
-            <span class="types"><span class="type">Sensor</span></span>
-         The sensor to add to <code>Body</code></li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
-
-
-
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "body:remove_sensor"></a>
-    <strong>body:remove_sensor&nbsp;(sensor)</strong>
-    </dt>
-    <dd>
-    Remove a <a href="../modules/sensor.html#">Sensor</a> from the <code>Body</code>.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">sensor</span>
-            <span class="types"><span class="type">Sensor</span></span>
-         The sensor to remove from <code>Body</code></li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
-
-
-
-    </ol>
-
-
-
 
 </dd>
 </dl>
