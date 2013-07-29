@@ -90,6 +90,13 @@ Body = BoundObject:extend({
         velo = BoundObject.fwd_func("set_velo"),
     },
 
+    _collections = {
+        sensors = {
+            adder = BoundObject.fwd_func("add_sensor"),
+            remover = BoundObject.fwd_func("remove_sensor")
+        }
+    },
+
 --- Class Methods.
 -- Must be called on `Class`, with a capital leading character.
 -- e.g. `Class:method("foo")`
@@ -142,19 +149,5 @@ Body = BoundObject:extend({
     -- @treturn nil
     -- @usage body:set_hit_box(0.5, 0.5, {0, 10}) -- A hitbox half the size
     set_hit_box = BoundObject.fwd_func("set_hit_box"),
-
-    --- Add a @{sensor|Sensor} to the `Body`.
-    --
-    -- @function body:add_sensor
-    -- @tparam Sensor sensor The sensor to add to `Body`
-    -- @treturn nil
-    add_sensor = BoundObject.fwd_adder("add_sensor"),
-
-    --- Remove a @{sensor|Sensor} from the `Body`.
-    --
-    -- @function body:remove_sensor
-    -- @tparam Sensor sensor The sensor to remove from `Body`
-    -- @treturn nil
-    remove_sensor = BoundObject.fwd_remover("remove_sensor"),
 
 })

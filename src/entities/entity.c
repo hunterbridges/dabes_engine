@@ -5,12 +5,13 @@
 #include "../physics/world.h"
 #include "../scenes/scene.h"
 
-Entity *Entity_create() {
+Entity *Entity_create(Engine *engine) {
     Entity *entity = calloc(1, sizeof(Entity));
     check(entity != NULL, "Failed to create entity");
 
     entity->alpha = 0.f;
-    entity->z_index = 1;
+    entity->timestamp = (uint32_t)Engine_get_ticks(engine);
+    Entity_set_z_index(entity, 1);
 
     return entity;
 error:
@@ -40,10 +41,10 @@ VRect Entity_base_rect(Entity *entity) {
       return body->_(gfx_rect)(body, entity->pixels_per_meter, 0);
     } else {
       VRect base_rect =
-          VRect_from_xywh(entity->center.x - entity->size.w / 2.0,
-                          entity->center.y - entity->size.h / 2.0,
-                          entity->size.w,
-                          entity->size.h);
+          VRect_from_xywh(entity->center.x - entity->size.w / 2.0 * entity->pixels_per_meter,
+                          entity->center.y - entity->size.h / 2.0 * entity->pixels_per_meter,
+                          entity->size.w * entity->pixels_per_meter,
+                          entity->size.h * entity->pixels_per_meter);
       return base_rect;
     }
 }
@@ -98,15 +99,22 @@ error:
 }
 
 void Entity_set_z_index(Entity *entity, int z_index) {
+    if (entity->scene) {
+        BSTree_delete(entity->scene->entities, &entity->z_key);
+    }
     entity->z_index = z_index;
+    entity->z_key = ((uint64_t)z_index << 32) | entity->timestamp;
+    if (entity->scene) {
+        BSTree_set(entity->scene->entities, &entity->z_key, entity);
+    }
 }
 
-int Entity_z_cmp(void **a, void **b) {
-    Entity *left = (Entity *)*a;
-    Entity *right = (Entity *)*b;
-    if (left->z_index > right->z_index) return 1;
-    if (left->z_index == right->z_index) return 0;
-    if (left->z_index < right->z_index) return -1;
+int Entity_z_cmp(void *a, void *b) {
+    uint64_t left = a ? *(uint64_t *)a : 0;
+    uint64_t right = b ? *(uint64_t *)b : 0;
+    if (left > right) return 1;
+    if (left == right) return 0;
+    if (left < right) return -1;
     return 0;
 }
 

@@ -18,7 +18,7 @@ typedef struct Entity {
     Controller *controller;
     short int auto_control;
     short int force_keyframe;
-  
+
     Sprite *sprite;
     Body *body;
     struct Scene *scene;
@@ -26,6 +26,8 @@ typedef struct Entity {
 
     int pixels_per_meter;
     int z_index;
+    uint32_t timestamp;
+    uint64_t z_key;
 
     VPoint center;
     GfxSize size;
@@ -36,7 +38,7 @@ typedef struct Entity {
 struct Engine;
 struct DrawBuffer;
 
-Entity *Entity_create();
+Entity *Entity_create(struct Engine *engine);
 void Entity_destroy(Entity *entity);
 void Entity_render(Entity *self, struct Engine *engine,
                    struct DrawBuffer *draw_buffer);
@@ -46,7 +48,7 @@ VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
 void Entity_set_z_index(Entity *entity, int z_index);
-int Entity_z_cmp(void **a, void **b);
+int Entity_z_cmp(void *a, void *b);
 
 int Entity_set_center(Entity *entity, VPoint center);
 int Entity_set_size(Entity *entity, GfxSize size);

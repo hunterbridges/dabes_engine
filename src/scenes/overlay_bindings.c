@@ -125,7 +125,17 @@ error:
 }
 
 Scripting_num_getter(Overlay, z_index);
-Scripting_num_setter(Overlay, z_index);
+
+int luab_Overlay_set_z_index(lua_State *L) {
+    int z_index = lua_tonumber(L, 2);
+    Overlay *overlay = luaL_tooverlay(L, 1);
+    check(overlay != NULL, "Overlay required");
+    Overlay_set_z_index(overlay, z_index);
+
+    return 0;
+error:
+    return 0;
+}
 
 int luab_Overlay_add_sprite(lua_State *L) {
     Overlay *overlay = luaL_tooverlay(L, 1);

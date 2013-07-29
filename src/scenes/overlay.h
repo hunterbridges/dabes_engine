@@ -12,6 +12,8 @@ typedef struct Overlay {
     DArray *sprites;
     Entity *track_entity;
     int z_index;
+    uint32_t timestamp;
+    uint64_t z_key;
 } Overlay;
 
 Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
@@ -19,5 +21,7 @@ void Overlay_destroy(Overlay *overlay);
 void Overlay_update(Overlay *overlay, Engine *engine);
 void Overlay_render(Overlay *overlay, Engine *engine);
 void Overlay_add_sprite(Overlay *overlay, struct Sprite *sprite);
+void Overlay_set_z_index(Overlay *overlay, int z_index);
+int Overlay_z_cmp(void *a, void *b);
 
 #endif

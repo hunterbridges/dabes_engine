@@ -83,7 +83,7 @@ int luab_Scene_start(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
     if (!scene->started) {
-        scene->_(start)(scene, engine);
+        Scene_start(scene, engine);
     }
 
     return 1;
@@ -96,7 +96,7 @@ int luab_Scene_stop(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
     if (scene->started) {
-        scene->_(stop)(scene, engine);
+        Scene_stop(scene, engine);
     }
 
     return 1;
@@ -110,7 +110,20 @@ int luab_Scene_add_entity(lua_State *L) {
     check(scene != NULL, "Scene required");
     lua_getfield(L, 2, "real");
     Entity *entity = luaL_toentity(L, -1);
-    scene->_(add_entity)(scene, engine, entity);
+    Scene_add_entity(scene, engine, entity);
+
+    return 0;
+error:
+    return 0;
+}
+
+int luab_Scene_remove_entity(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    Engine *engine = luaL_get_engine(L);
+    check(scene != NULL, "Scene required");
+    lua_getfield(L, 2, "real");
+    Entity *entity = luaL_toentity(L, -1);
+    Scene_remove_entity(scene, engine, entity);
 
     return 0;
 error:
@@ -240,6 +253,7 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"start", luab_Scene_start},
     {"stop", luab_Scene_stop},
     {"add_entity", luab_Scene_add_entity},
+    {"remove_entity", luab_Scene_remove_entity},
     {"add_overlay", luab_Scene_add_overlay},
     {"remove_overlay", luab_Scene_remove_overlay},
     {"load_map", luab_Scene_load_map},

@@ -40,7 +40,7 @@ FatMap = Scene:extend({
         megaman.body.pos = {6.0 / 2, 27.25 / 2}
         megaman.controller = get_controller(1)
         megaman.z_index = 3
-        self:add_entity(megaman)
+        self.entities:add(megaman)
 
         self.camera:track_entities(megaman)
         self.camera.snap_to_scene = true
@@ -55,7 +55,7 @@ FatMap = Scene:extend({
 
             box.alpha = i / num_boxes * 1.0
             box.z_index = 2
-            self:add_entity(box)
+            self.entities:add(box)
 
             xo = xo + 2
         end
@@ -64,7 +64,7 @@ FatMap = Scene:extend({
         door.destination = ReasonableMap
         door.body.pos = {3.0, 13.1 + 1 / 64}
         door.z_index = 1
-        self:add_entity(door)
+        self.entities:add(door)
 
         -- Parallax
         self.parallax = self.gen_parallax()

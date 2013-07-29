@@ -14,6 +14,11 @@
 #include "../math/vpolygon.h"
 #include "overlay.h"
 
+typedef struct OCSTraverseCtx {
+    Scene *scene;
+    Engine *engine;
+} OCSTraverseCtx;
+
 typedef struct OrthoChipmunkSceneCtx {
     List *tile_shapes;
     cpSpace *space;
@@ -46,12 +51,6 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     free(context);
     scene->context = NULL;
 
-    DArray_destroy(scene->entities);
-    scene->entities = NULL;
-
-    DArray_destroy(scene->overlays);
-    scene->overlays = NULL;
-
     if (scene->space) {
       cpSpaceFree(scene->space);
       scene->space = NULL;
@@ -61,31 +60,15 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     scene->started = 0;
 }
 
-void OrthoChipmunkScene_start(struct Scene *scene, Engine *engine) {
-    if (scene->started) return;
-    assert(scene->world == NULL);
-    assert(scene->entities == NULL);
-    scene->entities = DArray_create(sizeof(Entity *), 8);
-    scene->overlays = DArray_create(sizeof(Overlay *), 8);
-
+void OrthoChipmunkScene_start(struct Scene *scene, Engine *UNUSED(engine)) {
     OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
     scene->context = context;
     context->tile_shapes = List_create();
     context->recorders = DArray_create(sizeof(Recorder), 4);
+}
 
-    if (Scripting_call_hook(engine->scripting, scene, "started")) {
-      OrthoChipmunkScene_create_space(scene, engine);
-      scene->started = 1;
-      scene->started_at = Engine_get_ticks(engine);
-    } else {
-      // Need to do a graceful stop since user could have manipulated the scene
-      // before the hook hit the error.
-
-      scene->started = 1;
-      OrthoChipmunkScene_stop(scene, engine);
-
-      // Now scene->started is 0
-    }
+void OrthoChipmunkScene_start_success_cb(struct Scene *scene, Engine *engine) {
+    OrthoChipmunkScene_create_space(scene, engine);
 }
 
 void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
@@ -132,12 +115,16 @@ Recorder *OrthoChipmunkScene_gen_recorder(Scene *scene, Entity *entity) {
     return recorder;
 };
 
+static inline int presolve_traverse_cb(BSTreeNode *node, void *context) {
+    OCSTraverseCtx *ctx = (OCSTraverseCtx *)context;
+    Entity *entity = node->data;
+    Scripting_call_hook(ctx->engine->scripting, entity, "presolve");
+    return 0;
+}
+
 void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
-    int i = 0;
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        Scripting_call_hook(engine->scripting, entity, "presolve");
-    }
+    OCSTraverseCtx ctx = { .scene = scene, .engine = engine };
+    BSTree_traverse(scene->entities, presolve_traverse_cb, &ctx);
 
     int phys_ticks = (int)(engine->frame_ticks < 100 ? engine->frame_ticks : 100);
     Stepper_update(engine->physics->stepper, phys_ticks);
@@ -347,7 +334,6 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     body->state.entity = entity;
     body->state.scene = scene;
 
-    entity->pixels_per_meter = scene->pixels_per_meter;
     cpSpaceAddShape(scene->space, body->cp_shape);
 
     if (!body->is_rogue) {
@@ -361,14 +347,17 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     }
 }
 
-void OrthoChipmunkScene_add_entity(Scene *scene, Engine *engine,
+void OrthoChipmunkScene_add_entity_cb(Scene *scene, Engine *engine,
         Entity *entity) {
-    assert(entity != NULL);
-    assert(scene != NULL);
-    entity->scene = scene;
-    DArray_push(scene->entities, entity);
     if (scene->space) {
         OrthoChipmunkScene_add_entity_body(scene, engine, entity);
+    }
+}
+
+void OrthoChipmunkScene_remove_entity_cb(Scene *scene, Engine *engine,
+        Entity *entity) {
+    if (scene->space) {
+      entity->body->_(cleanup)(entity->body);
     }
 }
 
@@ -456,6 +445,13 @@ void OrthoChipmunkScene_create_collision_shapes(Scene *scene,
     }
 }
 
+static inline int add_body_traverse_cb(BSTreeNode *node, void *context) {
+    OCSTraverseCtx *ctx = (OCSTraverseCtx *)context;
+    Entity *entity = node->data;
+    OrthoChipmunkScene_add_entity_body(ctx->scene, ctx->engine, entity);
+    return 0;
+}
+
 int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(scene);
     check_mem(engine);
@@ -487,11 +483,8 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
 
     OrthoChipmunkScene_create_collision_shapes(scene, engine);
 
-    int i = 0;
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        OrthoChipmunkScene_add_entity_body(scene, engine, entity);
-    }
+    OCSTraverseCtx ctx = { .scene = scene, .engine = engine };
+    BSTree_traverse(scene->entities, add_body_traverse_cb, &ctx);
 
     return 1;
 error:
@@ -500,12 +493,14 @@ error:
 
 SceneProto OrthoChipmunkSceneProto = {
     .start = OrthoChipmunkScene_start,
+    .start_success_cb = OrthoChipmunkScene_start_success_cb,
     .stop = OrthoChipmunkScene_stop,
     .cleanup = OrthoChipmunkScene_cleanup,
     .update = OrthoChipmunkScene_update,
     .render = OrthoChipmunkScene_render,
     .control = OrthoChipmunkScene_control,
-    .add_entity = OrthoChipmunkScene_add_entity,
+    .add_entity_cb = OrthoChipmunkScene_add_entity_cb,
+    .remove_entity_cb = OrthoChipmunkScene_remove_entity_cb,
     .hit_test = OrthoChipmunkScene_hit_test,
     .gen_recorder = OrthoChipmunkScene_gen_recorder
 };

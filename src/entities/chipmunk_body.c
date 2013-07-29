@@ -115,6 +115,8 @@ void body_clear_shapes(cpBody *UNUSED(cpBody), cpShape *shape, void *data) {
 }
 
 void ChipmunkBody_cleanup(Body *body) {
+    if (!body->cp_body) return;
+  
     cpBodyEachShape(body->cp_body, body_clear_shapes, body);
 
     if (body->cp_shape) {
@@ -124,8 +126,10 @@ void ChipmunkBody_cleanup(Body *body) {
     }
 
     if (body->cp_space) {
-        if (!body->is_rogue)
+        if (!body->is_rogue) {
             cpSpaceRemoveBody(body->cp_space, body->cp_body);
+            body->cp_body = NULL;
+        }
     }
 
     cpBodyFree(body->cp_body);

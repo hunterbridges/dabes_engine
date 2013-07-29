@@ -6,6 +6,12 @@
 #include "../graphics/draw_buffer.h"
 #include "overlay.h"
 
+typedef struct SceneTraverseCtx {
+    Scene *scene;
+    Engine *engine;
+    DrawBuffer *draw_buffer;
+} SceneTraverseCtx;
+
 Scene *Scene_create(Engine *engine, SceneProto proto) {
     Scene *scene = calloc(1, sizeof(Scene));
     check(scene != NULL, "Couldn't create scene");
@@ -44,8 +50,8 @@ error:
 }
 
 void Scene_restart(Scene *scene, Engine *engine) {
-    scene->_(stop)(scene, engine);
-    scene->_(start)(scene, engine);
+    Scene_stop(scene, engine);
+    Scene_start(scene, engine);
 }
 
 void Scene_reset_camera(Scene *scene, Engine *engine) {
@@ -112,10 +118,24 @@ void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
   Scene_set_tile_map(scene, engine, map);
 }
 
+static inline int entity_update_traverse_cb(BSTreeNode *node, void *context) {
+    SceneTraverseCtx *ctx = (SceneTraverseCtx *)context;
+    Entity *entity = node->data;
+    Entity_update(entity, ctx->engine);
+    return 0;
+}
+
+static inline int overlay_update_traverse_cb(BSTreeNode *node, void *context) {
+    SceneTraverseCtx *ctx = (SceneTraverseCtx *)context;
+    Overlay *overlay = node->data;
+    Overlay_update(overlay, ctx->engine);
+    return 0;
+}
+
 void Scene_update(Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
     Scene_control(scene, engine);
-  
+
     int i = 0;
     for (i = 0; i < INPUT_NUM_CONTROLLERS; i++) {
         Scripting_call_hook(engine->scripting, engine->input->controllers[i],
@@ -126,15 +146,9 @@ void Scene_update(Scene *scene, Engine *engine) {
 
     Scripting_call_hook(engine->scripting, scene, "main");
 
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        Entity_update(entity, engine);
-    }
-
-    for (i = 0; i < DArray_count(scene->overlays); i++) {
-        Overlay *overlay = DArray_get(scene->overlays, i);
-        if (overlay) Overlay_update(overlay, engine);
-    }
+    SceneTraverseCtx ctx = {.scene = scene, .engine = engine};
+    BSTree_traverse(scene->entities, entity_update_traverse_cb, &ctx);
+    BSTree_traverse(scene->overlays, overlay_update_traverse_cb, &ctx);
 
     Camera_track(scene->camera);
 }
@@ -173,10 +187,66 @@ void Scene_control(Scene *scene, Engine *engine) {
     if (scene->proto.control != NULL) scene->_(control)(scene, engine);
 }
 
+void Scene_start(Scene *scene, Engine *engine) {
+    check(scene != NULL, "No scene to start");
+    check(engine != NULL, "Scene requires engine to start");
+    if (scene->started) return;
+    assert(scene->entities == NULL);
+    scene->entities = BSTree_create(Entity_z_cmp);
+    scene->overlays = BSTree_create(Overlay_z_cmp);
+
+    if (scene->proto.start) scene->_(start)(scene, engine);
+
+    if (Scripting_call_hook(engine->scripting, scene, "started")) {
+        if (scene->proto.start_success_cb) {
+            scene->_(start_success_cb)(scene, engine);
+        }
+        scene->started = 1;
+        scene->started_at = Engine_get_ticks(engine);
+    } else {
+        // Need to do a graceful stop since user could have manipulated the scene
+        // before the hook hit the error.
+
+        scene->started = 1;
+        Scene_stop(scene, engine);
+
+        // Now scene->started is 0
+    }
+    return;
+error:
+    return;
+}
+
+void Scene_stop(Scene *scene, Engine *engine) {
+    check(scene != NULL, "No scene to stop");
+    check(engine != NULL, "Scene requires engine to stop");
+
+    Scripting_call_hook(engine->scripting, scene, "cleanup");
+
+    if (scene->proto.stop) scene->_(stop)(scene, engine);
+    BSTree_destroy(scene->entities);
+    scene->entities = NULL;
+
+    BSTree_destroy(scene->overlays);
+    scene->overlays = NULL;
+
+    scene->started = 0;
+    return;
+error:
+    return;
+}
+
 void Scene_render(Scene *scene, Engine *engine) {
     if (scene->proto.render != NULL) {
         scene->_(render)(scene, engine);
     }
+}
+
+static inline int entity_deselect_traverse_cb(BSTreeNode *node,
+        void *UNUSED(context)) {
+    Entity *entity = node->data;
+    entity->selected = 0;
+    return 0;
 }
 
 void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode) {
@@ -190,11 +260,7 @@ void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode) {
                 scene->selected_entities = NULL;
             }
 
-            int i = 0;
-            for (i = 0; i < DArray_count(scene->entities); i++) {
-                Entity *entity = DArray_get(scene->entities, i);
-                entity->selected = 0;
-            }
+            BSTree_traverse(scene->entities, entity_deselect_traverse_cb, NULL);
             break;
 
 
@@ -232,34 +298,44 @@ int Scene_select_entities_at(Scene *scene, VPoint screen_point) {
 
 #pragma mark - Rendering
 
+static inline int entity_render_traverse_cb(BSTreeNode *node, void *context) {
+    SceneTraverseCtx *ctx = (SceneTraverseCtx *)context;
+    Entity *entity = node->data;
+    Entity_render(entity, ctx->engine, ctx->draw_buffer);
+    return 0;
+}
+
 void Scene_render_entities(Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
     Graphics_use_shader(engine->graphics, dshader);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, engine->graphics->projection_matrix.gl);
 
-    int i = 0;
-    for (i = 0; i < DArray_count(scene->entities); i++) {
-        Entity *entity = DArray_get(scene->entities, i);
-        Entity_render(entity, engine, dshader->draw_buffer);
-    }
+    SceneTraverseCtx ctx = {.engine = engine,
+        .draw_buffer = dshader->draw_buffer};
+    BSTree_traverse(scene->entities, entity_render_traverse_cb, &ctx);
 
     DrawBuffer_draw(dshader->draw_buffer);
     DrawBuffer_empty(dshader->draw_buffer);
 }
 
+static inline int entity_render_sel_traverse_cb(BSTreeNode *node,
+        void *context) {
+    SceneTraverseCtx *ctx = (SceneTraverseCtx *)context;
+    Entity *entity = node->data;
+
+    VRect entity_rect = Entity_real_rect(entity);
+    GLfloat color[4] = {1, 1, 1, 0.5};
+    if (entity->selected) color[3] = 1.0;
+    Graphics_stroke_rect(ctx->engine->graphics, entity_rect, color, 2, 0);
+    return 0;
+}
+
+
 void Scene_render_selected_entities(Scene *scene, Engine *engine) {
     if (scene->selection_mode != kSceneNotSelecting) {
-        int i = 0;
-        for (i = 0; i < DArray_count(scene->entities); i++) {
-            Entity *entity = DArray_get(scene->entities, i);
-            if (!entity) continue;
-
-            VRect entity_rect = Entity_real_rect(entity);
-            GLfloat color[4] = {1, 1, 1, 0.5};
-            if (entity->selected) color[3] = 1.0;
-            Graphics_stroke_rect(engine->graphics, entity_rect, color, 2, 0);
-        }
+        SceneTraverseCtx ctx = {.engine = engine};
+        BSTree_traverse(scene->entities, entity_render_sel_traverse_cb, &ctx);
     }
 }
 
@@ -290,35 +366,48 @@ void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
     }
 }
 
-void Scene_render_overlays(Scene *scene, Engine *engine) {
-    int i = 0;
-    for (i = 0; i < DArray_count(scene->overlays); i++) {
-        Overlay *overlay = DArray_get(scene->overlays, i);
-        if (overlay) Overlay_render(overlay, engine);
-    }
-}
-
-static inline int overlay_z_cmp(Overlay **a, Overlay **b) {
-    Overlay *oa = (Overlay *)*a;
-    Overlay *ob = (Overlay *)*b;
-    if (oa->z_index > ob->z_index) return 1;
-    if (oa->z_index < ob->z_index) return -1;
+static inline int overlay_render_traverse_cb(BSTreeNode *node, void *context) {
+    SceneTraverseCtx *ctx = (SceneTraverseCtx *)context;
+    Overlay *overlay = node->data;
+    Overlay_render(overlay, ctx->engine);
     return 0;
 }
 
+void Scene_render_overlays(Scene *scene, Engine *engine) {
+    SceneTraverseCtx ctx = {.engine = engine};
+    BSTree_traverse(scene->overlays, overlay_render_traverse_cb, &ctx);
+}
+
+void Scene_add_entity(Scene *scene, Engine *engine, struct Entity *entity) {
+    assert(entity != NULL);
+    assert(scene != NULL);
+    entity->scene = scene;
+    entity->pixels_per_meter = scene->pixels_per_meter;
+    BSTree_set(scene->entities, &entity->z_key, entity);
+    if (scene->proto.add_entity_cb) {
+        scene->_(add_entity_cb)(scene, engine, entity);
+    }
+}
+
+void Scene_remove_entity(Scene *scene, Engine *engine,
+                         struct Entity *entity) {
+    assert(entity != NULL);
+    assert(scene != NULL);
+    BSTree_delete(scene->entities, &entity->z_key);
+    if (scene->proto.remove_entity_cb) {
+        scene->_(remove_entity_cb)(scene, engine, entity);
+    }
+}
+
 void Scene_add_overlay(Scene *scene, Overlay *overlay) {
-    DArray_push(scene->overlays, overlay);
+    assert(overlay != NULL);
+    assert(scene != NULL);
     overlay->scene = scene;
-  
-    DArray_mergesort(scene->overlays, (DArray_compare)overlay_z_cmp);
+    BSTree_set(scene->overlays, &overlay->z_key, overlay);
 }
 
 void Scene_remove_overlay(Scene *scene, Overlay *overlay) {
-    int i = 0;
-    for (i = 0; i < DArray_count(scene->overlays); i++) {
-        if (DArray_get(scene->overlays, i) == overlay) {
-            DArray_remove(scene->overlays, i);
-            break;
-        }
-    }
+    assert(overlay != NULL);
+    assert(scene != NULL);
+    BSTree_delete(scene->overlays, &overlay->z_key);
 }

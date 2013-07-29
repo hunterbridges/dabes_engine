@@ -11,42 +11,6 @@
 #include "scene.h"
 #include "overlay.h"
 
-void StaticScene_stop(struct Scene *scene, Engine *engine) {
-    if (!scene->started) return;
-
-    Scripting_call_hook(engine->scripting, scene, "cleanup");
-
-    DArray_destroy(scene->entities);
-    scene->entities = NULL;
-
-    DArray_destroy(scene->overlays);
-    scene->overlays = NULL;
-
-    Stepper_reset(engine->physics->stepper);
-    scene->started = 0;
-}
-
-void StaticScene_start(struct Scene *scene, Engine *engine) {
-    if (scene->started) return;
-    assert(scene->world == NULL);
-    assert(scene->entities == NULL);
-    scene->entities = DArray_create(sizeof(Entity *), 8);
-    scene->overlays = DArray_create(sizeof(Overlay *), 8);
-
-    if (Scripting_call_hook(engine->scripting, scene, "started")) {
-      scene->started = 1;
-      scene->started_at = Engine_get_ticks(engine);
-    } else {
-      // Need to do a graceful stop since user could have manipulated the scene
-      // before the hook hit the error.
-
-      scene->started = 1;
-      StaticScene_stop(scene, engine);
-
-      // Now scene->started is 0
-    }
-}
-
 void StaticScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
     check(scene != NULL, "No scene to destroy");
 error:
@@ -65,7 +29,7 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
 
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
-  
+
     Scene_fill(scene, engine, scene->bg_color);
 
     if (scene->parallax) {
@@ -94,28 +58,19 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
 void StaticScene_add_entity_body(Scene *UNUSED(scene), Engine *UNUSED(engine),
         Entity *UNUSED(entity)) { }
 
-void StaticScene_add_entity(Scene *scene, Engine *engine,
-        Entity *entity) {
-    assert(entity != NULL);
-    assert(scene != NULL);
-    entity->scene = scene;
-    DArray_push(scene->entities, entity);
-    if (scene->space) {
-        StaticScene_add_entity_body(scene, engine, entity);
-    }
-}
-
 Entity *StaticScene_hit_test(Scene *UNUSED(scene), VPoint UNUSED(g_point)) {
     return NULL;
 }
 
 SceneProto StaticSceneProto = {
-    .start = StaticScene_start,
-    .stop = StaticScene_stop,
+    .start = NULL,
+    .start_success_cb = NULL,
+    .stop = NULL,
     .cleanup = StaticScene_cleanup,
     .update = StaticScene_update,
     .render = StaticScene_render,
     .control = StaticScene_control,
-    .add_entity = StaticScene_add_entity,
-    .hit_test = StaticScene_hit_test
+    .hit_test = StaticScene_hit_test,
+    .add_entity_cb = NULL,
+    .remove_entity_cb = NULL
 };

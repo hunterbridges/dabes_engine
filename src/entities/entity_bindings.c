@@ -11,15 +11,16 @@ Scripting_num_setter(Entity, alpha);
 
 int luab_Entity_new(lua_State *L) {
     Entity_userdata *ud = NULL;
+    Engine *engine = luaL_get_engine(L);
 
     ud = lua_newuserdata(L, sizeof(Entity_userdata));
     check(ud != NULL, "Could not make Entity userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_Entity_metatable);
     lua_setmetatable(L, -2);
 
-    Entity *entity = Entity_create();
+    Entity *entity = Entity_create(engine);
     luaL_register_ud(L, -1, (void **)&ud->p, entity);
     return 1;
 error:

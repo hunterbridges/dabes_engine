@@ -11,6 +11,8 @@ Overlay *Overlay_create(Engine *engine, char *font_name, int px_size) {
     }
 
     overlay->sprites = DArray_create(sizeof(Sprite *), 8);
+    overlay->timestamp = (uint32_t)Engine_get_ticks(engine);
+    Overlay_set_z_index(overlay, 1);
 
     return overlay;
 error:
@@ -53,3 +55,24 @@ void Overlay_render(Overlay *overlay, Engine *engine) {
 
     Scripting_call_hook(engine->scripting, overlay, "render");
 }
+
+void Overlay_set_z_index(Overlay *overlay, int z_index) {
+    if (overlay->scene) {
+        BSTree_delete(overlay->scene->overlays, &overlay->z_key);
+    }
+    overlay->z_index = z_index;
+    overlay->z_key = ((uint64_t)z_index << 32) | overlay->timestamp;
+    if (overlay->scene) {
+        BSTree_set(overlay->scene->overlays, &overlay->z_key, overlay);
+    }
+}
+
+int Overlay_z_cmp(void *a, void *b) {
+    uint64_t left = a ? *(uint64_t *)a : 0;
+    uint64_t right = b ? *(uint64_t *)b : 0;
+    if (left > right) return 1;
+    if (left == right) return 0;
+    if (left < right) return -1;
+    return 0;
+}
+

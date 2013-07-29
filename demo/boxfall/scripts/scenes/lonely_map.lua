@@ -30,7 +30,7 @@ LonelyMap = Scene:extend({
         megaman.body.pos = {5.0 / 2, 23.25 / 2}
         megaman.controller = get_controller(1)
         megaman.z_index = 3
-        self:add_entity(megaman)
+        self.entities:add(megaman)
         self.camera:track_entities(megaman)
         self.camera.snap_to_scene = true
 
@@ -38,10 +38,10 @@ LonelyMap = Scene:extend({
 
         local test_overlay = TestOverlay:new()
         test_overlay.z_index = 2
-        self:add_overlay(test_overlay)
+        self.overlays:add(test_overlay)
 
         local another_overlay = AnotherOverlay:new()
         another_overlay.z_index = 1
-        self:add_overlay(another_overlay)
+        self.overlays:add(another_overlay)
     end
 })

@@ -123,6 +123,17 @@ Scene = BoundObject:extend({
         started_at = BoundObject.readonly
     },
 
+    _collections = {
+        entities = {
+            adder = BoundObject.fwd_func("add_entity"),
+            remover = BoundObject.fwd_func("remove_entity")
+        },
+        overlays = {
+            adder = BoundObject.fwd_func("add_overlay"),
+            remover = BoundObject.fwd_func("remove_overlay")
+        },
+    },
+
 --- Class Methods.
 -- Must be called on `Class`, with a capital leading character.
 -- e.g. `Class:method("foo")`
@@ -225,27 +236,6 @@ Scene = BoundObject:extend({
     -- meters
     -- @treturn nil
     load_map = BoundObject.fwd_func("load_map"),
-
-    --- Add an @{entity|Entity} to the `Scene`.
-    --
-    -- @function scene:add_entity
-    -- @tparam Entity entity The entity to add
-    -- @treturn nil
-    add_entity = BoundObject.fwd_adder("add_entity"),
-
-    --- Add an @{overlay|Overlay} to the `Scene`.
-    --
-    -- @function scene:add_overlay
-    -- @tparam Overlay overlay The overlay to add
-    -- @treturn nil
-    add_overlay = BoundObject.fwd_adder("add_overlay"),
-
-    --- Remove an @{overlay|Overlay} from the `Scene`.
-    --
-    -- @function scene:remove_overlay
-    -- @tparam Overlay overlay The overlay to add
-    -- @treturn nil
-    remove_overlay = BoundObject.fwd_remover("remove_overlay"),
 
 --- Hooks.
 -- Callbacks implemented in subclasses to customize behavior. Hooks are called

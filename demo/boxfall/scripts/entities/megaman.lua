@@ -25,7 +25,7 @@ Megaman = Entity:extend({
 
         self.ground_sensor = Sensor:new(hbw * w - 0.1, 0.1,
                                         {0, hbh / 2 * h - 0.04})
-        body:add_sensor(self.ground_sensor)
+        body.sensors:add(self.ground_sensor)
 
         self.sprite = self.build_sprite()
         self.alpha = 0
@@ -80,10 +80,18 @@ Megaman = Entity:extend({
             local ppos = self.body.pos
             ppos[2] = ppos[2] - 1.0
             projectile.body.pos = ppos
-            projectile.body.velo = {0, -50}
+            projectile.z_index = 2
+            projectile.body.velo = {0, -5}
             projectile.body.elasticity = 0.1
             projectile.body.mass = 1000
-            self.scene:add_entity(projectile)
+            
+            projectile.peaser = Easer:new(3000)
+            projectile.peaser.finish = function(easer)
+            	self.scene.camera:track_entities(self)
+            	self.scene.entities:remove(projectile)
+            end
+            
+            self.scene.entities:add(projectile)
             self.scene.camera:track_entities(self, projectile)
             Sfx:new("media/sfx/blast.ogg"):play()
         end
@@ -148,6 +156,13 @@ Megaman = Entity:extend({
                     self.force_keyframe = true
                 end
             end
+        end
+
+        if self.controller.pressed.down then
+        	self.z_index = 0
+        end
+        if self.controller.released.down then
+        	self.z_index = 3
         end
 
         if (math.abs(velo[1]) >= self.motion.max_velo and

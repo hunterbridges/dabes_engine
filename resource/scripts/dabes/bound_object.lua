@@ -9,6 +9,33 @@
 
 require 'dabes.object'
 
+Collection = Object:extend({
+
+    new = function(class, owner)
+        local instance = Object:new()
+        local meta = getmetatable(instance)
+        setmetatable(meta, class)
+
+        instance.owner = owner
+
+        return instance
+    end,
+
+    add = function(self, member, ...)
+        if self.adder == nil then return end
+        self._cache[member] = true
+        return self.adder(self.owner, member, ...)
+    end,
+
+    remove = function(self, member, ...)
+        if self.remover == nil then return end
+        local rc = self.remover(self.owner, member, ...)
+        self._cache[member] = nil
+        return rc
+    end
+
+})
+
 BoundObject = Object:extend({
 
 --- Configuration.
@@ -19,6 +46,9 @@ BoundObject = Object:extend({
     --- The Lua library provided by the game engine that instance method
     -- calls are forwarded to.
     lib = nil,
+
+    --- A table of collection configurations for the class.
+    _collections = {},
 
 --- Properties.
 -- Significant fields on an instance.
@@ -52,9 +82,21 @@ BoundObject = Object:extend({
         bound.real = bound:realize(...)
         dab_registerinstance(bound.real, bound)
         bound.born_at = dab_engine.ticks()
+        bound:_init_collections()
         bound:init(...)
 
         return bound
+    end,
+
+    _init_collections = function(self)
+        for k,v in pairs(self._collections) do
+            local coll = Collection:new(self)
+
+            coll.adder = v.adder
+            coll.remover = v.remover
+
+            self[k] = coll
+        end
     end,
 
 --- Hooks.
