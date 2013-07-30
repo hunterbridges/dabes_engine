@@ -50,6 +50,9 @@ typedef struct Scene {
 
     BSTree *entities;
     BSTree *overlays;
+    uint16_t entity_count;
+    uint16_t overlay_count;
+
     Music *music;
     Camera *camera;
     union {

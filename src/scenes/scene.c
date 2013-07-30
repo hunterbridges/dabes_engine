@@ -362,7 +362,7 @@ void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
                            1, GL_FALSE, engine->graphics->projection_matrix.gl);
         Graphics_draw_rect(engine->graphics, NULL, cover_rect,
                 color.raw, NULL, VPointZero, GfxSizeZero,
-                0, 0);
+                0, 0, 1);
     }
 }
 
@@ -381,9 +381,10 @@ void Scene_render_overlays(Scene *scene, Engine *engine) {
 void Scene_add_entity(Scene *scene, Engine *engine, struct Entity *entity) {
     assert(entity != NULL);
     assert(scene != NULL);
-    entity->scene = scene;
     entity->pixels_per_meter = scene->pixels_per_meter;
+    Entity_set_add_index(entity, scene->entity_count++);
     BSTree_set(scene->entities, &entity->z_key, entity);
+    entity->scene = scene;
     if (scene->proto.add_entity_cb) {
         scene->_(add_entity_cb)(scene, engine, entity);
     }
@@ -402,8 +403,9 @@ void Scene_remove_entity(Scene *scene, Engine *engine,
 void Scene_add_overlay(Scene *scene, Overlay *overlay) {
     assert(overlay != NULL);
     assert(scene != NULL);
-    overlay->scene = scene;
+    Overlay_set_add_index(overlay, scene->overlay_count++);
     BSTree_set(scene->overlays, &overlay->z_key, overlay);
+    overlay->scene = scene;
 }
 
 void Scene_remove_overlay(Scene *scene, Overlay *overlay) {

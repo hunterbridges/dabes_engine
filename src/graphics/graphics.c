@@ -324,32 +324,35 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
                        GL_FALSE, graphics->projection_matrix.gl);
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-
+    VVector4 aVertex = {.raw = {1, 1, 1, 1}};
+  
     // Transpose modelview matrix because attribute reads columns, not rows.
     VMatrix tmvm = graphics->modelview_matrix;
 
-    VVector4 vertices[7 * num_points];
+    VVector4 vertices[8 * num_points];
     int i = 0;
     for (i = 0; i < num_points; i++) {
-        int pos_idx   = i * 7;
-        int color_idx = i * 7 + 1;
-        int tex_idx   = i * 7 + 2;
-        int mvm_1_idx = i * 7 + 3;
-        int mvm_2_idx = i * 7 + 4;
-        int mvm_3_idx = i * 7 + 5;
-        int mvm_4_idx = i * 7 + 6;
+        int pos_idx   = i * 8;
+        int color_idx = i * 8 + 1;
+        int alpha_idx = i * 8 + 2;
+        int tex_idx   = i * 8 + 3;
+        int mvm_1_idx = i * 8 + 4;
+        int mvm_2_idx = i * 8 + 5;
+        int mvm_3_idx = i * 8 + 6;
+        int mvm_4_idx = i * 8 + 7;
 
         VPoint point = points[i];
         VVector4 pos = {.raw = {point.x, point.y, 0.0, 1.0}};
         vertices[pos_idx] = pos;
         vertices[color_idx] = cVertex;
+        vertices[alpha_idx] = aVertex;
         vertices[tex_idx] = tex;
         vertices[mvm_1_idx] = tmvm.v[0];
         vertices[mvm_2_idx] = tmvm.v[1];
         vertices[mvm_3_idx] = tmvm.v[2];
         vertices[mvm_4_idx] = tmvm.v[3];
     }
-    glBufferData(GL_ARRAY_BUFFER, 7 * num_points * sizeof(VVector4), vertices,
+    glBufferData(GL_ARRAY_BUFFER, 8 * num_points * sizeof(VVector4), vertices,
             GL_STATIC_DRAW);
 
     // Texture
@@ -385,7 +388,8 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
 
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index) {
+                          GLfloat color[4], double rot_degs, int z_index,
+                          GLfloat alpha) {
     SpriteFrame *frame = &sprite->frames[sprite->current_frame];
     VPoint frame_offset = frame->offset;
     frame_offset.x += sprite->padding;
@@ -397,12 +401,12 @@ void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
         draw_size.w = -sprite->cell_size.w;
     }
     Graphics_draw_rect(graphics, draw_buffer, rect, color, sprite->texture,
-                       frame_offset, draw_size, rot_degs, z_index);
+                       frame_offset, draw_size, rot_degs, z_index, alpha);
 }
 
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index) {
+        GfxSize textureSize, double rotation, int z_index, GLfloat alpha) {
     check_mem(graphics);
     Graphics_reset_modelview_matrix(graphics);
     double w = rect.tr.x - rect.tl.x;
@@ -444,13 +448,15 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     }
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-
+    VVector4 aVertex = {.raw = {1, 1, 1, alpha}};
+  
     // Transpose modelview matrix because attribute reads columns, not rows.
     VMatrix tmvm = graphics->modelview_matrix;
 
-    VVector4 vertices[7 * 6] = {
+    VVector4 vertices[8 * 6] = {
         {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
             cVertex,
+            aVertex,
             {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
@@ -458,6 +464,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[3],
         {.raw = {w / 2.0, -h / 2.0, 0, 1}},
             cVertex,
+            aVertex,
             {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
@@ -465,6 +472,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[3],
         {.raw = {w / 2.0, h / 2.0, 0, 1}},
             cVertex,
+            aVertex,
             {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
@@ -473,6 +481,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
 
         {.raw = {w / 2.0, h / 2.0, 0, 1}},
             cVertex,
+            aVertex,
             {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
@@ -480,6 +489,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[3],
         {.raw = {-w / 2.0, h / 2.0, 0, 1}},
             cVertex,
+            aVertex,
             {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
@@ -487,6 +497,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[3],
         {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
             cVertex,
+            aVertex,
             {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
             tmvm.v[0],
             tmvm.v[1],
@@ -495,7 +506,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     };
 
     if (draw_buffer) {
-        DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 7, vertices);
+        DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 8, vertices);
     } else {
         glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
                     texture ? texture->gl_tex : 0);
@@ -716,6 +727,7 @@ void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
 
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
+    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_ALPHA]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1);
@@ -723,7 +735,7 @@ void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3);
 
     // Position, color, texture, modelView * 4
-    int v_size = sizeof(VVector4) * 7;
+    int v_size = sizeof(VVector4) * 8;
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, v_size, 0);
@@ -731,26 +743,30 @@ void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_COLOR], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 1));
-
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
+  
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_ALPHA], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 2));
+  
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
+                          GL_FLOAT, GL_FALSE, v_size,
+                          (GLvoid *)(sizeof(VVector4) * 3));
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX],
                           4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 3));
+                          (GLvoid *)(sizeof(VVector4) * 4));
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1,
                           4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 4));
+                          (GLvoid *)(sizeof(VVector4) * 5));
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 2,
                           4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 5));
+                          (GLvoid *)(sizeof(VVector4) * 6));
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 3,
                           4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 6));
+                          (GLvoid *)(sizeof(VVector4) * 7));
 
     graphics->bind_vao(0);
 }
@@ -760,6 +776,7 @@ void tear_down_decal_shader(GfxShader *shader, Graphics *graphics) {
 
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_COLOR]);
+    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_ALPHA]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_TEXTURE]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] + 1);
@@ -788,6 +805,8 @@ void Graphics_build_decal_shader(Graphics *graphics) {
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_DECAL_COLOR] =
         glGetAttribLocation(program, "color");
+    GfxShader_attributes[ATTRIB_DECAL_ALPHA] =
+        glGetAttribLocation(program, "alpha");
     GfxShader_attributes[ATTRIB_DECAL_TEXTURE] =
         glGetAttribLocation(program, "texture");
     GfxShader_attributes[ATTRIB_DECAL_MODELVIEW_MATRIX] =

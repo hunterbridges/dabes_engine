@@ -1,5 +1,6 @@
 precision mediump float;
 varying vec4 colorVarying;
+varying vec4 alphaVarying;
 varying vec4 textureVarying;
 uniform int hasTexture;
 uniform sampler2D texture;
@@ -12,5 +13,6 @@ void main()
     vec4 texColor = texture2D(texture, texCoord);
     mixed = texColor + colorVarying * (1.0 - texColor.a);
   }
+  mixed = mixed * alphaVarying;
   gl_FragColor = mixed;
 }

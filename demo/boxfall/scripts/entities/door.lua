@@ -17,7 +17,7 @@ Door = Entity:extend({
         self.body = body
 
         self.sprite = self.build_sprite()
-        self.alpha = 0
+        self.alpha = 1
 
         local open_sensor = Sensor:new(0.1, 0.1,
                                        {0, hbh / 2 * h - 0.04})

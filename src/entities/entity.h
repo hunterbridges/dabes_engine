@@ -22,11 +22,15 @@ typedef struct Entity {
     Sprite *sprite;
     Body *body;
     struct Scene *scene;
+    VVector4 bg_color;
     GLfloat alpha;
 
     int pixels_per_meter;
-    int z_index;
+
+    uint16_t z_index;
     uint32_t timestamp;
+    uint16_t add_index;
+
     uint64_t z_key;
 
     VPoint center;
@@ -47,7 +51,8 @@ void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
-void Entity_set_z_index(Entity *entity, int z_index);
+void Entity_set_z_index(Entity *entity, uint16_t z_index);
+void Entity_set_add_index(Entity *entity, uint16_t add_index);
 int Entity_z_cmp(void *a, void *b);
 
 int Entity_set_center(Entity *entity, VPoint center);

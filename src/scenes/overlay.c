@@ -10,6 +10,7 @@ Overlay *Overlay_create(Engine *engine, char *font_name, int px_size) {
         overlay->font = font;
     }
 
+    overlay->alpha = 1;
     overlay->sprites = DArray_create(sizeof(Sprite *), 8);
     overlay->timestamp = (uint32_t)Engine_get_ticks(engine);
     Overlay_set_z_index(overlay, 1);
@@ -56,15 +57,26 @@ void Overlay_render(Overlay *overlay, Engine *engine) {
     Scripting_call_hook(engine->scripting, overlay, "render");
 }
 
-void Overlay_set_z_index(Overlay *overlay, int z_index) {
+void Overlay_refresh_z_key(Overlay *overlay) {
     if (overlay->scene) {
         BSTree_delete(overlay->scene->overlays, &overlay->z_key);
     }
-    overlay->z_index = z_index;
-    overlay->z_key = ((uint64_t)z_index << 32) | overlay->timestamp;
+    overlay->z_key = (((uint64_t)overlay->z_index << 48) |
+                     ((uint64_t)overlay->timestamp << 16) |
+                     overlay->add_index);
     if (overlay->scene) {
         BSTree_set(overlay->scene->overlays, &overlay->z_key, overlay);
     }
+}
+
+void Overlay_set_z_index(Overlay *overlay, uint16_t z_index) {
+    overlay->z_index = z_index;
+    Overlay_refresh_z_key(overlay);
+}
+
+void Overlay_set_add_index(Overlay *overlay, uint16_t add_index) {
+    overlay->add_index = add_index;
+    Overlay_refresh_z_key(overlay);
 }
 
 int Overlay_z_cmp(void *a, void *b) {

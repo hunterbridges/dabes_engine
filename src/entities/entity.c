@@ -9,7 +9,9 @@ Entity *Entity_create(Engine *engine) {
     Entity *entity = calloc(1, sizeof(Entity));
     check(entity != NULL, "Failed to create entity");
 
-    entity->alpha = 0.f;
+    entity->alpha = 1.f;
+    VVector4 bg_color = {.raw = {0, 0, 0, 0}};
+    entity->bg_color = bg_color;
     entity->timestamp = (uint32_t)Engine_get_ticks(engine);
     Entity_set_z_index(entity, 1);
 
@@ -79,10 +81,10 @@ void Entity_render(Entity *entity, struct Engine *engine,
       rads = entity->body->_(get_angle)(entity->body);
     }
     float degrees = rads * 180.0 / M_PI;
-    GLfloat color[4] = {0.f, 0.f, 0.f, entity->alpha};
 
-    Graphics_draw_sprite(graphics, entity->sprite, draw_buffer, rect, color,
-                         degrees, entity->z_index);
+    Graphics_draw_sprite(graphics, entity->sprite, draw_buffer, rect,
+                         entity->bg_color.raw, degrees, entity->z_index,
+                         entity->alpha);
 }
 
 void Entity_update(Entity *entity, Engine *engine) {
@@ -98,15 +100,26 @@ error:
     return;
 }
 
-void Entity_set_z_index(Entity *entity, int z_index) {
+void Entity_refresh_z_key(Entity *entity) {
     if (entity->scene) {
         BSTree_delete(entity->scene->entities, &entity->z_key);
     }
-    entity->z_index = z_index;
-    entity->z_key = ((uint64_t)z_index << 32) | entity->timestamp;
+    entity->z_key = (((uint64_t)entity->z_index << 48) |
+                     ((uint64_t)entity->timestamp << 16) |
+                     entity->add_index);
     if (entity->scene) {
         BSTree_set(entity->scene->entities, &entity->z_key, entity);
     }
+}
+
+void Entity_set_z_index(Entity *entity, uint16_t z_index) {
+    entity->z_index = z_index;
+    Entity_refresh_z_key(entity);
+}
+
+void Entity_set_add_index(Entity *entity, uint16_t add_index) {
+    entity->add_index = add_index;
+    Entity_refresh_z_key(entity);
 }
 
 int Entity_z_cmp(void *a, void *b) {

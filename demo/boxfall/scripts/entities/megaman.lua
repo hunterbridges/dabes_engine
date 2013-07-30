@@ -28,7 +28,7 @@ Megaman = Entity:extend({
         body.sensors:add(self.ground_sensor)
 
         self.sprite = self.build_sprite()
-        self.alpha = 0
+        self.alpha = 1
     end,
 
     build_sprite = function()
@@ -75,24 +75,29 @@ Megaman = Entity:extend({
             end
         end
 
-        if self.controller.released.up then
-            local projectile = Box:new()
-            local ppos = self.body.pos
-            ppos[2] = ppos[2] - 1.0
-            projectile.body.pos = ppos
-            projectile.z_index = 2
-            projectile.body.velo = {0, -5}
-            projectile.body.elasticity = 0.1
-            projectile.body.mass = 1000
+        if self.controller.pressed.up then
+        	for i=1,5 do
+	            local projectile = Box:new()
+	            local ppos = self.body.pos
+	            ppos[2] = ppos[2] - 1.0
+	            projectile.body.pos = ppos
+	            projectile.z_index = 2
+	            projectile.body.velo = {0, -5}
+	            projectile.body.elasticity = 0.1
+	            projectile.body.mass = 1000
+	            
+	            projectile.peaser = Easer:new(i * 2000)
+	            projectile.peaser.update = function(easer)
+	            	projectile.alpha = 1.0 - easer.value
+	            end
+	            
+	            projectile.peaser.finish = function(easer)
+	            	self.scene.camera:track_entities(self)
+	            	self.scene.entities:remove(projectile)
+	            end
             
-            projectile.peaser = Easer:new(3000)
-            projectile.peaser.finish = function(easer)
-            	self.scene.camera:track_entities(self)
-            	self.scene.entities:remove(projectile)
-            end
-            
-            self.scene.entities:add(projectile)
-            self.scene.camera:track_entities(self, projectile)
+                self.scene.entities:add(projectile)
+	        end
             Sfx:new("media/sfx/blast.ogg"):play()
         end
 

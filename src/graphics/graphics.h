@@ -101,6 +101,7 @@ enum {
 enum {
     ATTRIB_DECAL_VERTEX,
     ATTRIB_DECAL_COLOR,
+    ATTRIB_DECAL_ALPHA,
     ATTRIB_DECAL_TEXTURE,
     ATTRIB_DECAL_MODELVIEW_MATRIX,
     ATTRIB_TILEMAP_VERTEX,
@@ -172,7 +173,7 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index);
+        GfxSize textureSize, double rotation, int z_index, GLfloat alpha);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
         GLfloat shadow_color[4], VPoint shadow_offset);
@@ -213,7 +214,8 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index);
+                          GLfloat color[4], double rot_degs, int z_index,
+                          GLfloat alpha);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 

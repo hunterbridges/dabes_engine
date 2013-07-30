@@ -18,7 +18,9 @@ Entity = BoundObject:extend({
 -- @section properties
 
    _getters = {
-       --- The fill opacity of the `Entity`
+       --- The opacity of the `Entity`, between `0` and `1`.
+       --
+       -- Default `1`
        alpha = BoundObject.fwd_func('get_alpha'),
 
        --- **(bool)** Whether the entity is being controlled by the system and

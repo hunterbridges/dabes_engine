@@ -104,7 +104,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
             0 - (hyp - screen_size.h) / 2.0,
             hyp, hyp);
     Graphics_draw_rect(graphics, dshader->draw_buffer, sea_rect, parallax->sea_color.raw,
-        NULL, VPointZero, GfxSizeZero, 0, 0);
+        NULL, VPointZero, GfxSizeZero, 0, 0, 1);
 
     // render sky color
     VRect sky_rect = VRect_from_xywh(
@@ -112,7 +112,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
             0 - (hyp - screen_size.h) / 2.0,
             hyp, hyp / 2.0 - y_wiggle);
     Graphics_draw_rect(graphics, dshader->draw_buffer, sky_rect, parallax->sky_color.raw,
-        NULL, VPointZero, GfxSizeZero, 0, 0);
+        NULL, VPointZero, GfxSizeZero, 0, 0, 1);
     DrawBuffer_draw(dshader->draw_buffer);
     DrawBuffer_empty(dshader->draw_buffer);
     

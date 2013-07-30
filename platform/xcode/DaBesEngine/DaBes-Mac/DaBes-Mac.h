@@ -990,6 +990,7 @@ enum {
 enum {
     ATTRIB_DECAL_VERTEX,
     ATTRIB_DECAL_COLOR,
+    ATTRIB_DECAL_ALPHA,
     ATTRIB_DECAL_TEXTURE,
     ATTRIB_DECAL_MODELVIEW_MATRIX,
     ATTRIB_TILEMAP_VERTEX,
@@ -1061,7 +1062,7 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index);
+        GfxSize textureSize, double rotation, int z_index, GLfloat alpha);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
         GLfloat shadow_color[4], VPoint shadow_offset);
@@ -1102,7 +1103,8 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index);
+                          GLfloat color[4], double rot_degs, int z_index,
+                          GLfloat alpha);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
@@ -1476,11 +1478,15 @@ typedef struct Entity {
     Sprite *sprite;
     Body *body;
     struct Scene *scene;
+    VVector4 bg_color;
     GLfloat alpha;
 
     int pixels_per_meter;
-    int z_index;
+
+    uint16_t z_index;
     uint32_t timestamp;
+    uint16_t add_index;
+
     uint64_t z_key;
 
     VPoint center;
@@ -1501,7 +1507,8 @@ void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
-void Entity_set_z_index(Entity *entity, int z_index);
+void Entity_set_z_index(Entity *entity, uint16_t z_index);
+void Entity_set_add_index(Entity *entity, uint16_t add_index);
 int Entity_z_cmp(void *a, void *b);
 
 int Entity_set_center(Entity *entity, VPoint center);
@@ -1883,6 +1890,9 @@ typedef struct Scene {
 
     BSTree *entities;
     BSTree *overlays;
+    uint16_t entity_count;
+    uint16_t overlay_count;
+
     Music *music;
     Camera *camera;
     union {
@@ -2417,8 +2427,13 @@ typedef struct Overlay {
     GfxFont *font;
     DArray *sprites;
     Entity *track_entity;
-    int z_index;
+  
+    float alpha;
+  
+    uint16_t z_index;
     uint32_t timestamp;
+    uint16_t add_index;
+
     uint64_t z_key;
 } Overlay;
 
@@ -2427,7 +2442,8 @@ void Overlay_destroy(Overlay *overlay);
 void Overlay_update(Overlay *overlay, Engine *engine);
 void Overlay_render(Overlay *overlay, Engine *engine);
 void Overlay_add_sprite(Overlay *overlay, struct Sprite *sprite);
-void Overlay_set_z_index(Overlay *overlay, int z_index);
+void Overlay_set_z_index(Overlay *overlay, uint16_t z_index);
+void Overlay_set_add_index(Overlay *overlay, uint16_t add_index);
 int Overlay_z_cmp(void *a, void *b);
 
 #endif

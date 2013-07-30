@@ -53,7 +53,6 @@ FatMap = Scene:extend({
             body.angle = math.pi / 16.0 * (i % 8)
             body.mass = 100.0 + 900.0 * i / num_boxes
 
-            box.alpha = i / num_boxes * 1.0
             box.z_index = 2
             self.entities:add(box)
 

@@ -103,7 +103,7 @@ int luab_Overlay_draw_sprite(lua_State *L) {
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, engine->graphics->projection_matrix.gl);
     Graphics_draw_sprite(engine->graphics, sprite, NULL,
-            rect, color.raw, rotation, 0);
+            rect, color.raw, rotation, 0, overlay->alpha);
 
     return 1;
 error:

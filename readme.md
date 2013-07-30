@@ -40,6 +40,7 @@ Bugs:
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
 * SFX playback sometimes choppy
+* Easers have a tendency to introduce leaks
 
 ```
 # Ya gonna need dis stuf!
