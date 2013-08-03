@@ -1,5 +1,6 @@
 #ifndef __audio_h
 #define __audio_h
+#include <pthread.h>
 #include <lcthw/list.h>
 #if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
@@ -17,6 +18,11 @@ typedef struct Audio {
     List *active_sfx;
     ALCdevice *device;
     ALCcontext *context;
+
+    pthread_t thread;
+    pthread_mutex_t run_lock;
+    pthread_mutex_t music_lock;
+    pthread_mutex_t sfx_lock;
 } Audio;
 
 Audio *Audio_create();
@@ -34,8 +40,5 @@ struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 void Audio_sweep(Audio *audio, struct Engine *engine);
-
-#pragma mark - Audio thread
-void Audio_t_stream(Audio *audio);
 
 #endif

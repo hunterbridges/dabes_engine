@@ -43,6 +43,12 @@ void Sfx_play(Sfx *sfx) {
     sfx->_needs_play = 1;
 }
 
+void Sfx_end(Sfx *sfx) {
+    if (sfx == NULL) return;
+    if (sfx->ended) return;
+    sfx->_needs_end = 1;
+}
+
 void Sfx_set_volume(Sfx *sfx, double volume) {
     sfx->volume = volume;
 
@@ -62,6 +68,11 @@ void Sfx_t_end(Sfx *sfx) {
 
 void Sfx_t_update(Sfx *sfx) {
     if (sfx->ended) return;
+    if (sfx->_needs_end) {
+        Sfx_t_end(sfx);
+        sfx->_needs_end = 0;
+        return;
+    }
 
     // TODO: Lock
     if (!sfx->initialized) {

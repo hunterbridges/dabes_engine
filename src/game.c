@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
     while (engine->input->game_quit == 0) {
         Engine_regulate(engine);
         Input_poll(engine->input);
-        Audio_t_stream(engine->audio);
 
         if (engine->frame_now) {
             Engine_update_easers(engine);
@@ -52,9 +51,12 @@ int main(int argc, char *argv[]) {
     Engine_destroy(engine);
     SDL_FreeSurface(screen);
 
+    pthread_exit(NULL);
+
     return 0;
 error:
     Engine_destroy(engine);
     SDL_FreeSurface(screen);
+    pthread_exit(NULL);
     return 1;
 }

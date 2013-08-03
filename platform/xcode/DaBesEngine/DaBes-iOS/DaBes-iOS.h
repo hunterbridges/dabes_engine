@@ -193,6 +193,7 @@ extern char *bundlePath__;
 #endif
 #ifndef __audio_h
 #define __audio_h
+#include <pthread.h>
 #include <lcthw/list.h>
 #if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
@@ -208,13 +209,17 @@ typedef struct Audio {
     List *active_sfx;
     ALCdevice *device;
     ALCcontext *context;
+
+    pthread_t thread;
+    pthread_mutex_t run_lock;
+    pthread_mutex_t music_lock;
+    pthread_mutex_t sfx_lock;
 } Audio;
 
 Audio *Audio_create();
 int Audio_check();
 
 struct Engine;
-void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -224,6 +229,8 @@ void Audio_destroy_music(Audio *audio, struct Music *music);
 struct Sfx;
 struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
+
+void Audio_sweep(Audio *audio, struct Engine *engine);
 
 #endif
 #ifndef __ogg_stream_h
@@ -279,6 +286,7 @@ void OggStream_rewind(OggStream *ogg_stream);
 #endif
 #ifndef __audio_h
 #define __audio_h
+#include <pthread.h>
 #include <lcthw/list.h>
 #if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
@@ -294,13 +302,17 @@ typedef struct Audio {
     List *active_sfx;
     ALCdevice *device;
     ALCcontext *context;
+
+    pthread_t thread;
+    pthread_mutex_t run_lock;
+    pthread_mutex_t music_lock;
+    pthread_mutex_t sfx_lock;
 } Audio;
 
 Audio *Audio_create();
 int Audio_check();
 
 struct Engine;
-void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -311,36 +323,47 @@ struct Sfx;
 struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
+void Audio_sweep(Audio *audio, struct Engine *engine);
+
 #endif
 #ifndef __music_h
 #define __music_h
 #include <lcthw/list.h>
 #include <OpenAL/al.h>
+#include <pthread.h>
 
 struct Scene;
 typedef struct Music {
     double volume;
     List *ogg_streams;
     int playing;
+    int _needs_play;
+
     int ended;
+    int _needs_end;
+
     int loop;
+    int initialized;
     ALuint source;
     OggStream *active_stream;
-  
+
     struct Scene *scene;
-  
+
     int num_files;
     char *ogg_files[];
 } Music;
 
+#pragma mark - Main thread
 Music *Music_load(int num_files, char *ogg_files[]);
 void Music_destroy(Music *music);
 void Music_play(Music *music);
-void Music_update(Music *music);
 void Music_pause(Music *music);
 void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
 void Music_set_loop(Music *music, int loop);
+
+#pragma mark - Audio thread
+void Music_t_update(Music *music);
 
 #endif
 #ifndef __binding_macros_h
@@ -700,21 +723,32 @@ int luaopen_dabes_music(lua_State *L);
 #ifndef __sfx_h
 #define __sfx_h
 #include <OpenAL/al.h>
+#include <pthread.h>
 
 typedef struct Sfx {
     double volume;
     int playing;
+    int _needs_play;
+
     int ended;
+    int _needs_end;
+
+    int initialized;
     ALuint source;
 
+    char *filename;
     OggStream *ogg_stream;
 } Sfx;
 
+#pragma mark - Main Thread
 Sfx *Sfx_load(char *filename);
 void Sfx_destroy(Sfx *sfx);
 void Sfx_play(Sfx *sfx);
-void Sfx_update(Sfx *sfx);
+void Sfx_end(Sfx *sfx);
 void Sfx_set_volume(Sfx *sfx, double volume);
+
+#pragma mark - Audio thread
+void Sfx_t_update(Sfx *sfx);
 
 #endif
 #ifndef __sfx_bindings
@@ -800,8 +834,10 @@ extern Object ControllerProto;
 #ifndef __input_h
 #define __input_h
 
+#define INPUT_NUM_CONTROLLERS 4
+
 typedef struct Input {
-    Controller *controllers[4];
+    Controller *controllers[INPUT_NUM_CONTROLLERS];
     int game_quit;
     int debug_scene_draw_grid;
     int cam_reset;
@@ -988,6 +1024,7 @@ enum {
 enum {
     ATTRIB_DECAL_VERTEX,
     ATTRIB_DECAL_COLOR,
+    ATTRIB_DECAL_ALPHA,
     ATTRIB_DECAL_TEXTURE,
     ATTRIB_DECAL_MODELVIEW_MATRIX,
     ATTRIB_TILEMAP_VERTEX,
@@ -1059,7 +1096,7 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index);
+        GfxSize textureSize, double rotation, int z_index, GLfloat alpha);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
         GLfloat shadow_color[4], VPoint shadow_offset);
@@ -1100,7 +1137,8 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index);
+                          GLfloat color[4], double rot_degs, int z_index,
+                          GLfloat alpha);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
@@ -1470,14 +1508,20 @@ typedef struct Entity {
     Controller *controller;
     short int auto_control;
     short int force_keyframe;
-  
+
     Sprite *sprite;
     Body *body;
     struct Scene *scene;
+    VVector4 bg_color;
     GLfloat alpha;
 
     int pixels_per_meter;
-    int z_index;
+
+    uint16_t z_index;
+    uint32_t timestamp;
+    uint16_t add_index;
+
+    uint64_t z_key;
 
     VPoint center;
     GfxSize size;
@@ -1488,7 +1532,7 @@ typedef struct Entity {
 struct Engine;
 struct DrawBuffer;
 
-Entity *Entity_create();
+Entity *Entity_create(struct Engine *engine);
 void Entity_destroy(Entity *entity);
 void Entity_render(Entity *self, struct Engine *engine,
                    struct DrawBuffer *draw_buffer);
@@ -1497,8 +1541,9 @@ void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
-void Entity_set_z_index(Entity *entity, int z_index);
-int Entity_z_cmp(void **a, void **b);
+void Entity_set_z_index(Entity *entity, uint16_t z_index);
+void Entity_set_add_index(Entity *entity, uint16_t add_index);
+int Entity_z_cmp(void *a, void *b);
 
 int Entity_set_center(Entity *entity, VPoint center);
 int Entity_set_size(Entity *entity, GfxSize size);
@@ -1841,17 +1886,20 @@ void Recorder_set_state(Recorder *recorder, RecorderState state);
 #ifndef __scene_h
 #define __scene_h
 #include <chipmunk/chipmunk.h>
+#include <lcthw/bstree.h>
 #include <lcthw/darray.h>
 
 struct Scene;
 typedef struct SceneProto {
     void (*start)(struct Scene *scene, Engine *engine);
+    void (*start_success_cb)(struct Scene *scene, Engine *engine);
     void (*stop)(struct Scene *scene, Engine *engine);
     void (*cleanup)(struct Scene *scene, Engine *engine);
     void (*update)(struct Scene *scene, Engine *engine);
     void (*render)(struct Scene *scene, Engine *engine);
     void (*control)(struct Scene *scene, Engine *engine);
-    void (*add_entity)(struct Scene *scene, Engine *engine, Entity *entity);
+    void (*add_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
+    void (*remove_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
     Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
     Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
 } SceneProto;
@@ -1874,8 +1922,11 @@ typedef struct Scene {
 
     GfxTexture *bg_texture; // deprecated
 
-    DArray *entities;
-    DArray *overlays;
+    BSTree *entities;
+    BSTree *overlays;
+    uint16_t entity_count;
+    uint16_t overlay_count;
+
     Music *music;
     Camera *camera;
     union {
@@ -1913,6 +1964,8 @@ void Scene_reset_camera(Scene *scene, Engine *engine);
 void Scene_render(Scene *scene, Engine *engine);
 void Scene_update(Scene *scene, Engine *engine);
 void Scene_control(Scene *scene, Engine *engine);
+void Scene_start(Scene *scene, Engine *engine);
+void Scene_stop(Scene *scene, Engine *engine);
 
 void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
 int Scene_select_entities_at(Scene *scene, VPoint screen_point);
@@ -1924,6 +1977,9 @@ void Scene_render_selected_entities(Scene *scene, Engine *engine);
 void Scene_render_overlays(Scene *scene, Engine *engine);
 
 struct Overlay;
+void Scene_add_entity(Scene *scene, Engine *engine, struct Entity *entity);
+void Scene_remove_entity(Scene *scene, Engine *engine, struct Entity *entity);
+
 void Scene_add_overlay(Scene *scene, struct Overlay *overlay);
 void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
 
@@ -2405,7 +2461,14 @@ typedef struct Overlay {
     GfxFont *font;
     DArray *sprites;
     Entity *track_entity;
-    int z_index;
+  
+    float alpha;
+  
+    uint16_t z_index;
+    uint32_t timestamp;
+    uint16_t add_index;
+
+    uint64_t z_key;
 } Overlay;
 
 Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
@@ -2413,6 +2476,9 @@ void Overlay_destroy(Overlay *overlay);
 void Overlay_update(Overlay *overlay, Engine *engine);
 void Overlay_render(Overlay *overlay, Engine *engine);
 void Overlay_add_sprite(Overlay *overlay, struct Sprite *sprite);
+void Overlay_set_z_index(Overlay *overlay, uint16_t z_index);
+void Overlay_set_add_index(Overlay *overlay, uint16_t add_index);
+int Overlay_z_cmp(void *a, void *b);
 
 #endif
 #ifndef __overlay_bindings_h

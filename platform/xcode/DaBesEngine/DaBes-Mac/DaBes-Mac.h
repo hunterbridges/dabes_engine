@@ -193,6 +193,7 @@ extern char *bundlePath__;
 #endif
 #ifndef __audio_h
 #define __audio_h
+#include <pthread.h>
 #include <lcthw/list.h>
 #if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
@@ -208,13 +209,15 @@ typedef struct Audio {
     List *active_sfx;
     ALCdevice *device;
     ALCcontext *context;
+
+    pthread_t thread;
+    pthread_mutex_t run_lock;
 } Audio;
 
 Audio *Audio_create();
 int Audio_check();
 
 struct Engine;
-void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -224,6 +227,8 @@ void Audio_destroy_music(Audio *audio, struct Music *music);
 struct Sfx;
 struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
+
+void Audio_sweep(Audio *audio, struct Engine *engine);
 
 #endif
 #ifndef __ogg_stream_h
@@ -279,6 +284,7 @@ void OggStream_rewind(OggStream *ogg_stream);
 #endif
 #ifndef __audio_h
 #define __audio_h
+#include <pthread.h>
 #include <lcthw/list.h>
 #if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
@@ -294,13 +300,15 @@ typedef struct Audio {
     List *active_sfx;
     ALCdevice *device;
     ALCcontext *context;
+
+    pthread_t thread;
+    pthread_mutex_t run_lock;
 } Audio;
 
 Audio *Audio_create();
 int Audio_check();
 
 struct Engine;
-void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -311,36 +319,47 @@ struct Sfx;
 struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
+void Audio_sweep(Audio *audio, struct Engine *engine);
+
 #endif
 #ifndef __music_h
 #define __music_h
 #include <lcthw/list.h>
 #include <OpenAL/al.h>
+#include <pthread.h>
 
 struct Scene;
 typedef struct Music {
     double volume;
     List *ogg_streams;
     int playing;
+    int _needs_play;
+
     int ended;
+    int _needs_end;
+
     int loop;
+    int initialized;
     ALuint source;
     OggStream *active_stream;
-  
+
     struct Scene *scene;
-  
+
     int num_files;
     char *ogg_files[];
 } Music;
 
+#pragma mark - Main thread
 Music *Music_load(int num_files, char *ogg_files[]);
 void Music_destroy(Music *music);
 void Music_play(Music *music);
-void Music_update(Music *music);
 void Music_pause(Music *music);
 void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
 void Music_set_loop(Music *music, int loop);
+
+#pragma mark - Audio thread
+void Music_t_update(Music *music);
 
 #endif
 #ifndef __binding_macros_h
@@ -700,21 +719,32 @@ int luaopen_dabes_music(lua_State *L);
 #ifndef __sfx_h
 #define __sfx_h
 #include <OpenAL/al.h>
+#include <pthread.h>
 
 typedef struct Sfx {
     double volume;
     int playing;
+    int _needs_play;
+
     int ended;
+    int _needs_end;
+
+    int initialized;
     ALuint source;
 
+    char *filename;
     OggStream *ogg_stream;
 } Sfx;
 
+#pragma mark - Main Thread
 Sfx *Sfx_load(char *filename);
 void Sfx_destroy(Sfx *sfx);
 void Sfx_play(Sfx *sfx);
-void Sfx_update(Sfx *sfx);
+void Sfx_end(Sfx *sfx);
 void Sfx_set_volume(Sfx *sfx, double volume);
+
+#pragma mark - Audio thread
+void Sfx_t_update(Sfx *sfx);
 
 #endif
 #ifndef __sfx_bindings

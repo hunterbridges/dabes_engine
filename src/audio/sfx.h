@@ -23,6 +23,7 @@ typedef struct Sfx {
 Sfx *Sfx_load(char *filename);
 void Sfx_destroy(Sfx *sfx);
 void Sfx_play(Sfx *sfx);
+void Sfx_end(Sfx *sfx);
 void Sfx_set_volume(Sfx *sfx, double volume);
 
 #pragma mark - Audio thread
