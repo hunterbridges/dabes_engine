@@ -23,7 +23,6 @@ Audio *Audio_create();
 int Audio_check();
 
 struct Engine;
-void Audio_stream(Audio *audio, struct Engine *engine);
 void Audio_destroy(Audio *audio);
 
 struct Music;
@@ -33,5 +32,10 @@ void Audio_destroy_music(Audio *audio, struct Music *music);
 struct Sfx;
 struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
+
+void Audio_sweep(Audio *audio, struct Engine *engine);
+
+#pragma mark - Audio thread
+void Audio_t_stream(Audio *audio);
 
 #endif

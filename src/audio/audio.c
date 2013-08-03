@@ -11,16 +11,6 @@ ALfloat listenerOri[]={0.0,0.0,1.0,0.0,1.0,0.0};
 Audio *Audio_create() {
     Audio *audio = calloc(1, sizeof(Audio));
     check(audio != NULL, "Couldn't create audio");
-#ifdef DABES_SDL
-   int audio_rate = 44100;
-    Uint16 audio_format = AUDIO_S16;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
-        printf("Unable to open audio!\n");
-        return 0;
-    }
-#endif
     const ALCchar *defaultDevice =
         alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
     check(defaultDevice != NULL, "Could not get default audio device");
@@ -59,12 +49,12 @@ error:
     return 0;
 }
 
-void Audio_stream(Audio *audio, Engine *engine) {
+void Audio_sweep(Audio *audio, Engine *engine) {
     ListNode *node = audio->musics->first;
     while (node != NULL) {
         Music *music = node->value;
-
         if (music->ended) {
+            printf("Audio_sweep(): Sweeping music %p\n", music);
             ListNode *old = node;
             node = node->next;
             Scripting_call_hook(engine->scripting, music, "ended");
@@ -73,8 +63,6 @@ void Audio_stream(Audio *audio, Engine *engine) {
             Music_destroy(music);
             continue;
         }
-
-        Music_update(music);
         node = node->next;
     }
 
@@ -83,6 +71,7 @@ void Audio_stream(Audio *audio, Engine *engine) {
         Sfx *sfx = node->value;
 
         if (sfx->ended) {
+            printf("Audio_sweep(): Sweeping sfx %p\n", sfx);
             ListNode *old = node;
             node = node->next;
             Scripting_call_hook(engine->scripting, sfx, "ended");
@@ -90,8 +79,22 @@ void Audio_stream(Audio *audio, Engine *engine) {
             Sfx_destroy(sfx);
             continue;
         }
+        node = node->next;
+    }
+}
 
-        Sfx_update(sfx);
+void Audio_t_stream(Audio *audio) {
+    ListNode *node = audio->musics->first;
+    while (node != NULL) {
+        Music *music = node->value;
+        Music_t_update(music);
+        node = node->next;
+    }
+
+    node = audio->active_sfx->first;
+    while (node != NULL) {
+        Sfx *sfx = node->value;
+        Sfx_t_update(sfx);
         node = node->next;
     }
 }

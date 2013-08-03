@@ -1,0 +1,74 @@
+Current implementation
+----------------------
+
+Engine_create
+    Audio_create
+        alContextCreate
+
+while 1
+    Audio_stream
+        if music ended
+            Scripting_call_hook music end
+            Remove from musics
+            Music_destroy
+        Music_update
+
+        if sfx ended
+            Scripting_call_hook sfx end
+            Remove from sfxs
+            Sfx_destroy
+        Sfx_update
+
+    if frame
+        Scene_update
+            (script) Audio_gen_music
+                Add to musics
+            (script) Audio_gen_sfx
+                Add to sfxs
+
+Engine_destroy
+    Audio_destroy
+        alContextDestroy
+
+
+Threaded implementation
+-----------------------
+
+Thread 1                               Thread 2
+
+Engine_create
+    Audio_create
+        alContextCreate
+        pthread_attr_init
+        pthread_attr_setdetachstate  -------------------------------------------
+        pthread_create               | while 1
+    lock engine_run                  |
+while 1                              |     if trylock engine_run
+                                     |         Unbind all music and sfx
+    Scene_update                     |         pthread_exit
+        (music binding)              |     Audio_stream
+            lock music               |         if trylock music
+            ...                      |             for each streaming music
+            unlock music             |                 if not initialized
+                                     |                     Music_initialize
+        (sfx binding)                |                     Music_play
+            lock sfx                 |                 Music_update
+            ...                      |             unlock music
+            unlock sfx               |
+    Audio_sweep                      |         if trylock sfx
+                                     |             for each streaming sfx
+Engine_destroy                       |                 if not initialized
+     unlock engine_run               |                     Sfx_initialize
+     Audio_destroy                   |                     Sfx_play
+         pthread_join                |                 Sfx_update
+                                     |             unlock sfx
+                                     |
+                                     |
+                                     |
+                                     |
+                                     |
+                                     |
+                                     |
+                                     |
+
+

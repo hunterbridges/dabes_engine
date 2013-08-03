@@ -30,7 +30,6 @@ rawset(_injector, "__newindex", function(table, key, val)
                 exists[k] = v
             end
         else
-            print("New val for key ", key)
             table._veil[key] = val
             _globalkeys[val] = key
 
