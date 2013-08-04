@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Wextra -Isrc -DDEBUG $(OPTFLAGS) -g -Iinclude -I/usr/include/libxml2 -I/usr/local/include/freetype2 -D__ASSERTMACROS__
+CFLAGS=-Wall -Wextra -Isrc -DDEBUG -pthread $(OPTFLAGS) -g -Iinclude -I/usr/include/libxml2 -I/usr/local/include/freetype2 -D__ASSERTMACROS__
 LINKER_FLAGS=`sdl-config --cflags --libs --static-libs` -lSDL_Image -lSDL_TTF -lSDL_Mixer -Llib -llcthw -lz -lxml2 -lchipmunk -llua -lopenal -lvorbis -lvorbisfile -logg -lfreetype
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
@@ -30,7 +30,7 @@ dev: all
 
 $(TARGET): CFLAGS += -fPIC
 $(TARGET): build $(OBJECTS)
-	$(CC) $(CFLAGS) $(LINKER_FLAGS) $(OBJECTS) -o $(TARGET)
+	$(CC) $(CFLAGS) $(LINKER_FLAGS) $(OBJECTS) $(TARGET_FLAGS) -o $(TARGET)
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) -shared -o $@ $(OBJECTS)

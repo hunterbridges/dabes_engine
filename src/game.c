@@ -49,14 +49,11 @@ int main(int argc, char *argv[]) {
     }
 
     Engine_destroy(engine);
-    SDL_FreeSurface(screen);
 
-    pthread_exit(NULL);
+    log_info("main(): Exiting main thread");
 
     return 0;
 error:
     Engine_destroy(engine);
-    SDL_FreeSurface(screen);
-    pthread_exit(NULL);
     return 1;
 }

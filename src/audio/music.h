@@ -22,6 +22,8 @@ typedef struct Music {
 
     struct Scene *scene;
 
+    pthread_mutex_t lock;
+
     int num_files;
     char *ogg_files[];
 } Music;

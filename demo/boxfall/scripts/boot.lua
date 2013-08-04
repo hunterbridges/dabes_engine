@@ -4,7 +4,7 @@ require 'scenes.reasonable_map'
 require 'scenes.lonely_map'
 
 function boot()
-    local map = ReasonableMap:new()
+    local map = LonelyMap:new()
     scene_manager:push_scene(map)
 end
 

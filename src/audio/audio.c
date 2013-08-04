@@ -56,6 +56,7 @@ error:
 }
 
 void Audio_sweep(Audio *audio, Engine *engine) {
+    pthread_mutex_lock(&audio->music_lock);
     ListNode *node = audio->musics->first;
     while (node != NULL) {
         Music *music = node->value;
@@ -70,7 +71,9 @@ void Audio_sweep(Audio *audio, Engine *engine) {
         }
         node = node->next;
     }
+    pthread_mutex_unlock(&audio->music_lock);
 
+    pthread_mutex_lock(&audio->sfx_lock);
     node = audio->active_sfx->first;
     while (node != NULL) {
         Sfx *sfx = node->value;
@@ -85,12 +88,15 @@ void Audio_sweep(Audio *audio, Engine *engine) {
         }
         node = node->next;
     }
+    pthread_mutex_unlock(&audio->sfx_lock);
 }
 
 void Audio_destroy(Audio *audio) {
     check(audio != NULL, "No audio to destroy");
 
     Audio_t_join(audio);
+
+    log_info("Audio_destroy(): Cleaning up Audio");
 
     {LIST_FOREACH(audio->musics, first, next, current) {
         Music *music = current->value;
@@ -111,6 +117,8 @@ void Audio_destroy(Audio *audio) {
     alcDestroyContext(audio->context);
     alcCloseDevice(audio->device);
     free(audio);
+
+    log_info("Audio_destroy(): Audio destroyed");
 error:
     return;
 }
@@ -162,46 +170,56 @@ void *Audio_t_work(void *threadarg) {
         rc = Audio_t_stream(audio);
     }
 
-    printf("Audio_t_work(): exiting...\n");
+    log_info("Audio_t_work(): exiting...");
     pthread_exit(NULL);
 }
 
 void Audio_t_create(Audio *audio) {
     // Create run lock mutex
-    printf("Audio_t_create(): locking run_lock...\n");
-    pthread_mutex_init(&audio->run_lock, NULL);
-    pthread_mutex_init(&audio->music_lock, NULL);
-    pthread_mutex_init(&audio->sfx_lock, NULL);
+    log_info("Audio_t_create(): creating locks...");
+    if (pthread_mutex_init(&audio->run_lock, NULL)) {
+        log_err("Audio_t_create(): Couldn't create run_lock");
+    }
+    if (pthread_mutex_init(&audio->music_lock, NULL)) {
+        log_err("Audio_t_create(): Couldn't create music_lock");
+    }
+    if (pthread_mutex_init(&audio->sfx_lock, NULL)) {
+        log_err("Audio_t_create(): Couldn't create sfx_lock");
+    }
+    log_info("Audio_t_create(): Locking run_lock...");
     pthread_mutex_lock(&audio->run_lock);
 
     // Create joinable worker thread
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    printf("Audio_t_create(): creating thread...\n");
+    log_info("Audio_t_create(): creating thread...");
     int rc = pthread_create(&audio->thread, &attr, Audio_t_work, (void *)audio);
     if (rc) {
-        printf("ERROR; return code from pthread_create() is %d\n", rc);
+        log_err("return code from pthread_create() is %d", rc);
         exit(-1);
+    } else {
+        log_info("Audio_t_create(): Audio thread created on thread %p",
+                audio->thread);
     }
     pthread_attr_destroy(&attr);
 }
 
 void Audio_t_join(Audio *audio) {
-    printf("Audio_t_join(): unlocking run_lock...\n");
+    log_info("Audio_t_join(): unlocking run_lock...");
     pthread_mutex_unlock(&audio->run_lock);
 
     void *status;
-    printf("Audio_t_join(): joining thread...\n");
+    log_info("Audio_t_join(): joining thread %p...", audio->thread);
     int rc = pthread_join(audio->thread, &status);
     // The main thread now waits for the audio thread to clean up...
 
     if (rc) {
-        printf("ERROR; return code from pthread_join() is %d\n", rc);
+        log_err("return code from pthread_join() is %d", rc);
         exit(-1);
     }
 
-    printf("Audio_t_join(): destroying run_lock...\n");
+    log_info("Audio_t_join(): destroying locks...");
     pthread_mutex_destroy(&audio->run_lock);
     pthread_mutex_destroy(&audio->music_lock);
     pthread_mutex_destroy(&audio->sfx_lock);
@@ -212,8 +230,11 @@ int Audio_t_stream(Audio *audio) {
     if (pthread_mutex_trylock(&audio->run_lock) == 0) {
         // If stream was able to get the run lock, that means we need to clean
         // up and exit.
-        printf("Audio_t_stream(): thread locked run_lock. Cleaning up...\n");
+        log_info("Audio_t_stream(): thread locked run_lock. Cleaning up...");
         cleanup = 1;
+        if (pthread_mutex_unlock(&audio->run_lock)) {
+            log_err("Couldn't unlock run_lock");
+        }
     }
 
     pthread_mutex_lock(&audio->music_lock);

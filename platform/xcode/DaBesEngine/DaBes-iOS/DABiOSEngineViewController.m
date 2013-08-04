@@ -61,7 +61,8 @@ char *bundlePath__;
 
 - (void)setupGL;
 - (void)tearDownGL;
-
+- (void)primeThread;
+  
 @end
 
 @implementation DABiOSEngineViewController
@@ -126,8 +127,20 @@ char *bundlePath__;
   self.tapGesture.delegate = self;
   [self.view addGestureRecognizer:self.tapGesture];
 
+  NSThread *primerThread = [[NSThread alloc] initWithTarget:self
+                                                   selector:@selector(primeThread)
+                                                     object:nil];
+  [primerThread start];
+  
   [self setupGL];
   if (!engine_) [self initEngine];
+}
+
+- (void)primeThread {
+  NSLog(@"Priming engine for multithreading...");
+  if ([NSThread isMultiThreaded]) {
+    NSLog(@"Engine is multithreaded");
+  }
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer

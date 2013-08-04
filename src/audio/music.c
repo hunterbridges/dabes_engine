@@ -16,6 +16,9 @@ Music *Music_load(int num_files, char *ogg_files[]) {
     music->ogg_streams = List_create();
     music->num_files = num_files;
 
+    int rc = pthread_mutex_init(&music->lock, NULL);
+    check (rc == 0, "Error making music->lock mutex");
+
     int i = 0;
     for (i = 0; i < num_files; i++) {
         char *filename = (char*)ogg_files[i];
@@ -36,29 +39,30 @@ error:
     return NULL;
 }
 
-void Music_end(Music *music) {
-    if (music->ended) return;
-    music->_needs_end = 1;
-}
-
 void Music_destroy(Music *music) {
-    if (!music->ended) {
-        // TODO: Block condvar and wait for end signal
-        Music_t_end(music);
-    }
     assert(music->initialized == 0);
     int i = 0;
     for (i = 0; i < music->num_files; i++) {
       free(music->ogg_files[i]);
     }
     Audio_check();
+    pthread_mutex_destroy(&music->lock);
     free(music);
+}
+
+void Music_end(Music *music) {
+    if (music->ended) return;
+    pthread_mutex_lock(&music->lock);
+    music->_needs_end = 1;
+    pthread_mutex_unlock(&music->lock);
 }
 
 void Music_play(Music *music) {
     if (music == NULL) return;
     if (music->playing) return;
+    pthread_mutex_lock(&music->lock);
     music->_needs_play = 1;
+    pthread_mutex_unlock(&music->lock);
 }
 
 void Music_pause(Music *UNUSED(music)) {
@@ -66,25 +70,30 @@ void Music_pause(Music *UNUSED(music)) {
 }
 
 void Music_set_volume(Music *music, double volume) {
+    pthread_mutex_lock(&music->lock);
     music->volume = volume;
     if (music->initialized) {
         // TODO: Lock? This might be thread safe
         alSourcef(music->source, AL_GAIN, volume);
     }
+    pthread_mutex_unlock(&music->lock);
 }
 
 void Music_set_loop(Music *music, int loop) {
+    pthread_mutex_lock(&music->lock);
     music->loop = loop;
     // TODO: Lock
     if (music->ogg_streams->last) {
         OggStream *last_stream = (OggStream *)music->ogg_streams->last->value;
         last_stream->should_loop = loop;
     }
+    pthread_mutex_unlock(&music->lock);
 }
 
 #pragma mark - Audio Thread
 
 void Music_t_end(Music *music) {
+    log_info("Music_t_end(): Ending music...");
     alSourceStop(music->source);
     Music_t_uninitialize(music);
     music->ended = 1;
@@ -92,10 +101,16 @@ void Music_t_end(Music *music) {
 
 void Music_t_update(Music *music) {
     // TODO: Try Lock
-    if (music->ended) return;
+    if (pthread_mutex_trylock(&music->lock)) return;
+
+    if (music->ended) {
+        pthread_mutex_unlock(&music->lock);
+        return;
+    }
     if (music->_needs_end) {
         Music_t_end(music);
         music->_needs_end = 0;
+        pthread_mutex_unlock(&music->lock);
         return;
     }
 
@@ -106,7 +121,10 @@ void Music_t_update(Music *music) {
         music->_needs_play = 0;
         music->playing = 1;
         ListNode *node = music->ogg_streams->first;
-        if (node == NULL) return;
+        if (node == NULL) {
+            pthread_mutex_unlock(&music->lock);
+            return;
+        }
         music->active_stream = node->value;
         OggStream_play(node->value);
     }
@@ -127,7 +145,10 @@ void Music_t_update(Music *music) {
     }
 
     OggStream_update(music->active_stream);
-    if (!music->active_stream->eof) return;
+    if (music->active_stream && !music->active_stream->eof) {
+        pthread_mutex_unlock(&music->lock);
+        return;
+    }
 
     if (active_node && active_node->next) {
         // Next? Should enqueue next
@@ -135,7 +156,7 @@ void Music_t_update(Music *music) {
         OggStream *next_stream = next_node->value;
         OggStream_play(next_stream);
         music->active_stream = next_stream;
-    } else if (music->active_stream->should_loop) {
+    } else if (music->active_stream && music->active_stream->should_loop) {
         // Loop!
         OggStream_rewind(music->active_stream);
         OggStream_play(music->active_stream);
@@ -144,6 +165,8 @@ void Music_t_update(Music *music) {
     if (music->active_stream && music->active_stream->ended) {
         Music_t_end(music);
     }
+
+    pthread_mutex_unlock(&music->lock);
 }
 
 void Music_t_initialize(Music *music) {
@@ -193,4 +216,5 @@ void Music_t_uninitialize(Music *music) {
     alDeleteSources(1, &music->source);
     music->source = 0;
     music->initialized = 0;
+    log_info("Music_t_uninitialize(): Music uninitialized");
 }

@@ -349,6 +349,8 @@ typedef struct Music {
 
     struct Scene *scene;
 
+    pthread_mutex_t lock;
+
     int num_files;
     char *ogg_files[];
 } Music;
@@ -735,6 +737,8 @@ typedef struct Sfx {
 
     int initialized;
     ALuint source;
+
+    pthread_mutex_t lock;
 
     char *filename;
     OggStream *ogg_stream;

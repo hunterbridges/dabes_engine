@@ -212,6 +212,8 @@ typedef struct Audio {
 
     pthread_t thread;
     pthread_mutex_t run_lock;
+    pthread_mutex_t music_lock;
+    pthread_mutex_t sfx_lock;
 } Audio;
 
 Audio *Audio_create();
@@ -303,6 +305,8 @@ typedef struct Audio {
 
     pthread_t thread;
     pthread_mutex_t run_lock;
+    pthread_mutex_t music_lock;
+    pthread_mutex_t sfx_lock;
 } Audio;
 
 Audio *Audio_create();
@@ -344,6 +348,8 @@ typedef struct Music {
     OggStream *active_stream;
 
     struct Scene *scene;
+
+    pthread_mutex_t lock;
 
     int num_files;
     char *ogg_files[];
@@ -731,6 +737,8 @@ typedef struct Sfx {
 
     int initialized;
     ALuint source;
+
+    pthread_mutex_t lock;
 
     char *filename;
     OggStream *ogg_stream;

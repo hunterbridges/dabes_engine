@@ -15,6 +15,8 @@ typedef struct Sfx {
     int initialized;
     ALuint source;
 
+    pthread_mutex_t lock;
+
     char *filename;
     OggStream *ogg_stream;
 } Sfx;

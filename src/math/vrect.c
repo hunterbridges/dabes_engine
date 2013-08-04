@@ -133,7 +133,8 @@ VRect VRect_scale(VRect box, double scale) {
 }
 
 void VRect_find_axes(VRect box, VPoint *axes) {
-    for (int i = 0; i < 2; i++) {
+    int i = 0;
+    for (i = 0; i < 2; i++) {
         VPoint p1 = VRect_vertex(box, i);
         VPoint p2 = VRect_vertex(box, i + 1);
         VPoint edge = VPoint_subtract(p1, p2);

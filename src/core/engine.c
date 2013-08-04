@@ -25,16 +25,18 @@ Engine *Engine_create(Engine_resource_path_func path_func,
     check(engine != NULL, "Could not create engine. World explodes.");
 
 #ifdef DABES_SDL
-    SDL_Init(SDL_INIT_EVERYTHING);
+    if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) == -1) {
+        log_err("%s", SDL_GetError());
+        exit(1);
+    }
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    TTF_Init();
     *sdl_screen =
         SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_OPENGL);
 #endif
     check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
-  
+
     engine->resource_path =
         path_func ? path_func : Engine_default_resource_path;
     engine->project_path =
@@ -70,7 +72,7 @@ void Engine_destroy(Engine *engine) {
     check(engine != NULL, "No engine to destroy");
 
     List_clear_destroy(engine->easers);
-  
+
     // Scripting has to go first, as it
     // manages all the objects that leverage other things.
     Scripting_destroy(engine->scripting);
@@ -79,6 +81,10 @@ void Engine_destroy(Engine *engine) {
     Input_destroy(engine->input);
     Graphics_destroy(engine->graphics);
     Physics_destroy(engine->physics);
+
+#ifdef DABES_SDL
+    SDL_Quit();
+#endif
 
     free(engine);
     return;

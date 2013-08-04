@@ -20,6 +20,23 @@ GLfloat GfxGLClearColor[4] = {0.0, 0.0, 0.0, 0.0};
 GLint GfxShader_uniforms[NUM_UNIFORMS];
 GLint GfxShader_attributes[NUM_ATTRIBUTES];
 
+static inline GLenum Graphics_check() {
+    GLenum er = glGetError();
+    switch (er) {
+      case GL_INVALID_OPERATION:
+        log_err("OpenGL GL_INVALID_OPERATION");
+        break;
+        
+      case GL_INVALID_VALUE:
+        log_err("OpenGL GL_INVALID_VALUE");
+        break;
+        
+      default:
+        break;
+    }
+    return er;
+}
+
 int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
     GLenum error = glGetError();
     glEnable(GL_BLEND);
@@ -123,7 +140,9 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     texture->pot_size.w = pot_width;
     texture->pot_size.h = pot_height;
 
+    GLenum er = Graphics_check();
     glGenTextures(1, &texture->gl_tex);
+    er = Graphics_check();
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
     GLenum color_format = GL_RGBA;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -133,10 +152,7 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pot_width,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
-    GLenum er = glGetError();
-    if (er != GL_NO_ERROR) {
-        debug("breakpoint here");
-    }
+    er = Graphics_check();
     check(er == GL_NO_ERROR, "Error loading texture: %d", er);
     return texture;
 error:

@@ -14,6 +14,6 @@ void main()
 {
   gl_Position = projection * modelView * position;
   colorVarying = color;
-  alphaVarying = color;
+  alphaVarying = alpha;
   textureVarying = texture;
 }
