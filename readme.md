@@ -39,7 +39,6 @@ Bugs:
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
 * Parallax zoom is sliiiightly weird
 * Weird camera humping as tracked entity is rotating
-* SFX playback sometimes choppy
 * Easers have a tendency to introduce leaks
 
 ```
