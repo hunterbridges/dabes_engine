@@ -176,13 +176,14 @@ char *bundlePath__;
           postNotificationName:kEngineReadyForScriptNotification
           object:self];
       
-      Audio_sweep(self.engine->audio, self.engine);
       Engine_frame_end(self.engine);
       [self refreshScene];
       [[NSNotificationCenter defaultCenter]
           postNotificationName:kFrameEndNotification
           object:self];
     }
+    
+    Audio_sweep(self.engine->audio, self.engine);
     
     if (self.rebootWhenReady) {
       self.rebootWhenReady = NO;

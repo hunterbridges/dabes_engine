@@ -255,6 +255,8 @@ void Audio_sweep(Audio *audio, struct Engine *engine);
 #endif
 
 
+#define OGG_BUFFER_COUNT 3
+
 typedef struct OggStream {
     char *filename;
     FILE *file;
@@ -263,7 +265,7 @@ typedef struct OggStream {
     vorbis_comment *vorbis_comment;
 
     int buf_count;
-    ALuint buffers[2];
+    ALuint buffers[OGG_BUFFER_COUNT];
     ALuint source;
     ALenum format;
 

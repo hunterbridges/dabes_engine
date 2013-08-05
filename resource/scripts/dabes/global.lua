@@ -5,6 +5,16 @@
 require 'lib.inspect'
 require 'dabes.util'
 
+_cleanglobals = function()
+    print "_cleanglobals(): Cleaning globals..."
+
+    scene_manager = nil
+    _controllers = nil
+
+    print "_cleanglobals(): Collecting garbage..."
+    collectgarbage("collect")
+end
+
 math.randomseed(os.time())
 
 _veil = {}

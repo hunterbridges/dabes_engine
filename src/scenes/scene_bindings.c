@@ -53,7 +53,9 @@ int luab_Scene_close(lua_State *L) {
 
     Scene_userdata *scene_ud = (Scene_userdata *)
         luaL_checkudata(L, 1, luab_Scene_metatable);
-    if (scene_ud->p) Scene_destroy(scene_ud->p, engine);
+    if (scene_ud->p) {
+        Scene_destroy(scene_ud->p, engine);
+    }
     scene_ud->p = NULL;
     return 0;
 }

@@ -98,7 +98,9 @@ Megaman = Entity:extend({
             
                 self.scene.entities:add(projectile)
 	        end
-            Sfx:new("media/sfx/blast.ogg"):play()
+            local blast = Sfx:new("media/sfx/blast.ogg")
+            blast.volume = 1.0
+            blast:play()
         end
 
         self:control()

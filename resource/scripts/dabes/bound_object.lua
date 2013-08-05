@@ -57,6 +57,12 @@ BoundObject = Object:extend({
         dab_registerinstance(bound.real, bound)
         bound.born_at = dab_engine.ticks()
         bound:_init_collections()
+        bound._cleancache = function(self)
+            self._cache = {}
+            for k,v in pairs(self._collections) do
+                local coll = self[k]:_cleancache()
+            end
+        end
         bound:init(...)
 
         return bound

@@ -187,6 +187,7 @@ Scene = BoundObject:extend({
         easer.finish = function(e)
             if completion ~= nil then completion(scene) end
             scene._fade_in_easer = nil
+            collectgarbage("collect")
         end
         scene._fade_in_easer = easer
     end,

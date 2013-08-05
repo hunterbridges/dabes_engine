@@ -1,8 +1,9 @@
 #include "ogg_stream.h"
 
-const int BUFFER_SIZE = 48000;
+const int BUFFER_SIZE = 1024 * 32;
+const int BUFFER_COUNT = OGG_BUFFER_COUNT;
 
-int OggStream_stream(OggStream *ogg_stream, ALuint buffer);
+int OggStream_buffer(OggStream *ogg_stream, ALuint buffer, size_t *sz);
 void OggStream_empty(OggStream *ogg_stream);
 const char *OggStream_error_string(long code);
 
@@ -49,7 +50,7 @@ OggStream *OggStream_create(char *file, ALuint source) {
     }
 
     ogg_stream->source = source;
-    alGenBuffers(2, ogg_stream->buffers);
+    alGenBuffers(BUFFER_COUNT, ogg_stream->buffers);
     Audio_check();
 
     return ogg_stream;
@@ -72,7 +73,7 @@ void OggStream_destroy(OggStream *ogg_stream) {
     free(ogg_stream->filename);
     OggStream_empty(ogg_stream);
 
-    alDeleteBuffers(2, ogg_stream->buffers);
+    alDeleteBuffers(BUFFER_COUNT, ogg_stream->buffers);
     Audio_check();
 
     OggStream_close_decoder(ogg_stream);
@@ -100,18 +101,30 @@ void OggStream_debug(OggStream *ogg_stream) {
 int OggStream_play(OggStream *ogg_stream) {
     if (!ogg_stream) return 0;
     if (OggStream_playing(ogg_stream)) return 1;
-    ogg_stream->buf_count = 1;
-
-    check(OggStream_stream(ogg_stream, ogg_stream->buffers[0]) == 1,
-        "Failed to stream OGG buffer 0");
-    if (ogg_stream->stream.end > BUFFER_SIZE) {
-        check(OggStream_stream(ogg_stream, ogg_stream->buffers[1]) == 1,
-            "Failed to stream OGG buffer 1");
+  
+    ogg_stream->buf_count = 0;
+    int i = 0;
+    for (i = 0; i < BUFFER_COUNT; i++) {
+        size_t sz;
+        int rc = OggStream_buffer(ogg_stream, ogg_stream->buffers[i] , &sz);
+        if (rc == 0) {
+            log_info("OggStream_play(): Did not stream OGG %p buffer %d",
+                     ogg_stream, i);
+          break;
+        }
         ogg_stream->buf_count++;
+        if (sz < BUFFER_SIZE ||
+            ogg_stream->stream.end <= ogg_stream->buf_count * BUFFER_SIZE) {
+            break;
+        }
     }
+  
+    check(ogg_stream->buf_count > 0,
+          "OggStream_play(): Unable to buffer initial sample.");
 
     alSourceQueueBuffers(ogg_stream->source, ogg_stream->buf_count,
             ogg_stream->buffers);
+    Audio_check();
     alSourcePlay(ogg_stream->source);
 
     return 1;
@@ -151,7 +164,7 @@ int OggStream_update(OggStream *ogg_stream) {
         alSourceUnqueueBuffers(ogg_stream->source, 1, &buffer);
         Audio_check();
 
-        buffered = OggStream_stream(ogg_stream, buffer);
+        buffered = OggStream_buffer(ogg_stream, buffer, NULL);
         if (buffered) {
           alSourceQueueBuffers(ogg_stream->source, 1, &buffer);
           Audio_check();
@@ -171,7 +184,7 @@ int OggStream_update(OggStream *ogg_stream) {
     return buffered;
 }
 
-int OggStream_stream(OggStream *ogg_stream, ALuint buffer) {
+int OggStream_buffer(OggStream *ogg_stream, ALuint buffer, size_t *sz) {
     char data[BUFFER_SIZE];
     int size = 0;
     int section;
@@ -186,6 +199,7 @@ int OggStream_stream(OggStream *ogg_stream, ALuint buffer) {
         } else {
             if (result < 0) {
                 debug("%s", OggStream_error_string(result));
+                if (sz) *sz = 0;
                 return 0;
             } else {
                 ogg_stream->eof = 1;
@@ -194,11 +208,20 @@ int OggStream_stream(OggStream *ogg_stream, ALuint buffer) {
         }
     }
 
-    if (size == 0) return 0;
+    if (sz) *sz = size;
+    if (size == 0) {
+        return 0;
+    }
+    if (size < BUFFER_SIZE) {
+        log_info("OggStream_stream(): Buffer %u size %d < %d", buffer,
+                 size, BUFFER_SIZE);
+      
+    }
 
     alBufferData(buffer, ogg_stream->format, data, size,
             (ALsizei)ogg_stream->vorbis_info->rate);
-
+    Audio_check();
+  
     return Audio_check();
 }
 

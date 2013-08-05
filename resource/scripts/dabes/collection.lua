@@ -67,7 +67,7 @@ Collection = Object:extend({
         self._cache[member] = nil
         return rc
     end,
-
+    
 --- Hooks.
 -- Callbacks implemented in subclasses to customize behavior. Hooks are called
 -- on individual instances.

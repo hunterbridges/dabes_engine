@@ -114,6 +114,20 @@ void Scripting_update_paths(Scripting *scripting, struct Engine *engine) {
 
 void Scripting_destroy(Scripting *scripting) {
     check(scripting != NULL, "No scripting to destroy");
+  
+    lua_State *L = scripting->L;
+    lua_getglobal(L, "_cleanglobals");
+    int result = lua_pcall(L, 0, 0, 0);
+    if (result != 0) {
+        const char *error = lua_tostring(L, -1);
+        if (scripting->error_callback) {
+            scripting->error_callback(error);
+        } else {
+            debug("Error in _cleanglobals()\n    %s", lua_tostring(L, -1));
+        }
+        lua_pop(L, 1);
+    }
+  
     lua_close(scripting->L);
     free(scripting);
     return;

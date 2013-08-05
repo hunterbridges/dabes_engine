@@ -52,6 +52,28 @@ int Audio_check() {
     check(error == AL_NO_ERROR, "OpenAL error code: %d", error);
     return 1;
 error:
+    switch (error) {
+      case AL_INVALID_VALUE:
+        log_err("OpenAL AL_INVALID_VALUE");
+        break;
+        
+      case AL_INVALID_OPERATION:
+        log_err("OpenAL AL_INVALID_OPERATION");
+        break;
+        
+      case AL_INVALID_NAME:
+        log_err("OpenAL AL_INVALID_NAME");
+        break;
+        
+      case AL_INVALID_ENUM:
+        log_err("OpenAL AL_INVALID_ENUM");
+        break;
+        
+      default:
+        log_err("OpenAL error code %X", error);
+        break;
+    }
+  
     return 0;
 }
 
