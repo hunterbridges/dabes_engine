@@ -1,6 +1,7 @@
 #import <DaBes-iOS/DaBes-iOS.h>
 #import "DABiOSEngineViewController.h"
 #import "DABProjectManager.h"
+#import "DABPlatformerControllerOverlayView.h"
 
 NSTimeInterval kBufferRefreshDelay = 0.01;
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
@@ -41,16 +42,7 @@ char *iOS_resource_path(const char *filename) {
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 char *bundlePath__;
-@interface DABiOSEngineViewController () {
-  GLuint _program;
-  
-  GLuint _vertexArray;
-  GLuint _vertexBuffer;
-  
-  Input *touchInput_;
-  UILongPressGestureRecognizer *moveGesture_;
-  UILongPressGestureRecognizer *jumpGesture_;
-}
+@interface DABiOSEngineViewController ()
 
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKBaseEffect *effect;
@@ -58,6 +50,8 @@ char *bundlePath__;
 @property (nonatomic, assign) Engine *engine;
 @property (nonatomic, assign) Scene *scene;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, assign) Input *touchInput;
+@property (nonatomic, strong) DABPlatformerControllerOverlayView *controllerView;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -72,7 +66,7 @@ char *bundlePath__;
 - (id)initWithTouchInput:(Input *)input {
   self = [super init];
   if (self) {
-    touchInput_ = input;
+    self.touchInput = input;
   }
   return self;
 }
@@ -102,22 +96,13 @@ char *bundlePath__;
     kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGB565
   };
   
-  moveGesture_ =
-      [[UILongPressGestureRecognizer alloc]
-          initWithTarget:self
-          action:@selector(handleMove:)];
-  moveGesture_.minimumPressDuration=0.05;
-  moveGesture_.delegate = self;
-  [self.view addGestureRecognizer:moveGesture_];
-
-  jumpGesture_ =
-      [[UILongPressGestureRecognizer alloc]
-           initWithTarget:self
-           action:@selector(handleJump:)];
-  jumpGesture_.numberOfTouchesRequired = 2;
-  jumpGesture_.minimumPressDuration=0.05;
-  jumpGesture_.delegate = self;
-  [self.view addGestureRecognizer:jumpGesture_];
+  self.controllerView =
+      [[DABPlatformerControllerOverlayView alloc] initWithFrame:self.view.bounds];
+  self.controllerView.debugMode = NO;
+  self.controllerView.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
+                                          UIViewAutoresizingFlexibleHeight);
+  self.controllerView.touchInput = self.touchInput;
+  [self.view addSubview:self.controllerView];
   
   self.tapGesture =
       [[UITapGestureRecognizer alloc]
@@ -147,41 +132,6 @@ char *bundlePath__;
     shouldRecognizeSimultaneouslyWithGestureRecognizer:
         (UIGestureRecognizer *)otherGestureRecognizer {
   return YES;
-}
-
-- (void)handleMove:(UILongPressGestureRecognizer *)gesture {
-  CGRect screen = self.view.bounds;
-  CGPoint loc = [gesture locationOfTouch:0 inView:self.view];
-  BOOL ended = gesture.state == UIGestureRecognizerStateEnded;
-  
-  Controller *controller = touchInput_->controllers[0];
-  Controller_dpad_direction direction = CONTROLLER_DPAD_NONE;
-  
-  if (loc.x <= screen.size.width / 2.0) {
-    if (controller->dpad & CONTROLLER_DPAD_RIGHT)
-      controller->dpad &= ~(CONTROLLER_DPAD_RIGHT);
-    direction = CONTROLLER_DPAD_LEFT;
-  } else {
-    if (controller->dpad & CONTROLLER_DPAD_LEFT)
-      controller->dpad &= ~(CONTROLLER_DPAD_LEFT);
-    direction = CONTROLLER_DPAD_RIGHT;
-  }
-  
-  if (ended) {
-      controller->dpad &= ~(direction);
-  } else {
-      controller->dpad |= direction;
-  }
-}
-
-- (void)handleJump:(UILongPressGestureRecognizer *)gesture {
-  Controller *controller = touchInput_->controllers[0];
-  BOOL ended = gesture.state == UIGestureRecognizerStateEnded;
-  if (ended) {
-      controller->jump = 0;
-  } else {
-      controller->jump = 1;
-  }
 }
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture {
@@ -269,7 +219,7 @@ char *bundlePath__;
   if (!self.engine) return;
   
   Engine_regulate(engine_);
-  Input_touch(engine_->input, touchInput_);
+  Input_touch(engine_->input, self.touchInput);
   
   scene_ = Engine_get_current_scene(engine_);
   

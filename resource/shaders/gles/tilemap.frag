@@ -18,7 +18,7 @@ void main()
   
   int intindex = index_3;
   intindex = intindex + index_2 * 256;
-  //intindex = intindex + index_1 * 256 * 256;
+  intindex = intindex + index_1 * 256 * 256;
   
   float index = float(intindex);
   float sheet_col = mod(index, sheetRowsCols.x);

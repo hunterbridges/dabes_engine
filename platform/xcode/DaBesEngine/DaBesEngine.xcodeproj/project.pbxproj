@@ -80,6 +80,8 @@
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
 		CA8B9864178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
+		CA9EB70017CAFACA00CA273F /* DABPlatformerControllerOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = CA9EB6FE17CAFACA00CA273F /* DABPlatformerControllerOverlayView.h */; };
+		CA9EB70117CAFACA00CA273F /* DABPlatformerControllerOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA9EB6FF17CAFACA00CA273F /* DABPlatformerControllerOverlayView.m */; };
 		CAAF8C85178A325000BBB143 /* engine_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAAF8C83178A325000BBB143 /* engine_bindings.c */; };
 		CAAF8C86178A325000BBB143 /* engine_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAAF8C83178A325000BBB143 /* engine_bindings.c */; };
 		CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAAF8C84178A325000BBB143 /* engine_bindings.h */; };
@@ -468,6 +470,8 @@
 		CA8B9860178A08BA00CA41B4 /* static_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_scene.h; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
 		CA92BF1A16FFBEF000252D27 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = camera.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CA9EB6FE17CAFACA00CA273F /* DABPlatformerControllerOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABPlatformerControllerOverlayView.h; sourceTree = "<group>"; };
+		CA9EB6FF17CAFACA00CA273F /* DABPlatformerControllerOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABPlatformerControllerOverlayView.m; sourceTree = "<group>"; };
 		CAAF8C83178A325000BBB143 /* engine_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = engine_bindings.c; sourceTree = "<group>"; };
 		CAAF8C84178A325000BBB143 /* engine_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine_bindings.h; sourceTree = "<group>"; };
 		CAC3820817861D660072E709 /* DABProjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DABProjectManager.h; path = DaBesEngine/DABProjectManager.h; sourceTree = "<group>"; };
@@ -813,6 +817,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CA9EB6F917CAFA9700CA273F /* Controller Overlays */ = {
+			isa = PBXGroup;
+			children = (
+				CA9EB6FE17CAFACA00CA273F /* DABPlatformerControllerOverlayView.h */,
+				CA9EB6FF17CAFACA00CA273F /* DABPlatformerControllerOverlayView.m */,
+			);
+			name = "Controller Overlays";
+			sourceTree = "<group>";
+		};
 		CAC3820317861D250072E709 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -933,6 +946,7 @@
 		CAF429961780F38A00C3220A /* DaBes-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				CA9EB6F917CAFA9700CA273F /* Controller Overlays */,
 				CA51FC801783659A000C73E0 /* DABiOSEngineViewController.h */,
 				CA51FC811783659A000C73E0 /* DABiOSEngineViewController.m */,
 				CA705C291783566C00D2C6E4 /* DaBes-iOS.h */,
@@ -970,6 +984,7 @@
 				CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */,
 				CA72C44D1796739A00255691 /* overlay_bindings.h in Headers */,
 				CA72C4511796739A00255691 /* overlay.h in Headers */,
+				CA9EB70017CAFACA00CA273F /* DABPlatformerControllerOverlayView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1393,6 +1408,7 @@
 				CAEFD91A1790A56100D19B4D /* vpolygon.c in Sources */,
 				CA72C44B1796739A00255691 /* overlay_bindings.c in Sources */,
 				CA72C44F1796739A00255691 /* overlay.c in Sources */,
+				CA9EB70117CAFACA00CA273F /* DABPlatformerControllerOverlayView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
