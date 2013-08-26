@@ -2,6 +2,8 @@
 #define __ortho_chipmunk_scene_h
 #include "scene.h"
 
+#define COLLISION_SLOP 0.1
+
 typedef struct {
     Scene *scene;
     Engine *engine;

@@ -73,6 +73,8 @@ typedef struct Body {
 
     VPoint draw_offset;
 
+    void *context;
+  
     List *sensors;
 } Body;
 

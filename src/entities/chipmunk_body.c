@@ -3,6 +3,48 @@
 #include "chipmunk_body.h"
 #include "sensor.h"
 
+typedef struct GroundingContext {
+	cpVect normal;
+	cpVect impulse;
+	cpFloat penetration;
+	
+	cpBody *body;
+} GroundingContext;
+
+void GroundingContext_callback(cpBody *body, cpArbiter *arb, GroundingContext *grounding){
+	CP_ARBITER_GET_BODIES(arb, b1, b2);
+	cpVect n = cpvneg(cpArbiterGetNormal(arb, 0));
+	
+	if(n.y < grounding->normal.y){
+		grounding->normal = n;
+		grounding->penetration = -cpArbiterGetDepth(arb, 0);
+		grounding->body = b2;
+	}
+	
+	grounding->impulse = cpvadd(grounding->impulse, cpArbiterTotalImpulseWithFriction(arb));
+}
+
+void GroundingContext_update(GroundingContext *context, cpBody *body)
+{
+	(*context) = (GroundingContext){cpvzero, cpvzero, 0.0, NULL};
+	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)GroundingContext_callback,
+                    context);
+}
+
+typedef struct ChipmunkBodyContext {
+    GroundingContext grounding;
+} ChipmunkBodyContext;
+
+void ChipmunkBody_update_velocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
+{
+    Body *dab_body = cpBodyGetUserData(body);
+    ChipmunkBodyContext *context = (ChipmunkBodyContext *)dab_body->context;
+    GroundingContext_update(&context->grounding, body);
+    
+    // TODO: Fancier stuff
+    cpBodyUpdateVelocity(body, gravity, damping, dt);
+}
+
 void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset);
 
 cpShape *cpOffsetBoxShapeNew(cpBody *body, float w, float h, cpVect offset) {
@@ -94,7 +136,9 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
     float moment = (can_rotate ? cpMomentForBox(mass, w, h) : INFINITY);
     cpBody *cp_body = cpBodyNew(mass, moment);
     body->cp_body = cp_body;
-    cpBodySetUserData(cp_body, &body->state);
+    body->context = calloc(1, sizeof(ChipmunkBodyContext));
+    cpBodySetUserData(cp_body, body);
+    cp_body->velocity_func = ChipmunkBody_update_velocity;
 
     cpShape *shape = cpBoxShapeNew(cp_body, w, h);
     cpShapeSetBody(shape, cp_body);
@@ -116,6 +160,8 @@ void body_clear_shapes(cpBody *UNUSED(cpBody), cpShape *shape, void *data) {
 
 void ChipmunkBody_cleanup(Body *body) {
     if (!body->cp_body) return;
+  
+    free(body->context);
   
     cpBodyEachShape(body->cp_body, body_clear_shapes, body);
 
@@ -139,6 +185,8 @@ VRect ChipmunkBody_gfx_rect(Body *body, float pixels_per_meter, int rotate) {
     cpShape *shape = body->cp_shape;
     float rads = cpBodyGetAngle(shape->body);
     cpVect pos = cpBodyGetPos(shape->body);
+    ChipmunkBodyContext *ctx = (ChipmunkBodyContext *)body->context;
+    pos = cpvadd(pos, cpvmult(ctx->grounding.normal, ctx->grounding.penetration));
     VPoint center = {pos.x, pos.y};
     center = VPoint_add(center, body->draw_offset);
     VRect rect = VRect_from_xywh(center.x - body->w / 2, center.y - body->h / 2,
@@ -151,6 +199,8 @@ VRect ChipmunkBody_gfx_rect(Body *body, float pixels_per_meter, int rotate) {
 VPoint ChipmunkBody_gfx_center(Body *body, float pixels_per_meter) {
     cpShape *shape = body->cp_shape;
     cpVect pos = cpBodyGetPos(shape->body);
+    ChipmunkBodyContext *ctx = (ChipmunkBodyContext *)body->context;
+    pos = cpvadd(pos, cpvmult(ctx->grounding.normal, ctx->grounding.penetration));
     VPoint center = {pos.x, pos.y};
     center = VPoint_add(center, body->draw_offset);
     return VPoint_scale(center, pixels_per_meter);

@@ -1589,6 +1589,8 @@ typedef struct Body {
 
     VPoint draw_offset;
 
+    void *context;
+  
     List *sensors;
 } Body;
 
@@ -2617,6 +2619,8 @@ Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
 #endif
 #ifndef __ortho_chipmunk_scene_h
 #define __ortho_chipmunk_scene_h
+
+#define COLLISION_SLOP 0.1
 
 typedef struct {
     Scene *scene;

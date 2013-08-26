@@ -282,8 +282,8 @@ int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
         void *UNUSED(data)) {
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
-    BodyStateData *state_data = cpBodyGetUserData(eBody);
-    state_data->on_ground++;
+    Body *body = cpBodyGetUserData(eBody);
+    body->state.on_ground++;
     return 1;
 }
 
@@ -291,11 +291,11 @@ void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
         void *UNUSED(data)) {
     cpBody *eBody, *tBody;
     cpArbiterGetBodies(arb, &eBody, &tBody);
-    BodyStateData *state_data = cpBodyGetUserData(eBody);
+    Body *body = cpBodyGetUserData(eBody);
 
-    state_data->on_ground--;
-    if (state_data->on_ground < 0) {
-        state_data->on_ground = 0;
+    body->state.on_ground--;
+    if (body->state.on_ground < 0) {
+        body->state.on_ground = 0;
     }
 }
 
@@ -383,9 +383,9 @@ void hit_test_func(cpShape *shape, cpFloat UNUSED(distance),
     if (shape->collision_type == OCSCollisionTypeEntity) {
         Entity **top = data;
         cpBody *cpb = shape->body;
-        BodyStateData *state = cpb->data;
-        if (*top == NULL || state->entity->z_index > (*top)->z_index) {
-            *top = state->entity;
+        Body *body = cpb->data;
+        if (*top == NULL || body->state.entity->z_index > (*top)->z_index) {
+            *top = body->state.entity;
         }
     }
 }
@@ -481,7 +481,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
 
     cpVect gravity = {scene->gravity.x, scene->gravity.y};
     cpSpaceSetGravity(scene->space, gravity);
-    cpSpaceSetCollisionSlop(scene->space, 0.0);
+    cpSpaceSetCollisionSlop(scene->space, COLLISION_SLOP);
     cpSpaceSetCollisionBias(scene->space, 0.1);
     cpSpaceSetSleepTimeThreshold(scene->space, 0.4);
     cpSpaceSetIdleSpeedThreshold(scene->space, 1.0);
