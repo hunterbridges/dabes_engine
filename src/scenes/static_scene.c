@@ -62,6 +62,20 @@ Entity *StaticScene_hit_test(Scene *UNUSED(scene), VPoint UNUSED(g_point)) {
     return NULL;
 }
 
+VPoint StaticScene_get_gravity(struct Scene *scene) {
+    check(scene != NULL, "No scene to get gravity from");
+    return scene->gravity;
+error:
+    return VPointZero;
+}
+
+void StaticScene_set_gravity(struct Scene *scene, VPoint gravity) {
+    check(scene != NULL, "No scene to set gravity on");
+    scene->gravity = gravity;
+error:
+    return;
+}
+
 SceneProto StaticSceneProto = {
     .start = NULL,
     .start_success_cb = NULL,
@@ -72,5 +86,7 @@ SceneProto StaticSceneProto = {
     .control = StaticScene_control,
     .hit_test = StaticScene_hit_test,
     .add_entity_cb = NULL,
-    .remove_entity_cb = NULL
+    .remove_entity_cb = NULL,
+    .get_gravity = StaticScene_get_gravity,
+    .set_gravity = StaticScene_set_gravity
 };

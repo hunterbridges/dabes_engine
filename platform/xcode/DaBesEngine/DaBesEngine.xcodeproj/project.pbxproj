@@ -27,7 +27,6 @@
 		CA705BF9178350BD00D2C6E4 /* easer_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22C8176ED86F0044793D /* easer_bindings.c */; };
 		CA705BFA178350BD00D2C6E4 /* easer.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22CA176ED86F0044793D /* easer.c */; };
 		CA705BFB178350BD00D2C6E4 /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76516FC20900045D5DE /* engine.c */; };
-		CA705BFC178350BD00D2C6E4 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660C17054B0900629F80 /* base64.c */; };
 		CA705BFD178350BD00D2C6E4 /* gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660F17054C1E00629F80 /* gzip.c */; };
 		CA705BFE178350BD00D2C6E4 /* stepper.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA95601737630D00C90B8C /* stepper.c */; };
 		CA705BFF178350BD00D2C6E4 /* body.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC581A917585FFD004A8161 /* body.c */; };
@@ -117,7 +116,6 @@
 		CAF429A91780F3B800C3220A /* easer_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22C8176ED86F0044793D /* easer_bindings.c */; };
 		CAF429AA1780F3B800C3220A /* easer.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5D22CA176ED86F0044793D /* easer.c */; };
 		CAF429AB1780F3B800C3220A /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C76516FC20900045D5DE /* engine.c */; };
-		CAF429AC1780F3B800C3220A /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660C17054B0900629F80 /* base64.c */; };
 		CAF429AD1780F3B800C3220A /* gzip.c in Sources */ = {isa = PBXBuildFile; fileRef = CA30660F17054C1E00629F80 /* gzip.c */; };
 		CAF429AE1780F3B800C3220A /* stepper.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEA95601737630D00C90B8C /* stepper.c */; };
 		CAF429B51780F3BF00C3220A /* body.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC581A917585FFD004A8161 /* body.c */; };
@@ -421,7 +419,6 @@
 		CA3066041704231700629F80 /* tile_map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = tile_map.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CA3066051704233200629F80 /* tile_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tile_map.c; sourceTree = "<group>"; };
 		CA30660B17054AFE00629F80 /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
-		CA30660C17054B0900629F80 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		CA30660E17054C0900629F80 /* gzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gzip.h; sourceTree = "<group>"; };
 		CA30660F17054C1E00629F80 /* gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzip.c; sourceTree = "<group>"; };
 		CA30661217062E5D00629F80 /* tile_map_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tile_map_parse.c; sourceTree = "<group>"; };
@@ -647,7 +644,6 @@
 				CAAF8C83178A325000BBB143 /* engine_bindings.c */,
 				CAAF8C84178A325000BBB143 /* engine_bindings.h */,
 				CA30660B17054AFE00629F80 /* base64.h */,
-				CA30660C17054B0900629F80 /* base64.c */,
 				CA30660E17054C0900629F80 /* gzip.h */,
 				CA30660F17054C1E00629F80 /* gzip.c */,
 				CAEA95601737630D00C90B8C /* stepper.c */,
@@ -1352,7 +1348,6 @@
 				CA705BF9178350BD00D2C6E4 /* easer_bindings.c in Sources */,
 				CA705BFA178350BD00D2C6E4 /* easer.c in Sources */,
 				CA705BFB178350BD00D2C6E4 /* engine.c in Sources */,
-				CA705BFC178350BD00D2C6E4 /* base64.c in Sources */,
 				CA705BFD178350BD00D2C6E4 /* gzip.c in Sources */,
 				CA705BFE178350BD00D2C6E4 /* stepper.c in Sources */,
 				CA705BFF178350BD00D2C6E4 /* body.c in Sources */,
@@ -1415,7 +1410,6 @@
 				CAF429A91780F3B800C3220A /* easer_bindings.c in Sources */,
 				CAF429AA1780F3B800C3220A /* easer.c in Sources */,
 				CAF429AB1780F3B800C3220A /* engine.c in Sources */,
-				CAF429AC1780F3B800C3220A /* base64.c in Sources */,
 				CAF429AD1780F3B800C3220A /* gzip.c in Sources */,
 				CAF429AE1780F3B800C3220A /* stepper.c in Sources */,
 				CAF429B51780F3BF00C3220A /* body.c in Sources */,

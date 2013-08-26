@@ -1,4 +1,4 @@
-precision highp float;
+precision mediump float;
 varying vec4 colorVarying;
 varying vec4 texPosVarying;
 uniform sampler2D texture;

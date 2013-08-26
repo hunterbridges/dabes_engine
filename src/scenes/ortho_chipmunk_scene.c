@@ -261,6 +261,23 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 }
 
+VPoint OrthoChipmunkScene_get_gravity(struct Scene *scene) {
+    check(scene != NULL, "No scene to get gravity from");
+    return scene->gravity;
+error:
+    return VPointZero;
+}
+
+void OrthoChipmunkScene_set_gravity(struct Scene *scene, VPoint gravity) {
+    check(scene != NULL, "No scene to set gravity on");
+    scene->gravity = gravity;
+    if (!scene->space) return;
+    cpVect cp_grav = {gravity.x, gravity.y};
+    cpSpaceSetGravity(scene->space, cp_grav);
+error:
+    return;
+}
+
 int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
         void *UNUSED(data)) {
     cpBody *eBody, *tBody;
@@ -416,30 +433,32 @@ void OrthoChipmunkScene_create_collision_shapes(Scene *scene,
         } else {
             // Create a shape for each tile
 
-            TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);
-            cpBody *map_body = cpSpaceGetStaticBody(scene->space);
-            float grid_size = scene->tile_map->meters_per_tile;
-            int i = 0;
-            for (i = 0; i < base_layer->gid_count; i++) {
-                uint32_t gid = base_layer->tile_gids[i];
-                if (gid == 0) continue;
+            if (DArray_count(scene->tile_map->layers) > 0) {
+                TileMapLayer *base_layer = DArray_get(scene->tile_map->layers, 0);
+                cpBody *map_body = cpSpaceGetStaticBody(scene->space);
+                float grid_size = scene->tile_map->meters_per_tile;
+                int i = 0;
+                for (i = 0; i < base_layer->gid_count; i++) {
+                    uint32_t gid = base_layer->tile_gids[i];
+                    if (gid == 0) continue;
 
-                // TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
-                int col = i % scene->tile_map->cols;
-                int row = i / scene->tile_map->cols;
-                float corr = 0;
-                cpVect tile_verts[4] = {
-                  { grid_size * col + corr,             grid_size * row + grid_size - corr},
-                  { grid_size * col + grid_size - corr, grid_size * row + grid_size - corr},
-                  { grid_size * col + grid_size - corr, grid_size * row + corr},
-                  { grid_size * col + corr,             grid_size * row + corr},
-                };
-                cpShape *tile_shape = cpPolyShapeNew(map_body, 4, tile_verts,
-                                                    cpvzero);
-                cpShapeSetFriction(tile_shape, 0.5);
-                tile_shape->collision_type = OCSCollisionTypeTile;
-                cpSpaceAddStaticShape(scene->space, tile_shape);
-                List_push(context->tile_shapes, tile_shape);
+                    // TilesetTile *tile = TileMap_resolve_tile_gid(scene->tile_map, gid);
+                    int col = i % scene->tile_map->cols;
+                    int row = i / scene->tile_map->cols;
+                    float corr = 0;
+                    cpVect tile_verts[4] = {
+                      { grid_size * col + corr,             grid_size * row + grid_size - corr},
+                      { grid_size * col + grid_size - corr, grid_size * row + grid_size - corr},
+                      { grid_size * col + grid_size - corr, grid_size * row + corr},
+                      { grid_size * col + corr,             grid_size * row + corr},
+                    };
+                    cpShape *tile_shape = cpPolyShapeNew(map_body, 4, tile_verts,
+                                                        cpvzero);
+                    cpShapeSetFriction(tile_shape, 0.5);
+                    tile_shape->collision_type = OCSCollisionTypeTile;
+                    cpSpaceAddStaticShape(scene->space, tile_shape);
+                    List_push(context->tile_shapes, tile_shape);
+                }
             }
         }
     }
@@ -460,7 +479,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
     OrthoChipmunkSceneCtx *context = scene->context;
     context->space = scene->space;
 
-    cpVect gravity = {0, 9.8};
+    cpVect gravity = {scene->gravity.x, scene->gravity.y};
     cpSpaceSetGravity(scene->space, gravity);
     cpSpaceSetCollisionSlop(scene->space, 0.0);
     cpSpaceSetCollisionBias(scene->space, 0.1);
@@ -502,5 +521,7 @@ SceneProto OrthoChipmunkSceneProto = {
     .add_entity_cb = OrthoChipmunkScene_add_entity_cb,
     .remove_entity_cb = OrthoChipmunkScene_remove_entity_cb,
     .hit_test = OrthoChipmunkScene_hit_test,
-    .gen_recorder = OrthoChipmunkScene_gen_recorder
+    .gen_recorder = OrthoChipmunkScene_gen_recorder,
+    .get_gravity = OrthoChipmunkScene_get_gravity,
+    .set_gravity = OrthoChipmunkScene_set_gravity
 };

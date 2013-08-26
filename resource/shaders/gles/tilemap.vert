@@ -1,4 +1,4 @@
-precision highp float;
+precision mediump float;
 attribute vec4 position;
 attribute vec4 texture;
 varying vec4 textureVarying;

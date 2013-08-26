@@ -7,12 +7,36 @@
 #include "../core/engine.h"
 #include "../math/vpolygon.h"
 
+void str_sanitize(char **str) {
+    char *string = *str;
+    bstring bstr = bfromcstr((const char *)string);
+    bstring space = bfromcstr(" ");
+    bstring nl = bfromcstr("\n");
+    bstring empty = bfromcstr("");
+    int replaced = 0;
+    replaced = bfindreplace(bstr, nl, empty, 0);
+    replaced = bfindreplace(bstr, space, empty, 0);
+    char *processed = bstr2cstr(bstr, '\0');
+    *str = realloc(string, strlen(processed) + 1);
+    strcpy(*str, processed);
+    bdestroy(bstr);
+    bdestroy(space);
+    bdestroy(nl);
+    bdestroy(empty);
+}
+
 void extract_gids_from_encoded_data(xmlChar *value, uint32_t **gids,
         int *gid_count) {
-    unsigned char *decoded = malloc(1024);
-    size_t outlen = base64_decode((char *)value,
-            &decoded,
-            1024);
+    unsigned char *decoded = NULL;
+    int outlen = 0;
+    int inlen = xmlStrlen(value);
+  
+    char *to_decode = calloc(1, inlen + 1);
+    strcpy(to_decode, (const char *)value);
+    str_sanitize(&to_decode);
+    inlen = (int)strlen(to_decode);
+    decoded = base64_decode((const void *)to_decode, inlen, &outlen);
+  
     unsigned char *decompressed = calloc(1, 256);
     unsigned long int unzip_len = decompress_data(decoded, outlen, &decompressed, 256);
     free(decoded);

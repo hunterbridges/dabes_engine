@@ -18,7 +18,7 @@ unsigned long int decompress_data(unsigned char* abSrc, unsigned long nLenSrc, u
   zInfo.next_out = dst_start;
 
   long int nErr, nRet= -1;
-  nErr = inflateInit2(&zInfo, 15 + 32);
+  nErr = inflateInit2(&zInfo, MAX_WBITS + 32);
   if (nErr == Z_OK) {
     do {
       nErr = inflate(&zInfo, Z_SYNC_FLUSH);
@@ -27,11 +27,11 @@ unsigned long int decompress_data(unsigned char* abSrc, unsigned long nLenSrc, u
         case Z_NEED_DICT:
         case Z_STREAM_ERROR:
           nErr = Z_DATA_ERROR;
-          printf("Data error %ld", nErr);
+          log_err("decompress_data(): zlib error - Data error %ld", nErr);
         case Z_DATA_ERROR:
         case Z_MEM_ERROR:
           inflateEnd(&zInfo);
-          printf("%s\n", zInfo.msg);
+          log_err("decompress_data(): zlib error - %s", zInfo.msg);
           return zInfo.total_out;
       }
 

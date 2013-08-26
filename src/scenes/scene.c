@@ -24,6 +24,7 @@ Scene *Scene_create(Engine *engine, SceneProto proto) {
     VVector4 cover_color = {.raw = {0, 0, 0, 0}};
     scene->cover_color = cover_color;
 
+    scene->gravity = VPointZero;
     return scene;
 error:
     return NULL;

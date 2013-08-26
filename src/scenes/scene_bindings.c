@@ -248,6 +248,27 @@ Scripting_VVector4_setter(Scene, bg_color);
 Scripting_VVector4_getter(Scene, cover_color);
 Scripting_VVector4_setter(Scene, cover_color);
 
+int luab_Scene_get_gravity(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    luaL_pushvpoint(L, scene->_(get_gravity)(scene));
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Scene_set_gravity(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    VPoint gravity = luaL_tovpoint(L, 2);
+    scene->_(set_gravity)(scene, gravity);
+
+    return 0;
+error:
+    return 0;
+}
+
 Scripting_num_getter(Scene, started_at);
 
 static const struct luaL_Reg luab_Scene_meths[] = {
@@ -272,6 +293,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"set_bg_color", luab_Scene_set_bg_color},
     {"get_cover_color", luab_Scene_get_cover_color},
     {"set_cover_color", luab_Scene_set_cover_color},
+    {"get_gravity", luab_Scene_get_gravity},
+    {"set_gravity", luab_Scene_set_gravity},
     {"get_started_at", luab_Scene_get_started_at},
     {NULL, NULL}
 };

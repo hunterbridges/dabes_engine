@@ -28,6 +28,8 @@ typedef struct SceneProto {
     void (*remove_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
     Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
     Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
+    VPoint (*get_gravity)(struct Scene *scene);
+    void (*set_gravity)(struct Scene *scene, VPoint gravity);
 } SceneProto;
 
 typedef enum {
@@ -73,6 +75,7 @@ typedef struct Scene {
     long int started_at;
 
     int pixels_per_meter;
+    VPoint gravity;
 
     SceneEntitySelectionMode selection_mode;
     List *selected_entities;

@@ -53,10 +53,10 @@ GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
       free(tile);
     }
 
-    layer->raw_atlas[i]   = (diff_gid & 0x000000ff);
-    layer->raw_atlas[i+1] = (diff_gid & 0x0000ff00) >> 8;
-    layer->raw_atlas[i+2] = (diff_gid & 0x00ff0000) >> 16;
-    layer->raw_atlas[i+3] = (diff_gid & 0xff000000) >> 24;
+    layer->raw_atlas[i+3] = (diff_gid & 0x000000ff);
+    layer->raw_atlas[i+2] = (diff_gid & 0x0000ff00) >> 8;
+    layer->raw_atlas[i+1] = (diff_gid & 0x00ff0000) >> 16;
+    layer->raw_atlas[i]   = (diff_gid & 0xff000000) >> 24;
   }
   return GfxTexture_from_data((unsigned char **)&layer->raw_atlas,
                               map->cols, map->rows, GL_RGBA);

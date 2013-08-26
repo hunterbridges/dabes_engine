@@ -94,6 +94,11 @@ Scene = BoundObject:extend({
         -- Default `{0, 0, 0, 0}`
         cover_color = BoundObject.fwd_func("get_cover_color"),
 
+        --- An `{x, y}` vector of the `Scene`'s gravity in meters per
+        -- seconds squared. This doesn't do anything in `static` scenes, but
+        -- the property can still be used.
+        gravity = BoundObject.fwd_func("get_gravity"),
+
         --- The @{music|Music} bound to the `Scene`. Use this property
         -- if you want the `Music` to be managed along with the `Scene`.
         -- e.g. Stop the music automatically when the `Scene` disappears.
@@ -117,6 +122,7 @@ Scene = BoundObject:extend({
         cover_color = BoundObject.fwd_func("set_cover_color"),
         debug_camera = BoundObject.fwd_func("set_debug_camera"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
+        gravity = BoundObject.fwd_func("set_gravity"),
         music = BoundObject.fwd_zeroing_setter("set_music", "music"),
         parallax = BoundObject.fwd_func("set_parallax"),
         space = BoundObject.readonly,
