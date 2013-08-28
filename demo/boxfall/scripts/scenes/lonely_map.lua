@@ -11,6 +11,7 @@ LonelyMap = Scene:extend({
 
     init = function(self)
         self:load_map("media/tilemaps/lonely.tmx", 1.0)
+        self.gravity = {0, 9.8}
     end,
 
     fade_in_effect = function(scene, e)

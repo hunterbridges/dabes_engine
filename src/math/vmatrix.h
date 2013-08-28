@@ -40,6 +40,10 @@ typedef union VVector4 {
 
 extern const VVector4 VVector4Zero;
 
+static const VVector4 VVector4ClearColor = {.raw = {0.0, 0.0, 0.0, 0.0}};
+static const VVector4 VVector4BlackColor = {.raw = {0.0, 0.0, 0.0, 1.0}};
+static const VVector4 VVector4WhiteColor = {.raw = {1.0, 1.0, 1.0, 1.0}};
+
 typedef union VMatrix {
     struct {
       float m11, m12, m13, m14;
@@ -68,6 +72,10 @@ VMatrix VMatrix_rotate(VMatrix matrix, double rot_degs, double x, double y,
 VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz);
 VMatrix VMatrix_make_ortho(float left, float right, float top,
                            float bottom, float near, float far);
+VMatrix VMatrix_make_perspective(float fov_radians, float aspect, float near,
+                                 float far);
+VMatrix VMatrix_make_frustum(float left, float right, float top,
+                             float bottom, float near, float far);
 int VMatrix_is_equal(VMatrix a, VMatrix b);
 
 #endif

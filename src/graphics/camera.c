@@ -295,7 +295,8 @@ void Graphics_project_screen_camera(Graphics *graphics, Camera *camera) {
       .screen_size = camera->screen_size,
       .scale = 1,
       .rotation_radians = 0,
-      .margin = camera->margin
+      .margin = camera->margin,
+      .translation = {0, 0}
     };
   
     Graphics_reset_projection_matrix(graphics);

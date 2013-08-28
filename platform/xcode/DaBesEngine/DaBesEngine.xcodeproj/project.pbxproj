@@ -86,6 +86,10 @@
 		CAAF8C86178A325000BBB143 /* engine_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAAF8C83178A325000BBB143 /* engine_bindings.c */; };
 		CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAAF8C84178A325000BBB143 /* engine_bindings.h */; };
 		CAAF8C88178A325000BBB143 /* engine_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAAF8C84178A325000BBB143 /* engine_bindings.h */; };
+		CAB6AF3517CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CAB6AF3317CD42CA0000C3B5 /* telemetry_splash_scene.c */; };
+		CAB6AF3617CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CAB6AF3317CD42CA0000C3B5 /* telemetry_splash_scene.c */; };
+		CAB6AF3717CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */; };
+		CAB6AF3817CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */; };
 		CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
@@ -474,6 +478,8 @@
 		CA9EB6FF17CAFACA00CA273F /* DABPlatformerControllerOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABPlatformerControllerOverlayView.m; sourceTree = "<group>"; };
 		CAAF8C83178A325000BBB143 /* engine_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = engine_bindings.c; sourceTree = "<group>"; };
 		CAAF8C84178A325000BBB143 /* engine_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine_bindings.h; sourceTree = "<group>"; };
+		CAB6AF3317CD42CA0000C3B5 /* telemetry_splash_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = telemetry_splash_scene.c; sourceTree = "<group>"; };
+		CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = telemetry_splash_scene.h; sourceTree = "<group>"; };
 		CAC3820817861D660072E709 /* DABProjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DABProjectManager.h; path = DaBesEngine/DABProjectManager.h; sourceTree = "<group>"; };
 		CAC3820917861D660072E709 /* DABProjectManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DABProjectManager.m; path = DaBesEngine/DABProjectManager.m; sourceTree = "<group>"; };
 		CAC581A917585FFD004A8161 /* body.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = body.c; sourceTree = "<group>"; };
@@ -761,6 +767,8 @@
 				CA46A681175A77F500F2311E /* scene_bindings.h */,
 				CA8B985F178A08BA00CA41B4 /* static_scene.c */,
 				CA8B9860178A08BA00CA41B4 /* static_scene.h */,
+				CAB6AF3317CD42CA0000C3B5 /* telemetry_splash_scene.c */,
+				CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */,
 			);
 			name = scenes;
 			path = ../../../../src/scenes;
@@ -985,6 +993,7 @@
 				CA72C44D1796739A00255691 /* overlay_bindings.h in Headers */,
 				CA72C4511796739A00255691 /* overlay.h in Headers */,
 				CA9EB70017CAFACA00CA273F /* DABPlatformerControllerOverlayView.h in Headers */,
+				CAB6AF3817CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1052,6 +1061,7 @@
 				CAEFD91B1790A56100D19B4D /* vpolygon.h in Headers */,
 				CA72C44C1796739A00255691 /* overlay_bindings.h in Headers */,
 				CA72C4501796739A00255691 /* overlay.h in Headers */,
+				CAB6AF3717CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1409,6 +1419,7 @@
 				CA72C44B1796739A00255691 /* overlay_bindings.c in Sources */,
 				CA72C44F1796739A00255691 /* overlay.c in Sources */,
 				CA9EB70117CAFACA00CA273F /* DABPlatformerControllerOverlayView.m in Sources */,
+				CAB6AF3617CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1472,6 +1483,7 @@
 				CAEFD9191790A56100D19B4D /* vpolygon.c in Sources */,
 				CA72C44A1796739A00255691 /* overlay_bindings.c in Sources */,
 				CA72C44E1796739A00255691 /* overlay.c in Sources */,
+				CAB6AF3517CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

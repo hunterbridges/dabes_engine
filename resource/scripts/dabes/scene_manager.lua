@@ -31,6 +31,10 @@ SceneManager = Object:extend({
     -- @name scene_manager:push_scene
     -- @tparam Scene scene The scene to transition to
     push_scene = function(self, scene)
+        if scene == nil then
+            error("Can't push a nil Scene", 2)
+            return
+        end
         self.queued_scene = scene
     end,
 

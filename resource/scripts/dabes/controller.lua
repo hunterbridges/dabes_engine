@@ -27,7 +27,6 @@ Controller = BoundObject:extend({
             right = false,
             a_button = false
         }
-        print "derp"
     
         self.released = {
             up = false,

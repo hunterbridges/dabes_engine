@@ -2,6 +2,17 @@
 #define __easer_h
 #include "../prefix.h"
 
+// Here are some raw easing functions...
+
+static inline float ease_out_cubic(float time, float start, float change,
+                                   float duration) {
+	time /= duration;
+	time--;
+	return change*(time*time*time + 1) + start;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
 typedef float (*Easer_curve)(float progress);
 
 struct Engine;

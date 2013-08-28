@@ -181,7 +181,12 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
 // Projection matrix
 void Graphics_reset_projection_matrix(Graphics *graphics);
 void Graphics_ortho_projection_matrix(Graphics *graphics, double left,
-        double right, double top, double bottom, double far, double near);
+        double right, double top, double bottom, double near, double far);
+void Graphics_perspective_projection_matrix(Graphics *graphics,
+                                            float fov_radians, float aspect,
+                                            float near, float far);
+void Graphics_frustum_projection_matrix(Graphics *graphics, double left,
+                                        double right, double top, double bottom, double near, double far);
 void Graphics_scale_projection_matrix(Graphics *graphics, double x,
         double y, double z);
 void Graphics_rotate_projection_matrix(Graphics *graphics, double rot_degs,

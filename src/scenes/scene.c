@@ -33,7 +33,9 @@ error:
 void Scene_destroy(Scene *scene, Engine *engine) {
     check(scene != NULL, "No scene to destroy");
 
-    scene->_(stop)(scene, engine);
+    if (scene->started) {
+        scene->_(stop)(scene, engine);
+    }
     scene->_(cleanup)(scene, engine);
 
     free(scene->name);
@@ -340,25 +342,20 @@ void Scene_render_selected_entities(Scene *scene, Engine *engine) {
     }
 }
 
+void Scene_project_screen(Scene *scene, Engine *engine) {
+    Graphics_project_screen_camera(engine->graphics, scene->camera);
+}
+
 void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
     if (color.rgba.a > 0.0) {
         GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
         Graphics_use_shader(engine->graphics, dshader);
-        Camera screen_cam = {
-          .focal = {0, 0},
-          .screen_size = scene->camera->screen_size,
-          .scale = 1,
-          .rotation_radians = 0,
-          .margin = scene->camera->margin,
-          .translation = {0, 0}
-        };
-        Graphics_reset_projection_matrix(engine->graphics);
         Graphics_reset_modelview_matrix(engine->graphics);
-        Graphics_project_camera(engine->graphics, &screen_cam);
-        VRect cover_rect = VRect_from_xywh(-screen_cam.screen_size.w / 2.0,
-                                           -screen_cam.screen_size.h / 2.0,
-                                           screen_cam.screen_size.w,
-                                           screen_cam.screen_size.h);
+        Scene_project_screen(scene, engine);
+        VRect cover_rect = VRect_from_xywh(-scene->camera->screen_size.w / 2.0,
+                                           -scene->camera->screen_size.h / 2.0,
+                                           scene->camera->screen_size.w,
+                                           scene->camera->screen_size.h);
         glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX],
                            1, GL_FALSE, engine->graphics->projection_matrix.gl);
         Graphics_draw_rect(engine->graphics, NULL, cover_rect,

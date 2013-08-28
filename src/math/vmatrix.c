@@ -137,6 +137,29 @@ VMatrix VMatrix_make_ortho(float left, float right, float top,
   return ortho;
 }
 
+VMatrix VMatrix_make_perspective(float fov_radians, float aspect, float near, float far)
+{
+  float cotan = 1.0f / tanf(fov_radians / 2.0f);
+  
+  VMatrix pers = {.gl = { cotan / aspect, 0.0f, 0.0f, 0.0f,
+    0.0f, cotan, 0.0f, 0.0f,
+    0.0f, 0.0f, (far + near) / (near - far), -1.0f,
+    0.0f, 0.0f, (2.0f * far * near) / (near - far), 0.0f }};
+  
+  return pers;
+}
+
+VMatrix VMatrix_make_frustum(float left, float right, float top,
+                             float bottom, float near, float far) {
+  VMatrix frustum = {.gl = {
+    2.0 * near / (right - left),     0,                               0,                                  0,
+    0,                               2.0 * near / (top - bottom),     0,                                  0,
+    (right + left) / (right - left), (top + bottom) / (top - bottom), -(far + near) / (far - near),       -1,
+    0,                               0,                               (-2.0 * far * near) / (far - near), 0
+  }};
+  return frustum;
+}
+
 int VMatrix_is_equal(VMatrix a, VMatrix b) {
     int i = 0;
     for (i = 0; i < 16; i++) {

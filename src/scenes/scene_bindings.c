@@ -8,6 +8,7 @@
 #include "scene.h"
 #include "ortho_chipmunk_scene.h"
 #include "static_scene.h"
+#include "telemetry_splash_scene.h"
 #include "overlay_bindings.h"
 
 const char *luab_Scene_lib = "dab_scene";
@@ -26,14 +27,16 @@ int luab_Scene_new(lua_State *L) {
 
     const char *proto = NULL;
 
-    int valid_proto = 0;
+    int valid_proto = 1;
     proto = lua_tostring(L, 1);
     if (streq(proto, "ortho_chipmunk")) {
         scene = Scene_create(engine, OrthoChipmunkSceneProto);
-        valid_proto = 1;
     } else if (streq(proto, "static")) {
         scene = Scene_create(engine, StaticSceneProto);
-        valid_proto = 1;
+    } else if (streq(proto, "telemetry")) {
+        scene = Scene_create(engine, TelemetrySplashSceneProto);
+    } else {
+        valid_proto = 0;
     }
     check(valid_proto, "Invalid scene type: %s", proto);
 

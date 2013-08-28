@@ -26,11 +26,11 @@ static inline GLenum Graphics_check() {
       case GL_INVALID_OPERATION:
         log_err("OpenGL GL_INVALID_OPERATION");
         break;
-        
+
       case GL_INVALID_VALUE:
         log_err("OpenGL GL_INVALID_VALUE");
         break;
-        
+
       default:
         break;
     }
@@ -270,7 +270,7 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
 
     int rc = FT_Load_Char(font->face, (long unsigned)c, FT_LOAD_RENDER);
     check(rc == 0, "Could not load char %c", c);
-  
+
     FT_GlyphSlot g = font->face->glyph;
     FT_Glyph glyph;
     FT_Stroker  stroker = NULL;
@@ -282,9 +282,9 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
       FT_Glyph_Stroke(&glyph, stroker, 1);
       FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 1);
       FT_BitmapGlyph bit_glyph = (FT_BitmapGlyph)glyph;
-      
+
       fontchar = GfxFontChar_create(&bit_glyph->bitmap, g->advance, g->bitmap_top);
-      
+
       FT_Done_Glyph(glyph);
       FT_Stroker_Done(stroker);
     } else {
@@ -292,7 +292,7 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
       fontchar = GfxFontChar_create(&g->bitmap, g->advance, g->bitmap_top);
       FT_Done_Glyph(glyph);
     }
-  
+
     if (fontchar) {
       Hashmap_set(font->char_textures, bstr, fontchar);
     } else {
@@ -341,7 +341,7 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
     VVector4 aVertex = {.raw = {1, 1, 1, 1}};
-  
+
     // Transpose modelview matrix because attribute reads columns, not rows.
     VMatrix tmvm = graphics->modelview_matrix;
 
@@ -465,7 +465,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
     VVector4 aVertex = {.raw = {1, 1, 1, alpha}};
-  
+
     // Transpose modelview matrix because attribute reads columns, not rows.
     VMatrix tmvm = graphics->modelview_matrix;
 
@@ -543,7 +543,7 @@ error:
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
         GLfloat shadow_color[4], VPoint shadow_offset) {
-  
+
     if (shadow_color[3] > 0.0 &&
             VPoint_rel(shadow_offset, VPointZero) != VPointRelWithin) {
         // This is totally lazy and could be optimized.
@@ -551,7 +551,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         Graphics_draw_string(graphics, text, font, shadow_color, so,
                              align, GfxGLClearColor, VPointZero);
     }
-  
+
     char *c = text;
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
@@ -565,13 +565,13 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
             c++;
             continue;
           }
-        
+
           line_width += fontchar->advance.x / 64.0;
           c++;
       }
       line_width = floorf(line_width);
     }
-  
+
     c = text;
     float xo = 0;
     while (*c != '\0') {
@@ -601,7 +601,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
 
         // Transpose modelview matrix because attribute reads columns, not rows.
         VMatrix tmvm = graphics->modelview_matrix;
-      
+
         VRect glyph_rect = VRectZero;
         switch (align) {
           case GfxTextAlignRight: {
@@ -610,14 +610,14 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
                                          texture->size.w,
                                          texture->size.h);
           } break;
-          
+
           case GfxTextAlignCenter: {
             glyph_rect = VRect_from_xywh(origin.x - line_width / 2 + xo,
                                          origin.y - fontchar->bitmap_top,
                                          texture->size.w,
                                          texture->size.h);
           } break;
-            
+
           case GfxTextAlignLeft:
           default: {
             glyph_rect = VRect_from_xywh(origin.x + xo,
@@ -625,7 +625,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
                                          texture->size.w,
                                          texture->size.h);
           } break;
-            
+
         }
 
         VVector4 vertices[7 * 6] = {
@@ -696,6 +696,19 @@ void Graphics_ortho_projection_matrix(Graphics *graphics, double left,
         VMatrix_make_ortho(left, right, top, bottom, near, far);
 }
 
+void Graphics_perspective_projection_matrix(Graphics *graphics,
+                                            float fov_radians, float aspect,
+                                            float near, float far) {
+    graphics->projection_matrix =
+        VMatrix_make_perspective(fov_radians, aspect, near, far);
+}
+
+void Graphics_frustum_projection_matrix(Graphics *graphics, double left,
+        double right, double top, double bottom, double near, double far) {
+    graphics->projection_matrix =
+        VMatrix_make_frustum(left, right, top, bottom, near, far);
+}
+
 void Graphics_scale_projection_matrix(Graphics *graphics, double x,
         double y, double z) {
     graphics->projection_matrix =
@@ -759,11 +772,11 @@ void set_up_decal_shader(GfxShader *shader, Graphics *graphics) {
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_COLOR], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 1));
-  
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_ALPHA], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 2));
-  
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_DECAL_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 3));
