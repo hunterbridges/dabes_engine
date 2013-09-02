@@ -7,7 +7,7 @@
 #include "../entities/body_bindings.h"
 #include "../entities/sensor.h"
 #include "../graphics/draw_buffer.h"
-#include "../scenes/overlay.h"
+#include "../layers/overlay.h"
 #include "scene.h"
 
 static VPoint AXIS_CENTERING = {-23, 11};

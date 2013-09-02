@@ -4,15 +4,15 @@
 #include "../audio/sfx.h"
 #include "../entities/body.h"
 #include "../entities/body_bindings.h"
+#include "../entities/entity.h"
 #include "../entities/sensor.h"
 #include "../graphics/draw_buffer.h"
-#include "chipmunk_scene.h"
-#include "../entities/entity.h"
+#include "../layers/overlay.h"
+#include "../math/vpolygon.h"
 #include "../recorder/recorder.h"
 #include "../recorder/chipmunk_recorder.h"
+#include "chipmunk_scene.h"
 #include "scene.h"
-#include "../math/vpolygon.h"
-#include "overlay.h"
 
 typedef struct ChipmunkSceneTraverseCtx {
     Scene *scene;
@@ -171,8 +171,8 @@ static void render_shape_iter(cpShape *shape, void *data) {
         shape_verts[i].x = vert->x * iter_data->scene->pixels_per_meter;
         shape_verts[i].y = vert->y * iter_data->scene->pixels_per_meter;
     }
-    Graphics_stroke_poly(iter_data->engine->graphics, pshape->numVerts,
-            shape_verts, vcenter, color, 1, rot);
+    Graphics_stroke_path(iter_data->engine->graphics, shape_verts,
+                         pshape->numVerts, vcenter, color, 1, rot, 1);
 }
 
 void ChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
@@ -233,9 +233,15 @@ void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
     Scene_render_entities(scene, engine);
     Scene_render_selected_entities(scene, engine);
+    
+    if (scene->canvas) {
+        Canvas_render(scene->canvas, engine);
+    }
+    
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_fill(scene, engine, scene->cover_color);
+    
     if (scene->debug_camera) {
         Camera_debug(scene->camera, engine->graphics);
     }

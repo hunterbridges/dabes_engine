@@ -12,6 +12,7 @@
 #include "../graphics/parallax.h"
 #include "../graphics/tile_map.h"
 #include "../physics/world.h"
+#include "../layers/canvas.h"
 #include "../math/vmatrix.h"
 #include "../recorder/recorder.h"
 
@@ -63,6 +64,7 @@ typedef struct Scene {
     };
     Parallax *parallax;
     TileMap *tile_map;
+    Canvas *canvas;
 
     VVector4 bg_color;
     VVector4 cover_color;

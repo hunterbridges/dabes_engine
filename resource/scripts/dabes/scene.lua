@@ -81,6 +81,9 @@ Scene = BoundObject:extend({
             return got
         end,
 
+        --- A @{canvas|Canvas} that is rendered with the `Scene`.
+        canvas = BoundObject.fwd_func("get_canvas"),
+
         --- **(bool)** Whether to render camera debug outlines.
         debug_camera = BoundObject.fwd_func("get_debug_camera"),
 
@@ -120,6 +123,7 @@ Scene = BoundObject:extend({
     _setters = {
         bg_color = BoundObject.fwd_func("set_bg_color"),
         cover_color = BoundObject.fwd_func("set_cover_color"),
+        canvas = BoundObject.fwd_func("set_canvas"),
         debug_camera = BoundObject.fwd_func("set_debug_camera"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
         gravity = BoundObject.fwd_func("set_gravity"),

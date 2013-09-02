@@ -1289,7 +1289,7 @@ struct Engine;
 Graphics *Graphics_create(struct Engine *engine);
 void Graphics_destroy(Graphics *graphics);
 
-void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
+void Graphics_stroke_path(Graphics *graphics, int num_points, VPoint *points,
         VPoint center, GLfloat color[4], double line_width, double rotation);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);

@@ -59,6 +59,23 @@ void Input_poll(Input *input) {
             if (event.key.keysym.sym == SDLK_p)
                 input->phys_render = 1;
         }
+        if (event.type == SDL_MOUSEMOTION) {
+            input->controllers[0]->touch_state |= CONTROLLER_TOUCH_MOVED;
+            VPoint pos = {event.motion.x, event.motion.y};
+            input->controllers[0]->touch_pos = pos;
+        }
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD_CHANGED;
+            input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD;
+            VPoint pos = {event.button.x, event.button.y};
+            input->controllers[0]->touch_pos = pos;
+        }
+        if (event.type == SDL_MOUSEBUTTONUP) {
+            input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD_CHANGED;
+            input->controllers[0]->touch_state &= ~(CONTROLLER_TOUCH_HOLD);
+            VPoint pos = {event.button.x, event.button.y};
+            input->controllers[0]->touch_pos = pos;
+        }
     }
 #endif
 }
@@ -72,7 +89,7 @@ void Input_touch(Input *input, Input *touch_input) {
     input->cam_rotate = touch_input->cam_rotate;
     input->cam_focal_pan = touch_input->cam_focal_pan;
     input->cam_translate_pan = touch_input->cam_translate_pan;
-  
+
     for (i = 0; i < 4; i++) {
         input->controllers[i]->dpad = touch_input->controllers[i]->dpad;
         input->controllers[i]->jump = touch_input->controllers[i]->jump;
@@ -100,3 +117,18 @@ error:
     return;
 }
 
+void Input_change_preferred_style(Input *input, InputStyle preferred) {
+    check(input != NULL, "Input required");
+
+    if (preferred == input->preferred_style) return;
+    InputStyle old = input->preferred_style;
+    input->preferred_style = preferred;
+
+    if (input->change_preferred_style_cb != NULL) {
+        input->change_preferred_style_cb(input, old, preferred);
+    }
+
+    return;
+error:
+    return;
+}

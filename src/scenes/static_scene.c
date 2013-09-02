@@ -4,12 +4,12 @@
 #include "../audio/sfx.h"
 #include "../entities/body.h"
 #include "../entities/body_bindings.h"
+#include "../entities/entity.h"
 #include "../entities/sensor.h"
 #include "../graphics/draw_buffer.h"
+#include "../layers/overlay.h"
 #include "chipmunk_scene.h"
-#include "../entities/entity.h"
 #include "scene.h"
-#include "overlay.h"
 
 void StaticScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
     check(scene != NULL, "No scene to destroy");
@@ -43,6 +43,11 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
     }
 
     Scene_render_entities(scene, engine);
+    
+    if (scene->canvas) {
+        Canvas_render(scene->canvas, engine);
+    }
+    
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_render_selected_entities(scene, engine);

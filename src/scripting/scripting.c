@@ -13,7 +13,8 @@
 #include "../entities/entity_bindings.h"
 #include "../entities/sensor_bindings.h"
 #include "../scenes/scene_bindings.h"
-#include "../scenes/overlay_bindings.h"
+#include "../layers/canvas_bindings.h"
+#include "../layers/overlay_bindings.h"
 #include "../graphics/camera_bindings.h"
 #include "../graphics/parallax_bindings.h"
 #include "../graphics/sprite_bindings.h"
@@ -35,6 +36,7 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_entity(scripting->L);
     luaopen_dabes_sensor(scripting->L);
     luaopen_dabes_scene(scripting->L);
+    luaopen_dabes_canvas(scripting->L);
     luaopen_dabes_overlay(scripting->L);
     luaopen_dabes_camera(scripting->L);
     luaopen_dabes_parallax(scripting->L);
@@ -114,7 +116,7 @@ void Scripting_update_paths(Scripting *scripting, struct Engine *engine) {
 
 void Scripting_destroy(Scripting *scripting) {
     check(scripting != NULL, "No scripting to destroy");
-  
+
     lua_State *L = scripting->L;
     lua_getglobal(L, "_cleanglobals");
     int result = lua_pcall(L, 0, 0, 0);
@@ -127,7 +129,7 @@ void Scripting_destroy(Scripting *scripting) {
         }
         lua_pop(L, 1);
     }
-  
+
     lua_close(scripting->L);
     free(scripting);
     return;
@@ -266,10 +268,10 @@ error:
 
 int luaL_lookup_instance(lua_State *L, void *val) {
     int top = lua_gettop(L);
-  
+
     int rc = luaL_lookup_ud(L, val);
     if (rc == 0) return 0;
-  
+
     lua_getglobal(L, SCRIPTING_INSTANCE_MAP);
     lua_pushvalue(L, -2);
     lua_gettable(L, -2);

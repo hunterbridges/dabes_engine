@@ -4,7 +4,7 @@
 #include "../core/engine.h"
 #include "scene.h"
 #include "../graphics/draw_buffer.h"
-#include "overlay.h"
+#include "../layers/overlay.h"
 
 typedef struct SceneTraverseCtx {
     Scene *scene;
@@ -20,6 +20,7 @@ Scene *Scene_create(Engine *engine, SceneProto proto) {
     scene->proto = proto;
     scene->camera = Camera_create(engine->graphics->screen_size.w,
                                   engine->graphics->screen_size.h);
+    scene->canvas = NULL;
 
     VVector4 cover_color = {.raw = {0, 0, 0, 0}};
     scene->cover_color = cover_color;
@@ -138,6 +139,10 @@ static inline int overlay_update_traverse_cb(BSTreeNode *node, void *context) {
 void Scene_update(Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
     Scene_control(scene, engine);
+    
+    if (scene->canvas) {
+        Canvas_update(scene->canvas, engine);
+    }
 
     int i = 0;
     for (i = 0; i < INPUT_NUM_CONTROLLERS; i++) {
@@ -232,6 +237,8 @@ void Scene_stop(Scene *scene, Engine *engine) {
 
     BSTree_destroy(scene->overlays);
     scene->overlays = NULL;
+    
+    scene->canvas = NULL;
 
     scene->started = 0;
     return;

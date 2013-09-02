@@ -2343,22 +2343,22 @@ Scripting_caster_for(Controller, luaL_tocontroller);
 int luaopen_dabes_controller(lua_State *L);
 
 #endif
-#ifndef __vpolygon_h
-#define __vpolygon_h
+#ifndef __canvas_h
+#define __canvas_h
+#include <lcthw/darray.h>
 
-typedef struct VPolygon {
-    VPoint origin;
-    int num_points;
-    VPoint points[];
-} VPolygon;
+typedef struct Canvas {
+    DArray *raw_points;
+    DArray *simplified_points;
 
-VPolygon *VPolygon_create(int num_points, VPoint *points);
-VPolygon *VPolygon_from_rect(VRect rect);
-void VPolygon_destroy(VPolygon *poly);
-void VPolygon_set_point(VPolygon *poly, int i, VPoint point);
-VPoint VPolygon_get_point(VPolygon *poly, int i);
-void VPolygon_wind(VPolygon *poly, short int clockwise);
-int VPolygon_is_clockwise(VPolygon *poly);
+    float angle_threshold;
+    float distance_threshold;
+} Canvas;
+
+
+#endif
+#ifndef __canvas_bindings_h
+#define __canvas_bindings_h
 
 #endif
 #ifndef __physics_world_grid_h
@@ -2500,37 +2500,6 @@ void *Recorder_read_frame(Recorder *recorder);
 void Recorder_set_state(Recorder *recorder, RecorderState state);
 
 #endif
-#ifndef __chipmunk_recorder_h
-#define __chipmunk_recorder_h
-#include <chipmunk/chipmunk.h>
-
-typedef struct ChipmunkRecorderFrame {
-    short int keyframe;
-
-    short int has_delta_pos;
-    VPoint pos;
-
-    short int has_delta_velo;
-    VPoint velo;
-  
-    short int has_sprite_frame;
-    int sprite_frame;
-
-    short int has_sprite_direction;
-    SpriteDirection sprite_direction;
-} ChipmunkRecorderFrame;
-
-typedef struct ChipmunkRecorderCtx {
-    int keyframe_every;
-    ChipmunkRecorderFrame *prev_frame;
-    ChipmunkRecorderFrame tracking_frame;
-} ChipmunkRecorderCtx;
-
-extern RecorderProto ChipmunkRecorderProto;
-
-Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
-
-#endif
 #ifndef __scene_h
 #define __scene_h
 #include <chipmunk/chipmunk.h>
@@ -2637,27 +2606,6 @@ void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
 
 
 #endif
-#ifndef __chipmunk_scene_h
-#define __chipmunk_scene_h
-
-#define COLLISION_SLOP 0.1
-
-typedef struct {
-    Scene *scene;
-    Engine *engine;
-} OCSIterData;
-
-typedef enum {
-  OCSCollisionTypeEntity = 1,
-  OCSCollisionTypeTile = 2,
-  OCSCollisionTypeDrawShape = 3,
-  OCSCollisionTypeSensor = 4,
-  OCSCollisionTypeStaticEntity = 5
-} OCSCollisionType;
-
-extern SceneProto ChipmunkSceneProto;
-
-#endif
 #ifndef __overlay_h
 #define __overlay_h
 
@@ -2701,6 +2649,76 @@ Scripting_caster_for(Overlay, luaL_tooverlay);
 
 int luaopen_dabes_overlay(lua_State *L);
 
+
+#endif
+#ifndef __vpolygon_h
+#define __vpolygon_h
+
+typedef struct VPolygon {
+    VPoint origin;
+    int num_points;
+    VPoint points[];
+} VPolygon;
+
+VPolygon *VPolygon_create(int num_points, VPoint *points);
+VPolygon *VPolygon_from_rect(VRect rect);
+void VPolygon_destroy(VPolygon *poly);
+void VPolygon_set_point(VPolygon *poly, int i, VPoint point);
+VPoint VPolygon_get_point(VPolygon *poly, int i);
+void VPolygon_wind(VPolygon *poly, short int clockwise);
+int VPolygon_is_clockwise(VPolygon *poly);
+
+#endif
+#ifndef __chipmunk_recorder_h
+#define __chipmunk_recorder_h
+#include <chipmunk/chipmunk.h>
+
+typedef struct ChipmunkRecorderFrame {
+    short int keyframe;
+
+    short int has_delta_pos;
+    VPoint pos;
+
+    short int has_delta_velo;
+    VPoint velo;
+  
+    short int has_sprite_frame;
+    int sprite_frame;
+
+    short int has_sprite_direction;
+    SpriteDirection sprite_direction;
+} ChipmunkRecorderFrame;
+
+typedef struct ChipmunkRecorderCtx {
+    int keyframe_every;
+    ChipmunkRecorderFrame *prev_frame;
+    ChipmunkRecorderFrame tracking_frame;
+} ChipmunkRecorderCtx;
+
+extern RecorderProto ChipmunkRecorderProto;
+
+Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
+
+#endif
+#ifndef __chipmunk_scene_h
+#define __chipmunk_scene_h
+
+#define COLLISION_SLOP 0.1
+
+typedef struct {
+    Scene *scene;
+    Engine *engine;
+} OCSIterData;
+
+typedef enum {
+  OCSCollisionTypeEntity = 1,
+  OCSCollisionTypeTile = 2,
+  OCSCollisionTypeDrawShape = 3,
+  OCSCollisionTypeSensor = 4,
+  OCSCollisionTypeStaticEntity = 5
+} OCSCollisionType;
+
+extern SceneProto ChipmunkSceneProto;
 
 #endif
 #ifndef __scene_bindings_h

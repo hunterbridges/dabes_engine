@@ -9,7 +9,8 @@
 #include "chipmunk_scene.h"
 #include "static_scene.h"
 #include "telemetry_splash_scene.h"
-#include "overlay_bindings.h"
+#include "../layers/canvas_bindings.h"
+#include "../layers/overlay_bindings.h"
 
 const char *luab_Scene_lib = "dab_scene";
 const char *luab_Scene_metatable = "DaBes.scene";
@@ -226,6 +227,35 @@ error:
     return 0;
 }
 
+int luab_Scene_get_canvas(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    if (scene->canvas == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    luaL_lookup_instance(L, scene->canvas);
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Scene_set_canvas(lua_State *L) {
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+
+    lua_getfield(L, -1, "real");
+    Canvas *canvas = luaL_tocanvas(L, -1);
+    check(canvas != NULL, "Parallax required");
+
+    scene->canvas = canvas;
+    canvas->scene = scene;
+    lua_pop(L, 3);
+error:
+    return 0;
+}
+
 int luab_Scene_get_camera(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
@@ -285,6 +315,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"load_map", luab_Scene_load_map},
     {"get_music", luab_Scene_get_music},
     {"set_music", luab_Scene_set_music},
+    {"get_canvas", luab_Scene_get_canvas},
+    {"set_canvas", luab_Scene_set_canvas},
     {"get_parallax", luab_Scene_get_parallax},
     {"set_parallax", luab_Scene_set_parallax},
     {"get_camera", luab_Scene_get_camera},

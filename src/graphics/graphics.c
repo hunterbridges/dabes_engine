@@ -326,8 +326,9 @@ error:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
-        VPoint center, GLfloat color[4], double line_width, double rotation) {
+void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
+                          VPoint center, GLfloat color[4], double line_width, double rotation,
+                          int loop) {
     Graphics_reset_modelview_matrix(graphics);
 
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
@@ -376,7 +377,7 @@ void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
     glDisable(GL_MULTISAMPLE);
 #endif
     glLineWidth(line_width);
-    glDrawArrays(GL_LINE_LOOP, 0, num_points);
+    glDrawArrays(loop ? GL_LINE_LOOP : GL_LINES, 0, num_points);
     return;
 #ifdef DABES_SDL
     glEnable(GL_MULTISAMPLE);
@@ -398,7 +399,7 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         poly[i] = VPoint_subtract(VRect_vertex(rect, i), center);
     }
 
-    Graphics_stroke_poly(graphics, 4, poly, center, color, line_width, rotation);
+    Graphics_stroke_path(graphics, poly, 4, center, color, line_width, rotation, 1);
 }
 
 

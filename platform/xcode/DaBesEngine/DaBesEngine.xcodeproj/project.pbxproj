@@ -68,14 +68,6 @@
 		CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CA705C291783566C00D2C6E4 /* DaBes-iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA72C4201795210300255691 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C3231794FBBD00255691 /* libFreetype2.a */; };
 		CA72C4231795211100255691 /* libFreetype2-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C41D179520F600255691 /* libFreetype2-Mac.a */; };
-		CA72C44A1796739A00255691 /* overlay_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4461796739A00255691 /* overlay_bindings.c */; };
-		CA72C44B1796739A00255691 /* overlay_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4461796739A00255691 /* overlay_bindings.c */; };
-		CA72C44C1796739A00255691 /* overlay_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4471796739A00255691 /* overlay_bindings.h */; };
-		CA72C44D1796739A00255691 /* overlay_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4471796739A00255691 /* overlay_bindings.h */; };
-		CA72C44E1796739A00255691 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4481796739A00255691 /* overlay.c */; };
-		CA72C44F1796739A00255691 /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CA72C4481796739A00255691 /* overlay.c */; };
-		CA72C4501796739A00255691 /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4491796739A00255691 /* overlay.h */; };
-		CA72C4511796739A00255691 /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CA72C4491796739A00255691 /* overlay.h */; };
 		CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
@@ -211,6 +203,22 @@
 		CAF42A3A1780F62500C3220A /* object.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C77F16FC20900045D5DE /* object.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A3B1780F62500C3220A /* prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78D16FC20900045D5DE /* prefix.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A3C1780F62500C3220A /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78F16FC20900045D5DE /* util.h */; settings = {ATTRIBUTES = (); }; };
+		CAF915F217D46BA000EE204E /* canvas_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915EA17D46BA000EE204E /* canvas_bindings.c */; };
+		CAF915F317D46BA000EE204E /* canvas_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915EA17D46BA000EE204E /* canvas_bindings.c */; };
+		CAF915F417D46BA000EE204E /* canvas_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915EB17D46BA000EE204E /* canvas_bindings.h */; };
+		CAF915F517D46BA000EE204E /* canvas_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915EB17D46BA000EE204E /* canvas_bindings.h */; };
+		CAF915F617D46BA000EE204E /* canvas.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915EC17D46BA000EE204E /* canvas.c */; };
+		CAF915F717D46BA000EE204E /* canvas.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915EC17D46BA000EE204E /* canvas.c */; };
+		CAF915F817D46BA000EE204E /* canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915ED17D46BA000EE204E /* canvas.h */; };
+		CAF915F917D46BA000EE204E /* canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915ED17D46BA000EE204E /* canvas.h */; };
+		CAF915FA17D46BA000EE204E /* overlay_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915EE17D46BA000EE204E /* overlay_bindings.c */; };
+		CAF915FB17D46BA000EE204E /* overlay_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915EE17D46BA000EE204E /* overlay_bindings.c */; };
+		CAF915FC17D46BA000EE204E /* overlay_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915EF17D46BA000EE204E /* overlay_bindings.h */; };
+		CAF915FD17D46BA000EE204E /* overlay_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915EF17D46BA000EE204E /* overlay_bindings.h */; };
+		CAF915FE17D46BA000EE204E /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915F017D46BA000EE204E /* overlay.c */; };
+		CAF915FF17D46BA000EE204E /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915F017D46BA000EE204E /* overlay.c */; };
+		CAF9160017D46BA000EE204E /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915F117D46BA000EE204E /* overlay.h */; };
+		CAF9160117D46BA000EE204E /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915F117D46BA000EE204E /* overlay.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -464,10 +472,6 @@
 		CA7241B41730E55300255032 /* ogg_stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_stream.c; sourceTree = "<group>"; };
 		CA7241B51730E55300255032 /* ogg_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ogg_stream.h; sourceTree = "<group>"; };
 		CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = freetype2.xcodeproj; path = "../../../submodules/freetype2-ios/freetype2.xcodeproj"; sourceTree = "<group>"; };
-		CA72C4461796739A00255691 /* overlay_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay_bindings.c; sourceTree = "<group>"; };
-		CA72C4471796739A00255691 /* overlay_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = overlay_bindings.h; sourceTree = "<group>"; };
-		CA72C4481796739A00255691 /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = overlay.c; sourceTree = "<group>"; };
-		CA72C4491796739A00255691 /* overlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = overlay.h; sourceTree = "<group>"; };
 		CA8B985F178A08BA00CA41B4 /* static_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = static_scene.c; sourceTree = "<group>"; };
 		CA8B9860178A08BA00CA41B4 /* static_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_scene.h; sourceTree = "<group>"; };
 		CA92BF1916FFBEF000252D27 /* camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = camera.c; sourceTree = "<group>"; };
@@ -535,6 +539,14 @@
 		CAF4299A1780F38B00C3220A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CAF4299C1780F38B00C3220A /* DaBes-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DaBes-iOS-Prefix.pch"; sourceTree = "<group>"; };
 		CAF4299E1780F38B00C3220A /* DaBes-iOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DaBes-iOS.m"; sourceTree = "<group>"; };
+		CAF915EA17D46BA000EE204E /* canvas_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = canvas_bindings.c; path = ../../../../src/layers/canvas_bindings.c; sourceTree = "<group>"; };
+		CAF915EB17D46BA000EE204E /* canvas_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = canvas_bindings.h; path = ../../../../src/layers/canvas_bindings.h; sourceTree = "<group>"; };
+		CAF915EC17D46BA000EE204E /* canvas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = canvas.c; path = ../../../../src/layers/canvas.c; sourceTree = "<group>"; };
+		CAF915ED17D46BA000EE204E /* canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = canvas.h; path = ../../../../src/layers/canvas.h; sourceTree = "<group>"; };
+		CAF915EE17D46BA000EE204E /* overlay_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = overlay_bindings.c; path = ../../../../src/layers/overlay_bindings.c; sourceTree = "<group>"; };
+		CAF915EF17D46BA000EE204E /* overlay_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = overlay_bindings.h; path = ../../../../src/layers/overlay_bindings.h; sourceTree = "<group>"; };
+		CAF915F017D46BA000EE204E /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = overlay.c; path = ../../../../src/layers/overlay.c; sourceTree = "<group>"; };
+		CAF915F117D46BA000EE204E /* overlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = overlay.h; path = ../../../../src/layers/overlay.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -622,6 +634,7 @@
 				CAC581A817585FFD004A8161 /* entities */,
 				CA24C76D16FC20900045D5DE /* graphics */,
 				CA24C77716FC20900045D5DE /* input */,
+				CAF915E917D46B7A00EE204E /* layers */,
 				CA694523170FC4850021E89B /* math */,
 				CA24C78016FC20900045D5DE /* physics */,
 				CAEFD8F8178FA5E600D19B4D /* recorder */,
@@ -754,10 +767,6 @@
 			children = (
 				CA5E5E8E1721093A00CAF6A2 /* chipmunk_scene.c */,
 				CA5E5E8F1721093A00CAF6A2 /* chipmunk_scene.h */,
-				CA72C4461796739A00255691 /* overlay_bindings.c */,
-				CA72C4471796739A00255691 /* overlay_bindings.h */,
-				CA72C4481796739A00255691 /* overlay.c */,
-				CA72C4491796739A00255691 /* overlay.h */,
 				CA61B60F170FB3A600F1CC1A /* scene.c */,
 				CA61B610170FB3A600F1CC1A /* scene.h */,
 				CA65C6F7172B127400A7D4E5 /* scene_bindings.c */,
@@ -972,6 +981,21 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CAF915E917D46B7A00EE204E /* layers */ = {
+			isa = PBXGroup;
+			children = (
+				CAF915EA17D46BA000EE204E /* canvas_bindings.c */,
+				CAF915EB17D46BA000EE204E /* canvas_bindings.h */,
+				CAF915EC17D46BA000EE204E /* canvas.c */,
+				CAF915ED17D46BA000EE204E /* canvas.h */,
+				CAF915EE17D46BA000EE204E /* overlay_bindings.c */,
+				CAF915EF17D46BA000EE204E /* overlay_bindings.h */,
+				CAF915F017D46BA000EE204E /* overlay.c */,
+				CAF915F117D46BA000EE204E /* overlay.h */,
+			);
+			name = layers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -987,10 +1011,12 @@
 				CAEFD902178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
 				CAEFD908178FA5E600D19B4D /* recorder.h in Headers */,
 				CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */,
-				CA72C44D1796739A00255691 /* overlay_bindings.h in Headers */,
-				CA72C4511796739A00255691 /* overlay.h in Headers */,
 				CA9EB70017CAFACA00CA273F /* DABPlatformerControllerOverlayView.h in Headers */,
 				CAB6AF3817CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */,
+				CAF915F517D46BA000EE204E /* canvas_bindings.h in Headers */,
+				CAF915F917D46BA000EE204E /* canvas.h in Headers */,
+				CAF915FD17D46BA000EE204E /* overlay_bindings.h in Headers */,
+				CAF9160117D46BA000EE204E /* overlay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1055,9 +1081,11 @@
 				CAEFD901178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
 				CAEFD907178FA5E600D19B4D /* recorder.h in Headers */,
 				CAEFD91B1790A56100D19B4D /* vpolygon.h in Headers */,
-				CA72C44C1796739A00255691 /* overlay_bindings.h in Headers */,
-				CA72C4501796739A00255691 /* overlay.h in Headers */,
 				CAB6AF3717CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */,
+				CAF915F417D46BA000EE204E /* canvas_bindings.h in Headers */,
+				CAF915F817D46BA000EE204E /* canvas.h in Headers */,
+				CAF915FC17D46BA000EE204E /* overlay_bindings.h in Headers */,
+				CAF9160017D46BA000EE204E /* overlay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1412,10 +1440,12 @@
 				CAEFD900178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
 				CAEFD906178FA5E600D19B4D /* recorder.c in Sources */,
 				CAEFD91A1790A56100D19B4D /* vpolygon.c in Sources */,
-				CA72C44B1796739A00255691 /* overlay_bindings.c in Sources */,
-				CA72C44F1796739A00255691 /* overlay.c in Sources */,
 				CA9EB70117CAFACA00CA273F /* DABPlatformerControllerOverlayView.m in Sources */,
 				CAB6AF3617CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */,
+				CAF915F317D46BA000EE204E /* canvas_bindings.c in Sources */,
+				CAF915F717D46BA000EE204E /* canvas.c in Sources */,
+				CAF915FB17D46BA000EE204E /* overlay_bindings.c in Sources */,
+				CAF915FF17D46BA000EE204E /* overlay.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1477,9 +1507,11 @@
 				CAEFD8FF178FA5E600D19B4D /* chipmunk_recorder.c in Sources */,
 				CAEFD905178FA5E600D19B4D /* recorder.c in Sources */,
 				CAEFD9191790A56100D19B4D /* vpolygon.c in Sources */,
-				CA72C44A1796739A00255691 /* overlay_bindings.c in Sources */,
-				CA72C44E1796739A00255691 /* overlay.c in Sources */,
 				CAB6AF3517CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */,
+				CAF915F217D46BA000EE204E /* canvas_bindings.c in Sources */,
+				CAF915F617D46BA000EE204E /* canvas.c in Sources */,
+				CAF915FA17D46BA000EE204E /* overlay_bindings.c in Sources */,
+				CAF915FE17D46BA000EE204E /* overlay.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
