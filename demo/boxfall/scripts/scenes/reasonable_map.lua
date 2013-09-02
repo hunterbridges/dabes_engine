@@ -6,7 +6,7 @@ require 'entities.door'
 require 'scenes.fat_map'
 
 ReasonableMap = Scene:extend({
-    kind = "ortho_chipmunk",
+    kind = "chipmunk",
     pixels_per_meter = 64.0,
     music_volume = 0.3,
 

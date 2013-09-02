@@ -1,5 +1,5 @@
 #include <chipmunk/chipmunk.h>
-#include "../scenes/ortho_chipmunk_scene.h"
+#include "../scenes/chipmunk_scene.h"
 #include "chipmunk_body.h"
 #include "sensor.h"
 

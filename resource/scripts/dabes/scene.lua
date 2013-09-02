@@ -45,7 +45,7 @@ Scene = BoundObject:extend({
     -- * `"static"` - A scene not backed by a physics engine. Any updates
     -- happen purely in script hooks.
     --
-    -- * `"ortho_chipmunk"` - A scene backed by the Chipmunk physics engine.
+    -- * `"chipmunk"` - A scene backed by the Chipmunk physics engine.
     -- It behaves in a side-scroller style like Mario or Sonic.
     --
     -- Default `"static"`

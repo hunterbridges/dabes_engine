@@ -57,7 +57,7 @@
 		CA705C18178350BD00D2C6E4 /* physics.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78416FC20900045D5DE /* physics.c */; };
 		CA705C19178350BD00D2C6E4 /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78716FC20900045D5DE /* world.c */; };
 		CA705C1A178350BD00D2C6E4 /* world_grid.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78A16FC20900045D5DE /* world_grid.c */; };
-		CA705C1B178350BD00D2C6E4 /* ortho_chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */; };
+		CA705C1B178350BD00D2C6E4 /* chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* chipmunk_scene.c */; };
 		CA705C1C178350BD00D2C6E4 /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA61B60F170FB3A600F1CC1A /* scene.c */; };
 		CA705C1D178350BD00D2C6E4 /* scene_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA65C6F7172B127400A7D4E5 /* scene_bindings.c */; };
 		CA705C1E178350BE00D2C6E4 /* scripting.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC581D31758607F004A8161 /* scripting.c */; };
@@ -145,7 +145,7 @@
 		CAF429D91780F3DA00C3220A /* controller_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC581CD17586061004A8161 /* controller_bindings.c */; };
 		CAF429DA1780F3DA00C3220A /* controller.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77816FC20900045D5DE /* controller.c */; };
 		CAF429DB1780F3DA00C3220A /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77B16FC20900045D5DE /* input.c */; };
-		CAF429DF1780F40D00C3220A /* ortho_chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */; };
+		CAF429DF1780F40D00C3220A /* chipmunk_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA5E5E8E1721093A00CAF6A2 /* chipmunk_scene.c */; };
 		CAF429E01780F40D00C3220A /* scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA61B60F170FB3A600F1CC1A /* scene.c */; };
 		CAF429E11780F40D00C3220A /* scene_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA65C6F7172B127400A7D4E5 /* scene_bindings.c */; };
 		CAF429E51780F41100C3220A /* scripting.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC581D31758607F004A8161 /* scripting.c */; };
@@ -203,7 +203,7 @@
 		CAF42A311780F62500C3220A /* physics.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78516FC20900045D5DE /* physics.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A321780F62500C3220A /* world.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78816FC20900045D5DE /* world.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A331780F62500C3220A /* world_grid.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78B16FC20900045D5DE /* world_grid.h */; settings = {ATTRIBUTES = (); }; };
-		CAF42A341780F62500C3220A /* ortho_chipmunk_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */; settings = {ATTRIBUTES = (); }; };
+		CAF42A341780F62500C3220A /* chipmunk_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA5E5E8F1721093A00CAF6A2 /* chipmunk_scene.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A351780F62500C3220A /* scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA61B610170FB3A600F1CC1A /* scene.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A361780F62500C3220A /* scene_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA46A681175A77F500F2311E /* scene_bindings.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A371780F62500C3220A /* constants.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C76016FC20900045D5DE /* constants.h */; settings = {ATTRIBUTES = (); }; };
@@ -444,8 +444,8 @@
 		CA5D22C9176ED86F0044793D /* easer_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = easer_bindings.h; sourceTree = "<group>"; };
 		CA5D22CA176ED86F0044793D /* easer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = easer.c; sourceTree = "<group>"; };
 		CA5D22CB176ED86F0044793D /* easer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = easer.h; sourceTree = "<group>"; };
-		CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ortho_chipmunk_scene.c; sourceTree = "<group>"; };
-		CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ortho_chipmunk_scene.h; sourceTree = "<group>"; };
+		CA5E5E8E1721093A00CAF6A2 /* chipmunk_scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chipmunk_scene.c; sourceTree = "<group>"; };
+		CA5E5E8F1721093A00CAF6A2 /* chipmunk_scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipmunk_scene.h; sourceTree = "<group>"; };
 		CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk6.xcodeproj; path = "../../../third_party/Chipmunk-6.1.4/xcode/Chipmunk6.xcodeproj"; sourceTree = "<group>"; };
 		CA5E5EB81724EDC500CAF6A2 /* parallax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parallax.c; sourceTree = "<group>"; };
 		CA5E5EB91724EDC500CAF6A2 /* parallax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parallax.h; sourceTree = "<group>"; };
@@ -755,8 +755,8 @@
 		CA61B60B170FB3A600F1CC1A /* scenes */ = {
 			isa = PBXGroup;
 			children = (
-				CA5E5E8E1721093A00CAF6A2 /* ortho_chipmunk_scene.c */,
-				CA5E5E8F1721093A00CAF6A2 /* ortho_chipmunk_scene.h */,
+				CA5E5E8E1721093A00CAF6A2 /* chipmunk_scene.c */,
+				CA5E5E8F1721093A00CAF6A2 /* chipmunk_scene.h */,
 				CA72C4461796739A00255691 /* overlay_bindings.c */,
 				CA72C4471796739A00255691 /* overlay_bindings.h */,
 				CA72C4481796739A00255691 /* overlay.c */,
@@ -1045,7 +1045,7 @@
 				CAF42A311780F62500C3220A /* physics.h in Headers */,
 				CAF42A321780F62500C3220A /* world.h in Headers */,
 				CAF42A331780F62500C3220A /* world_grid.h in Headers */,
-				CAF42A341780F62500C3220A /* ortho_chipmunk_scene.h in Headers */,
+				CAF42A341780F62500C3220A /* chipmunk_scene.h in Headers */,
 				CAF42A351780F62500C3220A /* scene.h in Headers */,
 				CAF42A361780F62500C3220A /* scene_bindings.h in Headers */,
 				CAF42A371780F62500C3220A /* constants.h in Headers */,
@@ -1403,7 +1403,7 @@
 				CA705C18178350BD00D2C6E4 /* physics.c in Sources */,
 				CA705C19178350BD00D2C6E4 /* world.c in Sources */,
 				CA705C1A178350BD00D2C6E4 /* world_grid.c in Sources */,
-				CA705C1B178350BD00D2C6E4 /* ortho_chipmunk_scene.c in Sources */,
+				CA705C1B178350BD00D2C6E4 /* chipmunk_scene.c in Sources */,
 				CA705C1C178350BD00D2C6E4 /* scene.c in Sources */,
 				CA705C1D178350BD00D2C6E4 /* scene_bindings.c in Sources */,
 				CA705C1E178350BE00D2C6E4 /* scripting.c in Sources */,
@@ -1460,7 +1460,7 @@
 				CAF429D91780F3DA00C3220A /* controller_bindings.c in Sources */,
 				CAF429DA1780F3DA00C3220A /* controller.c in Sources */,
 				CAF429DB1780F3DA00C3220A /* input.c in Sources */,
-				CAF429DF1780F40D00C3220A /* ortho_chipmunk_scene.c in Sources */,
+				CAF429DF1780F40D00C3220A /* chipmunk_scene.c in Sources */,
 				CAF429E01780F40D00C3220A /* scene.c in Sources */,
 				CAF429E11780F40D00C3220A /* scene_bindings.c in Sources */,
 				CAF429E51780F41100C3220A /* scripting.c in Sources */,

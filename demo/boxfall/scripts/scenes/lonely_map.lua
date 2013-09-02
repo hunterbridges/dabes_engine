@@ -6,7 +6,7 @@ require 'overlays.test_overlay'
 require 'overlays.another_overlay'
 
 LonelyMap = Scene:extend({
-    kind = "ortho_chipmunk",
+    kind = "chipmunk",
     pixels_per_meter = 64.0,
 
     init = function(self)

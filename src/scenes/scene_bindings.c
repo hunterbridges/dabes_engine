@@ -6,7 +6,7 @@
 #include "../entities/entity_bindings.h"
 #include "../graphics/parallax_bindings.h"
 #include "scene.h"
-#include "ortho_chipmunk_scene.h"
+#include "chipmunk_scene.h"
 #include "static_scene.h"
 #include "telemetry_splash_scene.h"
 #include "overlay_bindings.h"
@@ -29,8 +29,8 @@ int luab_Scene_new(lua_State *L) {
 
     int valid_proto = 1;
     proto = lua_tostring(L, 1);
-    if (streq(proto, "ortho_chipmunk")) {
-        scene = Scene_create(engine, OrthoChipmunkSceneProto);
+    if (streq(proto, "chipmunk")) {
+        scene = Scene_create(engine, ChipmunkSceneProto);
     } else if (streq(proto, "static")) {
         scene = Scene_create(engine, StaticSceneProto);
     } else if (streq(proto, "telemetry")) {

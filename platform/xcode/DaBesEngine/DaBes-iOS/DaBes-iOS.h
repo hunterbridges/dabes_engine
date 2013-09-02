@@ -2642,8 +2642,8 @@ extern RecorderProto ChipmunkRecorderProto;
 Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
 
 #endif
-#ifndef __ortho_chipmunk_scene_h
-#define __ortho_chipmunk_scene_h
+#ifndef __chipmunk_scene_h
+#define __chipmunk_scene_h
 
 #define COLLISION_SLOP 0.1
 
@@ -2660,7 +2660,7 @@ typedef enum {
   OCSCollisionTypeStaticEntity = 5
 } OCSCollisionType;
 
-extern SceneProto OrthoChipmunkSceneProto;
+extern SceneProto ChipmunkSceneProto;
 
 #endif
 #ifndef __overlay_h

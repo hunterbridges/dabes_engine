@@ -1,5 +1,5 @@
-#ifndef __ortho_chipmunk_scene_h
-#define __ortho_chipmunk_scene_h
+#ifndef __chipmunk_scene_h
+#define __chipmunk_scene_h
 #include "scene.h"
 
 #define COLLISION_SLOP 0.1
@@ -17,6 +17,6 @@ typedef enum {
   OCSCollisionTypeStaticEntity = 5
 } OCSCollisionType;
 
-extern SceneProto OrthoChipmunkSceneProto;
+extern SceneProto ChipmunkSceneProto;
 
 #endif

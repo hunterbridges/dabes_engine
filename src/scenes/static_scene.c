@@ -6,7 +6,7 @@
 #include "../entities/body_bindings.h"
 #include "../entities/sensor.h"
 #include "../graphics/draw_buffer.h"
-#include "ortho_chipmunk_scene.h"
+#include "chipmunk_scene.h"
 #include "../entities/entity.h"
 #include "scene.h"
 #include "overlay.h"

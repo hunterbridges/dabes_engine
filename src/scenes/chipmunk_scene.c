@@ -6,7 +6,7 @@
 #include "../entities/body_bindings.h"
 #include "../entities/sensor.h"
 #include "../graphics/draw_buffer.h"
-#include "ortho_chipmunk_scene.h"
+#include "chipmunk_scene.h"
 #include "../entities/entity.h"
 #include "../recorder/recorder.h"
 #include "../recorder/chipmunk_recorder.h"
@@ -14,26 +14,26 @@
 #include "../math/vpolygon.h"
 #include "overlay.h"
 
-typedef struct OCSTraverseCtx {
+typedef struct ChipmunkSceneTraverseCtx {
     Scene *scene;
     Engine *engine;
 } OCSTraverseCtx;
 
-typedef struct OrthoChipmunkSceneCtx {
+typedef struct ChipmunkSceneCtx {
     List *tile_shapes;
     cpSpace *space;
     DArray *recorders;
-} OrthoChipmunkSceneCtx;
+} ChipmunkSceneCtx;
 
-int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine);
-void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine);
+int ChipmunkScene_create_space(Scene *scene, Engine *engine);
+void ChipmunkScene_control(struct Scene *scene, Engine *engine);
 
-void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
+void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
 
     Scripting_call_hook(engine->scripting, scene, "cleanup");
 
-    OrthoChipmunkSceneCtx *context = scene->context;
+    ChipmunkSceneCtx *context = scene->context;
 
     int i = 0;
     for (i = 0; i < DArray_count(context->recorders); i++) {
@@ -60,26 +60,26 @@ void OrthoChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     scene->started = 0;
 }
 
-void OrthoChipmunkScene_start(struct Scene *scene, Engine *UNUSED(engine)) {
-    OrthoChipmunkSceneCtx *context = calloc(1, sizeof(OrthoChipmunkSceneCtx));
+void ChipmunkScene_start(struct Scene *scene, Engine *UNUSED(engine)) {
+    ChipmunkSceneCtx *context = calloc(1, sizeof(ChipmunkSceneCtx));
     scene->context = context;
     context->tile_shapes = List_create();
     context->recorders = DArray_create(sizeof(Recorder), 4);
 }
 
-void OrthoChipmunkScene_start_success_cb(struct Scene *scene, Engine *engine) {
-    OrthoChipmunkScene_create_space(scene, engine);
+void ChipmunkScene_start_success_cb(struct Scene *scene, Engine *engine) {
+    ChipmunkScene_create_space(scene, engine);
 }
 
-void OrthoChipmunkScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
+void ChipmunkScene_cleanup(struct Scene *scene, Engine *UNUSED(engine)) {
     check(scene != NULL, "No scene to destroy");
 error:
     return;
 }
 
-void OrthoChipmunkScene_record_recorders(Scene *scene, Engine *UNUSED(engine)) {
+void ChipmunkScene_record_recorders(Scene *scene, Engine *UNUSED(engine)) {
     int i = 0;
-    OrthoChipmunkSceneCtx *context = scene->context;
+    ChipmunkSceneCtx *context = scene->context;
     for (i = 0; i < DArray_count(context->recorders); i++) {
         Recorder *recorder = DArray_get(context->recorders, i);
         if (recorder->state == RecorderStateRecording) {
@@ -90,9 +90,9 @@ void OrthoChipmunkScene_record_recorders(Scene *scene, Engine *UNUSED(engine)) {
     }
 }
 
-void OrthoChipmunkScene_play_recorders(Scene *scene, Engine *UNUSED(engine)) {
+void ChipmunkScene_play_recorders(Scene *scene, Engine *UNUSED(engine)) {
     int i = 0;
-    OrthoChipmunkSceneCtx *context = scene->context;
+    ChipmunkSceneCtx *context = scene->context;
     for (i = 0; i < DArray_count(context->recorders); i++) {
         Recorder *recorder = DArray_get(context->recorders, i);
         if (recorder->state == RecorderStatePlaying) {
@@ -107,10 +107,10 @@ void OrthoChipmunkScene_play_recorders(Scene *scene, Engine *UNUSED(engine)) {
     }
 }
 
-Recorder *OrthoChipmunkScene_gen_recorder(Scene *scene, Entity *entity) {
+Recorder *ChipmunkScene_gen_recorder(Scene *scene, Entity *entity) {
     Recorder *recorder = ChipmunkRecorder_create(5, FPS);
     recorder->entity = entity;
-    OrthoChipmunkSceneCtx *context = (OrthoChipmunkSceneCtx *)scene->context;
+    ChipmunkSceneCtx *context = (ChipmunkSceneCtx *)scene->context;
     DArray_push(context->recorders, recorder);
     return recorder;
 };
@@ -122,7 +122,7 @@ static inline int presolve_traverse_cb(BSTreeNode *node, void *context) {
     return 0;
 }
 
-void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
+void ChipmunkScene_update(struct Scene *scene, Engine *engine) {
     OCSTraverseCtx ctx = { .scene = scene, .engine = engine };
     BSTree_traverse(scene->entities, presolve_traverse_cb, &ctx);
 
@@ -130,9 +130,9 @@ void OrthoChipmunkScene_update(struct Scene *scene, Engine *engine) {
     Stepper_update(engine->physics->stepper, phys_ticks);
 
     while (Stepper_pop(engine->physics->stepper)) {
-        OrthoChipmunkScene_play_recorders(scene, engine);
+        ChipmunkScene_play_recorders(scene, engine);
         cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
-        OrthoChipmunkScene_record_recorders(scene, engine);
+        ChipmunkScene_record_recorders(scene, engine);
     }
 }
 
@@ -175,7 +175,7 @@ static void render_shape_iter(cpShape *shape, void *data) {
             shape_verts, vcenter, color, 1, rot);
 }
 
-void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
+void ChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
     Graphics *graphics = ((Engine *)engine)->graphics;
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     Graphics_project_camera(graphics, scene->camera);
@@ -185,7 +185,7 @@ void OrthoChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
     cpSpaceEachShape(scene->space, render_shape_iter, &iter_data);
 }
 
-void OrthoChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
+void ChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
     Graphics_project_screen_camera(engine->graphics, scene->camera);
     Graphics_reset_modelview_matrix(engine->graphics);
     GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
@@ -211,7 +211,7 @@ void OrthoChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
     free(dTxt);
 }
 
-void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
+void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
     Graphics *graphics = ((Engine *)engine)->graphics;
 
@@ -243,15 +243,15 @@ void OrthoChipmunkScene_render(struct Scene *scene, Engine *engine) {
         Scene_draw_debug_grid(scene, graphics);
     }
     if (scene->render_mode == kSceneRenderModePhysicsDebug) {
-        OrthoChipmunkScene_render_physdebug(scene, engine);
+        ChipmunkScene_render_physdebug(scene, engine);
     }
     if (scene->draw_debug_text) {
         Graphics_use_shader(graphics, txshader);
-        OrthoChipmunkScene_render_debug_text(scene, engine);
+        ChipmunkScene_render_debug_text(scene, engine);
     }
 }
 
-void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
+void ChipmunkScene_control(struct Scene *scene, Engine *engine) {
     Input *input = engine->input;
     if (input->phys_render) {
         scene->render_mode =
@@ -261,14 +261,14 @@ void OrthoChipmunkScene_control(struct Scene *scene, Engine *engine) {
     if (input->debug_scene_draw_grid) scene->draw_grid = !(scene->draw_grid);
 }
 
-VPoint OrthoChipmunkScene_get_gravity(struct Scene *scene) {
+VPoint ChipmunkScene_get_gravity(struct Scene *scene) {
     check(scene != NULL, "No scene to get gravity from");
     return scene->gravity;
 error:
     return VPointZero;
 }
 
-void OrthoChipmunkScene_set_gravity(struct Scene *scene, VPoint gravity) {
+void ChipmunkScene_set_gravity(struct Scene *scene, VPoint gravity) {
     check(scene != NULL, "No scene to set gravity on");
     scene->gravity = gravity;
     if (!scene->space) return;
@@ -340,7 +340,7 @@ void sensor_sensor_coll_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     Sensor_separate_sensor(sensor_b, sensor_a);
 }
 
-void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
+void ChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
         Entity *entity) {
     assert(entity != NULL);
     assert(entity->body != NULL);
@@ -364,14 +364,14 @@ void OrthoChipmunkScene_add_entity_body(Scene *scene, Engine *engine,
     }
 }
 
-void OrthoChipmunkScene_add_entity_cb(Scene *scene, Engine *engine,
+void ChipmunkScene_add_entity_cb(Scene *scene, Engine *engine,
         Entity *entity) {
     if (scene->space) {
-        OrthoChipmunkScene_add_entity_body(scene, engine, entity);
+        ChipmunkScene_add_entity_body(scene, engine, entity);
     }
 }
 
-void OrthoChipmunkScene_remove_entity_cb(Scene *scene, Engine *engine,
+void ChipmunkScene_remove_entity_cb(Scene *scene, Engine *engine,
         Entity *entity) {
     if (scene->space) {
       entity->body->_(cleanup)(entity->body);
@@ -390,7 +390,7 @@ void hit_test_func(cpShape *shape, cpFloat UNUSED(distance),
     }
 }
 
-Entity *OrthoChipmunkScene_hit_test(Scene *scene, VPoint g_point) {
+Entity *ChipmunkScene_hit_test(Scene *scene, VPoint g_point) {
     VPoint world_point = VPoint_scale(g_point, 1.0 / scene->pixels_per_meter);
     Entity *top = NULL;
     cpVect wp = {world_point.x, world_point.y};
@@ -399,9 +399,9 @@ Entity *OrthoChipmunkScene_hit_test(Scene *scene, VPoint g_point) {
     return top;
 }
 
-void OrthoChipmunkScene_create_collision_shapes(Scene *scene,
+void ChipmunkScene_create_collision_shapes(Scene *scene,
         Engine *UNUSED(engine)) {
-    OrthoChipmunkSceneCtx *context = scene->context;
+    ChipmunkSceneCtx *context = scene->context;
     if (scene->tile_map) {
         TileMap *map = scene->tile_map;
         if (map->collision_shapes) {
@@ -467,16 +467,16 @@ void OrthoChipmunkScene_create_collision_shapes(Scene *scene,
 static inline int add_body_traverse_cb(BSTreeNode *node, void *context) {
     OCSTraverseCtx *ctx = (OCSTraverseCtx *)context;
     Entity *entity = node->data;
-    OrthoChipmunkScene_add_entity_body(ctx->scene, ctx->engine, entity);
+    ChipmunkScene_add_entity_body(ctx->scene, ctx->engine, entity);
     return 0;
 }
 
-int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
+int ChipmunkScene_create_space(Scene *scene, Engine *engine) {
     check_mem(scene);
     check_mem(engine);
 
     scene->space = cpSpaceNew();
-    OrthoChipmunkSceneCtx *context = scene->context;
+    ChipmunkSceneCtx *context = scene->context;
     context->space = scene->space;
 
     cpVect gravity = {scene->gravity.x, scene->gravity.y};
@@ -500,7 +500,7 @@ int OrthoChipmunkScene_create_space(Scene *scene, Engine *engine) {
                                sensor_sensor_coll_begin_cb, NULL,
                                NULL, sensor_sensor_coll_seperate_cb, NULL);
 
-    OrthoChipmunkScene_create_collision_shapes(scene, engine);
+    ChipmunkScene_create_collision_shapes(scene, engine);
 
     OCSTraverseCtx ctx = { .scene = scene, .engine = engine };
     BSTree_traverse(scene->entities, add_body_traverse_cb, &ctx);
@@ -510,18 +510,18 @@ error:
     return 0;
 }
 
-SceneProto OrthoChipmunkSceneProto = {
-    .start = OrthoChipmunkScene_start,
-    .start_success_cb = OrthoChipmunkScene_start_success_cb,
-    .stop = OrthoChipmunkScene_stop,
-    .cleanup = OrthoChipmunkScene_cleanup,
-    .update = OrthoChipmunkScene_update,
-    .render = OrthoChipmunkScene_render,
-    .control = OrthoChipmunkScene_control,
-    .add_entity_cb = OrthoChipmunkScene_add_entity_cb,
-    .remove_entity_cb = OrthoChipmunkScene_remove_entity_cb,
-    .hit_test = OrthoChipmunkScene_hit_test,
-    .gen_recorder = OrthoChipmunkScene_gen_recorder,
-    .get_gravity = OrthoChipmunkScene_get_gravity,
-    .set_gravity = OrthoChipmunkScene_set_gravity
+SceneProto ChipmunkSceneProto = {
+    .start = ChipmunkScene_start,
+    .start_success_cb = ChipmunkScene_start_success_cb,
+    .stop = ChipmunkScene_stop,
+    .cleanup = ChipmunkScene_cleanup,
+    .update = ChipmunkScene_update,
+    .render = ChipmunkScene_render,
+    .control = ChipmunkScene_control,
+    .add_entity_cb = ChipmunkScene_add_entity_cb,
+    .remove_entity_cb = ChipmunkScene_remove_entity_cb,
+    .hit_test = ChipmunkScene_hit_test,
+    .gen_recorder = ChipmunkScene_gen_recorder,
+    .get_gravity = ChipmunkScene_get_gravity,
+    .set_gravity = ChipmunkScene_set_gravity
 };
