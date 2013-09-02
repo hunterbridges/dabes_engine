@@ -208,7 +208,6 @@
 		CAF42A361780F62500C3220A /* scene_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA46A681175A77F500F2311E /* scene_bindings.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A371780F62500C3220A /* constants.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C76016FC20900045D5DE /* constants.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A381780F62500C3220A /* dbg.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C76816FC20900045D5DE /* dbg.h */; settings = {ATTRIBUTES = (); }; };
-		CAF42A391780F62500C3220A /* gameobjects.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C76A16FC20900045D5DE /* gameobjects.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A3A1780F62500C3220A /* object.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C77F16FC20900045D5DE /* object.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A3B1780F62500C3220A /* prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78D16FC20900045D5DE /* prefix.h */; settings = {ATTRIBUTES = (); }; };
 		CAF42A3C1780F62500C3220A /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = CA24C78F16FC20900045D5DE /* util.h */; settings = {ATTRIBUTES = (); }; };
@@ -398,7 +397,6 @@
 		CA24C76516FC20900045D5DE /* engine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = engine.c; sourceTree = "<group>"; };
 		CA24C76616FC20900045D5DE /* engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engine.h; sourceTree = "<group>"; };
 		CA24C76816FC20900045D5DE /* dbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dbg.h; path = ../../../../src/dbg.h; sourceTree = "<group>"; };
-		CA24C76A16FC20900045D5DE /* gameobjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameobjects.h; path = ../../../../src/gameobjects.h; sourceTree = "<group>"; };
 		CA24C77116FC20900045D5DE /* graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = graphics.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		CA24C77216FC20900045D5DE /* graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = graphics.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CA24C77816FC20900045D5DE /* controller.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = controller.c; sourceTree = "<group>"; };
@@ -631,7 +629,6 @@
 				CAC581D11758607F004A8161 /* scripting */,
 				CA24C76016FC20900045D5DE /* constants.h */,
 				CA24C76816FC20900045D5DE /* dbg.h */,
-				CA24C76A16FC20900045D5DE /* gameobjects.h */,
 				CA24C77E16FC20900045D5DE /* object.c */,
 				CA24C77F16FC20900045D5DE /* object.h */,
 				CA24C78D16FC20900045D5DE /* prefix.h */,
@@ -1050,7 +1047,6 @@
 				CAF42A361780F62500C3220A /* scene_bindings.h in Headers */,
 				CAF42A371780F62500C3220A /* constants.h in Headers */,
 				CAF42A381780F62500C3220A /* dbg.h in Headers */,
-				CAF42A391780F62500C3220A /* gameobjects.h in Headers */,
 				CAF42A3A1780F62500C3220A /* object.h in Headers */,
 				CAF42A3B1780F62500C3220A /* prefix.h in Headers */,
 				CAF42A3C1780F62500C3220A /* util.h in Headers */,

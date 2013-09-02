@@ -11,7 +11,7 @@ typedef struct GroundingContext {
 	cpBody *body;
 } GroundingContext;
 
-void GroundingContext_callback(cpBody *body, cpArbiter *arb, GroundingContext *grounding){
+void GroundingContext_callback(cpBody *UNUSED(body), cpArbiter *arb, GroundingContext *grounding){
 	CP_ARBITER_GET_BODIES(arb, b1, b2);
 	cpVect n = cpvneg(cpArbiterGetNormal(arb, 0));
 	

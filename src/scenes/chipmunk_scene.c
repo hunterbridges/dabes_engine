@@ -371,7 +371,7 @@ void ChipmunkScene_add_entity_cb(Scene *scene, Engine *engine,
     }
 }
 
-void ChipmunkScene_remove_entity_cb(Scene *scene, Engine *engine,
+void ChipmunkScene_remove_entity_cb(Scene *scene, Engine *UNUSED(engine),
         Entity *entity) {
     if (scene->space) {
       entity->body->_(cleanup)(entity->body);

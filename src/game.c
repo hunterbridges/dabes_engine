@@ -1,6 +1,5 @@
-#include "prefix.h"
-#include "gameobjects.h"
-#include "scenes/ortho_chipmunk_scene.h"
+#include "core/engine.h"
+#include "scenes/scene.h"
 
 char *Boxfall_project_path(const char *filename) {
   const char *boxfall = "demo/boxfall/";
