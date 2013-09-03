@@ -17,6 +17,7 @@ ReasonableMap = Scene:extend({
 
         self.canvas = Canvas:new()
         self.canvas.enabled = true
+        self.canvas.draw_width = 2
     end,
 
     fade_in_effect = function(scene, e)

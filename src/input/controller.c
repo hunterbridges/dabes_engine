@@ -34,3 +34,15 @@ void Controller_reset(Controller *controller) {
 error:
     return;
 }
+
+void Controller_debug_touch_state(Controller *controller, const char *msg) {
+    check(controller != NULL, "Controller required");
+    log_info("%s - DOWN %d, CHANGED %d, MOVED %i, POS <%.02f, %.02f>", msg,
+             !!(controller->touch_state & CONTROLLER_TOUCH_HOLD),
+             !!(controller->touch_state & CONTROLLER_TOUCH_HOLD_CHANGED),
+             !!(controller->touch_state & CONTROLLER_TOUCH_MOVED),
+             controller->touch_pos.x, controller->touch_pos.y);
+    return;
+error:
+    return;
+}

@@ -29,6 +29,7 @@ typedef struct Controller {
 Controller *Controller_create();
 void Controller_destroy(Controller *controller);
 void Controller_reset(Controller *controller);
+void Controller_debug_touch_state(Controller *controller, const char *msg);
 
 extern Object ControllerProto;
 

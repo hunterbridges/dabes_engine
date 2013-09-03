@@ -105,9 +105,14 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
     check(canvas != NULL, "Canvas required");
 
     Controller *p1 = engine->input->controllers[0];
-    if (p1->touch_state & CONTROLLER_TOUCH_HOLD &&
-            (p1->touch_state & CONTROLLER_TOUCH_MOVED ||
-             p1->touch_state & CONTROLLER_TOUCH_HOLD_CHANGED)) {
+    short int hold = !!(p1->touch_state & CONTROLLER_TOUCH_HOLD);
+    short int hold_changed = !!(p1->touch_state & CONTROLLER_TOUCH_HOLD_CHANGED);
+    short int moved = !!(p1->touch_state & CONTROLLER_TOUCH_MOVED);
+    if (hold && hold_changed) {
+        Canvas_empty(canvas);
+    }
+
+    if (hold && (hold_changed || moved)) {
         Canvas_enqueue_point(canvas, p1->touch_pos);
     }
 

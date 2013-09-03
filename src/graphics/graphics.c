@@ -377,7 +377,7 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
     glDisable(GL_MULTISAMPLE);
 #endif
     glLineWidth(line_width);
-    glDrawArrays(loop ? GL_LINE_LOOP : GL_LINES, 0, num_points);
+    glDrawArrays(loop ? GL_LINE_LOOP : GL_LINE_STRIP, 0, num_points);
     return;
 #ifdef DABES_SDL
     glEnable(GL_MULTISAMPLE);
