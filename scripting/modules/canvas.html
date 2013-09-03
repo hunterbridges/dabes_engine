@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting API Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><strong>canvas</strong></li>
+  <li><a href="../modules/collection.html">collection</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/parallax_layer.html">parallax_layer</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>canvas</code></h1>
+
+<p>A layer the user can draw on</p>
+<p> <a href="../modules/canvas.html#">Canvas</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#alpha">alpha</a></td>
+	<td class="summary">Alpha value of the canvas from <code>0</code> to <code>1</code></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#angle_threshold">angle_threshold</a></td>
+	<td class="summary">The angle difference required for the path simplifier to recognize
+ a new vertex.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bg_color">bg_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector representing the Canvas background color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#distance_threshold">distance_threshold</a></td>
+	<td class="summary">The minimum distance required for the path simplifier to recognize
+ a new vertex.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#draw_color">draw_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector representing the Canvas draw color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#draw_width">draw_width</a></td>
+	<td class="summary">Draw render width in pixels</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enabled">enabled</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether the canvas is currently accepting input.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#simplified_path_color">simplified_path_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector representing the simplified path.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Canvas:new">Canvas:new&nbsp;()</a></td>
+	<td class="summary">Create a new <code>Canvas</code></td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "alpha"></a>
+    <strong>alpha</strong>
+    </dt>
+    <dd>
+    Alpha value of the canvas from <code>0</code> to <code>1</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "angle_threshold"></a>
+    <strong>angle_threshold</strong>
+    </dt>
+    <dd>
+    The angle difference required for the path simplifier to recognize
+ a new vertex.  In degrees
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bg_color"></a>
+    <strong>bg_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector representing the Canvas background color.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "distance_threshold"></a>
+    <strong>distance_threshold</strong>
+    </dt>
+    <dd>
+    The minimum distance required for the path simplifier to recognize
+ a new vertex.  In pixels
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "draw_color"></a>
+    <strong>draw_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector representing the Canvas draw color.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "draw_width"></a>
+    <strong>draw_width</strong>
+    </dt>
+    <dd>
+    Draw render width in pixels
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enabled"></a>
+    <strong>enabled</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether the canvas is currently accepting input.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "simplified_path_color"></a>
+    <strong>simplified_path_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector representing the simplified path.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Canvas:new"></a>
+    <strong>Canvas:new&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a new <code>Canvas</code>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Canvas</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

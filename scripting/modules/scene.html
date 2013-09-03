@@ -45,6 +45,7 @@
   <li><a href="../modules/body.html">body</a></li>
   <li><a href="../modules/bound_object.html">bound_object</a></li>
   <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/canvas.html">canvas</a></li>
   <li><a href="../modules/collection.html">collection</a></li>
   <li><a href="../modules/controller.html">controller</a></li>
   <li><a href="../modules/easer.html">easer</a></li>
@@ -99,6 +100,10 @@
 	<td class="summary"><em>(read only)</em> The <code>Scene</code>'s <a href="../modules/camera.html#">Camera</a>.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#canvas">canvas</a></td>
+	<td class="summary">A <a href="../modules/canvas.html#">Canvas</a> that is rendered with the <code>Scene</code>.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#debug_camera">debug_camera</a></td>
 	<td class="summary"><strong>(bool)</strong> Whether to render camera debug outlines.</td>
 	</tr>
@@ -109,6 +114,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#cover_color">cover_color</a></td>
 	<td class="summary">An <code>{r, g, b, a}</code> vector of the background color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#gravity">gravity</a></td>
+	<td class="summary">An <code>{x, y}</code> vector of the <code>Scene</code>'s gravity in meters per
+ seconds squared.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#music">music</a></td>
@@ -241,6 +251,19 @@
 
 </dd>
     <dt>
+    <a name = "canvas"></a>
+    <strong>canvas</strong>
+    </dt>
+    <dd>
+    A <a href="../modules/canvas.html#">Canvas</a> that is rendered with the <code>Scene</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
     <a name = "debug_camera"></a>
     <strong>debug_camera</strong>
     </dt>
@@ -276,6 +299,21 @@
 <p> Modified by <code>fade_in</code> and <code>fade_out</code></p>
 
 <p> Default <code>{0, 0, 0, 0}</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "gravity"></a>
+    <strong>gravity</strong>
+    </dt>
+    <dd>
+    An <code>{x, y}</code> vector of the <code>Scene</code>'s gravity in meters per
+ seconds squared.  This doesn't do anything in <code>static</code> scenes, but
+ the property can still be used.
 
 
 
@@ -550,7 +588,7 @@
 <ul>
     <li><p><code>"static"</code> - A scene not backed by a physics engine. Any updates
     happen purely in script hooks.</p></li>
-    <li><p><code>"ortho_chipmunk"</code> - A scene backed by the Chipmunk physics engine.
+    <li><p><code>"chipmunk"</code> - A scene backed by the Chipmunk physics engine.
     It behaves in a side-scroller style like Mario or Sonic.</p></li>
 </ul>
 
