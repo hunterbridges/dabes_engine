@@ -6,6 +6,9 @@
 @interface DABMacEngineView ()
 
 @property (nonatomic, assign) Input *touchInput;
+@property (nonatomic, assign) BOOL wasAcceptingMouseEvents;
+@property (nonatomic, assign) NSTrackingRectTag trackingRect;
+
 @end
 
 @implementation DABMacEngineView
@@ -81,23 +84,6 @@ static unsigned short int keysDown[128];
     self.touchInput->controllers[0]->jump = 0;
 }
 
-- (void)mouseDown:(NSEvent *)theEvent {
-  Scene *scene = self.scene;
-  if (!scene) return;
-  NSPoint mouse = [self.window convertScreenToBase:[NSEvent mouseLocation]];
-  NSPoint converted = [self convertPoint:mouse fromView:nil];
-  CGPoint cgConv = NSPointToCGPoint(converted);
-  VPoint screen_point = {cgConv.x, self.bounds.size.height - cgConv.y};
-  int selected = Scene_select_entities_at(scene, screen_point);
-  if (selected) {
-    BOOL commandKeyPressed = ([theEvent modifierFlags] & NSCommandKeyMask) != 0;
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:kEntitySelectedNotification
-        object:self
-        userInfo:@{@"commandKey": @(commandKeyPressed)}];
-  }
-}
-
 - (void)resizeGraphics {
   GfxSize screen_size = {self.bounds.size.width, self.bounds.size.height};
   self.engine->graphics->screen_size = screen_size;
@@ -120,6 +106,93 @@ static unsigned short int keysDown[128];
   [[self openGLContext] update];
   [self resizeGraphics];
   [self setNeedsDisplay:YES];
+}
+#pragma mark - Mouse Tracking
+
+- (void)resetTrackingRect {
+    [self removeTrackingRect:self.trackingRect];
+    CGRect tracking = self.bounds;
+    self.trackingRect =
+        [self addTrackingRect:tracking owner:self userData:NULL assumeInside:YES];
+}
+
+- (void)setFrame:(NSRect)frameRect {
+    [super setFrame:frameRect];
+    [self resetTrackingRect];
+}
+
+- (void)setBounds:(NSRect)aRect {
+    [super setBounds:aRect];
+    [self resetTrackingRect];
+}
+
+- (VPoint)screenPointFromMouseEvent:(NSEvent *)theEvent {
+    NSPoint mouse = [self.window convertScreenToBase:[NSEvent mouseLocation]];
+    NSPoint converted = [self convertPoint:mouse fromView:nil];
+    CGPoint cgConv = NSPointToCGPoint(converted);
+    VPoint screen_point = {cgConv.x, self.bounds.size.height - cgConv.y};
+    return screen_point;
+}
+
+- (void)mouseDown:(NSEvent *)theEvent {
+    Scene *scene = self.scene;
+    if (!scene) return;
+    VPoint screen_point = [self screenPointFromMouseEvent:theEvent];
+    
+    VPoint_debug(screen_point, "Mouse down");
+    Input *input = self.touchInput;
+    input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD_CHANGED;
+    input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD;
+    input->controllers[0]->touch_pos = screen_point;
+    
+    int selected = Scene_select_entities_at(scene, screen_point);
+    if (selected) {
+        BOOL commandKeyPressed = ([theEvent modifierFlags] & NSCommandKeyMask) != 0;
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName:kEntitySelectedNotification
+            object:self
+            userInfo:@{@"commandKey": @(commandKeyPressed)}];
+    }
+}
+
+- (void)mouseUp:(NSEvent *)theEvent {
+    Scene *scene = self.scene;
+    if (!scene) return;
+    VPoint screen_point = [self screenPointFromMouseEvent:theEvent];
+    VPoint_debug(screen_point, "Mouse up");
+    Input *input = self.touchInput;
+    input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD_CHANGED;
+    input->controllers[0]->touch_state &= ~(CONTROLLER_TOUCH_HOLD);
+    input->controllers[0]->touch_pos = screen_point;
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent {
+    Scene *scene = self.scene;
+    if (!scene) return;
+    VPoint screen_point = [self screenPointFromMouseEvent:theEvent];
+    Input *input = self.touchInput;
+    input->controllers[0]->touch_state |= CONTROLLER_TOUCH_MOVED;
+    input->controllers[0]->touch_pos = screen_point;
+    VPoint_debug(screen_point, "Mouse moved");
+}
+
+- (void)mouseDragged:(NSEvent *)theEvent {
+    Scene *scene = self.scene;
+    if (!scene) return;
+    VPoint screen_point = [self screenPointFromMouseEvent:theEvent];
+    Input *input = self.touchInput;
+    input->controllers[0]->touch_state |= CONTROLLER_TOUCH_MOVED;
+    input->controllers[0]->touch_pos = screen_point;
+    VPoint_debug(screen_point, "Mouse dragged");
+}
+
+- (void)mouseEntered:(NSEvent *)theEvent {
+    self.wasAcceptingMouseEvents = [[self window] acceptsMouseMovedEvents];
+    [[self window] setAcceptsMouseMovedEvents:YES];
+}
+
+- (void)mouseExited:(NSEvent *)theEvent {
+    [[self window] setAcceptsMouseMovedEvents:self.wasAcceptingMouseEvents];
 }
 
 @end

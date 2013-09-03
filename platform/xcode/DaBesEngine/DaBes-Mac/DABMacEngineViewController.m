@@ -171,6 +171,7 @@ char *bundlePath__;
       
       [self draw];
       Input_reset(self.engine->input);
+      Controller_reset_touches(self.touchInput->controllers[0]);
       
       [[NSNotificationCenter defaultCenter]
           postNotificationName:kEngineReadyForScriptNotification

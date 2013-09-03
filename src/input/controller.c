@@ -17,11 +17,8 @@ error:
     return;
 }
 
-void Controller_reset(Controller *controller) {
-    check_mem(controller);
-    controller->dpad = CONTROLLER_DPAD_NONE;
-    controller->jump = 0;
-
+void Controller_reset_touches(Controller *controller) {
+    check(controller != NULL, "Controller required");
     if (controller->touch_state & CONTROLLER_TOUCH_MOVED) {
         controller->touch_state &= ~(CONTROLLER_TOUCH_MOVED);
     }
@@ -30,6 +27,17 @@ void Controller_reset(Controller *controller) {
         controller->touch_state &= ~(CONTROLLER_TOUCH_HOLD_CHANGED);
     }
 
+    return;
+error:
+    return;
+}
+
+void Controller_reset(Controller *controller) {
+    check_mem(controller);
+    controller->dpad = CONTROLLER_DPAD_NONE;
+    controller->jump = 0;
+
+    Controller_reset_touches(controller);
     return;
 error:
     return;

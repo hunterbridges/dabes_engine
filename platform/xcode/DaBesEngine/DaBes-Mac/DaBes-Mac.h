@@ -1019,21 +1019,48 @@ typedef enum {
     CONTROLLER_DPAD_LEFT = 1<<3
 } Controller_dpad_direction;
 
+typedef enum {
+    CONTROLLER_TOUCH_NONE = 0,
+    CONTROLLER_TOUCH_HOLD = 1,
+    CONTROLLER_TOUCH_HOLD_CHANGED = 1 << 1,
+    CONTROLLER_TOUCH_MOVED = 1 << 2
+} ControllerTouchState;
+
 typedef struct Controller {
     Controller_dpad_direction dpad;
     int jump;
+
+    ControllerTouchState touch_state;
+    VPoint touch_pos;
 } Controller;
 
 Controller *Controller_create();
 void Controller_destroy(Controller *controller);
 void Controller_reset(Controller *controller);
+void Controller_reset_touches(Controller *controller);
+void Controller_debug_touch_state(Controller *controller, const char *msg);
 
 extern Object ControllerProto;
+
 #endif
 #ifndef __input_h
 #define __input_h
 
 #define INPUT_NUM_CONTROLLERS 4
+
+typedef enum InputStyle {
+    INPUT_STYLE_LEFT_RIGHT = 0,
+    INPUT_STYLE_TOUCHPAD,
+    INPUT_STYLE_USER0 = 16,
+    INPUT_STYLE_USER1,
+    INPUT_STYLE_USER2,
+    INPUT_STYLE_USER3,
+    INPUT_STYLE_USER4,
+    INPUT_STYLE_USER5,
+    INPUT_STYLE_USER6,
+    INPUT_STYLE_USER7,
+    INPUT_STYLE_USER8
+} InputStyle;
 
 typedef struct Input {
     Controller *controllers[INPUT_NUM_CONTROLLERS];
@@ -1046,7 +1073,11 @@ typedef struct Input {
     VPoint cam_translate_pan;
     int cam_debug;
     int phys_render;
-  
+    
+    InputStyle preferred_style;
+    void (*change_preferred_style_cb)(struct Input *input,
+                                      InputStyle old_style,
+                                      InputStyle new_style);
 } Input;
 
 Input *Input_create();
@@ -1054,6 +1085,7 @@ void Input_destroy(Input *input);
 void Input_poll(Input *input);
 void Input_touch(Input *input, Input *touch_input);
 void Input_reset(Input *input);
+void Input_change_preferred_style(Input *input, InputStyle preferred);
 
 #endif
 #ifndef __vrect_h
@@ -1289,8 +1321,9 @@ struct Engine;
 Graphics *Graphics_create(struct Engine *engine);
 void Graphics_destroy(Graphics *graphics);
 
-void Graphics_stroke_poly(Graphics *graphics, int num_points, VPoint *points,
-        VPoint center, GLfloat color[4], double line_width, double rotation);
+void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
+        VPoint center, GLfloat color[4], double line_width, double rotation,
+        int loop);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
@@ -2347,18 +2380,54 @@ int luaopen_dabes_controller(lua_State *L);
 #define __canvas_h
 #include <lcthw/darray.h>
 
+struct Scene;
+
+#define CANVAS_QUEUE_SIZE 128
+
 typedef struct Canvas {
     DArray *raw_points;
     DArray *simplified_points;
 
+    int enabled;
+    float alpha;
+    VPoint offset;
+
+    struct Scene *scene;
+
     float angle_threshold;
     float distance_threshold;
+    float draw_width;
+
+    VVector4 bg_color;
+    VVector4 draw_color;
+    VVector4 simplified_path_color;
+
+    VPoint point_queue[CANVAS_QUEUE_SIZE];
+    int queue_count;
 } Canvas;
 
+Canvas *Canvas_create(Engine *engine);
+void Canvas_destroy(Canvas *canvas);
+void Canvas_empty(Canvas *canvas);
+void Canvas_enqueue_point(Canvas *canvas, VPoint point);
+void Canvas_update(Canvas *canvas, Engine *engine);
+void Canvas_render(Canvas *canvas, Engine *engine);
+void Canvas_set_enabled(Canvas *canvas, Engine *engine, int enabled);
 
 #endif
 #ifndef __canvas_bindings_h
 #define __canvas_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Canvas_lib;
+extern const char *luab_Canvas_metatable;
+typedef Scripting_userdata_for(Canvas) Canvas_userdata;
+Scripting_caster_for(Canvas, luaL_tocanvas);
+
+int luaopen_dabes_canvas(lua_State *L);
+
 
 #endif
 #ifndef __physics_world_grid_h
@@ -2554,6 +2623,7 @@ typedef struct Scene {
     };
     Parallax *parallax;
     TileMap *tile_map;
+    Canvas *canvas;
 
     VVector4 bg_color;
     VVector4 cover_color;

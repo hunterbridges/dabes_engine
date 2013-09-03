@@ -93,6 +93,8 @@ void Input_touch(Input *input, Input *touch_input) {
     for (i = 0; i < 4; i++) {
         input->controllers[i]->dpad = touch_input->controllers[i]->dpad;
         input->controllers[i]->jump = touch_input->controllers[i]->jump;
+        input->controllers[i]->touch_pos = touch_input->controllers[i]->touch_pos;
+        input->controllers[i]->touch_state = touch_input->controllers[i]->touch_state;
     }
 }
 
