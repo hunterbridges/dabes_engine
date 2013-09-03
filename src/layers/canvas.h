@@ -29,6 +29,8 @@ typedef struct Canvas {
 
     VPoint point_queue[CANVAS_QUEUE_SIZE];
     int queue_count;
+    
+    VPoint *staged_point;
 } Canvas;
 
 Canvas *Canvas_create(Engine *engine);

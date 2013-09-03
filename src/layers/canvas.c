@@ -6,8 +6,17 @@ static const float CANVAS_DEFAULT_DISTANCE_THRESH = 25.f;
 static const int CANVAS_DEFAULT_DRAW_WIDTH = 2;
 
 static const VVector4 CANVAS_DEFAULT_DRAW_COLOR = {.raw = {1.f, 1.f, 0.f, 1.f}};
+static const VVector4 CANVAS_DEFAULT_SIMP_COLOR = {.raw = {1.f, 0.f, 0.f, 0.8f}};
 static const VVector4 CANVAS_DEFAULT_BG_COLOR = {.raw = {0.f, 0.f, 0.f, 0.5f}};
 
+
+static void simplifier_stage_point(Canvas *canvas, VPoint p);
+static void simplifier_try_point(Canvas *canvas, VPoint p,
+                                 short int suppress_commit);
+static void simplifier_commit_point(Canvas *canvas);
+static void simplifier_empty(Canvas *canvas);
+VPoint *simplifier_staged_path(Canvas *canvas, int *num_points);
+    
 Canvas *Canvas_create(Engine *engine) {
     check(engine != NULL, "Engine required");
     Canvas *canvas = calloc(1, sizeof(Canvas));
@@ -19,6 +28,7 @@ Canvas *Canvas_create(Engine *engine) {
 
     canvas->draw_color = CANVAS_DEFAULT_DRAW_COLOR;
     canvas->bg_color = CANVAS_DEFAULT_BG_COLOR;
+    canvas->simplified_path_color = CANVAS_DEFAULT_SIMP_COLOR;
 
     return canvas;
 error:
@@ -53,10 +63,7 @@ void Canvas_empty(Canvas *canvas) {
         canvas->raw_points = NULL;
     }
 
-    if (canvas->simplified_points) {
-        DArray_clear_destroy(canvas->simplified_points);
-        canvas->simplified_points = NULL;
-    }
+    simplifier_empty(canvas);
 
     return;
 error:
@@ -93,6 +100,13 @@ void Canvas_consume_queue(Canvas *canvas) {
         VPoint *to_save = calloc(1, sizeof(VPoint));
         *to_save = canvas->point_queue[i];
         DArray_push(canvas->raw_points, to_save);
+        
+        if (canvas->simplified_points) {
+            simplifier_try_point(canvas, canvas->point_queue[i], 0);
+        } else {
+            simplifier_stage_point(canvas, canvas->point_queue[i]);
+            simplifier_commit_point(canvas);
+        }
     }
 
     Canvas_empty_queue(canvas);
@@ -162,6 +176,25 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
 
         free(path);
     }
+    
+    int num_staged;
+    VPoint *staged_path = simplifier_staged_path(canvas, &num_staged);
+    if (staged_path) {
+        int i = 0;
+        for (i = 0; i < num_staged; i++) {
+            VPoint point = staged_path[i];
+            staged_path[i] = VPoint_subtract(point, screen_diff);
+        }
+
+        VVector4 path_draw_color = canvas->simplified_path_color;
+        path_draw_color.rgba.a *= canvas->alpha;
+
+        Graphics_stroke_path(engine->graphics, staged_path, num_staged,
+                             VPointZero, path_draw_color.raw,
+                             canvas->draw_width, 0, 0);
+
+        free(staged_path);
+    }
 
     return;
 error:
@@ -180,4 +213,123 @@ void Canvas_set_enabled(Canvas *canvas, Engine *engine, int enabled) {
     return;
 error:
     return;
+}
+
+#pragma mark - Simplifier
+
+static void simplifier_stage_point(Canvas *canvas, VPoint p) {
+    if (canvas->staged_point) {
+        free(canvas->staged_point);
+    }
+    
+    canvas->staged_point = malloc(sizeof(Point));
+    *canvas->staged_point = p;
+}
+
+static void simplifier_try_point(Canvas *canvas, VPoint p,
+                                 short int suppress_commit) {
+    short int has_one_ago = 0;
+    VPoint one_ago = VPointZero;
+    if (canvas->staged_point) {
+        has_one_ago = 1;
+        one_ago = *canvas->staged_point;
+    }
+    
+    short int has_two_ago = 0;
+    VPoint two_ago = VPointZero;
+    int simp_count = (canvas->simplified_points ?
+                      DArray_count(canvas->simplified_points) :
+                      0);
+    if (simp_count) {
+        has_two_ago = 1;
+        VPoint *got = DArray_get(canvas->simplified_points, simp_count - 1);
+        two_ago = *got;
+    }
+    
+    short int distance_ok = 0;
+    short int angle_ok = 0;
+    
+    if (has_two_ago) {
+        float dist = VPoint_magnitude(VPoint_subtract(p, two_ago));
+        if (dist > canvas->distance_threshold) {
+            distance_ok = 1;
+        }
+    }
+    
+    if (has_one_ago && has_two_ago) {
+        float before_angle = VPoint_angle(two_ago, one_ago);
+        float this_angle = VPoint_angle(one_ago, p);
+        float diff = fabsf(this_angle - before_angle);
+        float diff_deg = diff * 180.f / M_PI;
+        if (diff_deg > canvas->angle_threshold) {
+            angle_ok = 1;
+        }
+    }
+    
+    if (!suppress_commit && (distance_ok && angle_ok)) {
+        simplifier_commit_point(canvas);
+    }
+    
+    simplifier_stage_point(canvas, p);
+}
+
+static void simplifier_commit_point(Canvas *canvas) {
+    if (!canvas->staged_point) return;
+    
+    if (!canvas->simplified_points) {
+        canvas->simplified_points =
+            DArray_create(sizeof(VPoint), CANVAS_QUEUE_SIZE);
+    }
+    
+    DArray_push(canvas->simplified_points, canvas->staged_point);
+    canvas->staged_point = NULL;
+}
+
+static void simplifier_empty(Canvas *canvas) {
+    if (canvas->simplified_points) {
+        free(canvas->simplified_points);
+        canvas->simplified_points = NULL;
+    }
+    
+    if (canvas->staged_point) {
+        free(canvas->staged_point);
+        canvas->staged_point = NULL;
+    }
+}
+
+VPoint *simplifier_staged_path(Canvas *canvas, int *num_points) {
+    check(num_points != NULL, "*num_points can't be NULL");
+    
+    if (canvas->simplified_points == NULL) {
+        *num_points = 0;
+        return NULL;
+    }
+    
+    int num = DArray_count(canvas->simplified_points);
+    int simplified_count = num;
+    if (canvas->staged_point) {
+        num++;
+    }
+    *num_points = num;
+    
+    if (num == 0) {
+        return NULL;
+    }
+    
+    VPoint *points = calloc(num, sizeof(VPoint));
+    int i = 0;
+    for (i = 0; i < num; i++) {
+        if (i < simplified_count) {
+            // Get it out of simplified
+            VPoint *simp_point = DArray_get(canvas->simplified_points, i);
+            points[i] = *simp_point;
+        } else {
+            // It's the staged point
+            points[i] = *canvas->staged_point;
+        }
+    }
+    
+    return points;
+error:
+    return NULL;
 }
