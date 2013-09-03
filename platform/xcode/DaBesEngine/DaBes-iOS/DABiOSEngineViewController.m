@@ -2,12 +2,15 @@
 #import "DABiOSEngineViewController.h"
 #import "DABProjectManager.h"
 #import "DABPlatformerControllerOverlayView.h"
+#import "DABTouchpadControllerOverlayView.h"
 
 NSTimeInterval kBufferRefreshDelay = 0.01;
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kEngineReadyForScriptNotification =
     @"kEngineReadyForScriptNotification";
 NSString *kEntitySelectedNotification = @"kEntitySelectedNotification";
+NSString *kInputChangedPreferredStyleNotification =
+    @"kInputChangedPreferredStyleNotification";
 
 char *iOS_resource_path(const char *filename) {
   NSString *nsFilename = [NSString stringWithCString:filename
@@ -50,8 +53,11 @@ char *bundlePath__;
 @property (nonatomic, assign) Engine *engine;
 @property (nonatomic, assign) Scene *scene;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+
 @property (nonatomic, assign) Input *touchInput;
-@property (nonatomic, strong) DABPlatformerControllerOverlayView *controllerView;
+@property (nonatomic, assign) InputStyle currentInputStyle;
+@property (nonatomic, strong) UIView *currentInputView;
+@property (nonatomic, strong) NSMutableDictionary *inputViews;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -67,6 +73,12 @@ char *bundlePath__;
   self = [super init];
   if (self) {
     self.touchInput = input;
+      
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(handleChangePreferredInputStyle:)
+        name:kInputChangedPreferredStyleNotification
+        object:nil];
   }
   return self;
 }
@@ -95,14 +107,6 @@ char *bundlePath__;
     kEAGLDrawablePropertyRetainedBacking: @(NO),
     kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGB565
   };
-  
-  self.controllerView =
-      [[DABPlatformerControllerOverlayView alloc] initWithFrame:self.view.bounds];
-  self.controllerView.debugMode = NO;
-  self.controllerView.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
-                                          UIViewAutoresizingFlexibleHeight);
-  self.controllerView.touchInput = self.touchInput;
-  [self.view addSubview:self.controllerView];
   
   self.tapGesture =
       [[UITapGestureRecognizer alloc]
@@ -180,6 +184,15 @@ char *bundlePath__;
   return nil;
 }
 
+static void iOS_input_change_preferred_style_cb(Input *input,
+                                                InputStyle old_style,
+                                                InputStyle new_style)
+{
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:kInputChangedPreferredStyleNotification
+        object:@{@"old": @(old_style), @"new": @(new_style)}];
+}
+
 - (void)initEngine {
   NSString *bootScript = self.bootScript;
   if (!bootScript) return;
@@ -187,6 +200,11 @@ char *bundlePath__;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
   engine_ = Engine_create(iOS_resource_path, DABProjectManager_path_func, cBootScript, NULL);
+  engine_->input->change_preferred_style_cb =
+      iOS_input_change_preferred_style_cb;
+    
+  self.currentInputStyle = INPUT_STYLE_LEFT_RIGHT;
+    
   Scripting_boot(engine_->scripting);
 }
 
@@ -213,6 +231,62 @@ char *bundlePath__;
   [self.glkView display];
 }
 
+- (UIView *)inputViewForInputStyle:(InputStyle)inputStyle
+{
+    UIView *inputView = self.inputViews[@(inputStyle)];
+    if (inputView) {
+        return inputView;
+    }
+    
+    switch (inputStyle) {
+        case INPUT_STYLE_LEFT_RIGHT:
+            inputView =
+                [[DABPlatformerControllerOverlayView alloc] initWithFrame:self.view.bounds];
+            ((DABPlatformerControllerOverlayView *)inputView).touchInput =
+                self.touchInput;
+            break;
+        
+        case INPUT_STYLE_TOUCHPAD:
+            inputView =
+                [[DABTouchpadControllerOverlayView alloc] initWithFrame:self.view.bounds];
+            ((DABTouchpadControllerOverlayView *)inputView).touchInput =
+                self.touchInput;
+            break;
+            
+        default:
+            break;
+    }
+
+    inputView.autoresizingMask = (UIViewAutoresizingFlexibleWidth |
+                                  UIViewAutoresizingFlexibleHeight);
+
+    if (inputView) {
+        self.inputViews[@(inputStyle)] = inputView;
+    }
+
+    return inputView;
+}
+
+- (void)setCurrentInputStyle:(InputStyle)currentInputStyle
+{
+    _currentInputStyle = currentInputStyle;
+    
+    [self.currentInputView removeFromSuperview];
+    self.currentInputView = [self inputViewForInputStyle:currentInputStyle];
+    [self.view addSubview:self.currentInputView];
+}
+
+#pragma mark - Notification Handlers
+
+- (void)handleChangePreferredInputStyle:(NSNotification *)notif
+{
+    NSDictionary *obj = notif.object;
+    // InputStyle old_style = [obj[@"old"] intValue];
+    InputStyle new_style = [obj[@"new"] intValue];
+    
+    self.currentInputStyle = new_style;
+}
+
 #pragma mark - GLKView and GLKViewController delegate methods
 
 - (void)update {
@@ -227,6 +301,7 @@ char *bundlePath__;
     Engine_update_easers(engine_);
     if (scene_) Scene_update(scene_, engine_);
     Input_reset(engine_->input);
+    Controller_reset_touches(self.touchInput->controllers[0]);
     Audio_sweep(self.engine->audio, self.engine);
     
     [[NSNotificationCenter defaultCenter]

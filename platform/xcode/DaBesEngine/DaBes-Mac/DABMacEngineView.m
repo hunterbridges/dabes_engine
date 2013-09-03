@@ -139,7 +139,6 @@ static unsigned short int keysDown[128];
     if (!scene) return;
     VPoint screen_point = [self screenPointFromMouseEvent:theEvent];
     
-    VPoint_debug(screen_point, "Mouse down");
     Input *input = self.touchInput;
     input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD_CHANGED;
     input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD;
@@ -159,7 +158,6 @@ static unsigned short int keysDown[128];
     Scene *scene = self.scene;
     if (!scene) return;
     VPoint screen_point = [self screenPointFromMouseEvent:theEvent];
-    VPoint_debug(screen_point, "Mouse up");
     Input *input = self.touchInput;
     input->controllers[0]->touch_state |= CONTROLLER_TOUCH_HOLD_CHANGED;
     input->controllers[0]->touch_state &= ~(CONTROLLER_TOUCH_HOLD);
@@ -173,7 +171,6 @@ static unsigned short int keysDown[128];
     Input *input = self.touchInput;
     input->controllers[0]->touch_state |= CONTROLLER_TOUCH_MOVED;
     input->controllers[0]->touch_pos = screen_point;
-    VPoint_debug(screen_point, "Mouse moved");
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
@@ -183,7 +180,6 @@ static unsigned short int keysDown[128];
     Input *input = self.touchInput;
     input->controllers[0]->touch_state |= CONTROLLER_TOUCH_MOVED;
     input->controllers[0]->touch_pos = screen_point;
-    VPoint_debug(screen_point, "Mouse dragged");
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent {

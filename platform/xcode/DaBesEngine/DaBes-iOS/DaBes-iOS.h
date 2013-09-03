@@ -1019,21 +1019,48 @@ typedef enum {
     CONTROLLER_DPAD_LEFT = 1<<3
 } Controller_dpad_direction;
 
+typedef enum {
+    CONTROLLER_TOUCH_NONE = 0,
+    CONTROLLER_TOUCH_HOLD = 1,
+    CONTROLLER_TOUCH_HOLD_CHANGED = 1 << 1,
+    CONTROLLER_TOUCH_MOVED = 1 << 2
+} ControllerTouchState;
+
 typedef struct Controller {
     Controller_dpad_direction dpad;
     int jump;
+
+    ControllerTouchState touch_state;
+    VPoint touch_pos;
 } Controller;
 
 Controller *Controller_create();
 void Controller_destroy(Controller *controller);
 void Controller_reset(Controller *controller);
+void Controller_reset_touches(Controller *controller);
+void Controller_debug_touch_state(Controller *controller, const char *msg);
 
 extern Object ControllerProto;
+
 #endif
 #ifndef __input_h
 #define __input_h
 
 #define INPUT_NUM_CONTROLLERS 4
+
+typedef enum InputStyle {
+    INPUT_STYLE_LEFT_RIGHT = 0,
+    INPUT_STYLE_TOUCHPAD,
+    INPUT_STYLE_USER0 = 16,
+    INPUT_STYLE_USER1,
+    INPUT_STYLE_USER2,
+    INPUT_STYLE_USER3,
+    INPUT_STYLE_USER4,
+    INPUT_STYLE_USER5,
+    INPUT_STYLE_USER6,
+    INPUT_STYLE_USER7,
+    INPUT_STYLE_USER8
+} InputStyle;
 
 typedef struct Input {
     Controller *controllers[INPUT_NUM_CONTROLLERS];
@@ -1046,7 +1073,11 @@ typedef struct Input {
     VPoint cam_translate_pan;
     int cam_debug;
     int phys_render;
-  
+    
+    InputStyle preferred_style;
+    void (*change_preferred_style_cb)(struct Input *input,
+                                      InputStyle old_style,
+                                      InputStyle new_style);
 } Input;
 
 Input *Input_create();
@@ -1054,6 +1085,7 @@ void Input_destroy(Input *input);
 void Input_poll(Input *input);
 void Input_touch(Input *input, Input *touch_input);
 void Input_reset(Input *input);
+void Input_change_preferred_style(Input *input, InputStyle preferred);
 
 #endif
 #ifndef __vrect_h
@@ -1289,8 +1321,9 @@ struct Engine;
 Graphics *Graphics_create(struct Engine *engine);
 void Graphics_destroy(Graphics *graphics);
 
-void Graphics_stroke_path(Graphics *graphics, int num_points, VPoint *points,
-        VPoint center, GLfloat color[4], double line_width, double rotation);
+void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
+        VPoint center, GLfloat color[4], double line_width, double rotation,
+        int loop);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
@@ -1853,353 +1886,6 @@ VPoint Camera_project_point(Camera *camera, VPoint point, int translation);
 VPoint Camera_cast_point(Camera *camera, VPoint point);
 
 #endif
-#ifndef __parallax_h
-#define __parallax_h
-#include <lcthw/darray.h>
-
-typedef struct ParallaxLayer {
-    GfxTexture *texture;
-    VPoint offset;
-    double scale;
-    double p_factor;
-    double y_wiggle;
-} ParallaxLayer;
-
-ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
-
-typedef struct Parallax {
-    DArray *layers;
-    Camera *camera;
-    GfxSize level_size;
-    VVector4 sky_color;
-    VVector4 sea_color;
-    double y_wiggle;
-    double sea_level;
-} Parallax;
-
-Parallax *Parallax_create();
-void Parallax_destroy(Parallax *parallax);
-int Parallax_add_layer(Parallax *parallax, ParallaxLayer *layer);
-void Parallax_render(Parallax *parallax, Graphics *graphics);
-
-#endif
-#ifndef __tile_map_h
-#define __tile_map_h
-#include <lcthw/hashmap.h>
-#include <lcthw/darray.h>
-
-//TODO: objectgroup
-//TODO: properties
-
-extern const unsigned FLIPPED_HORIZONTALLY_FLAG;
-extern const unsigned FLIPPED_VERTICALLY_FLAG;
-extern const unsigned FLIPPED_DIAGONALLY_FLAG;
-
-// Only PNG
-// Doesn't support: format, trans
-typedef struct Tileset {
-    int spacing;
-    int margin;
-    GfxSize tile_size;
-    uint32_t first_gid;
-    char *name;
-    char *img_src;
-    GfxTexture *texture;
-} Tileset;
-
-void Tileset_destroy(Tileset *tileset);
-
-typedef struct TilesetTile {
-  uint32_t gid;
-  Tileset *tileset;
-  VPoint tl;
-  GfxSize size;
-} TilesetTile;
-
-typedef struct TileMapLayer {
-    char *name;
-    double opacity;
-    int visible;
-    int gid_count;
-    uint32_t *tile_gids;
-    GfxTexture *atlas;
-    uint8_t *raw_atlas;
-    Tileset *tileset;
-} TileMapLayer;
-
-TileMapLayer *TileMapLayer_create();
-void TileMapLayer_destroy(TileMapLayer *layer);
-
-// Only orthogonal
-typedef struct TileMap {
-  int rows;
-  int cols;
-  GfxSize tile_size;
-  DArray *tilesets;
-  DArray *layers;
-  DArray *collision_shapes;
-  float meters_per_tile;
-} TileMap;
-
-TileMap *TileMap_create();
-void TileMap_destroy(TileMap *map);
-void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter);
-TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid);
-GfxSize TileMap_draw_size(TileMap *map, int pixels_per_meter);
-
-void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics);
-
-#endif
-#ifndef __physics_world_grid_h
-#define __physics_world_grid_h
-
-typedef enum {
-    WORLDGRIDMEMBER_FIXTURE,
-    WORLDGRIDMEMBER_TILE
-} WorldGridMemberType;
-
-typedef struct {
-    WorldGridMemberType member_type;
-    union {
-        Fixture *fixture;
-        void *raw;
-    };
-} WorldGridMember;
-
-int WorldGridMember_is_equal(WorldGridMember *a, WorldGridMember *b);
-
-typedef struct WorldGridPoint {
-    WorldGridMember owner;
-    VPoint point;
-} WorldGridPoint;
-
-WorldGridPoint *WorldGridPoint_create(VPoint point, WorldGridMember owner);
-void WorldGridPoint_destroy(WorldGridPoint *wgpoint);
-int WorldGridPoint_is(WorldGridPoint *wgpoint, VPoint point,
-        WorldGridMember owner);
-
-typedef struct WorldGridCell {
-    int row;
-    int col;
-    List *points;
-} WorldGridCell;
-
-WorldGridCell *WorldGridCell_create(int row, int col);
-void WorldGridCell_destroy(WorldGridCell *cell);
-
-typedef struct WorldGrid {
-    int rows;
-    int cols;
-    double grid_size;
-    DArray *cells;
-} WorldGrid;
-
-WorldGrid *WorldGrid_create(int rows, int cols, double grid_size);
-void WorldGrid_destroy(WorldGrid *grid);
-
-int WorldGrid_update_fixture(WorldGrid *grid, Fixture *fixture);
-
-int WorldGrid_add_fixture(WorldGrid *grid, Fixture *fixture);
-int WorldGrid_add_box(WorldGrid *grid, VRect box, WorldGridMember owner);
-int WorldGrid_add_point(WorldGrid *grid, VPoint point,
-        WorldGridMember owner);
-
-int WorldGrid_remove_fixture(WorldGrid *grid, Fixture *fixture);
-int WorldGrid_remove_box(WorldGrid *grid, VRect box, WorldGridMember owner);
-int WorldGrid_remove_point(WorldGrid *grid, VPoint point,
-        WorldGridMember owner);
-
-WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, VPoint point);
-List *WorldGrid_cells_for_box(WorldGrid *grid, VRect box);
-List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture);
-VRect WorldGrid_box_for_cell(WorldGrid *grid, int col, int row);
-
-#endif
-#ifndef __world_h
-#define __world_h
-
-struct World {
-    double height;
-    double width;
-    double grid_size;
-    double time_scale;
-    double pixels_per_meter;
-    double gravity;
-    double air_density;
-    uint num_fixtures;
-    List *fixtures;
-    WorldGrid *grid;
-};
-typedef struct World World;
-
-World *World_create(int cols, int rows);
-void World_destroy(World *world);
-void World_solve(Physics *physics, World *world, TileMap *tile_map,
-                 double advance_ms);
-Fixture *World_create_fixture(World *world);
-VRect World_floor_box(World *world);
-VRect World_ceil_box(World *world);
-VRect World_left_wall_box(World *world);
-VRect World_right_wall_box(World *world);
-
-#endif
-#ifndef __recorder_h
-#define __recorder_h
-#include <lcthw/darray.h>
-
-struct Recorder;
-typedef struct RecorderProto {
-    void *(*capture_frame)(struct Recorder *recorder, size_t *size);
-    void (*apply_frame)(struct Recorder *recorder, void *frame);
-    void (*clear_frames)(struct Recorder *recorder);
-    void (*rewind)(struct Recorder *recorder);
-    void (*start_play_cb)(struct Recorder *recorder);
-    void (*stop_play_cb)(struct Recorder *recorder);
-    void (*pack)(struct Recorder *recorder, unsigned char **buffer,
-                 size_t *size);
-    void (*unpack)(struct Recorder *recorder, unsigned char *buffer,
-                   size_t size);
-} RecorderProto;
-
-typedef enum {
-    RecorderStateIdle = 0,
-    RecorderStateRecording = 1,
-    RecorderStatePlaying = 2
-} RecorderState;
-
-typedef struct Recorder {
-    RecorderProto proto;
-    Entity *entity;
-    DArray *frames;
-
-    void *context;
-
-    int current_frame;
-    RecorderState state;
-
-    int num_frames;
-    double avg_frame_size;
-    size_t total_frame_size;
-} Recorder;
-
-Recorder *Recorder_create(RecorderProto proto, int preroll_ms, int fps);
-void Recorder_destroy(Recorder *recorder);
-void Recorder_write_frame(Recorder *recorder, void *frame, size_t size);
-void *Recorder_read_frame(Recorder *recorder);
-void Recorder_set_state(Recorder *recorder, RecorderState state);
-
-#endif
-#ifndef __scene_h
-#define __scene_h
-#include <chipmunk/chipmunk.h>
-#include <lcthw/bstree.h>
-#include <lcthw/darray.h>
-
-struct Scene;
-typedef struct SceneProto {
-    void (*start)(struct Scene *scene, Engine *engine);
-    void (*start_success_cb)(struct Scene *scene, Engine *engine);
-    void (*stop)(struct Scene *scene, Engine *engine);
-    void (*cleanup)(struct Scene *scene, Engine *engine);
-    void (*update)(struct Scene *scene, Engine *engine);
-    void (*render)(struct Scene *scene, Engine *engine);
-    void (*control)(struct Scene *scene, Engine *engine);
-    void (*add_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
-    void (*remove_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
-    Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
-    Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
-    VPoint (*get_gravity)(struct Scene *scene);
-    void (*set_gravity)(struct Scene *scene, VPoint gravity);
-} SceneProto;
-
-typedef enum {
-  kSceneRenderModeNormal = 0,
-  kSceneRenderModePhysicsDebug = 1
-} SceneRenderMode;
-
-typedef enum {
-  kSceneNotSelecting = 0,
-  kSceneSelectingForCamera = 1,
-  kSceneSelectingForRecorder = 2
-} SceneEntitySelectionMode;
-
-typedef struct Scene {
-    SceneProto proto;
-    void *context;
-    char *name;
-
-    GfxTexture *bg_texture; // deprecated
-
-    BSTree *entities;
-    BSTree *overlays;
-    uint16_t entity_count;
-    uint16_t overlay_count;
-
-    Music *music;
-    Camera *camera;
-    union {
-      World *world;
-      cpSpace *space;
-    };
-    Parallax *parallax;
-    TileMap *tile_map;
-
-    VVector4 bg_color;
-    VVector4 cover_color;
-
-    short int draw_debug_text;
-    short int draw_grid;
-    short int debug_camera;
-    short int render_mode;
-    int started;
-    long int started_at;
-
-    int pixels_per_meter;
-    VPoint gravity;
-
-    SceneEntitySelectionMode selection_mode;
-    List *selected_entities;
-} Scene;
-
-Scene *Scene_create(Engine *engine, SceneProto proto);
-void Scene_destroy(Scene *scene, Engine *engine);
-void Scene_restart(Scene *scene, Engine *engine);
-void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
-                         int abs_path, float meters_per_tile);
-void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
-void Scene_set_music(Scene *scene, Music *music);
-void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
-void Scene_reset_camera(Scene *scene, Engine *engine);
-void Scene_render(Scene *scene, Engine *engine);
-void Scene_update(Scene *scene, Engine *engine);
-void Scene_control(Scene *scene, Engine *engine);
-void Scene_start(Scene *scene, Engine *engine);
-void Scene_stop(Scene *scene, Engine *engine);
-
-void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
-int Scene_select_entities_at(Scene *scene, VPoint screen_point);
-
-// Rendering
-void Scene_project_screen(Scene *scene, Engine *engine);
-void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
-void Scene_render_entities(Scene *scene, Engine *engine);
-void Scene_render_selected_entities(Scene *scene, Engine *engine);
-void Scene_render_overlays(Scene *scene, Engine *engine);
-
-struct Overlay;
-void Scene_add_entity(Scene *scene, Engine *engine, struct Entity *entity);
-void Scene_remove_entity(Scene *scene, Engine *engine, struct Entity *entity);
-
-void Scene_add_overlay(Scene *scene, struct Overlay *overlay);
-void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
-
-
-#endif
-#ifndef __gameobjects_h_
-#define __gameobjects_h_
-
-
-#endif
 #ifndef __camera_bindings_h
 #define __camera_bindings_h
 #include <lua/lua.h>
@@ -2255,6 +1941,36 @@ void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture, int z_index,
                        int num_points, int num_attrs, VVector4 vectors[]);
 void DrawBuffer_empty(DrawBuffer *buffer);
 void DrawBuffer_draw(DrawBuffer *buffer);
+
+#endif
+#ifndef __parallax_h
+#define __parallax_h
+#include <lcthw/darray.h>
+
+typedef struct ParallaxLayer {
+    GfxTexture *texture;
+    VPoint offset;
+    double scale;
+    double p_factor;
+    double y_wiggle;
+} ParallaxLayer;
+
+ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
+
+typedef struct Parallax {
+    DArray *layers;
+    Camera *camera;
+    GfxSize level_size;
+    VVector4 sky_color;
+    VVector4 sea_color;
+    double y_wiggle;
+    double sea_level;
+} Parallax;
+
+Parallax *Parallax_create();
+void Parallax_destroy(Parallax *parallax);
+int Parallax_add_layer(Parallax *parallax, ParallaxLayer *layer);
+void Parallax_render(Parallax *parallax, Graphics *graphics);
 
 #endif
 #ifndef __parallax_bindings_h
@@ -2565,6 +2281,73 @@ extern "C" {
 ////   end header file   /////////////////////////////////////////////////////
 #endif // STBI_INCLUDE_STB_IMAGE_H
 
+#ifndef __tile_map_h
+#define __tile_map_h
+#include <lcthw/hashmap.h>
+#include <lcthw/darray.h>
+
+//TODO: objectgroup
+//TODO: properties
+
+extern const unsigned FLIPPED_HORIZONTALLY_FLAG;
+extern const unsigned FLIPPED_VERTICALLY_FLAG;
+extern const unsigned FLIPPED_DIAGONALLY_FLAG;
+
+// Only PNG
+// Doesn't support: format, trans
+typedef struct Tileset {
+    int spacing;
+    int margin;
+    GfxSize tile_size;
+    uint32_t first_gid;
+    char *name;
+    char *img_src;
+    GfxTexture *texture;
+} Tileset;
+
+void Tileset_destroy(Tileset *tileset);
+
+typedef struct TilesetTile {
+  uint32_t gid;
+  Tileset *tileset;
+  VPoint tl;
+  GfxSize size;
+} TilesetTile;
+
+typedef struct TileMapLayer {
+    char *name;
+    double opacity;
+    int visible;
+    int gid_count;
+    uint32_t *tile_gids;
+    GfxTexture *atlas;
+    uint8_t *raw_atlas;
+    Tileset *tileset;
+} TileMapLayer;
+
+TileMapLayer *TileMapLayer_create();
+void TileMapLayer_destroy(TileMapLayer *layer);
+
+// Only orthogonal
+typedef struct TileMap {
+  int rows;
+  int cols;
+  GfxSize tile_size;
+  DArray *tilesets;
+  DArray *layers;
+  DArray *collision_shapes;
+  float meters_per_tile;
+} TileMap;
+
+TileMap *TileMap_create();
+void TileMap_destroy(TileMap *map);
+void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter);
+TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid);
+GfxSize TileMap_draw_size(TileMap *map, int pixels_per_meter);
+
+void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics);
+
+#endif
 #ifndef __tile_map_parse_h
 #define __tile_map_parse_h
 
@@ -2591,6 +2374,351 @@ typedef Scripting_userdata_for(Controller) Controller_userdata;
 Scripting_caster_for(Controller, luaL_tocontroller);
 
 int luaopen_dabes_controller(lua_State *L);
+
+#endif
+#ifndef __canvas_h
+#define __canvas_h
+#include <lcthw/darray.h>
+
+struct Scene;
+
+#define CANVAS_QUEUE_SIZE 128
+
+typedef struct Canvas {
+    DArray *raw_points;
+    DArray *simplified_points;
+
+    int enabled;
+    float alpha;
+    VPoint offset;
+
+    struct Scene *scene;
+
+    float angle_threshold;
+    float distance_threshold;
+    float draw_width;
+
+    VVector4 bg_color;
+    VVector4 draw_color;
+    VVector4 simplified_path_color;
+
+    VPoint point_queue[CANVAS_QUEUE_SIZE];
+    int queue_count;
+} Canvas;
+
+Canvas *Canvas_create(Engine *engine);
+void Canvas_destroy(Canvas *canvas);
+void Canvas_empty(Canvas *canvas);
+void Canvas_enqueue_point(Canvas *canvas, VPoint point);
+void Canvas_update(Canvas *canvas, Engine *engine);
+void Canvas_render(Canvas *canvas, Engine *engine);
+void Canvas_set_enabled(Canvas *canvas, Engine *engine, int enabled);
+
+#endif
+#ifndef __canvas_bindings_h
+#define __canvas_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Canvas_lib;
+extern const char *luab_Canvas_metatable;
+typedef Scripting_userdata_for(Canvas) Canvas_userdata;
+Scripting_caster_for(Canvas, luaL_tocanvas);
+
+int luaopen_dabes_canvas(lua_State *L);
+
+
+#endif
+#ifndef __physics_world_grid_h
+#define __physics_world_grid_h
+
+typedef enum {
+    WORLDGRIDMEMBER_FIXTURE,
+    WORLDGRIDMEMBER_TILE
+} WorldGridMemberType;
+
+typedef struct {
+    WorldGridMemberType member_type;
+    union {
+        Fixture *fixture;
+        void *raw;
+    };
+} WorldGridMember;
+
+int WorldGridMember_is_equal(WorldGridMember *a, WorldGridMember *b);
+
+typedef struct WorldGridPoint {
+    WorldGridMember owner;
+    VPoint point;
+} WorldGridPoint;
+
+WorldGridPoint *WorldGridPoint_create(VPoint point, WorldGridMember owner);
+void WorldGridPoint_destroy(WorldGridPoint *wgpoint);
+int WorldGridPoint_is(WorldGridPoint *wgpoint, VPoint point,
+        WorldGridMember owner);
+
+typedef struct WorldGridCell {
+    int row;
+    int col;
+    List *points;
+} WorldGridCell;
+
+WorldGridCell *WorldGridCell_create(int row, int col);
+void WorldGridCell_destroy(WorldGridCell *cell);
+
+typedef struct WorldGrid {
+    int rows;
+    int cols;
+    double grid_size;
+    DArray *cells;
+} WorldGrid;
+
+WorldGrid *WorldGrid_create(int rows, int cols, double grid_size);
+void WorldGrid_destroy(WorldGrid *grid);
+
+int WorldGrid_update_fixture(WorldGrid *grid, Fixture *fixture);
+
+int WorldGrid_add_fixture(WorldGrid *grid, Fixture *fixture);
+int WorldGrid_add_box(WorldGrid *grid, VRect box, WorldGridMember owner);
+int WorldGrid_add_point(WorldGrid *grid, VPoint point,
+        WorldGridMember owner);
+
+int WorldGrid_remove_fixture(WorldGrid *grid, Fixture *fixture);
+int WorldGrid_remove_box(WorldGrid *grid, VRect box, WorldGridMember owner);
+int WorldGrid_remove_point(WorldGrid *grid, VPoint point,
+        WorldGridMember owner);
+
+WorldGridCell *WorldGrid_cell_for_point(WorldGrid *grid, VPoint point);
+List *WorldGrid_cells_for_box(WorldGrid *grid, VRect box);
+List *WorldGrid_members_near_fixture(WorldGrid *grid, Fixture *fixture);
+VRect WorldGrid_box_for_cell(WorldGrid *grid, int col, int row);
+
+#endif
+#ifndef __world_h
+#define __world_h
+
+struct World {
+    double height;
+    double width;
+    double grid_size;
+    double time_scale;
+    double pixels_per_meter;
+    double gravity;
+    double air_density;
+    uint num_fixtures;
+    List *fixtures;
+    WorldGrid *grid;
+};
+typedef struct World World;
+
+World *World_create(int cols, int rows);
+void World_destroy(World *world);
+void World_solve(Physics *physics, World *world, TileMap *tile_map,
+                 double advance_ms);
+Fixture *World_create_fixture(World *world);
+VRect World_floor_box(World *world);
+VRect World_ceil_box(World *world);
+VRect World_left_wall_box(World *world);
+VRect World_right_wall_box(World *world);
+
+#endif
+#ifndef __recorder_h
+#define __recorder_h
+#include <lcthw/darray.h>
+
+struct Recorder;
+typedef struct RecorderProto {
+    void *(*capture_frame)(struct Recorder *recorder, size_t *size);
+    void (*apply_frame)(struct Recorder *recorder, void *frame);
+    void (*clear_frames)(struct Recorder *recorder);
+    void (*rewind)(struct Recorder *recorder);
+    void (*start_play_cb)(struct Recorder *recorder);
+    void (*stop_play_cb)(struct Recorder *recorder);
+    void (*pack)(struct Recorder *recorder, unsigned char **buffer,
+                 size_t *size);
+    void (*unpack)(struct Recorder *recorder, unsigned char *buffer,
+                   size_t size);
+} RecorderProto;
+
+typedef enum {
+    RecorderStateIdle = 0,
+    RecorderStateRecording = 1,
+    RecorderStatePlaying = 2
+} RecorderState;
+
+typedef struct Recorder {
+    RecorderProto proto;
+    Entity *entity;
+    DArray *frames;
+
+    void *context;
+
+    int current_frame;
+    RecorderState state;
+
+    int num_frames;
+    double avg_frame_size;
+    size_t total_frame_size;
+} Recorder;
+
+Recorder *Recorder_create(RecorderProto proto, int preroll_ms, int fps);
+void Recorder_destroy(Recorder *recorder);
+void Recorder_write_frame(Recorder *recorder, void *frame, size_t size);
+void *Recorder_read_frame(Recorder *recorder);
+void Recorder_set_state(Recorder *recorder, RecorderState state);
+
+#endif
+#ifndef __scene_h
+#define __scene_h
+#include <chipmunk/chipmunk.h>
+#include <lcthw/bstree.h>
+#include <lcthw/darray.h>
+
+struct Scene;
+typedef struct SceneProto {
+    void (*start)(struct Scene *scene, Engine *engine);
+    void (*start_success_cb)(struct Scene *scene, Engine *engine);
+    void (*stop)(struct Scene *scene, Engine *engine);
+    void (*cleanup)(struct Scene *scene, Engine *engine);
+    void (*update)(struct Scene *scene, Engine *engine);
+    void (*render)(struct Scene *scene, Engine *engine);
+    void (*control)(struct Scene *scene, Engine *engine);
+    void (*add_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
+    void (*remove_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
+    Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
+    Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
+    VPoint (*get_gravity)(struct Scene *scene);
+    void (*set_gravity)(struct Scene *scene, VPoint gravity);
+} SceneProto;
+
+typedef enum {
+  kSceneRenderModeNormal = 0,
+  kSceneRenderModePhysicsDebug = 1
+} SceneRenderMode;
+
+typedef enum {
+  kSceneNotSelecting = 0,
+  kSceneSelectingForCamera = 1,
+  kSceneSelectingForRecorder = 2
+} SceneEntitySelectionMode;
+
+typedef struct Scene {
+    SceneProto proto;
+    void *context;
+    char *name;
+
+    GfxTexture *bg_texture; // deprecated
+
+    BSTree *entities;
+    BSTree *overlays;
+    uint16_t entity_count;
+    uint16_t overlay_count;
+
+    Music *music;
+    Camera *camera;
+    union {
+      World *world;
+      cpSpace *space;
+    };
+    Parallax *parallax;
+    TileMap *tile_map;
+    Canvas *canvas;
+
+    VVector4 bg_color;
+    VVector4 cover_color;
+
+    short int draw_debug_text;
+    short int draw_grid;
+    short int debug_camera;
+    short int render_mode;
+    int started;
+    long int started_at;
+
+    int pixels_per_meter;
+    VPoint gravity;
+
+    SceneEntitySelectionMode selection_mode;
+    List *selected_entities;
+} Scene;
+
+Scene *Scene_create(Engine *engine, SceneProto proto);
+void Scene_destroy(Scene *scene, Engine *engine);
+void Scene_restart(Scene *scene, Engine *engine);
+void Scene_load_tile_map(Scene *scene, Engine *engine, char *map_file,
+                         int abs_path, float meters_per_tile);
+void Scene_set_tile_map(Scene *scene, Engine *engine, TileMap *tile_map);
+void Scene_set_music(Scene *scene, Music *music);
+void Scene_draw_debug_grid(Scene *scene, Graphics *graphics);
+void Scene_reset_camera(Scene *scene, Engine *engine);
+void Scene_render(Scene *scene, Engine *engine);
+void Scene_update(Scene *scene, Engine *engine);
+void Scene_control(Scene *scene, Engine *engine);
+void Scene_start(Scene *scene, Engine *engine);
+void Scene_stop(Scene *scene, Engine *engine);
+
+void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
+int Scene_select_entities_at(Scene *scene, VPoint screen_point);
+
+// Rendering
+void Scene_project_screen(Scene *scene, Engine *engine);
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
+void Scene_render_entities(Scene *scene, Engine *engine);
+void Scene_render_selected_entities(Scene *scene, Engine *engine);
+void Scene_render_overlays(Scene *scene, Engine *engine);
+
+struct Overlay;
+void Scene_add_entity(Scene *scene, Engine *engine, struct Entity *entity);
+void Scene_remove_entity(Scene *scene, Engine *engine, struct Entity *entity);
+
+void Scene_add_overlay(Scene *scene, struct Overlay *overlay);
+void Scene_remove_overlay(Scene *scene, struct Overlay *overlay);
+
+
+#endif
+#ifndef __overlay_h
+#define __overlay_h
+
+struct Sprite;
+
+typedef struct Overlay {
+    Scene *scene;
+    GfxFont *font;
+    DArray *sprites;
+    Entity *track_entity;
+  
+    float alpha;
+  
+    uint16_t z_index;
+    uint32_t timestamp;
+    uint16_t add_index;
+
+    uint64_t z_key;
+} Overlay;
+
+Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
+void Overlay_destroy(Overlay *overlay);
+void Overlay_update(Overlay *overlay, Engine *engine);
+void Overlay_render(Overlay *overlay, Engine *engine);
+void Overlay_add_sprite(Overlay *overlay, struct Sprite *sprite);
+void Overlay_set_z_index(Overlay *overlay, uint16_t z_index);
+void Overlay_set_add_index(Overlay *overlay, uint16_t add_index);
+int Overlay_z_cmp(void *a, void *b);
+
+#endif
+#ifndef __overlay_bindings_h
+#define __overlay_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Overlay_lib;
+extern const char *luab_Overlay_metatable;
+typedef Scripting_userdata_for(Overlay) Overlay_userdata;
+Scripting_caster_for(Overlay, luaL_tooverlay);
+
+int luaopen_dabes_overlay(lua_State *L);
+
 
 #endif
 #ifndef __vpolygon_h
@@ -2661,51 +2789,6 @@ typedef enum {
 } OCSCollisionType;
 
 extern SceneProto ChipmunkSceneProto;
-
-#endif
-#ifndef __overlay_h
-#define __overlay_h
-
-struct Sprite;
-
-typedef struct Overlay {
-    Scene *scene;
-    GfxFont *font;
-    DArray *sprites;
-    Entity *track_entity;
-  
-    float alpha;
-  
-    uint16_t z_index;
-    uint32_t timestamp;
-    uint16_t add_index;
-
-    uint64_t z_key;
-} Overlay;
-
-Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
-void Overlay_destroy(Overlay *overlay);
-void Overlay_update(Overlay *overlay, Engine *engine);
-void Overlay_render(Overlay *overlay, Engine *engine);
-void Overlay_add_sprite(Overlay *overlay, struct Sprite *sprite);
-void Overlay_set_z_index(Overlay *overlay, uint16_t z_index);
-void Overlay_set_add_index(Overlay *overlay, uint16_t add_index);
-int Overlay_z_cmp(void *a, void *b);
-
-#endif
-#ifndef __overlay_bindings_h
-#define __overlay_bindings_h
-#include <lua/lua.h>
-#include <lua/lualib.h>
-#include <lua/lauxlib.h>
-
-extern const char *luab_Overlay_lib;
-extern const char *luab_Overlay_metatable;
-typedef Scripting_userdata_for(Overlay) Overlay_userdata;
-Scripting_caster_for(Overlay, luaL_tooverlay);
-
-int luaopen_dabes_overlay(lua_State *L);
-
 
 #endif
 #ifndef __scene_bindings_h

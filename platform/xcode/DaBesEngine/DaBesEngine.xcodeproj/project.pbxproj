@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA03FAFE17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = CA03FAFC17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h */; };
+		CA03FAFF17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA03FAFD17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m */; };
 		CA2788851780FDB1005A242D /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788841780FDB1005A242D /* OpenAL.framework */; };
 		CA2788871780FDB6005A242D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788861780FDB6005A242D /* OpenGL.framework */; };
 		CA2788891780FDBF005A242D /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788881780FDBF005A242D /* libxml2.dylib */; };
@@ -397,6 +399,8 @@
 		CA02010717654206008F719D /* camera_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera_bindings.h; sourceTree = "<group>"; };
 		CA02010B176D86EE008F719D /* draw_buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = draw_buffer.c; sourceTree = "<group>"; };
 		CA02010D176D86FC008F719D /* draw_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = draw_buffer.h; sourceTree = "<group>"; };
+		CA03FAFC17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABTouchpadControllerOverlayView.h; sourceTree = "<group>"; };
+		CA03FAFD17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABTouchpadControllerOverlayView.m; sourceTree = "<group>"; };
 		CA1A05851762E774007B4682 /* sfx_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfx_bindings.c; sourceTree = "<group>"; };
 		CA1A05861762E774007B4682 /* sfx_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfx_bindings.h; sourceTree = "<group>"; };
 		CA1D745917702B6500712C8D /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = "../../../third_party/libogg-1.3.1/macosx/Ogg.xcodeproj"; sourceTree = "<group>"; };
@@ -836,6 +840,8 @@
 			children = (
 				CA9EB6FE17CAFACA00CA273F /* DABPlatformerControllerOverlayView.h */,
 				CA9EB6FF17CAFACA00CA273F /* DABPlatformerControllerOverlayView.m */,
+				CA03FAFC17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h */,
+				CA03FAFD17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m */,
 			);
 			name = "Controller Overlays";
 			sourceTree = "<group>";
@@ -1017,6 +1023,7 @@
 				CAF915F917D46BA000EE204E /* canvas.h in Headers */,
 				CAF915FD17D46BA000EE204E /* overlay_bindings.h in Headers */,
 				CAF9160117D46BA000EE204E /* overlay.h in Headers */,
+				CA03FAFE17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1446,6 +1453,7 @@
 				CAF915F717D46BA000EE204E /* canvas.c in Sources */,
 				CAF915FB17D46BA000EE204E /* overlay_bindings.c in Sources */,
 				CAF915FF17D46BA000EE204E /* overlay.c in Sources */,
+				CA03FAFF17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
