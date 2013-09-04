@@ -16,7 +16,7 @@ static void simplifier_try_point(Canvas *canvas, VPoint p,
 static void simplifier_commit_point(Canvas *canvas);
 static void simplifier_empty(Canvas *canvas);
 VPoint *simplifier_staged_path(Canvas *canvas, int *num_points);
-    
+
 Canvas *Canvas_create(Engine *engine) {
     check(engine != NULL, "Engine required");
     Canvas *canvas = calloc(1, sizeof(Canvas));
@@ -100,12 +100,17 @@ void Canvas_consume_queue(Canvas *canvas) {
         VPoint *to_save = calloc(1, sizeof(VPoint));
         *to_save = canvas->point_queue[i];
         DArray_push(canvas->raw_points, to_save);
-        
+
         if (canvas->simplified_points) {
             simplifier_try_point(canvas, canvas->point_queue[i], 0);
         } else {
             simplifier_stage_point(canvas, canvas->point_queue[i]);
             simplifier_commit_point(canvas);
+
+            if (canvas->shape_matcher) {
+                ShapeMatcher_start(canvas->shape_matcher,
+                        canvas->point_queue[i]);
+            }
         }
     }
 
@@ -124,6 +129,10 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
     short int moved = !!(p1->touch_state & CONTROLLER_TOUCH_MOVED);
     if (hold && hold_changed) {
         Canvas_empty(canvas);
+
+        if (canvas->shape_matcher) {
+            ShapeMatcher_reset(canvas->shape_matcher);
+        }
     }
 
     if (hold && (hold_changed || moved)) {
@@ -176,7 +185,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
 
         free(path);
     }
-    
+
     int num_staged;
     VPoint *staged_path = simplifier_staged_path(canvas, &num_staged);
     if (staged_path) {
@@ -194,6 +203,10 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                              canvas->draw_width, 0, 0);
 
         free(staged_path);
+    }
+
+    if (canvas->shape_matcher) {
+        // TODO Render shape matcher shtuff
     }
 
     return;
@@ -221,9 +234,13 @@ static void simplifier_stage_point(Canvas *canvas, VPoint p) {
     if (canvas->staged_point) {
         free(canvas->staged_point);
     }
-    
+
     canvas->staged_point = malloc(sizeof(Point));
     *canvas->staged_point = p;
+
+    if (canvas->shape_matcher) {
+        ShapeMatcher_stage_point(canvas->shape_matcher, p);
+    }
 }
 
 static void simplifier_try_point(Canvas *canvas, VPoint p,
@@ -234,7 +251,7 @@ static void simplifier_try_point(Canvas *canvas, VPoint p,
         has_one_ago = 1;
         one_ago = *canvas->staged_point;
     }
-    
+
     short int has_two_ago = 0;
     VPoint two_ago = VPointZero;
     int simp_count = (canvas->simplified_points ?
@@ -245,17 +262,17 @@ static void simplifier_try_point(Canvas *canvas, VPoint p,
         VPoint *got = DArray_get(canvas->simplified_points, simp_count - 1);
         two_ago = *got;
     }
-    
+
     short int distance_ok = 0;
     short int angle_ok = 0;
-    
+
     if (has_two_ago) {
         float dist = VPoint_magnitude(VPoint_subtract(p, two_ago));
         if (dist > canvas->distance_threshold) {
             distance_ok = 1;
         }
     }
-    
+
     if (has_one_ago && has_two_ago) {
         float before_angle = VPoint_angle(two_ago, one_ago);
         float this_angle = VPoint_angle(one_ago, p);
@@ -265,24 +282,28 @@ static void simplifier_try_point(Canvas *canvas, VPoint p,
             angle_ok = 1;
         }
     }
-    
+
     if (!suppress_commit && (distance_ok && angle_ok)) {
         simplifier_commit_point(canvas);
     }
-    
+
     simplifier_stage_point(canvas, p);
 }
 
 static void simplifier_commit_point(Canvas *canvas) {
     if (!canvas->staged_point) return;
-    
+
     if (!canvas->simplified_points) {
         canvas->simplified_points =
             DArray_create(sizeof(VPoint), CANVAS_QUEUE_SIZE);
     }
-    
+
     DArray_push(canvas->simplified_points, canvas->staged_point);
     canvas->staged_point = NULL;
+
+    if (canvas->shape_matcher) {
+        ShapeMatcher_commit_point(canvas->shape_matcher);
+    }
 }
 
 static void simplifier_empty(Canvas *canvas) {
@@ -290,7 +311,7 @@ static void simplifier_empty(Canvas *canvas) {
         free(canvas->simplified_points);
         canvas->simplified_points = NULL;
     }
-    
+
     if (canvas->staged_point) {
         free(canvas->staged_point);
         canvas->staged_point = NULL;
@@ -299,23 +320,23 @@ static void simplifier_empty(Canvas *canvas) {
 
 VPoint *simplifier_staged_path(Canvas *canvas, int *num_points) {
     check(num_points != NULL, "*num_points can't be NULL");
-    
+
     if (canvas->simplified_points == NULL) {
         *num_points = 0;
         return NULL;
     }
-    
+
     int num = DArray_count(canvas->simplified_points);
     int simplified_count = num;
     if (canvas->staged_point) {
         num++;
     }
     *num_points = num;
-    
+
     if (num == 0) {
         return NULL;
     }
-    
+
     VPoint *points = calloc(num, sizeof(VPoint));
     int i = 0;
     for (i = 0; i < num; i++) {
@@ -328,7 +349,7 @@ VPoint *simplifier_staged_path(Canvas *canvas, int *num_points) {
             points[i] = *canvas->staged_point;
         }
     }
-    
+
     return points;
 error:
     return NULL;

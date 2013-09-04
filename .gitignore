@@ -26,6 +26,8 @@ profile
 test-reports/
 */.DS_Store
 
+tags
+
 submodules/liblcthw/xcode/build
 submodules/liblcthw/xcode/build/*
 platform/xcode/DaBesEngine/build

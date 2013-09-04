@@ -4,6 +4,7 @@
 #include <lcthw/darray.h>
 #include "../core/engine.h"
 #include "../math/vmatrix.h"
+#include "../math/shape_matcher.h"
 
 struct Scene;
 
@@ -29,8 +30,10 @@ typedef struct Canvas {
 
     VPoint point_queue[CANVAS_QUEUE_SIZE];
     int queue_count;
-    
+
     VPoint *staged_point;
+
+    ShapeMatcher *shape_matcher;
 } Canvas;
 
 Canvas *Canvas_create(Engine *engine);

@@ -6,6 +6,11 @@
 // ===================
 // VPoint functions
 // ===================
+VPoint VPoint_make(float x, float y) {
+    VPoint new = {x, y};
+    return new;
+}
+
 VPoint VPoint_add(VPoint a, VPoint b) {
     VPoint new = {a.x + b.x, a.y + b.y};
     return new;
@@ -89,6 +94,21 @@ double VPoint_magnitude(VPoint a) {
     return sqrt(a.x * a.x + a.y * a.y);
 }
 
+double VPoint_distance(VPoint a, VPoint b) {
+    return VPoint_magnitude(VPoint_subtract(b, a));
+}
+
+VPoint VPoint_look_from(VPoint start_point, float angle_rads, float mag) {
+    VPoint translation = {
+        cosf(angle_rads) * mag,
+        sinf(angle_rads) * mag
+    };
+
+    VPoint next = VPoint_add(start_point, translation);
+
+    return next;
+}
+
 VPointRel VPoint_rel(VPoint a, VPoint b) {
     VPointRel rel = VPointRelWithin;
     if (fequal(a.x, b.x) && fequal(a.y, b.y)) return rel;
@@ -98,3 +118,29 @@ VPointRel VPoint_rel(VPoint a, VPoint b) {
     if (a.y > b.y) rel |= VPointRelYMore;
     return rel;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+VPath *VPath_create(VPoint *points, int num_points) {
+    check(points != NULL, "Points required");
+    check(num_points > 0, "More than 0 points required");
+    VPath *path = malloc(sizeof(VPath) + num_points * sizeof(VPoint));
+
+    int i = 0;
+    for (i = 0; i < num_points; i++) {
+        path->points[i] = points[i];
+    }
+
+    return path;
+error:
+    return NULL;
+}
+
+void VPath_destroy(VPath *path) {
+    check(path != NULL, "No path to destroy");
+    free(path);
+    return;
+error:
+    return;
+}
+
