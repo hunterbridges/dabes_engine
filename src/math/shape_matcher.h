@@ -3,7 +3,9 @@
 #include <lcthw/darray.h>
 #include <lcthw/bstree.h>
 #include <lcthw/hashmap.h>
+#include "vcircle.h"
 #include "vpoint.h"
+#include "vmatrix.h"
 
 typedef struct ShapeSegment {
     float length;
@@ -77,6 +79,13 @@ typedef struct ShapeMatcher {
     DArray *marked_shape_keys;
 
     PotentialShape *matched_shape;
+
+    int debug_shapes;
+    VVector4 debug_shape_color;
+    int debug_shape_width;
+
+    VVector4 dot_color;
+    int dot_width;
 } ShapeMatcher;
 
 ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes);
@@ -85,5 +94,9 @@ int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point);
 int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point);
 int ShapeMatcher_commit_point(ShapeMatcher *matcher);
 int ShapeMatcher_end(ShapeMatcher *matcher);
+void ShapeMatcher_get_potential_shape_paths(ShapeMatcher *matcher,
+    VPath ***paths, int *num_paths);
+void ShapeMatcher_get_connect_dots(ShapeMatcher *matcher, VCircle **circles,
+    int *num_circles);
 
 #endif

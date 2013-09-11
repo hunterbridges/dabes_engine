@@ -384,6 +384,29 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
 #endif
 }
 
+void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
+        VPoint center, GLfloat color[4], double line_width) {
+    VPoint points[precision];
+    check(graphics != NULL, "Graphics required");
+
+    int i = 0;
+    for (i = 0; i < precision; i++) {
+        float angle_rad = (1.f * i / precision) * M_PI * 2;
+        VPoint point = VPoint_make(
+            cosf(angle_rad) * circle.radius,
+            sinf(angle_rad) * circle.radius
+        );
+        points[i] = point;
+    }
+
+    Graphics_stroke_path(graphics, points, precision, center, color, line_width,
+        0, 1);
+
+    return;
+error:
+    return;
+}
+
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
                           double line_width, double rotation) {
     double w = rect.tr.x - rect.tl.x;

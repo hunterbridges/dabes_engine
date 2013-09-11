@@ -213,9 +213,38 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
     }
 
     if (canvas->shape_matcher) {
-        // TODO Render shape matcher shtuff
+        if (canvas->shape_matcher->debug_shapes) {
+            VPath **paths = NULL;
+            int num_paths = 0;
+            ShapeMatcher_get_potential_shape_paths(canvas->shape_matcher, &paths,
+                &num_paths);
+            int i = 0;
+            for (i = 0; i < num_paths; i++) {
+                VPath *path = paths[i];
+                Graphics_stroke_path(engine->graphics, path->points,
+                          path->num_points, screen_diff,
+                          canvas->shape_matcher->debug_shape_color.raw,
+                          canvas->shape_matcher->debug_shape_width,
+                          0, 0);
+                VPath_destroy(path);
+            }
+            if (paths) free(paths);
+        }
+
         // Like maybe the potential shapes we could draw
         // The next points we could draw to
+        VCircle *circles = NULL;
+        int num_circles = 0;
+        ShapeMatcher_get_connect_dots(canvas->shape_matcher, &circles,
+            &num_circles);
+        int i = 0;
+        for (i = 0; i < num_circles; i++) {
+            VCircle circle = circles[i];
+            Graphics_stroke_circle(engine->graphics, circle, 40, screen_diff,
+                canvas->shape_matcher->dot_color.raw,
+                canvas->shape_matcher->dot_width);
+        }
+        if (circles) free(circles);
     }
 
     return;

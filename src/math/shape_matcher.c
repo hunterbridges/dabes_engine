@@ -166,6 +166,14 @@ ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes) {
     matcher->slop_tolerance = SHAPE_MATCHER_DEFAULT_SLOP;
     matcher->state = SHAPE_MATCHER_STATE_NEW;
 
+    VVector4 dot_color = {.raw = {0.5, 0.5, 0.5, 0.5}};
+    matcher->dot_color = dot_color;
+    matcher->dot_width = 2;
+
+    VVector4 debug_shape_color = {.raw = {0, 1.0, 1.0, 1.0}};
+    matcher->debug_shape_color = debug_shape_color;
+    matcher->debug_shape_width = 5;
+
     return matcher;
 error:
     return NULL;
@@ -479,3 +487,182 @@ error:
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct ShapePathCtx {
+    ShapeMatcher *matcher;
+    VPath **paths;
+    int num_paths;
+    int i;
+} ShapePathCtx;
+
+int pshape_path_ambiguous_cb(BSTreeNode *node, void *context) {
+    ShapePathCtx *ctx = context;
+    PotentialShape *pshape = node->data;
+
+    VPoint *start = DArray_get(ctx->matcher->points, 0);
+
+    // CCW
+    ctx->paths[ctx->i] = Shape_get_path(pshape->shape, *start,
+        ctx->matcher->initial_segment_length,
+        ctx->matcher->initial_segment_angle,
+        SHAPE_WINDING_COUNTERCLOCKWISE, NULL);
+    ctx->i++;
+
+    // CW
+    ctx->paths[ctx->i] = Shape_get_path(pshape->shape, *start,
+        ctx->matcher->initial_segment_length,
+        ctx->matcher->initial_segment_angle,
+        SHAPE_WINDING_CLOCKWISE, NULL);
+    ctx->i++;
+
+    return 1;
+}
+
+int pshape_path_intended_cb(BSTreeNode *node, void *context) {
+    ShapePathCtx *ctx = context;
+    PotentialShape *pshape = node->data;
+
+    ctx->paths[ctx->i] = VPath_create(pshape->path->points,
+                                      pshape->path->num_points);
+    ctx->i++;
+
+    return 1;
+}
+
+void ShapeMatcher_get_potential_shape_paths(ShapeMatcher *matcher,
+        VPath ***paths, int *num_paths) {
+    check(paths != NULL, "paths can't be NULL");
+    check(num_paths != NULL, "num_paths can't be NULL");
+    if (matcher->initial_segment_length == 0) {
+        *paths = NULL;
+        *num_paths = 0;
+        return;
+    }
+
+    ShapePathCtx ctx = { .matcher = matcher, .i = 0 };
+    if (matcher->intended_convex_winding == SHAPE_WINDING_AMBIGUOUS) {
+        ctx.num_paths = matcher->potential_shapes->count * 2;
+        ctx.paths = malloc(ctx.num_paths * sizeof(VPath *));
+
+        BSTree_traverse(matcher->potential_shapes, pshape_path_ambiguous_cb,
+                        &ctx);
+    } else {
+        ctx.num_paths = matcher->potential_shapes->count;
+        ctx.paths = malloc(ctx.num_paths * sizeof(VPath *));
+
+        BSTree_traverse(matcher->potential_shapes, pshape_path_intended_cb,
+                        &ctx);
+    }
+
+    *paths = ctx.paths;
+    *num_paths = ctx.num_paths;
+
+    return;
+error:
+    return;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct ConnectDotsCtx {
+    ShapeMatcher *matcher;
+    VCircle *circles;
+    int num_circles;
+    int i;
+} ConnectDotsCtx;
+
+int pshape_dot_ambiguous_cb(BSTreeNode *node, void *context) {
+    ConnectDotsCtx *ctx = context;
+    PotentialShape *pshape = node->data;
+
+    VPoint *start = DArray_get(ctx->matcher->points, 0);
+
+    float radius = ctx->matcher->vertex_catch_tolerance *
+        ctx->matcher->initial_segment_length;
+
+    // CCW
+    VPath *ccw_path = Shape_get_path(pshape->shape, *start,
+        ctx->matcher->initial_segment_length,
+        ctx->matcher->initial_segment_angle,
+        SHAPE_WINDING_COUNTERCLOCKWISE, NULL);
+    if (ccw_path->num_points > 2) {
+        VCircle circle = {
+            .radius = radius,
+            .center = ccw_path->points[2]
+        };
+        ctx->circles[ctx->i] = circle;
+        ctx->i++;
+    }
+    VPath_destroy(ccw_path);
+
+    // CW
+    VPath *cw_path = Shape_get_path(pshape->shape, *start,
+        ctx->matcher->initial_segment_length,
+        ctx->matcher->initial_segment_angle,
+        SHAPE_WINDING_CLOCKWISE, NULL);
+    if (cw_path->num_points > 2) {
+        VCircle circle = {
+            .radius = radius,
+            .center = cw_path->points[2]
+        };
+        ctx->circles[ctx->i] = circle;
+        ctx->i++;
+    }
+    VPath_destroy(cw_path);
+
+    return 1;
+}
+
+int pshape_dot_intended_cb(BSTreeNode *node, void *context) {
+    ConnectDotsCtx *ctx = context;
+    PotentialShape *pshape = node->data;
+
+    VPath *path = pshape->path;
+    float radius = ctx->matcher->vertex_catch_tolerance *
+        ctx->matcher->initial_segment_length;
+
+    int match_count = DArray_count(pshape->matched_points);
+    if (path->num_points > match_count) {
+        VCircle circle = {
+            .radius = radius,
+            .center = path->points[match_count]
+        };
+        ctx->circles[ctx->i] = circle;
+        ctx->i++;
+    }
+
+    return 1;
+}
+void ShapeMatcher_get_connect_dots(ShapeMatcher *matcher, VCircle **circles,
+        int *num_circles) {
+    check(circles != NULL, "circles can't be NULL");
+    check(num_circles != NULL, "num_circles can't be NULL");
+    if (matcher->initial_segment_length == 0) {
+        *circles = NULL;
+        *num_circles = 0;
+        return;
+    }
+
+    ConnectDotsCtx ctx = { .matcher = matcher, .i = 0 };
+    if (matcher->intended_convex_winding == SHAPE_WINDING_AMBIGUOUS) {
+        ctx.num_circles = matcher->potential_shapes->count * 2;
+        ctx.circles = malloc(ctx.num_circles * sizeof(VCircle));
+
+        BSTree_traverse(matcher->potential_shapes, pshape_dot_ambiguous_cb,
+                        &ctx);
+    } else {
+        ctx.num_circles = matcher->potential_shapes->count;
+        ctx.circles = malloc(ctx.num_circles * sizeof(VCircle));
+
+        BSTree_traverse(matcher->potential_shapes, pshape_dot_intended_cb,
+                        &ctx);
+    }
+
+    *circles = ctx.circles;
+    *num_circles = ctx.num_circles;
+
+    return;
+error:
+    return;
+}

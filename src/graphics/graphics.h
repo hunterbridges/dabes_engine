@@ -4,6 +4,7 @@
 #include "../prefix.h"
 #include "../math/vmatrix.h"
 #include "../math/vrect.h"
+#include "../math/vcircle.h"
 
 #ifdef DABES_SDL
 #include <SDL/SDL_ttf.h>
@@ -170,6 +171,8 @@ void Graphics_destroy(Graphics *graphics);
 void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
         VPoint center, GLfloat color[4], double line_width, double rotation,
         int loop);
+void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
+        VPoint center, GLfloat color[4], double line_width);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
