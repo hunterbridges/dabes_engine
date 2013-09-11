@@ -402,13 +402,30 @@ int widdle_cb(BSTreeNode *node, void *ctx) {
                 log_info("Shape matcher: Too sloppy for %s",
                     pshape->shape->name);
 
-                // Can I do during a traversal?
-                BSTree_delete(matcher->potential_shapes, pshape->shape->name);
+                if (!matcher->marked_shape_keys) {
+                    matcher->marked_shape_keys =
+                        DArray_create(sizeof(void *),
+                                      matcher->potential_shapes->count);
+                }
+                DArray_push(matcher->marked_shape_keys, pshape->shape->name);
             }
         }
     }
 
     return 1;
+}
+
+void ShapeMatcher_clear_marked_shapes(ShapeMatcher *matcher) {
+    if (matcher->marked_shape_keys) {
+        int i = 0;
+        for (i = 0; i < DArray_count(matcher->marked_shape_keys); i++) {
+            void *key = DArray_get(matcher->marked_shape_keys, i);
+            BSTree_delete(matcher->potential_shapes, key);
+        }
+
+        DArray_destroy(matcher->marked_shape_keys);
+        matcher->marked_shape_keys = NULL;
+    }
 }
 
 int ShapeMatcher_commit_point(ShapeMatcher *matcher) {
@@ -420,6 +437,8 @@ int ShapeMatcher_commit_point(ShapeMatcher *matcher) {
     if (matcher->intended_convex_winding == SHAPE_WINDING_AMBIGUOUS) return 1;
 
     BSTree_traverse(matcher->potential_shapes, widdle_cb, matcher);
+
+    ShapeMatcher_clear_marked_shapes(matcher);
 
     return 1;
 error:

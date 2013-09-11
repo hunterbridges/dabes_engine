@@ -74,6 +74,7 @@ typedef struct ShapeMatcher {
     DArray *points;
     VPoint *staged_point;
     BSTree *potential_shapes;
+    DArray *marked_shape_keys;
 
     PotentialShape *matched_shape;
 } ShapeMatcher;
