@@ -48,5 +48,6 @@ typedef struct VPath {
 
 VPath *VPath_create(VPoint *points, int num_points);
 void VPath_destroy(VPath *path);
+void VPath_translate(VPath *path, VPoint trans);
 
 #endif

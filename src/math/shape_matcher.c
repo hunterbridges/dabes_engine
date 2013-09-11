@@ -1,4 +1,5 @@
 #include "shape_matcher.h"
+#include "vpolygon.h"
 
 ShapeSegment ShapeSegment_make(float length, float angle_degrees) {
     ShapeSegment segment = {
@@ -56,15 +57,11 @@ static float angle_wrap(float angle) {
     return angle;
 }
 
-void Shape_get_points(Shape *shape, VPoint start_point, float initial_length,
-        float initial_angle_degrees, ShapeWinding winding, VPoint **points,
-        int *num_points, VPoint *farthest_point) {
+VPath *Shape_get_path(Shape *shape, VPoint start_point, float initial_length,
+        float initial_angle_degrees, ShapeWinding winding, VPoint *farthest_point) {
     check(shape != NULL, "Shape required");
-    check(points != NULL, "**points required");
-    check(num_points != NULL, "*num_points required");
 
     int num = shape->num_segments + 2;
-    *num_points = num;
 
     VPoint *pts = calloc(num, sizeof(VPoint));
     int pt_idx = 0;
@@ -107,7 +104,42 @@ void Shape_get_points(Shape *shape, VPoint start_point, float initial_length,
         *farthest_point = far_point;
     }
 
-    *points = pts;
+    return VPath_create(pts, num);
+error:
+    return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+PotentialShape *PotentialShape_create(Shape *shape) {
+    check(shape != NULL, "Shape required to create PotentialShape");
+
+    PotentialShape *pshape = calloc(1, sizeof(PotentialShape));
+    pshape->shape = shape;
+    pshape->matched_points = DArray_create(sizeof(MatchedPoint *),
+            shape->num_segments + 2);
+
+    MatchedPoint *one = malloc(sizeof(MatchedPoint));
+    one->index = 0;
+    one->distance = 0;
+
+    MatchedPoint *two = malloc(sizeof(MatchedPoint));
+    two->index = 1;
+    two->distance = 0;
+
+    DArray_push(pshape->matched_points, one);
+    DArray_push(pshape->matched_points, two);
+
+    return pshape;
+error:
+    return NULL;
+}
+
+void PotentialShape_destroy(PotentialShape *pshape) {
+    check(pshape != NULL, "No PotentialShape to destroy");
+
+    DArray_clear_destroy(pshape->matched_points);
+    free(pshape);
 
     return;
 error:
@@ -154,8 +186,16 @@ void ShapeMatcher_clear_points(ShapeMatcher *matcher) {
     }
 }
 
+int potential_shapes_clear_cb(BSTreeNode *node, void *UNUSED(ctx)) {
+    PotentialShape *pshape = node->data;
+    PotentialShape_destroy(pshape);
+    return 1;
+}
+
 void ShapeMatcher_clear_potential_shapes(ShapeMatcher *matcher) {
     if (matcher->potential_shapes) {
+        BSTree_traverse(matcher->potential_shapes, potential_shapes_clear_cb,
+                NULL);
         BSTree_destroy(matcher->potential_shapes);
         matcher->potential_shapes = NULL;
     }
@@ -167,7 +207,8 @@ void ShapeMatcher_init_potential_shapes(ShapeMatcher *matcher) {
     int i = 0;
     for (i = 0; i < DArray_count(matcher->shapes); i++) {
         Shape *shape = DArray_get(matcher->shapes, i);
-        BSTree_set(matcher->potential_shapes, shape->name, shape);
+        BSTree_set(matcher->potential_shapes, shape->name,
+                PotentialShape_create(shape));
     }
 }
 
@@ -191,12 +232,12 @@ int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point) {
     assert(matcher->state != SHAPE_MATCHER_STATE_RUNNING);
 
     ShapeMatcher_reset(matcher);
+
+    matcher->matched_shape = NULL;
     ShapeMatcher_init_potential_shapes(matcher);
 
     VPoint *ppoint = calloc(1, sizeof(VPoint));
     *ppoint = point;
-
-    // TODO init matcher->matched_points
 
     matcher->points = DArray_create(sizeof(VPoint), 8);
     DArray_push(matcher->points, ppoint);
@@ -206,6 +247,84 @@ int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point) {
     return 1;
 error:
     return 0;
+}
+
+VPath *ShapeMatcher_staged_path(ShapeMatcher *matcher) {
+    int pt_count = DArray_count(matcher->points);
+    int staged_d = matcher->staged_point ? 1 : 0;
+    int staged_count = pt_count + staged_d;
+    VPoint pts[staged_count];
+
+    int i = 0;
+    for (i = 0; i < staged_count; i++) {
+        if (i < pt_count) {
+            VPoint *pt = DArray_get(matcher->points, i);
+            pts[i] = *pt;
+        } else {
+            pts[i] = *matcher->staged_point;
+        }
+    }
+
+    return VPath_create(pts, staged_count);
+}
+
+ShapeWinding ShapeMatcher_calc_winding(ShapeMatcher *matcher) {
+    VPath *spath = ShapeMatcher_staged_path(matcher);
+    check(spath != NULL, "Couldn't get staged path for winding");
+    check(spath->num_points >= 2, "Not enough points to get matcher winding");
+
+    int i = 0;
+    float xavg = 0;
+    float yavg = 0;
+    for (i = 0; i < spath->num_points; i++) {
+        VPoint pt = spath->points[i];
+        xavg += pt.x;
+        yavg += pt.y;
+    }
+    xavg /= spath->num_points;
+    yavg /= spath->num_points;
+
+    VPoint corr = VPoint_make(-xavg, -yavg);
+    VPath_translate(spath, corr);
+
+    VPolygon *poly = VPolygon_create(spath->num_points, spath->points);
+
+    ShapeWinding winding = (VPolygon_is_clockwise(poly) ?
+                            SHAPE_WINDING_CLOCKWISE :
+                            SHAPE_WINDING_COUNTERCLOCKWISE);
+
+    free(poly);
+    free(spath);
+
+    return winding;
+error:
+    if (spath) {
+        free(spath);
+    }
+    return SHAPE_WINDING_AMBIGUOUS;
+}
+
+int prepare_shapes_cb(BSTreeNode *node, void *ctx) {
+    PotentialShape *pshape = node->data;
+    ShapeMatcher *matcher = ctx;
+
+    if (pshape->path) {
+        VPath_destroy(pshape->path);
+    }
+
+    VPoint *start = DArray_get(matcher->points, 0);
+
+    pshape->path = Shape_get_path(pshape->shape, *start,
+            matcher->initial_segment_length,
+            matcher->initial_segment_angle,
+            matcher->intended_convex_winding,
+            &pshape->farthest);
+
+    return 1;
+}
+
+void ShapeMatcher_prepare_to_match(ShapeMatcher *matcher) {
+    BSTree_traverse(matcher->potential_shapes, prepare_shapes_cb, matcher);
 }
 
 int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point) {
@@ -223,13 +342,73 @@ int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point) {
             VPoint_angle(*last, point) * 180.f / M_PI;
         matcher->initial_segment_length = VPoint_distance(*last, point);
     } else if (num_points == 2) {
-        // TODO Calculate winding
-        // TODO Prepare to match points
+        matcher->intended_convex_winding =
+            ShapeMatcher_calc_winding(matcher);
+        ShapeMatcher_prepare_to_match(matcher);
     }
 
     return 1;
 error:
     return 0;
+}
+
+int widdle_cb(BSTreeNode *node, void *ctx) {
+    PotentialShape *pshape = node->data;
+    ShapeMatcher *matcher = ctx;
+
+    int matched_count = DArray_count(pshape->matched_points);
+    if (pshape->path->num_points > matched_count) {
+        VPoint *last_point = DArray_last(matcher->points);
+        VPoint next_point = pshape->path->points[matched_count];
+        float catch_dist = matcher->vertex_catch_tolerance *
+            matcher->initial_segment_length;
+        float point_dist = VPoint_distance(*last_point, next_point);
+
+        if (point_dist <= catch_dist) {
+            MatchedPoint *mpoint = malloc(sizeof(MatchedPoint));
+            mpoint->index = DArray_count(matcher->points) - 1;
+            mpoint->distance = point_dist;
+
+            DArray_push(pshape->matched_points, mpoint);
+
+            if (matched_count + 1 == pshape->path->num_points) {
+                matcher->matched_shape = pshape;
+            }
+        } else {
+            // No? How sloppy is the user?
+            int seg_idx = matched_count - 2;
+            ShapeSegment segment = pshape->shape->segments[seg_idx];
+            float ideal_length =
+                segment.length * matcher->initial_segment_length;
+            float max_length =
+                ideal_length * matcher->slop_tolerance;
+
+            // Calculate the length starting from the last matching point,
+            // through the rest of our points, to the target point.
+            float run_length = 0;
+            MatchedPoint *last_matched = DArray_last(pshape->matched_points);
+            int pt_idx = last_matched->index;
+            int i = 0;
+            VPoint *last_pt_checked = DArray_get(matcher->points, pt_idx);
+            for (i = pt_idx + 1; i < DArray_count(matcher->points); i++) {
+                VPoint *run_point = DArray_get(matcher->points, i);
+                run_length += VPoint_distance(*last_pt_checked, *run_point);
+                last_pt_checked = run_point;
+            }
+            run_length += VPoint_distance(*last_pt_checked, next_point);
+
+            if (run_length > max_length) {
+                // Too sloppy, throw out the shape!
+                log_info("Shape matcher: Too sloppy for %s",
+                    pshape->shape->name);
+
+                // Can I do during a traversal?
+                BSTree_delete(matcher->potential_shapes, pshape->shape->name);
+            }
+        }
+    }
+
+    return 1;
 }
 
 int ShapeMatcher_commit_point(ShapeMatcher *matcher) {
@@ -240,7 +419,7 @@ int ShapeMatcher_commit_point(ShapeMatcher *matcher) {
 
     if (matcher->intended_convex_winding == SHAPE_WINDING_AMBIGUOUS) return 1;
 
-    // TODO Widdle down shapes
+    BSTree_traverse(matcher->potential_shapes, widdle_cb, matcher);
 
     return 1;
 error:
@@ -253,11 +432,31 @@ int ShapeMatcher_end(ShapeMatcher *matcher) {
 
     assert(matcher->state == SHAPE_MATCHER_STATE_RUNNING);
 
-    // will end delegate was here
+    if (matcher->matched_shape) {
+        float catch_dist = matcher->vertex_catch_tolerance *
+            matcher->initial_segment_length;
+        float dist_sum = 0;
+        int i = 0;
+        int matched_count = DArray_count(matcher->matched_shape->matched_points);
+        for (i = 0; i < matched_count; i++) {
+            MatchedPoint *matched =
+                DArray_get(matcher->matched_shape->matched_points, i);
+            dist_sum += matched->distance;
+        }
 
-    // TODO check if we matched a shape
+        float max_dist = catch_dist * (matched_count - 2);
+        float accuracy = 1.f - dist_sum / max_dist;
+        log_info("Shape Matcher: Matched %s (%.02f%%)",
+                matcher->matched_shape->shape->name,
+                accuracy);
+
+        // Call a hook with shape and accuracy
+    } else {
+        // Failed or cancelled. Call a different hook?
+    }
 
     return 1;
 error:
     return 0;
 }
+

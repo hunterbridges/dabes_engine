@@ -144,3 +144,16 @@ error:
     return;
 }
 
+void VPath_translate(VPath *path, VPoint trans) {
+    check(path != NULL, "No path to translate");
+
+    int i = 0;
+    for (i = 0; i < path->num_points; i++) {
+        VPoint pt = path->points[i];
+        path->points[i] = VPoint_add(pt, trans);
+    }
+
+    return;
+error:
+    return;
+}

@@ -141,6 +141,13 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
 
     Canvas_consume_queue(canvas);
 
+    if (canvas->shape_matcher) {
+        if (canvas->shape_matcher->matched_shape ||
+                canvas->shape_matcher->potential_shapes->count == 0) {
+            ShapeMatcher_end(canvas->shape_matcher);
+        }
+    }
+
     return;
 error:
     return;
@@ -207,6 +214,8 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
 
     if (canvas->shape_matcher) {
         // TODO Render shape matcher shtuff
+        // Like maybe the potential shapes we could draw
+        // The next points we could draw to
     }
 
     return;

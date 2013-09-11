@@ -2,6 +2,7 @@
 #define __shape_matcher_h
 #include <lcthw/darray.h>
 #include <lcthw/bstree.h>
+#include <lcthw/hashmap.h>
 #include "vpoint.h"
 
 typedef struct ShapeSegment {
@@ -27,9 +28,25 @@ typedef struct Shape {
 
 Shape *Shape_create(ShapeSegment *segments, int num_segments, const char *name);
 void Shape_destroy(Shape *shape);
-void Shape_get_points(Shape *shape, VPoint start_point, float initial_length,
-    float initial_angle_degrees, ShapeWinding winding, VPoint **points,
-    int *num_points, VPoint *farthest_point);
+VPath *Shape_get_path(Shape *shape, VPoint start_point, float initial_length,
+    float initial_angle_degrees, ShapeWinding winding, VPoint *farthest_point);
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct MatchedPoint {
+    int index;
+    float distance;
+} MatchedPoint;
+
+typedef struct PotentialShape {
+    Shape *shape;
+    DArray *matched_points;
+    VPath *path;
+    VPoint farthest;
+} PotentialShape;
+
+PotentialShape *PotentialShape_create(Shape *shape);
+void PotentialShape_destroy(PotentialShape *pshape);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +74,8 @@ typedef struct ShapeMatcher {
     DArray *points;
     VPoint *staged_point;
     BSTree *potential_shapes;
+
+    PotentialShape *matched_shape;
 } ShapeMatcher;
 
 ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes);
