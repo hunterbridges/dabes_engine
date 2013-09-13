@@ -52,8 +52,8 @@ void PotentialShape_destroy(PotentialShape *pshape);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static float SHAPE_MATCHER_DEFAULT_VERTEX_CATCH = 0.2;
-static float SHAPE_MATCHER_DEFAULT_SLOP = 1.1;
+extern const float SHAPE_MATCHER_DEFAULT_VERTEX_CATCH;
+extern const float SHAPE_MATCHER_DEFAULT_SLOP;
 
 typedef enum {
     SHAPE_MATCHER_STATE_NEW = 0,
@@ -89,6 +89,7 @@ typedef struct ShapeMatcher {
 } ShapeMatcher;
 
 ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes);
+void ShapeMatcher_destroy(ShapeMatcher *matcher);
 void ShapeMatcher_reset(ShapeMatcher *matcher);
 int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point);
 int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point);

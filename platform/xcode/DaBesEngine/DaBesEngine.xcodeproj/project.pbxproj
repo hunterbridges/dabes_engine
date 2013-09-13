@@ -16,6 +16,18 @@
 		CA27888C178101DF005A242D /* DaBes-Mac.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF429831780F36300C3220A /* DaBes-Mac.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA51FC821783659A000C73E0 /* DABiOSEngineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CA51FC801783659A000C73E0 /* DABiOSEngineViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA51FC831783659A000C73E0 /* DABiOSEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA51FC811783659A000C73E0 /* DABiOSEngineViewController.m */; };
+		CA69E37417E2E2E000E9CC98 /* shape_matcher_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E36E17E2E2E000E9CC98 /* shape_matcher_bindings.c */; };
+		CA69E37517E2E2E000E9CC98 /* shape_matcher_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E36E17E2E2E000E9CC98 /* shape_matcher_bindings.c */; };
+		CA69E37617E2E2E000E9CC98 /* shape_matcher_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E36F17E2E2E000E9CC98 /* shape_matcher_bindings.h */; };
+		CA69E37717E2E2E000E9CC98 /* shape_matcher_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E36F17E2E2E000E9CC98 /* shape_matcher_bindings.h */; };
+		CA69E37817E2E2E000E9CC98 /* shape_matcher.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E37017E2E2E000E9CC98 /* shape_matcher.c */; };
+		CA69E37917E2E2E000E9CC98 /* shape_matcher.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E37017E2E2E000E9CC98 /* shape_matcher.c */; };
+		CA69E37A17E2E2E000E9CC98 /* shape_matcher.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E37117E2E2E000E9CC98 /* shape_matcher.h */; };
+		CA69E37B17E2E2E000E9CC98 /* shape_matcher.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E37117E2E2E000E9CC98 /* shape_matcher.h */; };
+		CA69E37C17E2E2E000E9CC98 /* vcircle.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E37217E2E2E000E9CC98 /* vcircle.c */; };
+		CA69E37D17E2E2E000E9CC98 /* vcircle.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E37217E2E2E000E9CC98 /* vcircle.c */; };
+		CA69E37E17E2E2E000E9CC98 /* vcircle.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E37317E2E2E000E9CC98 /* vcircle.h */; };
+		CA69E37F17E2E2E000E9CC98 /* vcircle.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E37317E2E2E000E9CC98 /* vcircle.h */; };
 		CA705BCF17834FCC00D2C6E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA705BCE17834FCC00D2C6E4 /* Foundation.framework */; };
 		CA705BEA1783505B00D2C6E4 /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
 		CA705BEB1783505B00D2C6E4 /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7C6170F60B400EE59CA /* liblcthw.a */; };
@@ -468,6 +480,12 @@
 		CA694525170FC52A0021E89B /* vpoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vpoint.c; path = ../../../../src/math/vpoint.c; sourceTree = "<group>"; };
 		CA694527170FC6E30021E89B /* vrect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = vrect.c; path = ../../../../src/math/vrect.c; sourceTree = "<group>"; };
 		CA694528170FC6E30021E89B /* vrect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vrect.h; path = ../../../../src/math/vrect.h; sourceTree = "<group>"; };
+		CA69E36E17E2E2E000E9CC98 /* shape_matcher_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shape_matcher_bindings.c; path = ../../../../src/math/shape_matcher_bindings.c; sourceTree = "<group>"; };
+		CA69E36F17E2E2E000E9CC98 /* shape_matcher_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shape_matcher_bindings.h; path = ../../../../src/math/shape_matcher_bindings.h; sourceTree = "<group>"; };
+		CA69E37017E2E2E000E9CC98 /* shape_matcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = shape_matcher.c; path = ../../../../src/math/shape_matcher.c; sourceTree = "<group>"; };
+		CA69E37117E2E2E000E9CC98 /* shape_matcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shape_matcher.h; path = ../../../../src/math/shape_matcher.h; sourceTree = "<group>"; };
+		CA69E37217E2E2E000E9CC98 /* vcircle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vcircle.c; path = ../../../../src/math/vcircle.c; sourceTree = "<group>"; };
+		CA69E37317E2E2E000E9CC98 /* vcircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vcircle.h; path = ../../../../src/math/vcircle.h; sourceTree = "<group>"; };
 		CA705BCD17834FCC00D2C6E4 /* DaBes-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework.static; includeInIndex = 0; path = "DaBes-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA705BCE17834FCC00D2C6E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CA705C291783566C00D2C6E4 /* DaBes-iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DaBes-iOS.h"; sourceTree = "<group>"; };
@@ -805,6 +823,12 @@
 		CA694523170FC4850021E89B /* math */ = {
 			isa = PBXGroup;
 			children = (
+				CA69E36E17E2E2E000E9CC98 /* shape_matcher_bindings.c */,
+				CA69E36F17E2E2E000E9CC98 /* shape_matcher_bindings.h */,
+				CA69E37017E2E2E000E9CC98 /* shape_matcher.c */,
+				CA69E37117E2E2E000E9CC98 /* shape_matcher.h */,
+				CA69E37217E2E2E000E9CC98 /* vcircle.c */,
+				CA69E37317E2E2E000E9CC98 /* vcircle.h */,
 				CA694524170FC4B00021E89B /* vpoint.h */,
 				CA694525170FC52A0021E89B /* vpoint.c */,
 				CAEFD9171790A56100D19B4D /* vpolygon.c */,
@@ -1024,6 +1048,9 @@
 				CAF915FD17D46BA000EE204E /* overlay_bindings.h in Headers */,
 				CAF9160117D46BA000EE204E /* overlay.h in Headers */,
 				CA03FAFE17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h in Headers */,
+				CA69E37717E2E2E000E9CC98 /* shape_matcher_bindings.h in Headers */,
+				CA69E37B17E2E2E000E9CC98 /* shape_matcher.h in Headers */,
+				CA69E37F17E2E2E000E9CC98 /* vcircle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1093,6 +1120,9 @@
 				CAF915F817D46BA000EE204E /* canvas.h in Headers */,
 				CAF915FC17D46BA000EE204E /* overlay_bindings.h in Headers */,
 				CAF9160017D46BA000EE204E /* overlay.h in Headers */,
+				CA69E37617E2E2E000E9CC98 /* shape_matcher_bindings.h in Headers */,
+				CA69E37A17E2E2E000E9CC98 /* shape_matcher.h in Headers */,
+				CA69E37E17E2E2E000E9CC98 /* vcircle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1454,6 +1484,9 @@
 				CAF915FB17D46BA000EE204E /* overlay_bindings.c in Sources */,
 				CAF915FF17D46BA000EE204E /* overlay.c in Sources */,
 				CA03FAFF17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m in Sources */,
+				CA69E37517E2E2E000E9CC98 /* shape_matcher_bindings.c in Sources */,
+				CA69E37917E2E2E000E9CC98 /* shape_matcher.c in Sources */,
+				CA69E37D17E2E2E000E9CC98 /* vcircle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1520,6 +1553,9 @@
 				CAF915F617D46BA000EE204E /* canvas.c in Sources */,
 				CAF915FA17D46BA000EE204E /* overlay_bindings.c in Sources */,
 				CAF915FE17D46BA000EE204E /* overlay.c in Sources */,
+				CA69E37417E2E2E000E9CC98 /* shape_matcher_bindings.c in Sources */,
+				CA69E37817E2E2E000E9CC98 /* shape_matcher.c in Sources */,
+				CA69E37C17E2E2E000E9CC98 /* vcircle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -148,6 +148,9 @@ error:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const float SHAPE_MATCHER_DEFAULT_VERTEX_CATCH = 0.2;
+const float SHAPE_MATCHER_DEFAULT_SLOP = 1.1;
+
 ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes) {
     check(shapes != NULL, "Shapes required");
     check(num_shapes > 0, "More than 0 shapes required");
@@ -166,7 +169,7 @@ ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes) {
     matcher->slop_tolerance = SHAPE_MATCHER_DEFAULT_SLOP;
     matcher->state = SHAPE_MATCHER_STATE_NEW;
 
-    VVector4 dot_color = {.raw = {0.5, 0.5, 0.5, 0.5}};
+    VVector4 dot_color = {.raw = {0.5, 0.5, 0.5, 0.75}};
     matcher->dot_color = dot_color;
     matcher->dot_width = 2;
 
@@ -177,6 +180,18 @@ ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes) {
     return matcher;
 error:
     return NULL;
+}
+
+void ShapeMatcher_destroy(ShapeMatcher *matcher) {
+    check(matcher != NULL, "No matcher to destroy");
+
+    ShapeMatcher_reset(matcher);
+    DArray_clear_destroy(matcher->shapes);
+    free(matcher);
+
+    return;
+error:
+    return;
 }
 
 void ShapeMatcher_clear_staged_point(ShapeMatcher *matcher) {
@@ -197,7 +212,7 @@ void ShapeMatcher_clear_points(ShapeMatcher *matcher) {
 int potential_shapes_clear_cb(BSTreeNode *node, void *UNUSED(ctx)) {
     PotentialShape *pshape = node->data;
     PotentialShape_destroy(pshape);
-    return 1;
+    return 0;
 }
 
 void ShapeMatcher_clear_potential_shapes(ShapeMatcher *matcher) {
@@ -215,8 +230,12 @@ void ShapeMatcher_init_potential_shapes(ShapeMatcher *matcher) {
     int i = 0;
     for (i = 0; i < DArray_count(matcher->shapes); i++) {
         Shape *shape = DArray_get(matcher->shapes, i);
-        BSTree_set(matcher->potential_shapes, shape->name,
-                PotentialShape_create(shape));
+        
+        assert(shape->name != NULL);
+        if (shape->name) {
+            BSTree_set(matcher->potential_shapes, shape->name,
+                    PotentialShape_create(shape));
+        }
     }
 }
 
@@ -225,6 +244,7 @@ void ShapeMatcher_set_state(ShapeMatcher *matcher, ShapeMatcherState state) {
 }
 
 void ShapeMatcher_reset(ShapeMatcher *matcher) {
+    matcher->matched_shape = NULL;
     matcher->initial_segment_length = 0.f;
     matcher->initial_segment_angle = 0.f;
     matcher->intended_convex_winding = SHAPE_WINDING_AMBIGUOUS;
@@ -328,7 +348,7 @@ int prepare_shapes_cb(BSTreeNode *node, void *ctx) {
             matcher->intended_convex_winding,
             &pshape->farthest);
 
-    return 1;
+    return 0;
 }
 
 void ShapeMatcher_prepare_to_match(ShapeMatcher *matcher) {
@@ -342,9 +362,14 @@ int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point) {
     matcher->staged_point = calloc(1, sizeof(VPoint));
     *matcher->staged_point = point;
 
-    VPoint *last = DArray_last(matcher->points);
+    
+    VPoint *last = NULL;
+    int num_points = 0;
+    if (matcher->points) {
+        last = DArray_last(matcher->points);
+        num_points = DArray_count(matcher->points);
+    }
 
-    int num_points = DArray_count(matcher->points);
     if (num_points == 1) {
         matcher->initial_segment_angle =
             VPoint_angle(*last, point) * 180.f / M_PI;
@@ -420,7 +445,7 @@ int widdle_cb(BSTreeNode *node, void *ctx) {
         }
     }
 
-    return 1;
+    return 0;
 }
 
 void ShapeMatcher_clear_marked_shapes(ShapeMatcher *matcher) {
@@ -475,12 +500,14 @@ int ShapeMatcher_end(ShapeMatcher *matcher) {
         float accuracy = 1.f - dist_sum / max_dist;
         log_info("Shape Matcher: Matched %s (%.02f%%)",
                 matcher->matched_shape->shape->name,
-                accuracy);
+                accuracy * 100.f);
 
         // Call a hook with shape and accuracy
     } else {
         // Failed or cancelled. Call a different hook?
     }
+    
+    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_ENDED);
 
     return 1;
 error:
@@ -516,7 +543,7 @@ int pshape_path_ambiguous_cb(BSTreeNode *node, void *context) {
         SHAPE_WINDING_CLOCKWISE, NULL);
     ctx->i++;
 
-    return 1;
+    return 0;
 }
 
 int pshape_path_intended_cb(BSTreeNode *node, void *context) {
@@ -527,7 +554,7 @@ int pshape_path_intended_cb(BSTreeNode *node, void *context) {
                                       pshape->path->num_points);
     ctx->i++;
 
-    return 1;
+    return 0;
 }
 
 void ShapeMatcher_get_potential_shape_paths(ShapeMatcher *matcher,
@@ -611,7 +638,7 @@ int pshape_dot_ambiguous_cb(BSTreeNode *node, void *context) {
     }
     VPath_destroy(cw_path);
 
-    return 1;
+    return 0;
 }
 
 int pshape_dot_intended_cb(BSTreeNode *node, void *context) {
@@ -623,7 +650,7 @@ int pshape_dot_intended_cb(BSTreeNode *node, void *context) {
         ctx->matcher->initial_segment_length;
 
     int match_count = DArray_count(pshape->matched_points);
-    if (path->num_points > match_count) {
+    if (path && path->num_points > match_count) {
         VCircle circle = {
             .radius = radius,
             .center = path->points[match_count]
@@ -632,8 +659,9 @@ int pshape_dot_intended_cb(BSTreeNode *node, void *context) {
         ctx->i++;
     }
 
-    return 1;
+    return 0;
 }
+
 void ShapeMatcher_get_connect_dots(ShapeMatcher *matcher, VCircle **circles,
         int *num_circles) {
     check(circles != NULL, "circles can't be NULL");

@@ -59,6 +59,6 @@ Shape = BoundObject:extend({
     end,
 
     init = function(self, name, ...)
-        self.segments = table.pack(...)
+        rawset(self, "segments", table.pack(...))
     end
 })

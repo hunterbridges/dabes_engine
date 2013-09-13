@@ -13,7 +13,7 @@ static const VVector4 CANVAS_DEFAULT_BG_COLOR = {.raw = {0.f, 0.f, 0.f, 0.5f}};
 static void simplifier_stage_point(Canvas *canvas, VPoint p);
 static void simplifier_try_point(Canvas *canvas, VPoint p,
                                  short int suppress_commit);
-static void simplifier_commit_point(Canvas *canvas);
+static void simplifier_commit_point(Canvas *canvas, int recursive);
 static void simplifier_empty(Canvas *canvas);
 VPoint *simplifier_staged_path(Canvas *canvas, int *num_points);
 
@@ -104,12 +104,12 @@ void Canvas_consume_queue(Canvas *canvas) {
         if (canvas->simplified_points) {
             simplifier_try_point(canvas, canvas->point_queue[i], 0);
         } else {
-            simplifier_stage_point(canvas, canvas->point_queue[i]);
-            simplifier_commit_point(canvas);
+            VPoint p = canvas->point_queue[i];
+            simplifier_stage_point(canvas, p);
+            simplifier_commit_point(canvas, 0);
 
             if (canvas->shape_matcher) {
-                ShapeMatcher_start(canvas->shape_matcher,
-                        canvas->point_queue[i]);
+                ShapeMatcher_start(canvas->shape_matcher, p);
             }
         }
     }
@@ -141,9 +141,16 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
 
     Canvas_consume_queue(canvas);
 
-    if (canvas->shape_matcher) {
+    if (canvas->shape_matcher &&
+        canvas->shape_matcher->state == SHAPE_MATCHER_STATE_RUNNING) {
+        int released_touch = (!hold && hold_changed);
+        int has_no_potential_shapes =
+            (canvas->shape_matcher->potential_shapes &&
+             canvas->shape_matcher->potential_shapes->count == 0);
+        
         if (canvas->shape_matcher->matched_shape ||
-                canvas->shape_matcher->potential_shapes->count == 0) {
+            has_no_potential_shapes ||
+            released_touch) {
             ShapeMatcher_end(canvas->shape_matcher);
         }
     }
@@ -240,7 +247,8 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
         int i = 0;
         for (i = 0; i < num_circles; i++) {
             VCircle circle = circles[i];
-            Graphics_stroke_circle(engine->graphics, circle, 40, screen_diff,
+            Graphics_stroke_circle(engine->graphics, circle, 40,
+                VPoint_scale(screen_diff, -1),
                 canvas->shape_matcher->dot_color.raw,
                 canvas->shape_matcher->dot_width);
         }
@@ -273,7 +281,7 @@ static void simplifier_stage_point(Canvas *canvas, VPoint p) {
         free(canvas->staged_point);
     }
 
-    canvas->staged_point = malloc(sizeof(Point));
+    canvas->staged_point = calloc(1, sizeof(VPoint));
     *canvas->staged_point = p;
 
     if (canvas->shape_matcher) {
@@ -322,13 +330,13 @@ static void simplifier_try_point(Canvas *canvas, VPoint p,
     }
 
     if (!suppress_commit && (distance_ok && angle_ok)) {
-        simplifier_commit_point(canvas);
+        simplifier_commit_point(canvas, 1);
     }
 
     simplifier_stage_point(canvas, p);
 }
 
-static void simplifier_commit_point(Canvas *canvas) {
+static void simplifier_commit_point(Canvas *canvas, int recursive) {
     if (!canvas->staged_point) return;
 
     if (!canvas->simplified_points) {
@@ -339,7 +347,7 @@ static void simplifier_commit_point(Canvas *canvas) {
     DArray_push(canvas->simplified_points, canvas->staged_point);
     canvas->staged_point = NULL;
 
-    if (canvas->shape_matcher) {
+    if (canvas->shape_matcher && recursive) {
         ShapeMatcher_commit_point(canvas->shape_matcher);
     }
 }

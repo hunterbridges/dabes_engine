@@ -81,6 +81,28 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     return 1; \
 }
 
+#define Scripting_string_setter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    check(lua_isstring(L, 2), \
+            "Please provide a string to set "#STYPE"->"#SPROP); \
+    char *string = lua_tostring(L, 2); \
+    STYPE *s = ud->p; \
+    s->SPROP = string; \
+    return 1; \
+error: \
+    return 0; \
+}
+
+#define Scripting_string_getter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE *s = ud->p; \
+    char *ret = s->SPROP; \
+    lua_pushstring(L, ret); \
+    return 1; \
+}
+
 // Property synthesis, complex types
 #define Scripting_VPoint_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \

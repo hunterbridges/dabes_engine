@@ -399,8 +399,9 @@ void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
         points[i] = point;
     }
 
-    Graphics_stroke_path(graphics, points, precision, center, color, line_width,
-        0, 1);
+    Graphics_stroke_path(graphics, points, precision,
+                         VPoint_add(center, circle.center),
+                         color, line_width, 0, 1);
 
     return;
 error:

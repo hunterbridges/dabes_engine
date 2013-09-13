@@ -18,6 +18,7 @@
 #include "../graphics/camera_bindings.h"
 #include "../graphics/parallax_bindings.h"
 #include "../graphics/sprite_bindings.h"
+#include "../math/shape_matcher_bindings.h"
 
 const char *SCRIPTING_CL_ENTITY_CONFIG = "entity_config";
 const char *SCRIPTING_CL_PARALLAX = "parallax";
@@ -41,6 +42,7 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_camera(scripting->L);
     luaopen_dabes_parallax(scripting->L);
     luaopen_dabes_sprite(scripting->L);
+    luaopen_dabes_shape_matcher(scripting->L);
 }
 
 int Scripting_handle_panic(lua_State *L) {

@@ -126,6 +126,8 @@ VPath *VPath_create(VPoint *points, int num_points) {
     check(num_points > 0, "More than 0 points required");
     VPath *path = malloc(sizeof(VPath) + num_points * sizeof(VPoint));
 
+    path->num_points = num_points;
+    
     int i = 0;
     for (i = 0; i < num_points; i++) {
         path->points[i] = points[i];

@@ -151,7 +151,7 @@ ShapeMatcher = BoundObject:extend({
     -- @treturn ShapeMatcher
     -- @usage local matcher = ShapeMatcher:new(square, zigzag, triangle)
     realize = function(class, ...)
-        return class.lib.new(...)
+        return class.lib.new(map_real(...))
     end,
 
 --- Hooks.
@@ -160,7 +160,7 @@ ShapeMatcher = BoundObject:extend({
 -- @section hooks
 
     init = function(self, ...)
-        self.shapes = table.pack(...)
+        rawset(self, "shapes", table.pack(...))
     end,
 
     --- Called when the ShapeMatcher changes its `state`

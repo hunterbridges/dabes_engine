@@ -1,6 +1,7 @@
 require 'dabes.controller'
 require 'dabes.canvas'
 require 'dabes.scene'
+require 'dabes.shape_matcher'
 require 'entities.squiggy_box'
 require 'entities.megaman'
 require 'entities.door'
@@ -73,9 +74,25 @@ ReasonableMap = Scene:extend({
         -- Parallax
         self.parallax = self.gen_parallax()
 
+        local square = Shape:new("Square",
+            {length = 1, angle = 90},
+            {length = 1, angle = 90},
+            {length = 1, angle = 90})
+        local triangle = Shape:new("Triangle",
+            {length = 1, angle = 60},
+            {length = 1, angle = 60})
+        local zigzag = Shape:new("zigzag",
+            {length = 1, angle = 30},
+            {length = 1, angle = -30},
+            {length = 1, angle = 30},
+            {length = 1, angle = -30},
+            {length = 1, angle = 30})
+        self.matcher = ShapeMatcher:new(square, triangle, zigzag)
+
         self.canvas = Canvas:new()
         self.canvas.enabled = true
         self.canvas.draw_width = 2
+        self.canvas.shape_matcher = self.matcher
     end,
 
 -- Private

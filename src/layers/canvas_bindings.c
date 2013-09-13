@@ -1,3 +1,4 @@
+#include "../math/shape_matcher_bindings.h"
 #include "canvas_bindings.h"
 
 const char *luab_Canvas_lib = "dab_canvas";
@@ -61,6 +62,34 @@ error:
     return 0;
 }
 
+int luab_Canvas_get_shape_matcher(lua_State *L) {
+    Canvas *canvas = luaL_tocanvas(L, 1);
+    check(canvas != NULL, "Canvas required");
+    if (canvas->shape_matcher == NULL) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    luaL_lookup_instance(L, canvas->shape_matcher);
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Canvas_set_shape_matcher(lua_State *L) {
+    Canvas *canvas = luaL_tocanvas(L, 1);
+    check(canvas != NULL, "Canvas required");
+
+    lua_getfield(L, -1, "real");
+    ShapeMatcher *matcher = luaL_toshapematcher(L, -1);
+    check(matcher != NULL, "Parallax required");
+
+    canvas->shape_matcher = matcher;
+    lua_pop(L, 3);
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Canvas_meths[] = {
     {"__gc", luab_Canvas_close},
     {"get_alpha", luab_Canvas_get_alpha},
@@ -79,6 +108,8 @@ static const struct luaL_Reg luab_Canvas_meths[] = {
     {"set_enabled", luab_Canvas_set_enabled},
     {"get_simplified_path_color", luab_Canvas_get_simplified_path_color},
     {"set_simplified_path_color", luab_Canvas_set_simplified_path_color},
+    {"get_shape_matcher", luab_Canvas_get_shape_matcher},
+    {"set_shape_matcher", luab_Canvas_set_shape_matcher},
     {NULL, NULL}
 };
 
