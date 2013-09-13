@@ -453,6 +453,28 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
     return 1; \
 }
 
+#define Scripting_string_setter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    check(lua_isstring(L, 2), \
+            "Please provide a string to set "#STYPE"->"#SPROP); \
+    char *string = lua_tostring(L, 2); \
+    STYPE *s = ud->p; \
+    s->SPROP = string; \
+    return 1; \
+error: \
+    return 0; \
+}
+
+#define Scripting_string_getter(STYPE, SPROP) \
+static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE *s = ud->p; \
+    char *ret = s->SPROP; \
+    lua_pushstring(L, ret); \
+    return 1; \
+}
+
 // Property synthesis, complex types
 #define Scripting_VPoint_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
@@ -565,6 +587,7 @@ typedef struct VPoint {
 
 static const VPoint VPointZero = {0,0};
 
+VPoint VPoint_make(float x, float y);
 VPoint VPoint_add(VPoint a, VPoint b);
 VPoint VPoint_subtract(VPoint a, VPoint b);
 VPoint VPoint_multiply(VPoint a, VPoint b);
@@ -577,11 +600,24 @@ VPoint VPoint_rotate(VPoint point, VPoint pivot, double angle_in_rads);
 VPoint VPoint_perp(VPoint a);
 VPoint VPoint_normalize(VPoint a);
 double VPoint_magnitude(VPoint a);
+double VPoint_distance(VPoint a, VPoint b);
+VPoint VPoint_look_from(VPoint start_point, float angle_rads, float mag);
 VPointRel VPoint_rel(VPoint a, VPoint b);
 
 static inline void VPoint_debug(VPoint point, char *msg) {
     debug("<%f, %f> %s", point.x, point.y, msg);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct VPath {
+    int num_points;
+    VPoint points[];
+} VPath;
+
+VPath *VPath_create(VPoint *points, int num_points);
+void VPath_destroy(VPath *path);
+void VPath_translate(VPath *path, VPoint trans);
 
 #endif
 #ifndef __vmatrix_h
@@ -1155,6 +1191,16 @@ VRect VRect_from_SDL_Rect(SDL_Rect rect);
 VPointRel VPoint_rect_rel(VPoint point, VRect rect);
 
 #endif
+#ifndef __vcircle_h
+#define __vcircle_h
+
+
+typedef struct VCircle {
+    float radius;
+    VPoint center;
+} VCircle;
+
+#endif
 #ifndef __graphics_h
 #define __graphics_h
 #include <lcthw/hashmap.h>
@@ -1324,6 +1370,8 @@ void Graphics_destroy(Graphics *graphics);
 void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
         VPoint center, GLfloat color[4], double line_width, double rotation,
         int loop);
+void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
+        VPoint center, GLfloat color[4], double line_width);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         double line_width, double rotation);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
@@ -2376,6 +2424,106 @@ Scripting_caster_for(Controller, luaL_tocontroller);
 int luaopen_dabes_controller(lua_State *L);
 
 #endif
+#ifndef __shape_matcher_h
+#define __shape_matcher_h
+#include <lcthw/darray.h>
+#include <lcthw/bstree.h>
+#include <lcthw/hashmap.h>
+
+typedef struct ShapeSegment {
+    float length;
+    float angle_degrees;
+} ShapeSegment;
+
+ShapeSegment ShapeSegment_make(float length, float angle_degrees);
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef enum {
+    SHAPE_WINDING_COUNTERCLOCKWISE = 1,
+    SHAPE_WINDING_AMBIGUOUS = 0,
+    SHAPE_WINDING_CLOCKWISE = -1
+} ShapeWinding;
+
+typedef struct Shape {
+    ShapeSegment *segments;
+    int num_segments;
+    char *name;
+} Shape;
+
+Shape *Shape_create(ShapeSegment *segments, int num_segments, const char *name);
+void Shape_destroy(Shape *shape);
+VPath *Shape_get_path(Shape *shape, VPoint start_point, float initial_length,
+    float initial_angle_degrees, ShapeWinding winding, VPoint *farthest_point);
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct MatchedPoint {
+    int index;
+    float distance;
+} MatchedPoint;
+
+typedef struct PotentialShape {
+    Shape *shape;
+    DArray *matched_points;
+    VPath *path;
+    VPoint farthest;
+} PotentialShape;
+
+PotentialShape *PotentialShape_create(Shape *shape);
+void PotentialShape_destroy(PotentialShape *pshape);
+
+////////////////////////////////////////////////////////////////////////////////
+
+extern const float SHAPE_MATCHER_DEFAULT_VERTEX_CATCH;
+extern const float SHAPE_MATCHER_DEFAULT_SLOP;
+
+typedef enum {
+    SHAPE_MATCHER_STATE_NEW = 0,
+    SHAPE_MATCHER_STATE_RUNNING = 1,
+    SHAPE_MATCHER_STATE_ENDED = 2
+} ShapeMatcherState;
+
+typedef struct ShapeMatcher {
+    DArray *shapes;
+    int num_shapes;
+    ShapeMatcherState state;
+
+    float vertex_catch_tolerance;
+    float slop_tolerance;
+
+    float initial_segment_angle;
+    float initial_segment_length;
+    ShapeWinding intended_convex_winding;
+
+    DArray *points;
+    VPoint *staged_point;
+    BSTree *potential_shapes;
+    DArray *marked_shape_keys;
+
+    PotentialShape *matched_shape;
+
+    int debug_shapes;
+    VVector4 debug_shape_color;
+    int debug_shape_width;
+
+    VVector4 dot_color;
+    int dot_width;
+} ShapeMatcher;
+
+ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes);
+void ShapeMatcher_destroy(ShapeMatcher *matcher);
+void ShapeMatcher_reset(ShapeMatcher *matcher);
+int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point);
+int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point);
+int ShapeMatcher_commit_point(ShapeMatcher *matcher);
+int ShapeMatcher_end(ShapeMatcher *matcher);
+void ShapeMatcher_get_potential_shape_paths(ShapeMatcher *matcher,
+    VPath ***paths, int *num_paths);
+void ShapeMatcher_get_connect_dots(ShapeMatcher *matcher, VCircle **circles,
+    int *num_circles);
+
+#endif
 #ifndef __canvas_h
 #define __canvas_h
 #include <lcthw/darray.h>
@@ -2404,8 +2552,10 @@ typedef struct Canvas {
 
     VPoint point_queue[CANVAS_QUEUE_SIZE];
     int queue_count;
-    
+
     VPoint *staged_point;
+
+    ShapeMatcher *shape_matcher;
 } Canvas;
 
 Canvas *Canvas_create(Engine *engine);
@@ -2721,6 +2871,25 @@ Scripting_caster_for(Overlay, luaL_tooverlay);
 
 int luaopen_dabes_overlay(lua_State *L);
 
+
+#endif
+#ifndef __shape_matcher_bindings_h
+#define __shape_matcher_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Shape_lib;
+extern const char *luab_Shape_metatable;
+typedef Scripting_userdata_for(Shape) Shape_userdata;
+Scripting_caster_for(Shape, luaL_toshape);
+
+extern const char *luab_ShapeMatcher_lib;
+extern const char *luab_ShapeMatcher_metatable;
+typedef Scripting_userdata_for(ShapeMatcher) ShapeMatcher_userdata;
+Scripting_caster_for(ShapeMatcher, luaL_toshapematcher);
+
+int luaopen_dabes_shape_matcher(lua_State *L);
 
 #endif
 #ifndef __vpolygon_h

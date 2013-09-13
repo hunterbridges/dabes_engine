@@ -169,6 +169,26 @@ ShapeMatcher = BoundObject:extend({
     -- @tparam ShapeMatcher self The `ShapeMatcher` instance
     -- @param state The new state
     state_changed = function(self, state)
+        print("Changed to state "..state)
+    end,
+
+    --- Called when the ShapeMatcher gets its initial segment
+    --
+    -- @function got_initial_segment
+    -- @tparam ShapeMatcher self The `ShapeMatcher` instance
+    got_initial_segment = function(self)
+        print("Got initial segment")
+    end,
+
+    --- Called when the ShapeMatcher connects a dot
+    --
+    -- @function dot_connected
+    -- @tparam ShapeMatcher self The `ShapeMatcher` instance
+    -- @tparam Shape shape The shape whose dot was connected
+    -- @tparam number index The '1'-based index of which dot was connected
+    -- @tparam number count How many dots there are to connect
+    dot_connected = function(self, shape, index, count)
+        print("Connected " .. shape.name .. " dot "..index.."/"..count)
     end,
 
     --- Called when the ShapeMatcher matches a shape successfully
@@ -179,6 +199,7 @@ ShapeMatcher = BoundObject:extend({
     -- @param accuracy A number (percentage) between `0` and `1` reflecting how
     -- accurately the user matched the shape.
     matched = function(self, shape, accuracy)
+        print("Matched " .. shape.name .. " with accuracy "..accuracy)
     end,
 
     --- Called when the ShapeMatcher fails to match a shape.
@@ -186,6 +207,7 @@ ShapeMatcher = BoundObject:extend({
     -- @function failed
     -- @tparam ShapeMatcher self The `ShapeMatcher` instance
     failed = function(self)
+        print("Failed to match shape")
     end
 })
 

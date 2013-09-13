@@ -31,6 +31,8 @@ void Scripting_update_paths(Scripting *scripting, struct Engine *engine);
 int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname);
 void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
         const char *fname);
+int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
+                         ...);
 
 void luaL_register_ud(lua_State *L, int ud_idx, void **ud_prop, void *val);
 int luaL_lookup_ud(lua_State *L, void *val);

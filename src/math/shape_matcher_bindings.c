@@ -46,7 +46,7 @@ Scripting_string_getter(Shape, name);
 
 static const struct luaL_Reg luab_Shape_meths[] = {
     {"__gc", luab_Shape_close},
-    {"name", luab_Shape_get_name},
+    {"get_name", luab_Shape_get_name},
     {NULL, NULL}
 };
 

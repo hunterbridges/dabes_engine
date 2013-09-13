@@ -1,3 +1,5 @@
+#include "../core/engine.h"
+#include "../scripting/scripting.h"
 #include "shape_matcher.h"
 #include "vpolygon.h"
 
@@ -185,8 +187,8 @@ error:
 void ShapeMatcher_destroy(ShapeMatcher *matcher) {
     check(matcher != NULL, "No matcher to destroy");
 
-    ShapeMatcher_reset(matcher);
-    DArray_clear_destroy(matcher->shapes);
+    ShapeMatcher_reset(matcher, NULL);
+    DArray_destroy(matcher->shapes);
     free(matcher);
 
     return;
@@ -239,27 +241,38 @@ void ShapeMatcher_init_potential_shapes(ShapeMatcher *matcher) {
     }
 }
 
-void ShapeMatcher_set_state(ShapeMatcher *matcher, ShapeMatcherState state) {
+void ShapeMatcher_set_state(ShapeMatcher *matcher, ShapeMatcherState state,
+                            struct Engine *engine) {
+    if (matcher->state == state) {
+        return;
+    }
+    
     matcher->state = state;
+    
+    if (engine) {
+        Scripting_call_dhook(engine->scripting, matcher, "state_changed",
+                             LUA_TNUMBER, (double)state, NULL);
+    }
 }
 
-void ShapeMatcher_reset(ShapeMatcher *matcher) {
+void ShapeMatcher_reset(ShapeMatcher *matcher, struct Engine *engine) {
     matcher->matched_shape = NULL;
     matcher->initial_segment_length = 0.f;
     matcher->initial_segment_angle = 0.f;
     matcher->intended_convex_winding = SHAPE_WINDING_AMBIGUOUS;
-    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_NEW);
+    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_NEW, engine);
 
     ShapeMatcher_clear_points(matcher);
     ShapeMatcher_clear_staged_point(matcher);
     ShapeMatcher_clear_potential_shapes(matcher);
 }
 
-int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point) {
+int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point,
+                       struct Engine *engine) {
     check(matcher != NULL, "No matcher to start");
     assert(matcher->state != SHAPE_MATCHER_STATE_RUNNING);
 
-    ShapeMatcher_reset(matcher);
+    ShapeMatcher_reset(matcher, engine);
 
     matcher->matched_shape = NULL;
     ShapeMatcher_init_potential_shapes(matcher);
@@ -270,7 +283,7 @@ int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point) {
     matcher->points = DArray_create(sizeof(VPoint), 8);
     DArray_push(matcher->points, ppoint);
 
-    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_RUNNING);
+    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_RUNNING, engine);
 
     return 1;
 error:
@@ -385,10 +398,17 @@ error:
     return 0;
 }
 
+typedef struct WiddleCtx {
+    ShapeMatcher *matcher;
+    Engine *engine;
+} WiddleCtx;
+
 int widdle_cb(BSTreeNode *node, void *ctx) {
     PotentialShape *pshape = node->data;
-    ShapeMatcher *matcher = ctx;
-
+    WiddleCtx *widdlectx = ctx;
+    ShapeMatcher *matcher = widdlectx->matcher;
+    Engine *engine = widdlectx->engine;
+    
     int matched_count = DArray_count(pshape->matched_points);
     if (pshape->path->num_points > matched_count) {
         VPoint *last_point = DArray_last(matcher->points);
@@ -403,7 +423,13 @@ int widdle_cb(BSTreeNode *node, void *ctx) {
             mpoint->distance = point_dist;
 
             DArray_push(pshape->matched_points, mpoint);
-
+            
+            Scripting_call_dhook(engine->scripting, matcher, "dot_connected",
+                                 LUA_TUSERDATA, pshape->shape,
+                                 LUA_TNUMBER, (double)(matched_count + 1),
+                                 LUA_TNUMBER, (double)(pshape->path->num_points),
+                                 NULL);
+            
             if (matched_count + 1 == pshape->path->num_points) {
                 matcher->matched_shape = pshape;
             }
@@ -461,15 +487,24 @@ void ShapeMatcher_clear_marked_shapes(ShapeMatcher *matcher) {
     }
 }
 
-int ShapeMatcher_commit_point(ShapeMatcher *matcher) {
+int ShapeMatcher_commit_point(ShapeMatcher *matcher, struct Engine *engine) {
     check(matcher != NULL, "No matcher to commit");
 
     DArray_push(matcher->points, matcher->staged_point);
     matcher->staged_point = NULL;
 
+    if (DArray_count(matcher->points) == 2) {
+        Scripting_call_hook(engine->scripting, matcher, "got_initial_segment");
+    }
+    
     if (matcher->intended_convex_winding == SHAPE_WINDING_AMBIGUOUS) return 1;
 
-    BSTree_traverse(matcher->potential_shapes, widdle_cb, matcher);
+    WiddleCtx ctx = {
+        .engine = engine,
+        .matcher = matcher
+    };
+    
+    BSTree_traverse(matcher->potential_shapes, widdle_cb, &ctx);
 
     ShapeMatcher_clear_marked_shapes(matcher);
 
@@ -478,11 +513,15 @@ error:
     return 0;
 }
 
-int ShapeMatcher_end(ShapeMatcher *matcher) {
+int ShapeMatcher_end(ShapeMatcher *matcher, struct Engine *engine) {
     check(matcher != NULL, "No matcher to end");
     if (matcher->state == SHAPE_MATCHER_STATE_ENDED) return 0;
 
     assert(matcher->state == SHAPE_MATCHER_STATE_RUNNING);
+    
+    if (matcher->staged_point) {
+        ShapeMatcher_commit_point(matcher, engine);
+    }
 
     if (matcher->matched_shape) {
         float catch_dist = matcher->vertex_catch_tolerance *
@@ -503,11 +542,16 @@ int ShapeMatcher_end(ShapeMatcher *matcher) {
                 accuracy * 100.f);
 
         // Call a hook with shape and accuracy
+        Scripting_call_dhook(engine->scripting, matcher, "matched",
+                             LUA_TUSERDATA, matcher->matched_shape->shape,
+                             LUA_TNUMBER, accuracy,
+                             NULL);
     } else {
         // Failed or cancelled. Call a different hook?
+        Scripting_call_hook(engine->scripting, matcher, "failed");
     }
     
-    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_ENDED);
+    ShapeMatcher_set_state(matcher, SHAPE_MATCHER_STATE_ENDED, engine);
 
     return 1;
 error:

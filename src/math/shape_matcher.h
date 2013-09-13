@@ -88,13 +88,16 @@ typedef struct ShapeMatcher {
     int dot_width;
 } ShapeMatcher;
 
+struct Engine;
+
 ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes);
 void ShapeMatcher_destroy(ShapeMatcher *matcher);
-void ShapeMatcher_reset(ShapeMatcher *matcher);
-int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point);
+void ShapeMatcher_reset(ShapeMatcher *matcher, struct Engine *engine);
+int ShapeMatcher_start(ShapeMatcher *matcher, VPoint point,
+                       struct Engine *engine);
 int ShapeMatcher_stage_point(ShapeMatcher *matcher, VPoint point);
-int ShapeMatcher_commit_point(ShapeMatcher *matcher);
-int ShapeMatcher_end(ShapeMatcher *matcher);
+int ShapeMatcher_commit_point(ShapeMatcher *matcher, struct Engine *engine);
+int ShapeMatcher_end(ShapeMatcher *matcher, struct Engine *engine);
 void ShapeMatcher_get_potential_shape_paths(ShapeMatcher *matcher,
     VPath ***paths, int *num_paths);
 void ShapeMatcher_get_connect_dots(ShapeMatcher *matcher, VCircle **circles,

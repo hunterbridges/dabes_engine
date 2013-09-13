@@ -12,8 +12,10 @@ static const VVector4 CANVAS_DEFAULT_BG_COLOR = {.raw = {0.f, 0.f, 0.f, 0.5f}};
 
 static void simplifier_stage_point(Canvas *canvas, VPoint p);
 static void simplifier_try_point(Canvas *canvas, VPoint p,
-                                 short int suppress_commit);
-static void simplifier_commit_point(Canvas *canvas, int recursive);
+                                 short int suppress_commit,
+                                 struct Engine *engine);
+static void simplifier_commit_point(Canvas *canvas, int recursive,
+                                    struct Engine *engine);
 static void simplifier_empty(Canvas *canvas);
 VPoint *simplifier_staged_path(Canvas *canvas, int *num_points);
 
@@ -86,7 +88,7 @@ error:
     return;
 }
 
-void Canvas_consume_queue(Canvas *canvas) {
+void Canvas_consume_queue(Canvas *canvas, struct Engine *engine) {
     check(canvas != NULL, "Canvas required");
 
     if (canvas->queue_count == 0) return;
@@ -102,14 +104,14 @@ void Canvas_consume_queue(Canvas *canvas) {
         DArray_push(canvas->raw_points, to_save);
 
         if (canvas->simplified_points) {
-            simplifier_try_point(canvas, canvas->point_queue[i], 0);
+            simplifier_try_point(canvas, canvas->point_queue[i], 0, engine);
         } else {
             VPoint p = canvas->point_queue[i];
             simplifier_stage_point(canvas, p);
-            simplifier_commit_point(canvas, 0);
+            simplifier_commit_point(canvas, 0, engine);
 
             if (canvas->shape_matcher) {
-                ShapeMatcher_start(canvas->shape_matcher, p);
+                ShapeMatcher_start(canvas->shape_matcher, p, engine);
             }
         }
     }
@@ -131,7 +133,7 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
         Canvas_empty(canvas);
 
         if (canvas->shape_matcher) {
-            ShapeMatcher_reset(canvas->shape_matcher);
+            ShapeMatcher_reset(canvas->shape_matcher, engine);
         }
     }
 
@@ -139,7 +141,7 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
         Canvas_enqueue_point(canvas, p1->touch_pos);
     }
 
-    Canvas_consume_queue(canvas);
+    Canvas_consume_queue(canvas, engine);
 
     if (canvas->shape_matcher &&
         canvas->shape_matcher->state == SHAPE_MATCHER_STATE_RUNNING) {
@@ -151,7 +153,7 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
         if (canvas->shape_matcher->matched_shape ||
             has_no_potential_shapes ||
             released_touch) {
-            ShapeMatcher_end(canvas->shape_matcher);
+            ShapeMatcher_end(canvas->shape_matcher, engine);
         }
     }
 
@@ -290,7 +292,8 @@ static void simplifier_stage_point(Canvas *canvas, VPoint p) {
 }
 
 static void simplifier_try_point(Canvas *canvas, VPoint p,
-                                 short int suppress_commit) {
+                                 short int suppress_commit,
+                                 struct Engine *engine) {
     short int has_one_ago = 0;
     VPoint one_ago = VPointZero;
     if (canvas->staged_point) {
@@ -330,13 +333,14 @@ static void simplifier_try_point(Canvas *canvas, VPoint p,
     }
 
     if (!suppress_commit && (distance_ok && angle_ok)) {
-        simplifier_commit_point(canvas, 1);
+        simplifier_commit_point(canvas, 1, engine);
     }
 
     simplifier_stage_point(canvas, p);
 }
 
-static void simplifier_commit_point(Canvas *canvas, int recursive) {
+static void simplifier_commit_point(Canvas *canvas, int recursive,
+                                    struct Engine *engine) {
     if (!canvas->staged_point) return;
 
     if (!canvas->simplified_points) {
@@ -348,7 +352,7 @@ static void simplifier_commit_point(Canvas *canvas, int recursive) {
     canvas->staged_point = NULL;
 
     if (canvas->shape_matcher && recursive) {
-        ShapeMatcher_commit_point(canvas->shape_matcher);
+        ShapeMatcher_commit_point(canvas->shape_matcher, engine);
     }
 }
 

@@ -221,6 +221,85 @@ error:
     return NULL;
 }
 
+int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
+                         ...) {
+    check(scripting != NULL, "No scripting to call hook in");
+    check(bound != NULL, "No bound object to call hook on");
+    lua_State *L = scripting->L;
+    
+    int result = luaL_lookup_instance(L, bound);
+    if (!result) return 0;
+
+    lua_getfield(L, -1, fname);
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 2);
+        return 0;
+    }
+
+    lua_pushvalue(L, -2);
+    
+    va_list vl;
+    int narg = 0;
+    va_start(vl, fname);
+    int ltype = va_arg(vl, int);
+    int done = 0;
+    while (ltype != LUA_TNIL && !done) {
+        switch (ltype) {
+            case LUA_TNUMBER: {
+                double num = va_arg(vl, double);
+                lua_pushnumber(L, num);
+                narg++;
+            } break;
+                
+            case LUA_TBOOLEAN: {
+                int b = va_arg(vl, int);
+                lua_pushboolean(L, b);
+                narg++;
+            } break;
+                
+            case LUA_TSTRING: {
+                char *str = va_arg(vl, char *);
+                lua_pushstring(L, str);
+                narg++;
+            } break;
+            
+            case LUA_TUSERDATA: {
+                void *obj = va_arg(vl, void *);
+                int result = luaL_lookup_instance(L, obj);
+                if (!result) {
+                    lua_pushnil(L);
+                }
+                narg++;
+            } break;
+            
+            default: {
+                done = 1;
+            } break;
+        }
+        
+        ltype = va_arg(vl, int);
+    }
+
+    va_end(vl);
+    
+    result = lua_pcall(L, 1 + narg, 0, 0);
+    if (result != 0) {
+        const char *error = lua_tostring(L, -1);
+        if (scripting->error_callback) {
+            scripting->error_callback(error);
+        } else {
+            debug("Error in %p %s hook,\n    %s", bound, fname, lua_tostring(L, -1));
+        }
+        lua_pop(L, 1);
+        return 0;
+    }
+    
+    lua_pop(L, 1);
+
+error:
+    return 0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void luaL_register_ud(lua_State *L, int ud_idx, void **ud_prop, void *val) {
