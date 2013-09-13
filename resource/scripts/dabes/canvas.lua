@@ -41,6 +41,10 @@ Canvas = BoundObject:extend({
         --- An `{r, g, b, a}` vector representing the simplified path.
         simplified_path_color =
             BoundObject.fwd_func("get_simplified_path_color"),
+
+        --- A @{shape_matcher|ShapeMatcher} hosted by the Canvas
+        shape_matcher =
+            BoundObject.fwd_func("get_shape_matcher"),
     },
 
     _setters = {
@@ -53,6 +57,8 @@ Canvas = BoundObject:extend({
         enabled = BoundObject.fwd_func("set_enabled"),
         simplified_path_color =
             BoundObject.fwd_func("set_simplified_path_color"),
+        shape_matcher =
+            BoundObject.fwd_func("set_shape_matcher")
     },
 
 --- Class Methods.
