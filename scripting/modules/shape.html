@@ -34,7 +34,6 @@
 <ul>
 <li><a href="#Properties">Properties </a></li>
 <li><a href="#Class_Methods">Class Methods </a></li>
-<li><a href="#Hooks">Hooks </a></li>
 </ul>
 
 
@@ -57,10 +56,10 @@
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
   <li><a href="../modules/sensor.html">sensor</a></li>
   <li><a href="../modules/sfx.html">sfx</a></li>
-  <li><a href="../modules/shape.html">shape</a></li>
+  <li><strong>shape</strong></li>
   <li><a href="../modules/shape_matcher.html">shape_matcher</a></li>
   <li><a href="../modules/sprite.html">sprite</a></li>
-  <li><strong>sprite_animation</strong></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
   <li><a href="../modules/util.html">util</a></li>
 </ul>
 
@@ -68,39 +67,30 @@
 
 <div id="content">
 
-<h1>Module <code>sprite_animation</code></h1>
+<h1>Module <code>shape</code></h1>
 
-<p>Represents a timed sequence of <a href="../modules/sprite.html#">Sprite</a> frames</p>
-<p> <a href="../modules/sprite_animation.html#">SpriteAnimation</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+<p>Defines a shape for use in a <code>ShapeMatcher</code>.</p>
+<p> A shape must be built from line segments and does not support curves.</p>
+
+<p> <a href="../modules/shape.html#">Shape</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
 <h2><a href="#Properties">Properties </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#current_index">current_index</a></td>
-	<td class="summary">The current frame index of the animation.</td>
+	<td class="name" nowrap><a href="#name">name</a></td>
+	<td class="summary"><em>(readonly)</em> The name of the shape.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#fps">fps</a></td>
-	<td class="summary">The rate the animation advances in frames per second.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#repeats">repeats</a></td>
-	<td class="summary"><strong>(bool)</strong> Whether the animation should repeat.</td>
+	<td class="name" nowrap><a href="#segments">segments</a></td>
+	<td class="summary"><em>(readonly)</em> The segments that make up the shape.</td>
 	</tr>
 </table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#SpriteAnimation:new">SpriteAnimation:new&nbsp;(...)</a></td>
-	<td class="summary">Create a new <code>SpriteAnimation</code> from a sequence of frames.</td>
-	</tr>
-</table>
-<h2><a href="#Hooks">Hooks </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#complete">complete&nbsp;(self)</a></td>
-	<td class="summary">Called when <code>SpriteAnimation</code> reaches the end.</td>
+	<td class="name" nowrap><a href="#SpriteAnimation:new">SpriteAnimation:new&nbsp;(name, ...)</a></td>
+	<td class="summary">Create a new <code>Shape</code> from a name and segment definitions.</td>
 	</tr>
 </table>
 
@@ -113,14 +103,11 @@
  Significant fields on an instance.
     <dl class="function">
     <dt>
-    <a name = "current_index"></a>
-    <strong>current_index</strong>
+    <a name = "name"></a>
+    <strong>name</strong>
     </dt>
     <dd>
-    The current frame index of the animation.  This is relative to
- the animation, not the sprite.</p>
-
-<p> Index <code>0</code> is the first frame in the animation.
+    <em>(readonly)</em> The name of the shape.
 
 
 
@@ -129,26 +116,14 @@
 
 </dd>
     <dt>
-    <a name = "fps"></a>
-    <strong>fps</strong>
+    <a name = "segments"></a>
+    <strong>segments</strong>
     </dt>
     <dd>
-    The rate the animation advances in frames per second.
+    <em>(readonly)</em> The segments that make up the shape.
+ This is a sequence of tables.</p>
 
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "repeats"></a>
-    <strong>repeats</strong>
-    </dt>
-    <dd>
-    <strong>(bool)</strong> Whether the animation should repeat. </p>
-
-<p> Default <code>true</code>
+<p> A segment is a table like <code>{length = 1, angle = 90}</code>
 
 
 
@@ -164,23 +139,30 @@
     <dl class="function">
     <dt>
     <a name = "SpriteAnimation:new"></a>
-    <strong>SpriteAnimation:new&nbsp;(...)</strong>
+    <strong>SpriteAnimation:new&nbsp;(name, ...)</strong>
     </dt>
     <dd>
-    Create a new <code>SpriteAnimation</code> from a sequence of frames.
+    Create a new <code>Shape</code> from a name and segment definitions. </p>
+
+<p> The shape definition always omits the initial segment.
 
     <h3>Parameters:</h3>
     <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         A name for the shape.</li>
         <li><span class="parameter">...</span>
-            <span class="types"><span class="type">number</span></span>
-         A variable list of <a href="../modules/sprite.html#">Sprite</a> frames to
- compose the animation with.</li>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         A sequence of tables with keys <code>length</code> and <code>angle</code>.
+ <code>length</code> is the length of the segment relative to the first segment.
+ <code>angle</code> is the angle in degrees at which to extend the segment from the
+ one before it based on the convex winding direction.</li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-          <span class="types"><span class="type">SpriteAnimation</span></span>
+          <span class="types"><span class="type">Shape</span></span>
 
 
 
@@ -190,35 +172,12 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example"><span class="keyword">local</span> anim = SpriteAnimation:new(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>) -- Walking</pre>
+        <pre class="example">
+    <span class="keyword">local</span> square = Shape:new(<span class="string">"Square"</span>,
+                             { length = <span class="number">1</span>, angle = <span class="number">90</span>},
+                             { length = <span class="number">1</span>, angle = <span class="number">90</span>},
+                             { length = <span class="number">1</span>, angle = <span class="number">90</span>})</pre>
     </ul>
-
-</dd>
-</dl>
-    <h2><a name="Hooks"></a>Hooks </h2>
-        Hooks.
- Callbacks implemented in subclasses to customize behavior. Hooks are called
- on individual instances.
-    <dl class="function">
-    <dt>
-    <a name = "complete"></a>
-    <strong>complete&nbsp;(self)</strong>
-    </dt>
-    <dd>
-    Called when <code>SpriteAnimation</code> reaches the end. </p>
-
-<p> This is not called if <a href="../modules/sprite_animation.html#repeats">repeats</a>  is <code>true</code>
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">self</span>
-            <span class="types"><span class="type">SpriteAnimation</span></span>
-         The <code>SpriteAnimation</code> instance</li>
-    </ul>
-
-
-
-
 
 </dd>
 </dl>

@@ -1,0 +1,580 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting API Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+<li><a href="#Constants">Constants </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/canvas.html">canvas</a></li>
+  <li><a href="../modules/collection.html">collection</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/parallax_layer.html">parallax_layer</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/shape.html">shape</a></li>
+  <li><strong>shape_matcher</strong></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>shape_matcher</code></h1>
+
+<p>Enables a <a href="../modules/canvas.html#">Canvas</a> to detect drawn shapes by letting the user
+ play a dynamic game of connect-the-dots.</p>
+<p> I'll think of a better explanation
+ later.</p>
+
+<p> <a href="../modules/shape_matcher.html#">ShapeMatcher</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#state">state</a></td>
+	<td class="summary"><em>(readonly)</em> The current ShapeMatcher state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vertex_catch_tolerance">vertex_catch_tolerance</a></td>
+	<td class="summary">The coefficient by which "dot" radii are calculated.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#slop_tolerance">slop_tolerance</a></td>
+	<td class="summary">The coefficient by which a sloppy line is considered too
+ long for the approach to the next "dot".</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#initial_segment_angle">initial_segment_angle</a></td>
+	<td class="summary"><em>(readonly)</em> The absolute trajectory angle of the first segment
+ in degrees.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#initial_segment_length">initial_segment_length</a></td>
+	<td class="summary"><em>(readonly)</em> The length of the initial segment, in pixels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#intended_convex_winding">intended_convex_winding</a></td>
+	<td class="summary"><em>(readonly)</em> The detected winding of the shape the user is
+ drawing.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#debug_shapes">debug_shapes</a></td>
+	<td class="summary"><strong>(bool)</strong> Whether to render a debug overlay that reveals all of
+ the shapes.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#debug_shape_color">debug_shape_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector representing the <a href="../modules/shape_matcher.html#debug_shapes">debug_shapes</a>  render
+ color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#debug_shape_width">debug_shape_width</a></td>
+	<td class="summary">The width of the <a href="../modules/shape_matcher.html#debug_shapes">debug_shapes</a>  stroke.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#dot_color">dot_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector representing the dot color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#dot_width">dot_width</a></td>
+	<td class="summary">The width of the dot stroke.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shapes">shapes</a></td>
+	<td class="summary"><em>(readonly)</em> The <a href="../modules/shape.html#">Shapes</a> being matched</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ShapeMatcher:new">ShapeMatcher:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new <code>ShapeMatcher</code> intended to match the given shapes.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#state_changed">state_changed&nbsp;(self, state)</a></td>
+	<td class="summary">Called when the ShapeMatcher changes its <a href="../modules/shape_matcher.html#state">state</a> </td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#matched">matched&nbsp;(self, shape, accuracy)</a></td>
+	<td class="summary">Called when the ShapeMatcher matches a shape successfully</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#failed">failed&nbsp;(self)</a></td>
+	<td class="summary">Called when the ShapeMatcher fails to match a shape.</td>
+	</tr>
+</table>
+<h2><a href="#Constants">Constants </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STATE_NEW">STATE_NEW</a></td>
+	<td class="summary">A ShapeMatcher state in which it is not running and has no data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STATE_RUNNING">STATE_RUNNING</a></td>
+	<td class="summary">A ShapeMatcher state in which it is running and gathering data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STATE_ENDED">STATE_ENDED</a></td>
+	<td class="summary">A ShapeMatcher state in which it is no longer running and has data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WINDING_COUNTERCLOCKWISE">WINDING_COUNTERCLOCKWISE</a></td>
+	<td class="summary">Denotes a counterclockwise winding.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WINDING_AMBIGUOUS">WINDING_AMBIGUOUS</a></td>
+	<td class="summary">Denotes an ambiguous winding.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WINDING_CLOCKWISE">WINDING_CLOCKWISE</a></td>
+	<td class="summary">Denotes a clockwise winding.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "state"></a>
+    <strong>state</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The current ShapeMatcher state
+
+
+
+
+    <h3>see also:</h3>
+    <ul>
+         <li><a href="../modules/shape_matcher.html#STATE_NEW">STATE_NEW</a></li>
+         <li><a href="../modules/shape_matcher.html#STATE_RUNNING">STATE_RUNNING</a></li>
+         <li><a href="../modules/shape_matcher.html#STATE_ENDED">STATE_ENDED</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "vertex_catch_tolerance"></a>
+    <strong>vertex_catch_tolerance</strong>
+    </dt>
+    <dd>
+    The coefficient by which "dot" radii are calculated.
+ The actual radius is figured by multiplying
+ <em>vertex_catch_tolerance</em> and <em>initial_segment_length</em>.</p>
+
+<p> Default <code>0.2</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "slop_tolerance"></a>
+    <strong>slop_tolerance</strong>
+    </dt>
+    <dd>
+    The coefficient by which a sloppy line is considered too
+ long for the approach to the next "dot". </p>
+
+<p> Default <code>1.1</code>
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "initial_segment_angle"></a>
+    <strong>initial_segment_angle</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The absolute trajectory angle of the first segment
+ in degrees.  <code>0</code> degrees points right.</p>
+
+<p> If no segment has been drawn, this is <code>0</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "initial_segment_length"></a>
+    <strong>initial_segment_length</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The length of the initial segment, in pixels. </p>
+
+<p> If no segment has been drawn, this is <code>0</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "intended_convex_winding"></a>
+    <strong>intended_convex_winding</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The detected winding of the shape the user is
+ drawing.
+
+
+
+
+    <h3>see also:</h3>
+    <ul>
+         <li><a href="../modules/shape_matcher.html#WINDING_COUNTERCLOCKWISE">WINDING_COUNTERCLOCKWISE</a></li>
+         <li><a href="../modules/shape_matcher.html#WINDING_AMBIGUOUS">WINDING_AMBIGUOUS</a></li>
+         <li><a href="../modules/shape_matcher.html#WINDING_CLOCKWISE">WINDING_CLOCKWISE</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "debug_shapes"></a>
+    <strong>debug_shapes</strong>
+    </dt>
+    <dd>
+    <strong>(bool)</strong> Whether to render a debug overlay that reveals all of
+ the shapes.  Helpful when designing new shapes.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "debug_shape_color"></a>
+    <strong>debug_shape_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector representing the <a href="../modules/shape_matcher.html#debug_shapes">debug_shapes</a>  render
+ color.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "debug_shape_width"></a>
+    <strong>debug_shape_width</strong>
+    </dt>
+    <dd>
+    The width of the <a href="../modules/shape_matcher.html#debug_shapes">debug_shapes</a>  stroke.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dot_color"></a>
+    <strong>dot_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector representing the dot color.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dot_width"></a>
+    <strong>dot_width</strong>
+    </dt>
+    <dd>
+    The width of the dot stroke.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shapes"></a>
+    <strong>shapes</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The <a href="../modules/shape.html#">Shapes</a> being matched
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "ShapeMatcher:new"></a>
+    <strong>ShapeMatcher:new&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Create a new <code>ShapeMatcher</code> intended to match the given shapes.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+            <span class="types"><span class="type">number</span></span>
+         A variable list of <a href="../modules/shape.html#">Shapes</a> to match.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">ShapeMatcher</span></span>
+
+
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> matcher = ShapeMatcher:new(square, zigzag, triangle)</pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "state_changed"></a>
+    <strong>state_changed&nbsp;(self, state)</strong>
+    </dt>
+    <dd>
+    Called when the ShapeMatcher changes its <a href="../modules/shape_matcher.html#state">state</a>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">ShapeMatcher</span></span>
+         The <code>ShapeMatcher</code> instance</li>
+        <li><span class="parameter">state</span>
+         The new state</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "matched"></a>
+    <strong>matched&nbsp;(self, shape, accuracy)</strong>
+    </dt>
+    <dd>
+    Called when the ShapeMatcher matches a shape successfully
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">ShapeMatcher</span></span>
+         The <code>ShapeMatcher</code> instance</li>
+        <li><span class="parameter">shape</span>
+            <span class="types"><span class="type">Shape</span></span>
+         The shape that was matched</li>
+        <li><span class="parameter">accuracy</span>
+         A number (percentage) between <code>0</code> and <code>1</code> reflecting how
+ accurately the user matched the shape.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "failed"></a>
+    <strong>failed&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the ShapeMatcher fails to match a shape.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">ShapeMatcher</span></span>
+         The <code>ShapeMatcher</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Constants"></a>Constants </h2>
+        Constants.
+ Accessed at the class level e.g. <code>Class.CONSTANT</code>
+    <dl class="function">
+    <dt>
+    <a name = "STATE_NEW"></a>
+    <strong>STATE_NEW</strong>
+    </dt>
+    <dd>
+    A ShapeMatcher state in which it is not running and has no data.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STATE_RUNNING"></a>
+    <strong>STATE_RUNNING</strong>
+    </dt>
+    <dd>
+    A ShapeMatcher state in which it is running and gathering data.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STATE_ENDED"></a>
+    <strong>STATE_ENDED</strong>
+    </dt>
+    <dd>
+    A ShapeMatcher state in which it is no longer running and has data.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "WINDING_COUNTERCLOCKWISE"></a>
+    <strong>WINDING_COUNTERCLOCKWISE</strong>
+    </dt>
+    <dd>
+    Denotes a counterclockwise winding.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "WINDING_AMBIGUOUS"></a>
+    <strong>WINDING_AMBIGUOUS</strong>
+    </dt>
+    <dd>
+    Denotes an ambiguous winding.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "WINDING_CLOCKWISE"></a>
+    <strong>WINDING_CLOCKWISE</strong>
+    </dt>
+    <dd>
+    Denotes a clockwise winding.
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
