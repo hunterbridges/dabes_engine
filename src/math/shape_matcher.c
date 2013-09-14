@@ -694,13 +694,33 @@ int pshape_dot_intended_cb(BSTreeNode *node, void *context) {
         ctx->matcher->initial_segment_length;
 
     int match_count = DArray_count(pshape->matched_points);
-    if (path && path->num_points > match_count) {
-        VCircle circle = {
-            .radius = radius,
-            .center = path->points[match_count]
-        };
-        ctx->circles[ctx->i] = circle;
-        ctx->i++;
+    
+    if (path) {
+        // If we are close enough to the next point, be predictive
+        if (path->num_points > match_count + 1) {
+            VPoint next_point = pshape->path->points[match_count];
+            VPoint *last_commited = DArray_last(ctx->matcher->points);
+            VPoint last = (ctx->matcher->staged_point ?
+                           *ctx->matcher->staged_point :
+                           *last_commited);
+            if (VPoint_distance(next_point, last) <= radius) {
+                VCircle circle = {
+                    .radius = radius,
+                    .center = path->points[match_count + 1]
+                };
+                ctx->circles[ctx->i] = circle;
+                ctx->i++;
+            }
+        }
+        
+        if (path->num_points > match_count) {
+            VCircle circle = {
+                .radius = radius,
+                .center = path->points[match_count]
+            };
+            ctx->circles[ctx->i] = circle;
+            ctx->i++;
+        }
     }
 
     return 0;
@@ -724,8 +744,8 @@ void ShapeMatcher_get_connect_dots(ShapeMatcher *matcher, VCircle **circles,
         BSTree_traverse(matcher->potential_shapes, pshape_dot_ambiguous_cb,
                         &ctx);
     } else {
-        ctx.num_circles = matcher->potential_shapes->count;
-        ctx.circles = malloc(ctx.num_circles * sizeof(VCircle));
+        ctx.num_circles = matcher->potential_shapes->count * 2;
+        ctx.circles = calloc(1, ctx.num_circles * sizeof(VCircle));
 
         BSTree_traverse(matcher->potential_shapes, pshape_dot_intended_cb,
                         &ctx);

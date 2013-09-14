@@ -388,6 +388,10 @@ void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
         VPoint center, GLfloat color[4], double line_width) {
     VPoint points[precision];
     check(graphics != NULL, "Graphics required");
+    
+    if (circle.radius <= 0) {
+        return;
+    }
 
     int i = 0;
     for (i = 0; i < precision; i++) {
