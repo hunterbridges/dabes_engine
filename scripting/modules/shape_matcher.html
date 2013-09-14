@@ -149,6 +149,14 @@
 	<td class="summary">Called when the ShapeMatcher changes its <a href="../modules/shape_matcher.html#state">state</a> </td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#got_initial_segment">got_initial_segment&nbsp;(self)</a></td>
+	<td class="summary">Called when the ShapeMatcher gets its initial segment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#dot_connected">dot_connected&nbsp;(self, shape, index, count)</a></td>
+	<td class="summary">Called when the ShapeMatcher connects a dot</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#matched">matched&nbsp;(self, shape, accuracy)</a></td>
 	<td class="summary">Called when the ShapeMatcher matches a shape successfully</td>
 	</tr>
@@ -433,6 +441,53 @@
          The <code>ShapeMatcher</code> instance</li>
         <li><span class="parameter">state</span>
          The new state</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "got_initial_segment"></a>
+    <strong>got_initial_segment&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the ShapeMatcher gets its initial segment
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">ShapeMatcher</span></span>
+         The <code>ShapeMatcher</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dot_connected"></a>
+    <strong>dot_connected&nbsp;(self, shape, index, count)</strong>
+    </dt>
+    <dd>
+    Called when the ShapeMatcher connects a dot
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">ShapeMatcher</span></span>
+         The <code>ShapeMatcher</code> instance</li>
+        <li><span class="parameter">shape</span>
+            <span class="types"><span class="type">Shape</span></span>
+         The shape whose dot was connected</li>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">number</span></span>
+         The '1'-based index of which dot was connected</li>
+        <li><span class="parameter">count</span>
+            <span class="types"><span class="type">number</span></span>
+         How many dots there are to connect</li>
     </ul>
 
 
