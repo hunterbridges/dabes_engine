@@ -74,6 +74,7 @@ error:
 
 void Canvas_enqueue_point(Canvas *canvas, VPoint point) {
     check(canvas != NULL, "Canvas required");
+    
     if (canvas->queue_count >= CANVAS_QUEUE_SIZE) {
         log_warn("Trying to enqueue a point when we already have %d",
                  canvas->queue_count);
@@ -125,6 +126,10 @@ error:
 void Canvas_update(Canvas *canvas, Engine *engine) {
     check(canvas != NULL, "Canvas required");
 
+    if (!canvas->enabled) {
+        return;
+    }
+    
     Controller *p1 = engine->input->controllers[0];
     short int hold = !!(p1->touch_state & CONTROLLER_TOUCH_HOLD);
     short int hold_changed = !!(p1->touch_state & CONTROLLER_TOUCH_HOLD_CHANGED);
@@ -270,6 +275,8 @@ void Canvas_set_enabled(Canvas *canvas, Engine *engine, int enabled) {
     } else {
         Input_change_preferred_style(engine->input, INPUT_STYLE_LEFT_RIGHT);
     }
+    
+    canvas->enabled = enabled;
 
     return;
 error:
