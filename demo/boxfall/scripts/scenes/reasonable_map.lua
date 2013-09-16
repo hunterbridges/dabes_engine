@@ -92,6 +92,7 @@ ReasonableMap = Scene:extend({
         self.canvas = Canvas:new()
         self.canvas.enabled = true
         self.canvas.draw_width = 2
+        self.canvas.angle_color = {1, 1, 1, 1}
         self.canvas.shape_matcher = self.matcher
     end,
 

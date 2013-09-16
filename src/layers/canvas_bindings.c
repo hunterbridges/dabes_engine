@@ -37,6 +37,8 @@ Scripting_num_getter(Canvas, alpha);
 Scripting_num_setter(Canvas, alpha);
 Scripting_num_getter(Canvas, angle_threshold);
 Scripting_num_setter(Canvas, angle_threshold);
+Scripting_VVector4_getter(Canvas, angle_color);
+Scripting_VVector4_setter(Canvas, angle_color);
 Scripting_VVector4_getter(Canvas, bg_color);
 Scripting_VVector4_setter(Canvas, bg_color);
 Scripting_num_getter(Canvas, distance_threshold);
@@ -96,6 +98,8 @@ static const struct luaL_Reg luab_Canvas_meths[] = {
     {"set_alpha", luab_Canvas_set_alpha},
     {"get_angle_threshold", luab_Canvas_get_angle_threshold},
     {"set_angle_threshold", luab_Canvas_set_angle_threshold},
+    {"get_angle_color", luab_Canvas_get_angle_color},
+    {"set_angle_color", luab_Canvas_set_angle_color},
     {"get_bg_color", luab_Canvas_get_bg_color},
     {"set_bg_color", luab_Canvas_set_bg_color},
     {"get_distance_threshold", luab_Canvas_get_distance_threshold},

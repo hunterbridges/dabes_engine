@@ -31,6 +31,7 @@ Canvas *Canvas_create(Engine *engine) {
     canvas->draw_color = CANVAS_DEFAULT_DRAW_COLOR;
     canvas->bg_color = CANVAS_DEFAULT_BG_COLOR;
     canvas->simplified_path_color = CANVAS_DEFAULT_SIMP_COLOR;
+    canvas->angle_color = VVector4ClearColor;
 
     return canvas;
 error:
@@ -74,7 +75,7 @@ error:
 
 void Canvas_enqueue_point(Canvas *canvas, VPoint point) {
     check(canvas != NULL, "Canvas required");
-    
+
     if (canvas->queue_count >= CANVAS_QUEUE_SIZE) {
         log_warn("Trying to enqueue a point when we already have %d",
                  canvas->queue_count);
@@ -129,11 +130,12 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
     if (!canvas->enabled) {
         return;
     }
-    
+
     Controller *p1 = engine->input->controllers[0];
     short int hold = !!(p1->touch_state & CONTROLLER_TOUCH_HOLD);
     short int hold_changed = !!(p1->touch_state & CONTROLLER_TOUCH_HOLD_CHANGED);
     short int moved = !!(p1->touch_state & CONTROLLER_TOUCH_MOVED);
+    short int released_touch = (!hold && hold_changed);
     if (hold && hold_changed) {
         Canvas_empty(canvas);
 
@@ -150,16 +152,28 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
 
     if (canvas->shape_matcher &&
         canvas->shape_matcher->state == SHAPE_MATCHER_STATE_RUNNING) {
-        int released_touch = (!hold && hold_changed);
         int has_no_potential_shapes =
             (canvas->shape_matcher->potential_shapes &&
              canvas->shape_matcher->potential_shapes->count == 0);
-        
+
         if (canvas->shape_matcher->matched_shape ||
             has_no_potential_shapes ||
             released_touch) {
             ShapeMatcher_end(canvas->shape_matcher, engine);
         }
+    }
+
+    if (released_touch) {
+        VPoint path[2] = {
+            *(VPoint *)DArray_get(canvas->raw_points, 0),
+            *(VPoint *)DArray_last(canvas->raw_points)
+        };
+
+        float r = VPoint_distance(path[0], path[1]);
+        float angle = VPoint_angle(path[0], path[1]) * 180 / M_PI;
+        Scripting_call_dhook(engine->scripting, canvas, "finish",
+                             LUA_TNUMBER, angle,
+                             LUA_TNUMBER, r, nil);
     }
 
     return;
@@ -170,6 +184,8 @@ error:
 void Canvas_render(Canvas *canvas, Engine *engine) {
     check(canvas != NULL, "Canvas required");
     check(canvas->scene != NULL, "Canvas is not in a scene");
+
+    if (canvas->alpha == 0.0) return;
 
     Graphics_reset_modelview_matrix(engine->graphics);
     Scene_project_screen(canvas->scene, engine);
@@ -186,30 +202,56 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                        NULL, VPointZero, GfxSizeZero, 0, 1, canvas->alpha);
 
     if (canvas->raw_points) {
-        // Adjust each point cause canvas points are relative to screen top left
-        // and projection matrix thinks <0, 0> is screen center
         int num_points = DArray_count(canvas->raw_points);
-        VPoint *path =
-            malloc(sizeof(VPoint) * num_points);
-        int i = 0;
-        for (i = 0; i < num_points; i++) {
-            VPoint *point = DArray_get(canvas->raw_points, i);
-            path[i] = VPoint_subtract(*point, screen_diff);
+        if (canvas->draw_color.rgba.a > 0.0) {
+            // Adjust each point cause canvas points are relative to screen top left
+            // and projection matrix thinks <0, 0> is screen center
+            VPoint *path =
+                malloc(sizeof(VPoint) * num_points);
+            int i = 0;
+            for (i = 0; i < num_points; i++) {
+                VPoint *point = DArray_get(canvas->raw_points, i);
+                path[i] = VPoint_subtract(*point, screen_diff);
+            }
+
+            VVector4 path_draw_color = canvas->draw_color;
+            path_draw_color.rgba.a *= canvas->alpha;
+
+            Graphics_stroke_path(engine->graphics, path, num_points,
+                                 VPointZero, path_draw_color.raw,
+                                 canvas->draw_width, 0, 0);
+
+            free(path);
         }
 
-        VVector4 path_draw_color = canvas->draw_color;
-        path_draw_color.rgba.a *= canvas->alpha;
+        if (canvas->angle_color.rgba.a > 0.0 && num_points >= 2) {
+            VPoint path[2] = {
+                *(VPoint *)DArray_get(canvas->raw_points, 0),
+                *(VPoint *)DArray_last(canvas->raw_points)
+            };
 
-        Graphics_stroke_path(engine->graphics, path, num_points,
-                             VPointZero, path_draw_color.raw,
-                             canvas->draw_width, 0, 0);
+            float r = VPoint_distance(path[0], path[1]);
 
-        free(path);
+            VVector4 path_draw_color = canvas->angle_color;
+            path_draw_color.rgba.a *= canvas->alpha;
+
+            VPoint inv_diff = VPoint_scale(screen_diff, -1);
+            Graphics_stroke_path(engine->graphics, path, 2,
+                                 inv_diff, path_draw_color.raw,
+                                 canvas->draw_width, 0, 0);
+
+            VCircle circle  = {
+                .center = path[0],
+                .radius = r
+            };
+            Graphics_stroke_circle(engine->graphics, circle, 40,
+                inv_diff, canvas->angle_color.raw, canvas->draw_width);
+        }
     }
 
     int num_staged;
     VPoint *staged_path = simplifier_staged_path(canvas, &num_staged);
-    if (staged_path) {
+    if (staged_path && canvas->simplified_path_color.rgba.a > 0.0) {
         int i = 0;
         for (i = 0; i < num_staged; i++) {
             VPoint point = staged_path[i];
@@ -275,7 +317,7 @@ void Canvas_set_enabled(Canvas *canvas, Engine *engine, int enabled) {
     } else {
         Input_change_preferred_style(engine->input, INPUT_STYLE_LEFT_RIGHT);
     }
-    
+
     canvas->enabled = enabled;
 
     return;
