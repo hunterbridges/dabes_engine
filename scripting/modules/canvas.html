@@ -34,6 +34,8 @@
 <ul>
 <li><a href="#Properties">Properties </a></li>
 <li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
 </ul>
 
 
@@ -85,6 +87,11 @@
  a new vertex.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#angle_color">angle_color</a></td>
+	<td class="summary">An <code>{r, g, b, a}</code> vector representing the color for the line
+ between the first and last point of the draw action.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#bg_color">bg_color</a></td>
 	<td class="summary">An <code>{r, g, b, a}</code> vector representing the Canvas background color.</td>
 	</tr>
@@ -121,6 +128,20 @@
 	<td class="summary">Create a new <code>Canvas</code></td>
 	</tr>
 </table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#canvas:empty">canvas:empty&nbsp;()</a></td>
+	<td class="summary">Empty the canvas.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#finish">finish&nbsp;(self, angle, distance)</a></td>
+	<td class="summary">Called when the Canvas finishes drawing</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
@@ -150,6 +171,20 @@
     <dd>
     The angle difference required for the path simplifier to recognize
  a new vertex.  In degrees
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "angle_color"></a>
+    <strong>angle_color</strong>
+    </dt>
+    <dd>
+    An <code>{r, g, b, a}</code> vector representing the color for the line
+ between the first and last point of the draw action.
 
 
 
@@ -271,6 +306,63 @@
 
 
     </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "canvas:empty"></a>
+    <strong>canvas:empty&nbsp;()</strong>
+    </dt>
+    <dd>
+    Empty the canvas.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "finish"></a>
+    <strong>finish&nbsp;(self, angle, distance)</strong>
+    </dt>
+    <dd>
+    Called when the Canvas finishes drawing
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Canvas</span></span>
+         The <code>Canvas</code> instance</li>
+        <li><span class="parameter">angle</span>
+         The angle between the touch and release points in degrees</li>
+        <li><span class="parameter">distance</span>
+         The distance between the touch and release points in
+ pixels</li>
+    </ul>
+
 
 
 
