@@ -81,6 +81,17 @@ Canvas = BoundObject:extend({
         return realized
     end,
 
+--- Instance Methods.
+-- Must be called on an instance of `Class`.
+-- e.g. `instance:method("foo")`
+-- @section instancemethods
+
+    --- Empty the canvas.
+    --
+    -- @function canvas:empty
+    -- @treturn nil
+    empty = BoundObject.fwd_func("empty"),
+
 --- Hooks.
 -- Callbacks implemented in subclasses to customize behavior. Hooks are called
 -- on individual instances.

@@ -33,6 +33,15 @@ int luab_Canvas_close(lua_State *L) {
     return 0;
 }
 
+int luab_Canvas_empty(lua_State *L) {
+    Canvas *canvas = luaL_tocanvas(L, 1);
+    check(canvas != NULL, "Canvas required");
+    Canvas_empty(canvas);
+    return 0;
+error:
+    return 0;
+}
+
 Scripting_num_getter(Canvas, alpha);
 Scripting_num_setter(Canvas, alpha);
 Scripting_num_getter(Canvas, angle_threshold);
@@ -82,11 +91,15 @@ int luab_Canvas_set_shape_matcher(lua_State *L) {
     Canvas *canvas = luaL_tocanvas(L, 1);
     check(canvas != NULL, "Canvas required");
 
-    lua_getfield(L, -1, "real");
-    ShapeMatcher *matcher = luaL_toshapematcher(L, -1);
-    check(matcher != NULL, "Parallax required");
+    if (lua_isnil(L, -1)) {
+        canvas->shape_matcher = NULL;
+    } else {
+        lua_getfield(L, -1, "real");
+        ShapeMatcher *matcher = luaL_toshapematcher(L, -1);
+        check(matcher != NULL, "Shape Matcher required");
 
-    canvas->shape_matcher = matcher;
+        canvas->shape_matcher = matcher;
+    }
     lua_pop(L, 3);
 error:
     return 0;
@@ -94,6 +107,7 @@ error:
 
 static const struct luaL_Reg luab_Canvas_meths[] = {
     {"__gc", luab_Canvas_close},
+    {"empty", luab_Canvas_empty},
     {"get_alpha", luab_Canvas_get_alpha},
     {"set_alpha", luab_Canvas_set_alpha},
     {"get_angle_threshold", luab_Canvas_get_angle_threshold},

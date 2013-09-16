@@ -163,7 +163,7 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
         }
     }
 
-    if (released_touch) {
+    if (released_touch && DArray_count(canvas->raw_points) >= 2) {
         VPoint path[2] = {
             *(VPoint *)DArray_get(canvas->raw_points, 0),
             *(VPoint *)DArray_last(canvas->raw_points)
@@ -245,7 +245,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                 .radius = r
             };
             Graphics_stroke_circle(engine->graphics, circle, 40,
-                inv_diff, canvas->angle_color.raw, canvas->draw_width);
+                inv_diff, path_draw_color.raw, canvas->draw_width);
         }
     }
 
