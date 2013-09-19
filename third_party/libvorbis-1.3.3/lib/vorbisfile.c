@@ -463,7 +463,7 @@ static ogg_int64_t _initial_pcmoffset(OggVorbis_File *vf, vorbis_info *vi){
    (has to begin by knowing the offset of the lb's initial page).
    Recurses for each link so it can alloc the link storage after
    finding them all, then unroll and fill the cache at the same time */
-static int _bisect_forward_serialno(OggVorbis_File *vf,
+static ogg_int64_t _bisect_forward_serialno(OggVorbis_File *vf,
                                     ogg_int64_t begin,
                                     ogg_int64_t searched,
                                     ogg_int64_t end,

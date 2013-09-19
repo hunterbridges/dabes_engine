@@ -29,7 +29,6 @@
 		CA69E37E17E2E2E000E9CC98 /* vcircle.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E37317E2E2E000E9CC98 /* vcircle.h */; };
 		CA69E37F17E2E2E000E9CC98 /* vcircle.h in Headers */ = {isa = PBXBuildFile; fileRef = CA69E37317E2E2E000E9CC98 /* vcircle.h */; };
 		CA705BCF17834FCC00D2C6E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA705BCE17834FCC00D2C6E4 /* Foundation.framework */; };
-		CA705BEA1783505B00D2C6E4 /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
 		CA705BEB1783505B00D2C6E4 /* liblcthw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA63D7C6170F60B400EE59CA /* liblcthw.a */; };
 		CA705BEC1783505B00D2C6E4 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA65C6EF1729B72800A7D4E5 /* liblua.a */; };
 		CA705BF3178350BD00D2C6E4 /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3F99C2172F87AC00ED1135 /* audio.c */; };
@@ -77,11 +76,8 @@
 		CA705C1E178350BE00D2C6E4 /* scripting.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC581D31758607F004A8161 /* scripting.c */; };
 		CA705C1F178350BE00D2C6E4 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77E16FC20900045D5DE /* object.c */; };
 		CA705C20178350BE00D2C6E4 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
-		CA705C27178355EF00D2C6E4 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B8172F85E000ED1135 /* Ogg.framework */; };
-		CA705C28178355EF00D2C6E4 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3F99B9172F85E000ED1135 /* Vorbis.framework */; };
 		CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CA705C291783566C00D2C6E4 /* DaBes-iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA72C4201795210300255691 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C3231794FBBD00255691 /* libFreetype2.a */; };
-		CA72C4231795211100255691 /* libFreetype2-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C41D179520F600255691 /* libFreetype2-Mac.a */; };
 		CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8B9860178A08BA00CA41B4 /* static_scene.h */; };
@@ -116,7 +112,6 @@
 		CAEFD91A1790A56100D19B4D /* vpolygon.c in Sources */ = {isa = PBXBuildFile; fileRef = CAEFD9171790A56100D19B4D /* vpolygon.c */; };
 		CAEFD91B1790A56100D19B4D /* vpolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD9181790A56100D19B4D /* vpolygon.h */; };
 		CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = CAEFD9181790A56100D19B4D /* vpolygon.h */; };
-		CAF429771780F36200C3220A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF429761780F36200C3220A /* Cocoa.framework */; };
 		CAF429811780F36300C3220A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CAF4297F1780F36300C3220A /* InfoPlist.strings */; };
 		CAF429851780F36300C3220A /* DaBes-Mac.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF429841780F36300C3220A /* DaBes-Mac.m */; };
 		CAF429891780F37C00C3220A /* audio.c in Sources */ = {isa = PBXBuildFile; fileRef = CA3F99C2172F87AC00ED1135 /* audio.c */; };
@@ -158,8 +153,6 @@
 		CAF429E71780F41400C3220A /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77E16FC20900045D5DE /* object.c */; };
 		CAF429E81780F41400C3220A /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
 		CAF429F51780F48400C3220A /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9A17211BFA00CAF6A2 /* libChipmunk.a */; };
-		CAF429F61780F48400C3220A /* liblcthw-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5D237B17700CCF0044793D /* liblcthw-mac.a */; };
-		CAF429F71780F48400C3220A /* liblua-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5D235717700C190044793D /* liblua-mac.a */; };
 		CAF429F81780F48400C3220A /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D745F17702B6500712C8D /* Ogg.framework */; };
 		CAF429F91780F48400C3220A /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D746A17702B6E00712C8D /* Vorbis.framework */; };
 		CAF429FC1780F53400C3220A /* fixture.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78116FC20900045D5DE /* fixture.c */; };
@@ -233,6 +226,11 @@
 		CAF915FF17D46BA000EE204E /* overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = CAF915F017D46BA000EE204E /* overlay.c */; };
 		CAF9160017D46BA000EE204E /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915F117D46BA000EE204E /* overlay.h */; };
 		CAF9160117D46BA000EE204E /* overlay.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF915F117D46BA000EE204E /* overlay.h */; };
+		CAFAF64A17EBA129002AA22A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF64917EBA129002AA22A /* Cocoa.framework */; };
+		CAFAF64F17EBA179002AA22A /* libFreetype2-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C41D179520F600255691 /* libFreetype2-Mac.a */; };
+		CAFAF65017EBA179002AA22A /* liblcthw-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5D237B17700CCF0044793D /* liblcthw-mac.a */; };
+		CAFAF65117EBA179002AA22A /* liblua-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5D235717700C190044793D /* liblua-mac.a */; };
+		CAFAF73B17EBB153002AA22A /* libChipmunk-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9C17211BFA00CAF6A2 /* libChipmunk-iPhone.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -404,6 +402,34 @@
 			remoteGlobalIDString = CA5D232A17700BFC0044793D;
 			remoteInfo = "lua-mac";
 		};
+		CAFAF6B017EBA6C3002AA22A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CAFAF6C317EBA7C0002AA22A;
+			remoteInfo = "Vorbis-iOS";
+		};
+		CAFAF6B217EBA6C3002AA22A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CAFAF6F317EBA8C0002AA22A;
+			remoteInfo = "Ogg-iOS";
+		};
+		CAFAF6B517EBA6C3002AA22A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAFAF66117EBA5AA002AA22A;
+			remoteInfo = "Ogg-iOS";
+		};
+		CAFAF6B817EBA6C3002AA22A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAFAF6AE17EBA63F002AA22A;
+			remoteInfo = "Vorbis-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -548,7 +574,6 @@
 		CAEFD9171790A56100D19B4D /* vpolygon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vpolygon.c; path = ../../../../src/math/vpolygon.c; sourceTree = "<group>"; };
 		CAEFD9181790A56100D19B4D /* vpolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vpolygon.h; path = ../../../../src/math/vpolygon.h; sourceTree = "<group>"; };
 		CAF429741780F36200C3220A /* DaBes-Mac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "DaBes-Mac.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAF429761780F36200C3220A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		CAF429791780F36200C3220A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		CAF4297A1780F36200C3220A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CAF4297B1780F36200C3220A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -569,6 +594,7 @@
 		CAF915EF17D46BA000EE204E /* overlay_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = overlay_bindings.h; path = ../../../../src/layers/overlay_bindings.h; sourceTree = "<group>"; };
 		CAF915F017D46BA000EE204E /* overlay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = overlay.c; path = ../../../../src/layers/overlay.c; sourceTree = "<group>"; };
 		CAF915F117D46BA000EE204E /* overlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = overlay.h; path = ../../../../src/layers/overlay.h; sourceTree = "<group>"; };
+		CAFAF64917EBA129002AA22A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -576,13 +602,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAFAF73B17EBB153002AA22A /* libChipmunk-iPhone.a in Frameworks */,
 				CA72C4201795210300255691 /* libFreetype2.a in Frameworks */,
-				CA705BEA1783505B00D2C6E4 /* libChipmunk-iPhone.a in Frameworks */,
 				CA705BEB1783505B00D2C6E4 /* liblcthw.a in Frameworks */,
 				CA705BEC1783505B00D2C6E4 /* liblua.a in Frameworks */,
 				CA705BCF17834FCC00D2C6E4 /* Foundation.framework in Frameworks */,
-				CA705C27178355EF00D2C6E4 /* Ogg.framework in Frameworks */,
-				CA705C28178355EF00D2C6E4 /* Vorbis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,17 +614,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA72C4231795211100255691 /* libFreetype2-Mac.a in Frameworks */,
+				CAFAF64F17EBA179002AA22A /* libFreetype2-Mac.a in Frameworks */,
+				CAFAF65017EBA179002AA22A /* liblcthw-mac.a in Frameworks */,
+				CAFAF65117EBA179002AA22A /* liblua-mac.a in Frameworks */,
+				CAFAF64A17EBA129002AA22A /* Cocoa.framework in Frameworks */,
 				CA27888B1780FDC4005A242D /* libz.dylib in Frameworks */,
 				CA2788891780FDBF005A242D /* libxml2.dylib in Frameworks */,
 				CA2788871780FDB6005A242D /* OpenGL.framework in Frameworks */,
 				CA2788851780FDB1005A242D /* OpenAL.framework in Frameworks */,
 				CAF429F51780F48400C3220A /* libChipmunk.a in Frameworks */,
-				CAF429F61780F48400C3220A /* liblcthw-mac.a in Frameworks */,
-				CAF429F71780F48400C3220A /* liblua-mac.a in Frameworks */,
 				CAF429F81780F48400C3220A /* Ogg.framework in Frameworks */,
 				CAF429F91780F48400C3220A /* Vorbis.framework in Frameworks */,
-				CAF429771780F36200C3220A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,6 +636,7 @@
 			children = (
 				CA1D745F17702B6500712C8D /* Ogg.framework */,
 				CA1D746117702B6500712C8D /* libogg.a */,
+				CAFAF6B617EBA6C3002AA22A /* Ogg.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -623,6 +648,7 @@
 				CA1D746C17702B6E00712C8D /* libvorbis.a */,
 				CA1D746E17702B6E00712C8D /* libvorbisenc.a */,
 				CA1D747017702B6E00712C8D /* libvorbisfile.a */,
+				CAFAF6B917EBA6C3002AA22A /* Vorbis.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -940,11 +966,11 @@
 		CAF429751780F36200C3220A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CAFAF64917EBA129002AA22A /* Cocoa.framework */,
 				CA27888A1780FDC4005A242D /* libz.dylib */,
 				CA2788881780FDBF005A242D /* libxml2.dylib */,
 				CA2788861780FDB6005A242D /* OpenGL.framework */,
 				CA2788841780FDB1005A242D /* OpenAL.framework */,
-				CAF429761780F36200C3220A /* Cocoa.framework */,
 				CA705BCE17834FCC00D2C6E4 /* Foundation.framework */,
 				CAF429781780F36200C3220A /* Other Frameworks */,
 			);
@@ -1149,6 +1175,8 @@
 				CA705BE31783502F00D2C6E4 /* PBXTargetDependency */,
 				CA705BE71783502F00D2C6E4 /* PBXTargetDependency */,
 				CA705BE91783502F00D2C6E4 /* PBXTargetDependency */,
+				CAFAF6B317EBA6C3002AA22A /* PBXTargetDependency */,
+				CAFAF6B117EBA6C3002AA22A /* PBXTargetDependency */,
 			);
 			name = "DaBes-iOS";
 			productName = "DaBes-iOS";
@@ -1186,7 +1214,7 @@
 		CA24C72716FC1E7E0045D5DE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "The Telemetry Group";
 			};
 			buildConfigurationList = CA24C72A16FC1E7E0045D5DE /* Build configuration list for PBXProject "DaBesEngine" */;
@@ -1330,6 +1358,20 @@
 			fileType = archive.ar;
 			path = "libFreetype2-Mac.a";
 			remoteRef = CA72C41C179520F600255691 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CAFAF6B617EBA6C3002AA22A /* Ogg.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework.static;
+			path = Ogg.framework;
+			remoteRef = CAFAF6B517EBA6C3002AA22A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CAFAF6B917EBA6C3002AA22A /* Vorbis.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework.static;
+			path = Vorbis.framework;
+			remoteRef = CAFAF6B817EBA6C3002AA22A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1612,6 +1654,16 @@
 			name = "lua-mac";
 			targetProxy = CAF429F31780F45500C3220A /* PBXContainerItemProxy */;
 		};
+		CAFAF6B117EBA6C3002AA22A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Vorbis-iOS";
+			targetProxy = CAFAF6B017EBA6C3002AA22A /* PBXContainerItemProxy */;
+		};
+		CAFAF6B317EBA6C3002AA22A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Ogg-iOS";
+			targetProxy = CAFAF6B217EBA6C3002AA22A /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1703,13 +1755,11 @@
 		CA705BD717834FCC00D2C6E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../third_party/OggVorbis\"",
 					"\"$(SRCROOT)\"/**",
 				);
 				FRAMEWORK_VERSION = A;
@@ -1729,6 +1779,12 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDABES_IOS";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Ogg,
+					"-framework",
+					Vorbis,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1739,13 +1795,11 @@
 		CA705BD817834FCC00D2C6E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../../third_party/OggVorbis\"",
 					"\"$(SRCROOT)\"/**",
 				);
 				FRAMEWORK_VERSION = A;
@@ -1759,6 +1813,12 @@
 				INFOPLIST_FILE = "DaBes-iOS/DaBes-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DDABES_IOS";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Ogg,
+					"-framework",
+					Vorbis,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1769,7 +1829,6 @@
 		CAF429871780F36300C3220A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1801,7 +1860,6 @@
 		CAF429881780F36300C3220A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;

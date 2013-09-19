@@ -2554,6 +2554,7 @@ typedef struct Canvas {
     VVector4 bg_color;
     VVector4 draw_color;
     VVector4 simplified_path_color;
+    VVector4 angle_color;
 
     VPoint point_queue[CANVAS_QUEUE_SIZE];
     int queue_count;
