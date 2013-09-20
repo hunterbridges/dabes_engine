@@ -87,7 +87,11 @@ StepSequencer = Object:extend({
                 if self.current_step.kind == 'every' then
                     local tween = (self.count - self.current_step.started_at) /
                                   self.current_step.steps
-                    self.current_step.update(self, self.current_env, tween)
+                    local ret =
+                        self.current_step.update(self, self.current_env, tween)
+                    if ret then
+                        self.current_step = nil
+                    end
                 elseif self.current_step.kind == 'until' then
                     local ret = self.current_step.update(self, self.current_env)
 

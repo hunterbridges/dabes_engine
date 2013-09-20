@@ -1,21 +1,23 @@
 require 'dabes.step_sequencer'
 
 local sequence = StepSequencer:new(
-    {"wait", 0, function(seq, env)
+    function(seq, env)
         print "Starting with this"
-     end},
+    end,
+
+    {"every", 10, function(seq, env, tween)
+        print("Tween "..tween)
+    end},
 
     function(seq, env)
         print "Shorthand for wait 0"
     end,
 
-    {"wait", 10, function(seq, env)
-        print "Ok waited"
-    end},
+    {"wait", 10},
 
-    {"every", 10, function(seq, env, tween)
-        print("Tween "..tween)
-    end},
+    function(seq, env)
+        print "Ok waited"
+    end,
 
     {"until", function(seq, env)
         if env.count == nil then
