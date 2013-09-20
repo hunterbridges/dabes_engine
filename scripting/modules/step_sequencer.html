@@ -32,10 +32,8 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Properties">Properties </a></li>
 <li><a href="#Class_Methods">Class Methods </a></li>
 <li><a href="#Instance_Methods">Instance Methods </a></li>
-<li><a href="#Hooks">Hooks </a></li>
 </ul>
 
 
@@ -57,12 +55,12 @@
   <li><a href="../modules/scene.html">scene</a></li>
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
   <li><a href="../modules/sensor.html">sensor</a></li>
-  <li><strong>sfx</strong></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
   <li><a href="../modules/shape.html">shape</a></li>
   <li><a href="../modules/shape_matcher.html">shape_matcher</a></li>
   <li><a href="../modules/sprite.html">sprite</a></li>
   <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
-  <li><a href="../modules/step_sequencer.html">step_sequencer</a></li>
+  <li><strong>step_sequencer</strong></li>
   <li><a href="../modules/util.html">util</a></li>
 </ul>
 
@@ -70,38 +68,24 @@
 
 <div id="content">
 
-<h1>Module <code>sfx</code></h1>
+<h1>Module <code>step_sequencer</code></h1>
 
-<p>A one-shot OGG Vorbis audio sample.</p>
-<p> <a href="../modules/sfx.html#">Sfx</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+<p>Manages a sequence of update callbacks over time.</p>
+<p> <a href="../modules/step_sequencer.html#">StepSequencer</a> extends <a href="../modules/object.html#">Object</a></p>
 
 
-<h2><a href="#Properties">Properties </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#volume">volume</a></td>
-	<td class="summary">Minimum <code>0</code>, maximum <code>1</code></td>
-	</tr>
-</table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#Sfx:new">Sfx:new&nbsp;(filename)</a></td>
-	<td class="summary">Create a new <code>Sfx</code> by loading an OGG file</td>
+	<td class="name" nowrap><a href="#StepSequencer:new">StepSequencer:new&nbsp;(...)</a></td>
+	<td class="summary">Create a new <code>StepSequencer</code></td>
 	</tr>
 </table>
 <h2><a href="#Instance_Methods">Instance Methods </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#sfx:play">sfx:play&nbsp;()</a></td>
-	<td class="summary">Play the <code>Sfx</code></td>
-	</tr>
-</table>
-<h2><a href="#Hooks">Hooks </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#ended">ended&nbsp;(self)</a></td>
-	<td class="summary">Called when the <code>Music</code> ends.</td>
+	<td class="name" nowrap><a href="#step_sequener:update">step_sequener:update&nbsp;(steps)</a></td>
+	<td class="summary">Run the StepSequencer.</td>
 	</tr>
 </table>
 
@@ -109,47 +93,30 @@
 <br/>
 
 
-    <h2><a name="Properties"></a>Properties </h2>
-        Properties.
- Significant fields on an instance.
-    <dl class="function">
-    <dt>
-    <a name = "volume"></a>
-    <strong>volume</strong>
-    </dt>
-    <dd>
-    Minimum <code>0</code>, maximum <code>1</code>
-
-
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Class_Methods"></a>Class Methods </h2>
         Class Methods.
  Must be called on <code>Class</code>, with a capital leading character.
  e.g. <code>Class:method("foo")</code>
     <dl class="function">
     <dt>
-    <a name = "Sfx:new"></a>
-    <strong>Sfx:new&nbsp;(filename)</strong>
+    <a name = "StepSequencer:new"></a>
+    <strong>StepSequencer:new&nbsp;(...)</strong>
     </dt>
     <dd>
-    Create a new <code>Sfx</code> by loading an OGG file
+    Create a new <code>StepSequencer</code>
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">filename</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         The filename of the OGG file</li>
+        <li><span class="parameter">...</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         the steps to sequence, of types <code>wait</code>, <code>every</code>, or
+ <code>until</code></li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-          <span class="types"><span class="type">Sfx</span></span>
+          <span class="types"><span class="type">StepSequencer</span></span>
 
 
 
@@ -166,46 +133,26 @@
  e.g. <code>instance:method("foo")</code>
     <dl class="function">
     <dt>
-    <a name = "sfx:play"></a>
-    <strong>sfx:play&nbsp;()</strong>
+    <a name = "step_sequener:update"></a>
+    <strong>step_sequener:update&nbsp;(steps)</strong>
     </dt>
     <dd>
-    Play the <code>Sfx</code>
+    Run the StepSequencer.
 
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">steps</span>
+            <span class="types"><span class="type">number</span></span>
+         How many steps to advance the sequencer.</li>
+    </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-          <span class="types"><span class="type">nil</span></span>
-
-
-
+          <span class="types"><span class="type">boolean</span></span>
+        <code>true</code> if the StepSequencer has pending cycles, <code>false</code>
+ if it has completed.
     </ol>
-
-
-
-
-</dd>
-</dl>
-    <h2><a name="Hooks"></a>Hooks </h2>
-        Hooks.
- Callbacks implemented in subclasses to customize behavior. Hooks are called
- on individual instances.
-    <dl class="function">
-    <dt>
-    <a name = "ended"></a>
-    <strong>ended&nbsp;(self)</strong>
-    </dt>
-    <dd>
-    Called when the <code>Music</code> ends.
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">self</span>
-            <span class="types"><span class="type">Music</span></span>
-         The instance</li>
-    </ul>
-
 
 
 
