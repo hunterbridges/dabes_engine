@@ -61,3 +61,9 @@ function ticks()
     return dab_engine.ticks()
 end
 
+--- Returns the number of milliseconds since the last frame was rendered.
+-- @treturn number
+function frame_ticks()
+    return dab_engine.frame_ticks()
+end
+
