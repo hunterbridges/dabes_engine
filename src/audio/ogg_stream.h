@@ -6,18 +6,15 @@
 #if defined(DABES_IOS) || defined(DABES_MAC)
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-#include <Ogg/ogg.h>
-#include <Vorbis/codec.h>
-#include <Vorbis/vorbisenc.h>
-#include <Vorbis/vorbisfile.h>
 #else
 #include <al/al.h>
 #include <al/alc.h>
+#endif
+
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 #include <vorbis/vorbisenc.h>
 #include <vorbis/vorbisfile.h>
-#endif
 
 #include "../prefix.h"
 #include "audio.h"

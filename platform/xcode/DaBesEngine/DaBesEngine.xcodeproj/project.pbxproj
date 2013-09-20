@@ -92,6 +92,8 @@
 		CAB6AF3617CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CAB6AF3317CD42CA0000C3B5 /* telemetry_splash_scene.c */; };
 		CAB6AF3717CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */; };
 		CAB6AF3817CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */; };
+		CAB8494617EC337C00FCF11A /* libogg-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB8493C17EC330800FCF11A /* libogg-iOS.a */; };
+		CAB8494717EC337C00FCF11A /* liblibvorbis-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB8493F17EC330800FCF11A /* liblibvorbis-iOS.a */; };
 		CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
@@ -367,6 +369,34 @@
 			remoteGlobalIDString = CA72C32C179520BF00255691;
 			remoteInfo = "Freetype2-Mac";
 		};
+		CAB8493B17EC330800FCF11A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAB8491417EC32CF00FCF11A;
+			remoteInfo = "libogg-iOS";
+		};
+		CAB8493E17EC330800FCF11A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAB848D817EC31FC00FCF11A;
+			remoteInfo = "libvorbis-iOS";
+		};
+		CAB8494017EC331600FCF11A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CAB848D717EC31FC00FCF11A;
+			remoteInfo = "libvorbis-iOS";
+		};
+		CAB8494217EC331600FCF11A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CAB8491317EC32CF00FCF11A;
+			remoteInfo = "libogg-iOS";
+		};
 		CAF429EB1780F45500C3220A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
@@ -401,20 +431,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CA5D232A17700BFC0044793D;
 			remoteInfo = "lua-mac";
-		};
-		CAFAF6B017EBA6C3002AA22A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CAFAF6C317EBA7C0002AA22A;
-			remoteInfo = "Vorbis-iOS";
-		};
-		CAFAF6B217EBA6C3002AA22A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CAFAF6F317EBA8C0002AA22A;
-			remoteInfo = "Ogg-iOS";
 		};
 		CAFAF6B517EBA6C3002AA22A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -602,6 +618,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAB8494617EC337C00FCF11A /* libogg-iOS.a in Frameworks */,
+				CAB8494717EC337C00FCF11A /* liblibvorbis-iOS.a in Frameworks */,
 				CAFAF73B17EBB153002AA22A /* libChipmunk-iPhone.a in Frameworks */,
 				CA72C4201795210300255691 /* libFreetype2.a in Frameworks */,
 				CA705BEB1783505B00D2C6E4 /* liblcthw.a in Frameworks */,
@@ -637,6 +655,7 @@
 				CA1D745F17702B6500712C8D /* Ogg.framework */,
 				CA1D746117702B6500712C8D /* libogg.a */,
 				CAFAF6B617EBA6C3002AA22A /* Ogg.framework */,
+				CAB8493C17EC330800FCF11A /* libogg-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -649,6 +668,7 @@
 				CA1D746E17702B6E00712C8D /* libvorbisenc.a */,
 				CA1D747017702B6E00712C8D /* libvorbisfile.a */,
 				CAFAF6B917EBA6C3002AA22A /* Vorbis.framework */,
+				CAB8493F17EC330800FCF11A /* liblibvorbis-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1171,12 +1191,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				CAB8494117EC331600FCF11A /* PBXTargetDependency */,
+				CAB8494317EC331600FCF11A /* PBXTargetDependency */,
 				CA72C41F179520FE00255691 /* PBXTargetDependency */,
 				CA705BE31783502F00D2C6E4 /* PBXTargetDependency */,
 				CA705BE71783502F00D2C6E4 /* PBXTargetDependency */,
 				CA705BE91783502F00D2C6E4 /* PBXTargetDependency */,
-				CAFAF6B317EBA6C3002AA22A /* PBXTargetDependency */,
-				CAFAF6B117EBA6C3002AA22A /* PBXTargetDependency */,
 			);
 			name = "DaBes-iOS";
 			productName = "DaBes-iOS";
@@ -1358,6 +1378,21 @@
 			fileType = archive.ar;
 			path = "libFreetype2-Mac.a";
 			remoteRef = CA72C41C179520F600255691 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CAB8493C17EC330800FCF11A /* libogg-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libogg-iOS.a";
+			remoteRef = CAB8493B17EC330800FCF11A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CAB8493F17EC330800FCF11A /* liblibvorbis-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			name = "liblibvorbis-iOS.a";
+			path = "libvorbis-iOS.a";
+			remoteRef = CAB8493E17EC330800FCF11A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CAFAF6B617EBA6C3002AA22A /* Ogg.framework */ = {
@@ -1629,6 +1664,16 @@
 			name = "Freetype2-Mac";
 			targetProxy = CA72C4211795210A00255691 /* PBXContainerItemProxy */;
 		};
+		CAB8494117EC331600FCF11A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libvorbis-iOS";
+			targetProxy = CAB8494017EC331600FCF11A /* PBXContainerItemProxy */;
+		};
+		CAB8494317EC331600FCF11A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libogg-iOS";
+			targetProxy = CAB8494217EC331600FCF11A /* PBXContainerItemProxy */;
+		};
 		CAF429EC1780F45500C3220A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Vorbis;
@@ -1653,16 +1698,6 @@
 			isa = PBXTargetDependency;
 			name = "lua-mac";
 			targetProxy = CAF429F31780F45500C3220A /* PBXContainerItemProxy */;
-		};
-		CAFAF6B117EBA6C3002AA22A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Vorbis-iOS";
-			targetProxy = CAFAF6B017EBA6C3002AA22A /* PBXContainerItemProxy */;
-		};
-		CAFAF6B317EBA6C3002AA22A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Ogg-iOS";
-			targetProxy = CAFAF6B217EBA6C3002AA22A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1774,17 +1809,12 @@
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-iOS/DaBes-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DDABES_IOS";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Ogg,
-					"-framework",
-					Vorbis,
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1809,16 +1839,12 @@
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-iOS/DaBes-iOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DDABES_IOS";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Ogg,
-					"-framework",
-					Vorbis,
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;

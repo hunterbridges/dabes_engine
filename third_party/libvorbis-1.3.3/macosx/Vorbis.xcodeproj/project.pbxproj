@@ -94,75 +94,45 @@
 		738836090B19000B005C7A69 /* bitrate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60D03389C830112CE8F /* bitrate.c */; };
 		738836140B1904A5005C7A69 /* vorbisenc.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65E03389C830112CE8F /* vorbisenc.c */; };
 		738836230B190601005C7A69 /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65F03389C830112CE8F /* vorbisfile.c */; };
-		CAFAF6C717EBA7C0002AA22A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF6C617EBA7C0002AA22A /* Foundation.framework */; };
-		CAFAF6CD17EBA7C0002AA22A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CAFAF6CB17EBA7C0002AA22A /* InfoPlist.strings */; };
-		CAFAF6D217EBA7E5002AA22A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60A03389C830112CE8F /* analysis.c */; };
-		CAFAF6D417EBA7E5002AA22A /* bitrate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60D03389C830112CE8F /* bitrate.c */; };
-		CAFAF6D517EBA7E5002AA22A /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60F03389C830112CE8F /* block.c */; };
-		CAFAF6D617EBA7E5002AA22A /* codebook.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62303389C830112CE8F /* codebook.c */; };
-		CAFAF6D717EBA7E5002AA22A /* envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62603389C830112CE8F /* envelope.c */; };
-		CAFAF6D817EBA7E5002AA22A /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62803389C830112CE8F /* floor0.c */; };
-		CAFAF6D917EBA7E5002AA22A /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62903389C830112CE8F /* floor1.c */; };
-		CAFAF6DA17EBA7E5002AA22A /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62B03389C830112CE8F /* info.c */; };
-		CAFAF6DB17EBA7E5002AA22A /* lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62C03389C830112CE8F /* lookup.c */; };
-		CAFAF6DC17EBA7E5002AA22A /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63003389C830112CE8F /* lpc.c */; };
-		CAFAF6DD17EBA7E5002AA22A /* lsp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63203389C830112CE8F /* lsp.c */; };
-		CAFAF6DE17EBA7E5002AA22A /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63603389C830112CE8F /* mapping0.c */; };
-		CAFAF6DF17EBA7E5002AA22A /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63803389C830112CE8F /* mdct.c */; };
-		CAFAF6E117EBA7E5002AA22A /* psy.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65203389C830112CE8F /* psy.c */; };
-		CAFAF6E317EBA7E5002AA22A /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65503389C830112CE8F /* registry.c */; };
-		CAFAF6E417EBA7E5002AA22A /* res0.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65703389C830112CE8F /* res0.c */; };
-		CAFAF6E517EBA7E5002AA22A /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65903389C830112CE8F /* sharedbook.c */; };
-		CAFAF6E617EBA7E5002AA22A /* smallft.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65A03389C830112CE8F /* smallft.c */; };
-		CAFAF6E717EBA7E5002AA22A /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65C03389C830112CE8F /* synthesis.c */; };
-		CAFAF6E917EBA7E5002AA22A /* vorbisenc.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65E03389C830112CE8F /* vorbisenc.c */; };
-		CAFAF6EA17EBA7E5002AA22A /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65F03389C830112CE8F /* vorbisfile.c */; };
-		CAFAF6EB17EBA7E5002AA22A /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F66003389C830112CE8F /* window.c */; };
-		CAFAF70517EBA9F6002AA22A /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF70417EBA9F6002AA22A /* Ogg.framework */; };
+		CA0CEDCE17EC9AB0003E71AD /* vorbisenc.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65E03389C830112CE8F /* vorbisenc.c */; };
+		CA0CEDCF17EC9AB0003E71AD /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65F03389C830112CE8F /* vorbisfile.c */; };
+		CAB848D917EC31FC00FCF11A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF6C617EBA7C0002AA22A /* Foundation.framework */; };
+		CAB848DE17EC31FC00FCF11A /* vorbis_iOS.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CAB848DD17EC31FC00FCF11A /* vorbis_iOS.h */; };
+		CAB848FC17EC327200FCF11A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60A03389C830112CE8F /* analysis.c */; };
+		CAB848FD17EC327200FCF11A /* bitrate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60D03389C830112CE8F /* bitrate.c */; };
+		CAB848FE17EC327200FCF11A /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60F03389C830112CE8F /* block.c */; };
+		CAB848FF17EC327200FCF11A /* codebook.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62303389C830112CE8F /* codebook.c */; };
+		CAB8490017EC327200FCF11A /* envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62603389C830112CE8F /* envelope.c */; };
+		CAB8490117EC327200FCF11A /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62803389C830112CE8F /* floor0.c */; };
+		CAB8490217EC327200FCF11A /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62903389C830112CE8F /* floor1.c */; };
+		CAB8490317EC327200FCF11A /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62B03389C830112CE8F /* info.c */; };
+		CAB8490417EC327200FCF11A /* lookup.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F62C03389C830112CE8F /* lookup.c */; };
+		CAB8490517EC327200FCF11A /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63003389C830112CE8F /* lpc.c */; };
+		CAB8490617EC327200FCF11A /* lsp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63203389C830112CE8F /* lsp.c */; };
+		CAB8490717EC327200FCF11A /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63603389C830112CE8F /* mapping0.c */; };
+		CAB8490817EC327200FCF11A /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F63803389C830112CE8F /* mdct.c */; };
+		CAB8490917EC327200FCF11A /* psy.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65203389C830112CE8F /* psy.c */; };
+		CAB8490A17EC327200FCF11A /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65503389C830112CE8F /* registry.c */; };
+		CAB8490B17EC327200FCF11A /* res0.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65703389C830112CE8F /* res0.c */; };
+		CAB8490C17EC327200FCF11A /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65903389C830112CE8F /* sharedbook.c */; };
+		CAB8490D17EC327200FCF11A /* smallft.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65A03389C830112CE8F /* smallft.c */; };
+		CAB8490E17EC327200FCF11A /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65C03389C830112CE8F /* synthesis.c */; };
+		CAB8490F17EC327200FCF11A /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F66003389C830112CE8F /* window.c */; };
 		CAFAF70817EBAA6C002AA22A /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF70417EBA9F6002AA22A /* Ogg.framework */; };
-		CAFAF70F17EBAADB002AA22A /* codec.h in Headers */ = {isa = PBXBuildFile; fileRef = F58520B90191D12B01A802FE /* codec.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CAFAF71017EBAAE6002AA22A /* vorbisenc.h in Headers */ = {isa = PBXBuildFile; fileRef = F58520BA0191D12B01A802FE /* vorbisenc.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CAFAF71117EBAAE6002AA22A /* vorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F58520BB0191D12B01A802FE /* vorbisfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CAFAF71217EBAB40002AA22A /* backends.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F60B03389C830112CE8F /* backends.h */; };
-		CAFAF71317EBAB40002AA22A /* bitrate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F60E03389C830112CE8F /* bitrate.h */; };
-		CAFAF71417EBAB40002AA22A /* res_books_stereo.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F61603389C830112CE8F /* res_books_stereo.h */; };
-		CAFAF71517EBAB40002AA22A /* floor_books.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F61903389C830112CE8F /* floor_books.h */; };
-		CAFAF71617EBAB40002AA22A /* res_books_uncoupled.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62203389C830112CE8F /* res_books_uncoupled.h */; };
-		CAFAF71717EBAB40002AA22A /* codebook.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62403389C830112CE8F /* codebook.h */; };
-		CAFAF71817EBAB40002AA22A /* codec_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62503389C830112CE8F /* codec_internal.h */; };
-		CAFAF71917EBAB40002AA22A /* envelope.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62703389C830112CE8F /* envelope.h */; };
-		CAFAF71A17EBAB40002AA22A /* highlevel.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62A03389C830112CE8F /* highlevel.h */; };
-		CAFAF71B17EBAB40002AA22A /* lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62D03389C830112CE8F /* lookup.h */; };
-		CAFAF71C17EBAB40002AA22A /* lookup_data.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F62E03389C830112CE8F /* lookup_data.h */; };
-		CAFAF71D17EBAB40002AA22A /* lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F63103389C830112CE8F /* lpc.h */; };
-		CAFAF71E17EBAB40002AA22A /* lsp.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F63303389C830112CE8F /* lsp.h */; };
-		CAFAF71F17EBAB40002AA22A /* masking.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F63703389C830112CE8F /* masking.h */; };
-		CAFAF72017EBAB40002AA22A /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F63903389C830112CE8F /* mdct.h */; };
-		CAFAF72117EBAB40002AA22A /* misc.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F63B03389C830112CE8F /* misc.h */; };
-		CAFAF72217EBAB40002AA22A /* floor_all.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F63E03389C830112CE8F /* floor_all.h */; };
-		CAFAF72317EBAB40002AA22A /* psych_11.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64103389C830112CE8F /* psych_11.h */; };
-		CAFAF72417EBAB40002AA22A /* psych_16.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64203389C830112CE8F /* psych_16.h */; };
-		CAFAF72517EBAB40002AA22A /* psych_44.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64303389C830112CE8F /* psych_44.h */; };
-		CAFAF72617EBAB40002AA22A /* psych_8.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64403389C830112CE8F /* psych_8.h */; };
-		CAFAF72717EBAB40002AA22A /* residue_16.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64503389C830112CE8F /* residue_16.h */; };
-		CAFAF72817EBAB40002AA22A /* residue_44.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64603389C830112CE8F /* residue_44.h */; };
-		CAFAF72917EBAB40002AA22A /* residue_44u.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64703389C830112CE8F /* residue_44u.h */; };
-		CAFAF72A17EBAB40002AA22A /* residue_8.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64803389C830112CE8F /* residue_8.h */; };
-		CAFAF72B17EBAB40002AA22A /* setup_11.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64903389C830112CE8F /* setup_11.h */; };
-		CAFAF72C17EBAB40002AA22A /* setup_16.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64A03389C830112CE8F /* setup_16.h */; };
-		CAFAF72D17EBAB40002AA22A /* setup_22.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64B03389C830112CE8F /* setup_22.h */; };
-		CAFAF72E17EBAB40002AA22A /* setup_32.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64C03389C830112CE8F /* setup_32.h */; };
-		CAFAF72F17EBAB40002AA22A /* setup_44.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64D03389C830112CE8F /* setup_44.h */; };
-		CAFAF73017EBAB40002AA22A /* setup_44u.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64E03389C830112CE8F /* setup_44u.h */; };
-		CAFAF73117EBAB40002AA22A /* setup_8.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F64F03389C830112CE8F /* setup_8.h */; };
-		CAFAF73217EBAB40002AA22A /* setup_X.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F65003389C830112CE8F /* setup_X.h */; };
-		CAFAF73317EBAB57002AA22A /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F65103389C830112CE8F /* os.h */; };
-		CAFAF73417EBAB57002AA22A /* psy.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F65303389C830112CE8F /* psy.h */; };
-		CAFAF73517EBAB57002AA22A /* registry.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F65603389C830112CE8F /* registry.h */; };
-		CAFAF73617EBAB57002AA22A /* scales.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F65803389C830112CE8F /* scales.h */; };
-		CAFAF73717EBAB57002AA22A /* smallft.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F65B03389C830112CE8F /* smallft.h */; };
-		CAFAF73817EBAB57002AA22A /* window.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D8F66103389C830112CE8F /* window.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CAB848D617EC31FC00FCF11A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				CAB848DE17EC31FC00FCF11A /* vorbis_iOS.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -172,7 +142,15 @@
 		738835E40B18F870005C7A69 /* libvorbis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvorbis.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		738836130B190488005C7A69 /* libvorbisenc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvorbisenc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		738836220B1905E5005C7A69 /* libvorbisfile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvorbisfile.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAFAF6C417EBA7C0002AA22A /* Vorbis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework.static; includeInIndex = 0; path = Vorbis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAB848D817EC31FC00FCF11A /* libvorbis-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvorbis-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAB848DC17EC31FC00FCF11A /* vorbis-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "vorbis-iOS-Prefix.pch"; sourceTree = "<group>"; };
+		CAB848DD17EC31FC00FCF11A /* vorbis_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vorbis_iOS.h; sourceTree = "<group>"; };
+		CAB848DF17EC31FC00FCF11A /* vorbis_iOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vorbis_iOS.m; sourceTree = "<group>"; };
+		CAB848E617EC31FC00FCF11A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		CAB848E917EC31FC00FCF11A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		CAB848F017EC31FD00FCF11A /* vorbis-iOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "vorbis-iOSTests-Info.plist"; sourceTree = "<group>"; };
+		CAB848F217EC31FD00FCF11A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CAB848F417EC31FD00FCF11A /* vorbis_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vorbis_iOSTests.m; sourceTree = "<group>"; };
 		CAFAF6C617EBA7C0002AA22A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CAFAF6CA17EBA7C0002AA22A /* Vorbis-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Vorbis-iOS-Info.plist"; sourceTree = "<group>"; };
 		CAFAF6CC17EBA7C0002AA22A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -279,12 +257,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CAFAF6BE17EBA7C0002AA22A /* Frameworks */ = {
+		CAB848D517EC31FC00FCF11A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAFAF70517EBA9F6002AA22A /* Ogg.framework in Frameworks */,
-				CAFAF6C717EBA7C0002AA22A /* Foundation.framework in Frameworks */,
+				CAB848D917EC31FC00FCF11A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,7 +275,7 @@
 				738835E40B18F870005C7A69 /* libvorbis.a */,
 				738836130B190488005C7A69 /* libvorbisenc.a */,
 				738836220B1905E5005C7A69 /* libvorbisfile.a */,
-				CAFAF6C417EBA7C0002AA22A /* Vorbis.framework */,
+				CAB848D817EC31FC00FCF11A /* libvorbis-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -311,6 +288,8 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				CAFAF6C817EBA7C0002AA22A /* Vorbis-iOS */,
+				CAB848DA17EC31FC00FCF11A /* vorbis-iOS */,
+				CAB848EE17EC31FC00FCF11A /* vorbis-iOSTests */,
 				CAFAF6C517EBA7C0002AA22A /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -334,12 +313,50 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		CAB848DA17EC31FC00FCF11A /* vorbis-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CAB848DD17EC31FC00FCF11A /* vorbis_iOS.h */,
+				CAB848DF17EC31FC00FCF11A /* vorbis_iOS.m */,
+				CAB848DB17EC31FC00FCF11A /* Supporting Files */,
+			);
+			path = "vorbis-iOS";
+			sourceTree = "<group>";
+		};
+		CAB848DB17EC31FC00FCF11A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CAB848DC17EC31FC00FCF11A /* vorbis-iOS-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CAB848EE17EC31FC00FCF11A /* vorbis-iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				CAB848F417EC31FD00FCF11A /* vorbis_iOSTests.m */,
+				CAB848EF17EC31FD00FCF11A /* Supporting Files */,
+			);
+			path = "vorbis-iOSTests";
+			sourceTree = "<group>";
+		};
+		CAB848EF17EC31FD00FCF11A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CAB848F017EC31FD00FCF11A /* vorbis-iOSTests-Info.plist */,
+				CAB848F117EC31FD00FCF11A /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		CAFAF6C517EBA7C0002AA22A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				CAFAF70617EBAA4F002AA22A /* libogg.a */,
 				CAFAF70417EBA9F6002AA22A /* Ogg.framework */,
 				CAFAF6C617EBA7C0002AA22A /* Foundation.framework */,
+				CAB848E617EC31FC00FCF11A /* XCTest.framework */,
+				CAB848E917EC31FC00FCF11A /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -559,55 +576,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CAFAF6BF17EBA7C0002AA22A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CAFAF70F17EBAADB002AA22A /* codec.h in Headers */,
-				CAFAF71017EBAAE6002AA22A /* vorbisenc.h in Headers */,
-				CAFAF71117EBAAE6002AA22A /* vorbisfile.h in Headers */,
-				CAFAF71217EBAB40002AA22A /* backends.h in Headers */,
-				CAFAF71317EBAB40002AA22A /* bitrate.h in Headers */,
-				CAFAF71417EBAB40002AA22A /* res_books_stereo.h in Headers */,
-				CAFAF71517EBAB40002AA22A /* floor_books.h in Headers */,
-				CAFAF71617EBAB40002AA22A /* res_books_uncoupled.h in Headers */,
-				CAFAF71717EBAB40002AA22A /* codebook.h in Headers */,
-				CAFAF71817EBAB40002AA22A /* codec_internal.h in Headers */,
-				CAFAF71917EBAB40002AA22A /* envelope.h in Headers */,
-				CAFAF71A17EBAB40002AA22A /* highlevel.h in Headers */,
-				CAFAF71B17EBAB40002AA22A /* lookup.h in Headers */,
-				CAFAF71C17EBAB40002AA22A /* lookup_data.h in Headers */,
-				CAFAF71D17EBAB40002AA22A /* lpc.h in Headers */,
-				CAFAF71E17EBAB40002AA22A /* lsp.h in Headers */,
-				CAFAF71F17EBAB40002AA22A /* masking.h in Headers */,
-				CAFAF72017EBAB40002AA22A /* mdct.h in Headers */,
-				CAFAF72117EBAB40002AA22A /* misc.h in Headers */,
-				CAFAF72217EBAB40002AA22A /* floor_all.h in Headers */,
-				CAFAF72317EBAB40002AA22A /* psych_11.h in Headers */,
-				CAFAF72417EBAB40002AA22A /* psych_16.h in Headers */,
-				CAFAF72517EBAB40002AA22A /* psych_44.h in Headers */,
-				CAFAF72617EBAB40002AA22A /* psych_8.h in Headers */,
-				CAFAF72717EBAB40002AA22A /* residue_16.h in Headers */,
-				CAFAF72817EBAB40002AA22A /* residue_44.h in Headers */,
-				CAFAF72917EBAB40002AA22A /* residue_44u.h in Headers */,
-				CAFAF72A17EBAB40002AA22A /* residue_8.h in Headers */,
-				CAFAF72B17EBAB40002AA22A /* setup_11.h in Headers */,
-				CAFAF72C17EBAB40002AA22A /* setup_16.h in Headers */,
-				CAFAF72D17EBAB40002AA22A /* setup_22.h in Headers */,
-				CAFAF72E17EBAB40002AA22A /* setup_32.h in Headers */,
-				CAFAF72F17EBAB40002AA22A /* setup_44.h in Headers */,
-				CAFAF73017EBAB40002AA22A /* setup_44u.h in Headers */,
-				CAFAF73117EBAB40002AA22A /* setup_8.h in Headers */,
-				CAFAF73217EBAB40002AA22A /* setup_X.h in Headers */,
-				CAFAF73317EBAB57002AA22A /* os.h in Headers */,
-				CAFAF73417EBAB57002AA22A /* psy.h in Headers */,
-				CAFAF73517EBAB57002AA22A /* registry.h in Headers */,
-				CAFAF73617EBAB57002AA22A /* scales.h in Headers */,
-				CAFAF73717EBAB57002AA22A /* smallft.h in Headers */,
-				CAFAF73817EBAB57002AA22A /* window.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -682,26 +650,22 @@
 			productReference = 738836220B1905E5005C7A69 /* libvorbisfile.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		CAFAF6C317EBA7C0002AA22A /* Vorbis-iOS */ = {
+		CAB848D717EC31FC00FCF11A /* vorbis-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CAFAF6CF17EBA7C0002AA22A /* Build configuration list for PBXNativeTarget "Vorbis-iOS" */;
+			buildConfigurationList = CAB848F617EC31FD00FCF11A /* Build configuration list for PBXNativeTarget "vorbis-iOS" */;
 			buildPhases = (
-				CAFAF6BC17EBA7C0002AA22A /* ShellScript */,
-				CAFAF6BD17EBA7C0002AA22A /* Sources */,
-				CAFAF6BE17EBA7C0002AA22A /* Frameworks */,
-				CAFAF6BF17EBA7C0002AA22A /* Headers */,
-				CAFAF6C017EBA7C0002AA22A /* Resources */,
-				CAFAF6C117EBA7C0002AA22A /* ShellScript */,
-				CAFAF6C217EBA7C0002AA22A /* ShellScript */,
+				CAB848D417EC31FC00FCF11A /* Sources */,
+				CAB848D517EC31FC00FCF11A /* Frameworks */,
+				CAB848D617EC31FC00FCF11A /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "Vorbis-iOS";
-			productName = "Vorbis-iOS";
-			productReference = CAFAF6C417EBA7C0002AA22A /* Vorbis.framework */;
-			productType = "com.apple.product-type.framework.static";
+			name = "vorbis-iOS";
+			productName = "vorbis-iOS";
+			productReference = CAB848D817EC31FC00FCF11A /* libvorbis-iOS.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -727,7 +691,7 @@
 				738835E30B18F870005C7A69 /* libvorbis (static) */,
 				738836120B190488005C7A69 /* libvorbisenc (static) */,
 				738836210B1905E5005C7A69 /* libvorbisfile (static) */,
-				CAFAF6C317EBA7C0002AA22A /* Vorbis-iOS */,
+				CAB848D717EC31FC00FCF11A /* vorbis-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -738,14 +702,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				730F23CE091827B100AB638C /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CAFAF6C017EBA7C0002AA22A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CAFAF6CD17EBA7C0002AA22A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -760,48 +716,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXRezBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		CAFAF6BC17EBA7C0002AA22A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nset +u\nif [[ $UFW_MASTER_SCRIPT_RUNNING ]]\nthen\n    # Nothing for the slave script to do\n    exit 0\nfi\nset -u\n\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\n    UFW_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\n    echo \"Could not find platform name from SDK_NAME: $SDK_NAME\"\n    exit 1\nfi\n\nif [[ \"$SDK_NAME\" =~ ([0-9]+.*$) ]]\nthen\n\tUFW_SDK_VERSION=${BASH_REMATCH[1]}\nelse\n    echo \"Could not find sdk version  from SDK_NAME: $SDK_NAME\"\n    exit 1\nfi\n\nif [[ \"$UFW_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\n    UFW_OTHER_PLATFORM=iphonesimulator\nelse\n    UFW_OTHER_PLATFORM=iphoneos\nfi\n\nif [[ \"$BUILT_PRODUCTS_DIR\" =~ (.*)$UFW_SDK_PLATFORM$ ]]\nthen\n    UFW_OTHER_BUILT_PRODUCTS_DIR=\"${BASH_REMATCH[1]}${UFW_OTHER_PLATFORM}\"\nelse\n    echo \"Could not find $UFW_SDK_PLATFORM in $BUILT_PRODUCTS_DIR\"\n    exit 1\nfi\n\nONLY_ACTIVE_PLATFORM=${ONLY_ACTIVE_PLATFORM:-$ONLY_ACTIVE_ARCH}\n\n# Short-circuit if all binaries are up to date\n\nif [[ -f \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" ]] && \\\n   [[ -f \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/${EXECUTABLE_PATH}\" ]] && \\\n   [[ ! \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -nt \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/${EXECUTABLE_PATH}\" ]] && \\\n  ([[ \"${ONLY_ACTIVE_PLATFORM}\" == \"YES\" ]] || \\\n    ([[ -f \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" ]] && \\\n     [[ -f \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/${EXECUTABLE_PATH}\" ]] && \\\n     [[ ! \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -nt \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/${EXECUTABLE_PATH}\" ]]\n    )\n  )\nthen\n    exit 0\nfi\n\n\n# Clean other platform if needed\n\nif [[ ! -f \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" ]] && [[ \"${ONLY_ACTIVE_PLATFORM}\" != \"YES\" ]]\nthen\n\techo \"Platform \\\"$UFW_SDK_PLATFORM\\\" was cleaned recently. Cleaning \\\"$UFW_OTHER_PLATFORM\\\" as well\"\n\techo xcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${UFW_OTHER_PLATFORM}${UFW_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" CONFIGURATION_TEMP_DIR=\"${PROJECT_TEMP_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\" clean\n\txcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${UFW_OTHER_PLATFORM}${UFW_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" CONFIGURATION_TEMP_DIR=\"${PROJECT_TEMP_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\" clean\nfi\n\n\n# Make sure we are building from fresh binaries\n\nrm -rf \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nrm -rf \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework\"\n\nif [[ \"${ONLY_ACTIVE_PLATFORM}\" != \"YES\" ]]\nthen\n    rm -rf \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\n    rm -rf \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework\"\nfi\n";
-		};
-		CAFAF6C117EBA7C0002AA22A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "HEADERS_ROOT=$SRCROOT/$PRODUCT_NAME\nFRAMEWORK_HEADERS_DIR=\"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME/Versions/$FRAMEWORK_VERSION/Headers\"\n\n## only header files expected at this point\nPUBLIC_HEADERS=$(find $FRAMEWORK_HEADERS_DIR/. -not -type d 2> /dev/null | sed -e \"s@.*/@@g\")\n\nFIND_OPTS=\"\"\nfor PUBLIC_HEADER in $PUBLIC_HEADERS; do\n  if [ -n \"$FIND_OPTS\" ]; then\n    FIND_OPTS=\"$FIND_OPTS -o\"\n  fi\n  FIND_OPTS=\"$FIND_OPTS -name '$PUBLIC_HEADER'\"\ndone\n\nif [ -n \"$FIND_OPTS\" ]; then\n  for ORIG_HEADER in $(eval \"find $HEADERS_ROOT/. $FIND_OPTS\" 2> /dev/null | sed -e \"s@^$HEADERS_ROOT/./@@g\"); do\n    PUBLIC_HEADER=$(basename $ORIG_HEADER)\n    RELATIVE_PATH=$(dirname $ORIG_HEADER)\n    if [ -e $FRAMEWORK_HEADERS_DIR/$PUBLIC_HEADER ]; then\n      mkdir -p \"$FRAMEWORK_HEADERS_DIR/$RELATIVE_PATH\"\n      mv \"$FRAMEWORK_HEADERS_DIR/$PUBLIC_HEADER\" \"$FRAMEWORK_HEADERS_DIR/$RELATIVE_PATH/$PUBLIC_HEADER\"\n    fi\n  done\nfi\n";
-		};
-		CAFAF6C217EBA7C0002AA22A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\nset +u\nif [[ $UFW_MASTER_SCRIPT_RUNNING ]]\nthen\n    # Nothing for the slave script to do\n    exit 0\nfi\nset -u\nexport UFW_MASTER_SCRIPT_RUNNING=1\n\n\n# Functions\n\n## List files in the specified directory, storing to the specified array.\n#\n# @param $1 The path to list\n# @param $2 The name of the array to fill\n#\n##\nlist_files ()\n{\n    filelist=$(ls \"$1\")\n    while read line\n    do\n        eval \"$2[\\${#$2[*]}]=\\\"\\$line\\\"\"\n    done <<< \"$filelist\"\n}\n\n\n# Sanity check\n\nif [[ ! -f \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" ]]\nthen\n    echo \"Framework target \\\"${TARGET_NAME}\\\" had no source files to build from. Make sure your source files have the correct target membership\"\n    exit 1\nfi\n\n\n# Gather information\n\nif [[ \"$SDK_NAME\" =~ ([A-Za-z]+) ]]\nthen\n    UFW_SDK_PLATFORM=${BASH_REMATCH[1]}\nelse\n    echo \"Could not find platform name from SDK_NAME: $SDK_NAME\"\n    exit 1\nfi\n\nif [[ \"$SDK_NAME\" =~ ([0-9]+.*$) ]]\nthen\n    UFW_SDK_VERSION=${BASH_REMATCH[1]}\nelse\n    echo \"Could not find sdk version from SDK_NAME: $SDK_NAME\"\n    exit 1\nfi\n\nif [[ \"$UFW_SDK_PLATFORM\" = \"iphoneos\" ]]\nthen\n    UFW_OTHER_PLATFORM=iphonesimulator\nelse\n    UFW_OTHER_PLATFORM=iphoneos\nfi\n\nif [[ \"$BUILT_PRODUCTS_DIR\" =~ (.*)$UFW_SDK_PLATFORM$ ]]\nthen\n    UFW_OTHER_BUILT_PRODUCTS_DIR=\"${BASH_REMATCH[1]}${UFW_OTHER_PLATFORM}\"\nelse\n    echo \"Could not find $UFW_SDK_PLATFORM in $BUILT_PRODUCTS_DIR\"\n    exit 1\nfi\n\nONLY_ACTIVE_PLATFORM=${ONLY_ACTIVE_PLATFORM:-$ONLY_ACTIVE_ARCH}\n\n# Short-circuit if all binaries are up to date.\n# We already checked the other platform in the prerun script.\n\nif [[ -f \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" ]] && [[ -f \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/${EXECUTABLE_PATH}\" ]] && [[ ! \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -nt \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/${EXECUTABLE_PATH}\" ]]\nthen\n    exit 0\nfi\n\nif [ \"${ONLY_ACTIVE_PLATFORM}\" == \"YES\" ]\nthen\n    echo \"ONLY_ACTIVE_PLATFORM=${ONLY_ACTIVE_PLATFORM}: Skipping other platform build\"\nelse\n    # Make sure the other platform gets built\n    \n    echo \"Build other platform\"\n    \n    echo xcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${UFW_OTHER_PLATFORM}${UFW_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" CONFIGURATION_TEMP_DIR=\"${PROJECT_TEMP_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\" $ACTION\n    xcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration \"${CONFIGURATION}\" -sdk ${UFW_OTHER_PLATFORM}${UFW_SDK_VERSION} BUILD_DIR=\"${BUILD_DIR}\" CONFIGURATION_TEMP_DIR=\"${PROJECT_TEMP_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\" $ACTION\n    \n    \n    # Build the fat static library binary\n    \n    echo \"Create universal static library\"\n    \nif [[ \"$XCODE_VERSION_MAJOR\" = \"0500\" ]]\nthen\n    echo \"$DT_TOOLCHAIN_DIR/usr/bin/libtool\" -static \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -o \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}.temp\"\n    \"$DT_TOOLCHAIN_DIR/usr/bin/libtool\" -static \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -o \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}.temp\"\nelse\n    echo \"$PLATFORM_DEVELOPER_BIN_DIR/libtool\" -static \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -o \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}.temp\"\n    \"$PLATFORM_DEVELOPER_BIN_DIR/libtool\" -static \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${UFW_OTHER_BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -o \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}.temp\"\nfi \n    echo mv \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}.temp\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\n    mv \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}.temp\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nfi\n\n# Build embedded framework structure\n\necho \"Build Embedded Framework\"\n\necho rm -rf \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework\"\nrm -rf \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework\"\necho mkdir -p \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/Resources\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/Resources\"\necho cp -a \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/\"\ncp -a \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/\"\n\ndeclare -a UFW_FILE_LIST\nlist_files \"${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" UFW_FILE_LIST\nfor filename in \"${UFW_FILE_LIST[@]}\"\ndo\n    if [[ \"${filename}\" != \"Info.plist\" ]] && [[ ! \"${filename}\" =~ .*\\.lproj$ ]]\n    then\n        echo ln -sfh \"../${WRAPPER_NAME}/Resources/${filename}\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/Resources/${filename}\"\n        ln -sfh \"../${WRAPPER_NAME}/Resources/${filename}\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.embeddedframework/Resources/${filename}\"\n    fi\ndone\n\n\nif [ \"${ONLY_ACTIVE_PLATFORM}\" != \"YES\" ]\nthen\n    # Replace other platform's framework with a copy of this one (so that both have the same universal binary)\n    \n    echo \"Copy from $UFW_SDK_PLATFORM to $UFW_OTHER_PLATFORM\"\n    \n    echo rm -rf \"${BUILD_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\"\n    rm -rf \"${BUILD_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\"\n    echo cp -a \"${BUILD_DIR}/${CONFIGURATION}-${UFW_SDK_PLATFORM}\" \"${BUILD_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\"\n    cp -a \"${BUILD_DIR}/${CONFIGURATION}-${UFW_SDK_PLATFORM}\" \"${BUILD_DIR}/${CONFIGURATION}-${UFW_OTHER_PLATFORM}\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		730F23D2091827B100AB638C /* Sources */ = {
@@ -876,32 +790,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CAFAF6BD17EBA7C0002AA22A /* Sources */ = {
+		CAB848D417EC31FC00FCF11A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAFAF6D217EBA7E5002AA22A /* analysis.c in Sources */,
-				CAFAF6D417EBA7E5002AA22A /* bitrate.c in Sources */,
-				CAFAF6D517EBA7E5002AA22A /* block.c in Sources */,
-				CAFAF6D617EBA7E5002AA22A /* codebook.c in Sources */,
-				CAFAF6D717EBA7E5002AA22A /* envelope.c in Sources */,
-				CAFAF6D817EBA7E5002AA22A /* floor0.c in Sources */,
-				CAFAF6D917EBA7E5002AA22A /* floor1.c in Sources */,
-				CAFAF6DA17EBA7E5002AA22A /* info.c in Sources */,
-				CAFAF6DB17EBA7E5002AA22A /* lookup.c in Sources */,
-				CAFAF6DC17EBA7E5002AA22A /* lpc.c in Sources */,
-				CAFAF6DD17EBA7E5002AA22A /* lsp.c in Sources */,
-				CAFAF6DE17EBA7E5002AA22A /* mapping0.c in Sources */,
-				CAFAF6DF17EBA7E5002AA22A /* mdct.c in Sources */,
-				CAFAF6E117EBA7E5002AA22A /* psy.c in Sources */,
-				CAFAF6E317EBA7E5002AA22A /* registry.c in Sources */,
-				CAFAF6E417EBA7E5002AA22A /* res0.c in Sources */,
-				CAFAF6E517EBA7E5002AA22A /* sharedbook.c in Sources */,
-				CAFAF6E617EBA7E5002AA22A /* smallft.c in Sources */,
-				CAFAF6E717EBA7E5002AA22A /* synthesis.c in Sources */,
-				CAFAF6E917EBA7E5002AA22A /* vorbisenc.c in Sources */,
-				CAFAF6EA17EBA7E5002AA22A /* vorbisfile.c in Sources */,
-				CAFAF6EB17EBA7E5002AA22A /* window.c in Sources */,
+				CA0CEDCE17EC9AB0003E71AD /* vorbisenc.c in Sources */,
+				CA0CEDCF17EC9AB0003E71AD /* vorbisfile.c in Sources */,
+				CAB848FC17EC327200FCF11A /* analysis.c in Sources */,
+				CAB848FD17EC327200FCF11A /* bitrate.c in Sources */,
+				CAB848FE17EC327200FCF11A /* block.c in Sources */,
+				CAB848FF17EC327200FCF11A /* codebook.c in Sources */,
+				CAB8490017EC327200FCF11A /* envelope.c in Sources */,
+				CAB8490117EC327200FCF11A /* floor0.c in Sources */,
+				CAB8490217EC327200FCF11A /* floor1.c in Sources */,
+				CAB8490317EC327200FCF11A /* info.c in Sources */,
+				CAB8490417EC327200FCF11A /* lookup.c in Sources */,
+				CAB8490517EC327200FCF11A /* lpc.c in Sources */,
+				CAB8490617EC327200FCF11A /* lsp.c in Sources */,
+				CAB8490717EC327200FCF11A /* mapping0.c in Sources */,
+				CAB8490817EC327200FCF11A /* mdct.c in Sources */,
+				CAB8490917EC327200FCF11A /* psy.c in Sources */,
+				CAB8490A17EC327200FCF11A /* registry.c in Sources */,
+				CAB8490B17EC327200FCF11A /* res0.c in Sources */,
+				CAB8490C17EC327200FCF11A /* sharedbook.c in Sources */,
+				CAB8490D17EC327200FCF11A /* smallft.c in Sources */,
+				CAB8490E17EC327200FCF11A /* synthesis.c in Sources */,
+				CAB8490F17EC327200FCF11A /* window.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -912,6 +826,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		CAB848F117EC31FD00FCF11A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CAB848F217EC31FD00FCF11A /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1021,7 +943,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					../../ogg/include,
+					"../../libogg-1.3.1/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = vorbis;
@@ -1037,7 +959,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					../../ogg/include,
+					"../../libogg-1.3.1/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = vorbis;
@@ -1115,11 +1037,11 @@
 			};
 			name = Release;
 		};
-		CAFAF6D017EBA7C0002AA22A /* Debug */ = {
+		CAB848F717EC31FD00FCF11A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1132,18 +1054,11 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/DaBeSDK-apcfvgqrazxuvlgmpnpzyhbszraa/Build/Products/Debug",
-				);
-				FRAMEWORK_VERSION = A;
+				DSTROOT = /tmp/vorbis_iOS.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Vorbis-iOS/Vorbis-iOS-Prefix.pch";
+				GCC_PREFIX_HEADER = "vorbis-iOS/vorbis-iOS-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1158,23 +1073,21 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../lib,
 					"../../libogg-1.3.1/include/**",
+					"../lib/**",
 				);
-				INFOPLIST_FILE = "Vorbis-iOS/Vorbis-iOS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = Vorbis;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
-		CAFAF6D117EBA7C0002AA22A /* Release */ = {
+		CAB848F817EC31FD00FCF11A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1187,18 +1100,11 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DSTROOT = /tmp/vorbis_iOS.dst;
 				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/DaBeSDK-apcfvgqrazxuvlgmpnpzyhbszraa/Build/Products/Debug",
-				);
-				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Vorbis-iOS/Vorbis-iOS-Prefix.pch";
+				GCC_PREFIX_HEADER = "vorbis-iOS/vorbis-iOS-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1208,16 +1114,13 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../lib,
 					"../../libogg-1.3.1/include/**",
+					"../lib/**",
 				);
-				INFOPLIST_FILE = "Vorbis-iOS/Vorbis-iOS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_NAME = Vorbis;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				VALIDATE_PRODUCT = YES;
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -1269,11 +1172,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CAFAF6CF17EBA7C0002AA22A /* Build configuration list for PBXNativeTarget "Vorbis-iOS" */ = {
+		CAB848F617EC31FD00FCF11A /* Build configuration list for PBXNativeTarget "vorbis-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CAFAF6D017EBA7C0002AA22A /* Debug */,
-				CAFAF6D117EBA7C0002AA22A /* Release */,
+				CAB848F717EC31FD00FCF11A /* Debug */,
+				CAB848F817EC31FD00FCF11A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

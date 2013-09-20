@@ -356,6 +356,8 @@ void ChipmunkBody_set_can_rotate(Body *body, int can_rotate) {
                     cpMomentForBox(body->mass, body->w, body->h) :
                     INFINITY);
     cpBodySetMoment(body->cp_body, moment);
+    cpBodySetAngVel(body->cp_body, 0);
+    cpBodySetTorque(body->cp_body, 0);
 }
 
 int ChipmunkBody_get_is_rogue(Body *body) {
