@@ -9,6 +9,7 @@
 #import <PSMTabBarControl/PSMTabBarControl.h>
 #import <PSMTabBarControl/PSMRolloverButton.h>
 #import <DaBes-Mac/DABProjectManager.h>
+#import <DaBes-Mac/DABMacConsole.h>
 #import "FileSystemItem.h"
 #import "SDKMacAppDelegate.h"
 #import "SDKScriptEditorWindowController.h"
@@ -58,8 +59,11 @@
       selector:@selector(handleScriptPanic:)
       name:kEngineHasScriptPanicNotification
       object:nil];
-  
-  self.consolePanel.isVisible = YES;
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+      selector:@selector(handleConsoleLog:)
+      name:kDABMacConsoleLogNotification
+      object:nil];
 }
 
 - (void)dealloc {
@@ -291,6 +295,13 @@
 - (void)handleScriptPanic:(NSNotification *)notif {
     NSString *string = notif.object;
     NSLog(@"Script panic -- %@", string);
+}
+
+- (void)handleConsoleLog:(NSNotification *)notif {
+    self.consolePanel.isVisible = YES;
+  
+    NSString *msg = notif.userInfo[@"message"];
+    NSLog(@"I got this message: %@", msg);
 }
 
 #pragma mark - Window Delegate

@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <lcthw/list.h>
 #include "../prefix.h"
+#include "console.h"
 #include "../audio/audio.h"
 #include "../scripting/scripting.h"
 #include "../input/input.h"
@@ -21,6 +22,7 @@ typedef struct EngineTimer {
 typedef char *(*Engine_resource_path_func)(const char *filename);
 typedef struct Engine {
     Audio *audio;
+    Console *console;
     Input *input;
     Graphics *graphics;
     Physics *physics;
@@ -41,6 +43,7 @@ typedef struct Engine {
 
 Engine *Engine_create(Engine_resource_path_func path_func,
                       Engine_resource_path_func project_path_func,
+                      ConsoleProto console_proto,
                       const char *boot_script, void **sdl_screen);
 void Engine_set_resource_path(Engine *engine,
                               Engine_resource_path_func resource_path);

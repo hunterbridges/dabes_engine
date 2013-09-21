@@ -199,7 +199,8 @@ static void iOS_input_change_preferred_style_cb(Input *input,
   [DABProjectManager sharedInstance].projectPath = self.projectPath;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
-  engine_ = Engine_create(iOS_resource_path, DABProjectManager_path_func, cBootScript, NULL);
+  engine_ = Engine_create(iOS_resource_path, DABProjectManager_path_func,
+                          STDIOConsoleProto, cBootScript, NULL);
   engine_->input->change_preferred_style_cb =
       iOS_input_change_preferred_style_cb;
     

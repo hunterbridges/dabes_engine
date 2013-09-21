@@ -996,51 +996,23 @@ static inline unsigned char* base64_decode( const char* ascii, int len, int *fle
 }
 
 #endif
-#ifndef __easer_h
-#define __easer_h
+#ifndef __console_h
+#define __console_h
 
-// Here are some raw easing functions...
-
-static inline float ease_out_cubic(float time, float start, float change,
-                                   float duration) {
-	time /= duration;
-	time--;
-	return change*(time*time*time + 1) + start;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-typedef float (*Easer_curve)(float progress);
-
+struct Console;
 struct Engine;
-typedef struct Easer {
-    int length_ms;
-    int accumulator;
-    int finished;
-    float time_scale;
-    float value;
-    Easer_curve curve;
-} Easer;
+typedef struct ConsoleProto {
+  void (*log)(struct Console *console, char *str);
+} ConsoleProto;
 
-float Easer_curve_linear(float progress);
+typedef struct Console {
+  ConsoleProto proto;
+} Console;
 
-Easer *Easer_create(int length_ms, Easer_curve curve);
-void Easer_destroy(Easer *easer);
-void Easer_update(Easer *easer, struct Engine *engine, unsigned long delta_t);
+Console *Console_create(ConsoleProto proto);
+void Console_destroy(struct Console *console);
 
-#endif
-#ifndef __easer_bindings_h
-#define __easer_bindings_h
-#include <lua/lua.h>
-#include <lua/lualib.h>
-#include <lua/lauxlib.h>
-
-extern const char *luab_Easer_lib;
-extern const char *luab_Easer_metatable;
-typedef Scripting_userdata_for(Easer) Easer_userdata;
-Scripting_caster_for(Easer, luaL_toeaser);
-
-int luaopen_dabes_easer(lua_State *L);
+extern ConsoleProto STDIOConsoleProto;
 
 #endif
 #ifndef __controller_h
@@ -1460,6 +1432,39 @@ Physics *Physics_create();
 void Physics_destroy(Physics *physics);
 
 #endif
+#ifndef __easer_h
+#define __easer_h
+
+// Here are some raw easing functions...
+
+static inline float ease_out_cubic(float time, float start, float change,
+                                   float duration) {
+	time /= duration;
+	time--;
+	return change*(time*time*time + 1) + start;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+typedef float (*Easer_curve)(float progress);
+
+struct Engine;
+typedef struct Easer {
+    int length_ms;
+    int accumulator;
+    int finished;
+    float time_scale;
+    float value;
+    Easer_curve curve;
+} Easer;
+
+float Easer_curve_linear(float progress);
+
+Easer *Easer_create(int length_ms, Easer_curve curve);
+void Easer_destroy(Easer *easer);
+void Easer_update(Easer *easer, struct Engine *engine, unsigned long delta_t);
+
+#endif
 #ifndef __engine_h
 #define __engine_h
 
@@ -1476,6 +1481,7 @@ typedef struct EngineTimer {
 typedef char *(*Engine_resource_path_func)(const char *filename);
 typedef struct Engine {
     Audio *audio;
+    Console *console;
     Input *input;
     Graphics *graphics;
     Physics *physics;
@@ -1496,6 +1502,7 @@ typedef struct Engine {
 
 Engine *Engine_create(Engine_resource_path_func path_func,
                       Engine_resource_path_func project_path_func,
+                      ConsoleProto console_proto,
                       const char *boot_script, void **sdl_screen);
 void Engine_set_resource_path(Engine *engine,
                               Engine_resource_path_func resource_path);
@@ -1526,6 +1533,31 @@ void Engine_log_iOS(char *fmt, ...);
 #else
 #define Engine_log(A, ...) debug(A, ##__VA_ARGS__)
 #endif
+
+#endif
+#ifndef __console_bindings_h
+#define __console_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Console_lib;
+
+int luaopen_dabes_console(lua_State *L);
+
+#endif
+#ifndef __easer_bindings_h
+#define __easer_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Easer_lib;
+extern const char *luab_Easer_metatable;
+typedef Scripting_userdata_for(Easer) Easer_userdata;
+Scripting_caster_for(Easer, luaL_toeaser);
+
+int luaopen_dabes_easer(lua_State *L);
 
 #endif
 #ifndef __engine_bindings_h
