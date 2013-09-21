@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA0CEDFA17EE2117003E71AD /* SDKConsolePanel.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEDF917EE2117003E71AD /* SDKConsolePanel.m */; };
+		CA0CEDFD17EE2126003E71AD /* SDKConsoleView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEDFC17EE2126003E71AD /* SDKConsoleView.m */; };
 		CA253FB81797B1FE008F00D2 /* DebugMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CA253FB71797B1FE008F00D2 /* DebugMenu.xib */; };
 		CA45C888178631A500B995CC /* demo in Resources */ = {isa = PBXBuildFile; fileRef = CA45C887178631A500B995CC /* demo */; };
 		CA51FC5917835FBA000C73E0 /* blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CA51FC5517835FBA000C73E0 /* blueprint.jpg */; };
@@ -167,6 +169,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA0CEDF817EE2117003E71AD /* SDKConsolePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKConsolePanel.h; sourceTree = "<group>"; };
+		CA0CEDF917EE2117003E71AD /* SDKConsolePanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKConsolePanel.m; sourceTree = "<group>"; };
+		CA0CEDFB17EE2126003E71AD /* SDKConsoleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDKConsoleView.h; sourceTree = "<group>"; };
+		CA0CEDFC17EE2126003E71AD /* SDKConsoleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDKConsoleView.m; sourceTree = "<group>"; };
 		CA253FB71797B1FE008F00D2 /* DebugMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DebugMenu.xib; path = "DaBeSDK-iOS/DebugMenu.xib"; sourceTree = SOURCE_ROOT; };
 		CA2788331780F9CC005A242D /* PSMTabBarControl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PSMTabBarControl.xcodeproj; path = ../../../submodules/PSMTabBarControl/PSMTabBarControl.xcodeproj; sourceTree = "<group>"; };
 		CA27883D1780F9D2005A242D /* Fragaria.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Fragaria.xcodeproj; path = ../../../submodules/Fragaria/Fragaria.xcodeproj; sourceTree = "<group>"; };
@@ -316,6 +322,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA0CEDF217EE20EE003E71AD /* Console */ = {
+			isa = PBXGroup;
+			children = (
+				CA0CEDF817EE2117003E71AD /* SDKConsolePanel.h */,
+				CA0CEDF917EE2117003E71AD /* SDKConsolePanel.m */,
+				CA0CEDFB17EE2126003E71AD /* SDKConsoleView.h */,
+				CA0CEDFC17EE2126003E71AD /* SDKConsoleView.m */,
+			);
+			name = Console;
+			sourceTree = "<group>";
+		};
 		CA2788341780F9CC005A242D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -348,6 +365,7 @@
 		CA45C88E17863A6900B995CC /* Script Editor */ = {
 			isa = PBXGroup;
 			children = (
+				CA0CEDF217EE20EE003E71AD /* Console */,
 				CAF42A731780F7B700C3220A /* FileSystemItem.h */,
 				CAF42A741780F7B700C3220A /* FileSystemItem.m */,
 				CAF42A811780F7B700C3220A /* SDKScriptEditorView.h */,
@@ -789,7 +807,9 @@
 				CAF42A911780F7B700C3220A /* SDKScriptEditorWindow.m in Sources */,
 				CAF42A921780F7B700C3220A /* SDKScriptEditorWindowController.m in Sources */,
 				CAF42A931780F7B700C3220A /* SDKScriptTabModel.m in Sources */,
+				CA0CEDFD17EE2126003E71AD /* SDKConsoleView.m in Sources */,
 				CACE2B411783484600F36FA3 /* SDKProjectEngineViewController.m in Sources */,
+				CA0CEDFA17EE2117003E71AD /* SDKConsolePanel.m in Sources */,
 				CAE807631787C2D700B0A213 /* SDKMenuOutlineView.m in Sources */,
 				CAEFD911178FABE900D19B4D /* NSString+Bytes.m in Sources */,
 			);

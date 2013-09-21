@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="SDKScriptEditorWindowController">
             <connections>
+                <outlet property="consolePanel" destination="Osw-bK-cbc" id="Dep-7a-LwJ"/>
                 <outlet property="contentContainerView" destination="49" id="58"/>
                 <outlet property="tab" destination="20" id="46"/>
                 <outlet property="tabBar" destination="20" id="43"/>
@@ -130,5 +131,24 @@
                 </menuItem>
             </items>
         </menu>
+        <window title="Console" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="Osw-bK-cbc" customClass="SDKConsolePanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="139" y="81" width="583" height="347"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="GJp-Z6-GgQ">
+                <rect key="frame" x="0.0" y="0.0" width="583" height="347"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0JK-gc-vVR" customClass="SDKConsoleView">
+                        <rect key="frame" x="0.0" y="0.0" width="583" height="347"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </customView>
+                </subviews>
+            </view>
+            <connections>
+                <outlet property="consoleView" destination="0JK-gc-vVR" id="28S-bc-Tbf"/>
+            </connections>
+        </window>
     </objects>
 </document>

@@ -58,6 +58,8 @@
       selector:@selector(handleScriptPanic:)
       name:kEngineHasScriptPanicNotification
       object:nil];
+  
+  self.consolePanel.isVisible = YES;
 }
 
 - (void)dealloc {
