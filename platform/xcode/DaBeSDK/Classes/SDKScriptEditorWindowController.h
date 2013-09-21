@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <PSMTabBarControl/PSMTabBarControl.h>
 #import "SDKMenuOutlineView.h"
+#import "SDKConsolePanel.h"
 
 @class DABMacEngineViewController;
 @class SDKScriptTabModel;
@@ -19,6 +20,8 @@
 @property (nonatomic, weak) DABMacEngineViewController *engineVC;
 @property (nonatomic, assign) IBOutlet NSDrawer *treeDrawer;
 @property (nonatomic, assign) IBOutlet SDKMenuOutlineView *treeView;
+
+@property (nonatomic, weak) IBOutlet SDKConsolePanel *consolePanel;
 
 @property (nonatomic, assign, readonly) NSUInteger tabCount;
 @property (nonatomic, strong, readonly) NSTabViewItem *currentTab;
