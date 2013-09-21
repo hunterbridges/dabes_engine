@@ -74,7 +74,7 @@
 
 - (NSTabViewItem *)addNewTab:(id)sender withPath:(NSString *)path andSelect:(BOOL)select {
 	SDKScriptTabModel *newModel = [[SDKScriptTabModel alloc] init];
-	NSTabViewItem *newItem = [(NSTabViewItem *)[NSTabViewItem alloc] initWithIdentifier:newModel];
+	NSTabViewItem *newItem = [[NSTabViewItem alloc] initWithIdentifier:newModel];
   NSString *label = path ? [path lastPathComponent] : @"Untitled";
 	[newItem setLabel:label];
   
@@ -600,8 +600,38 @@
      forTableColumn:(NSTableColumn *)tableColumn
              byItem:(id)item {
   FileSystemItem *fsItem = item;
-  [fsItem renameTo:object];
-  [outlineView reloadItem:item];
+  
+  NSTabViewItem *foundItem = nil;
+  SDKScriptTabModel *foundModel = nil;
+  for (NSTabViewItem *item in self.tabView.tabViewItems) {
+    SDKScriptTabModel *model = item.identifier;
+    if ([model.scriptEditor.path isEqualToString:fsItem.fullPath]) {
+      foundItem = item;
+      foundModel = model;
+      break;
+    }
+  }
+  if (foundItem) {
+    if (foundModel.isEdited) {
+      NSAlert *alert = [NSAlert alertWithMessageText:@"Rename Failed"
+                                       defaultButton:@"OK"
+                                     alternateButton:nil
+                                         otherButton:nil
+                           informativeTextWithFormat:@"You need to save %@ before ranameing", fsItem.relativePath];
+      [alert beginSheetModalForWindow:self.window
+                        modalDelegate:nil
+                       didEndSelector:nil
+                          contextInfo:nil];
+    } else {
+      [fsItem renameTo:object];
+      [outlineView reloadItem:item];
+      foundItem.label = fsItem.relativePath;
+      foundModel.scriptEditor.path = fsItem.fullPath;
+    }
+  } else {
+    [fsItem renameTo:object];
+    [outlineView reloadItem:item];
+  }
   
 }
 
