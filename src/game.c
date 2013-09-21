@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     SDL_Surface *screen = NULL;
     Scene *scene = NULL;
 
-    engine = Engine_create(NULL, Boxfall_project_path,
+    engine = Engine_create(NULL, Boxfall_project_path, STDIOConsoleProto,
             "scripts/boot.lua", (void *)&screen);
     check(engine != NULL, "Failed to boot engine");
 

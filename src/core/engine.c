@@ -20,6 +20,7 @@ char *Engine_default_project_path(const char *filename) {
 
 Engine *Engine_create(Engine_resource_path_func path_func,
                       Engine_resource_path_func project_path_func,
+                      ConsoleProto console_proto,
                       const char *boot_script, void **sdl_screen) {
     Engine *engine = calloc(1, sizeof(Engine));
     check(engine != NULL, "Could not create engine. World explodes.");
@@ -43,6 +44,7 @@ Engine *Engine_create(Engine_resource_path_func path_func,
         project_path_func ? project_path_func : Engine_default_project_path;
 
     engine->audio = Audio_create();
+    engine->console = Console_create(console_proto);
     engine->input = Input_create();
     engine->graphics = Graphics_create(engine);
     engine->physics = Physics_create();

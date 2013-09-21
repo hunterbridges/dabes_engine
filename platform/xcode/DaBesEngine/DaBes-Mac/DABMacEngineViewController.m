@@ -3,6 +3,7 @@
 #import "DABMacEngineViewController.h"
 #import "DABMacEngineView.h"
 #import "DABProjectManager.h"
+#import "DABMacConsole.h"
 
 NSString *kFrameEndNotification =  @"kFrameEndNotification";
 NSString *kNewSceneNotification =  @"kNewSceneNotification";
@@ -132,7 +133,8 @@ char *bundlePath__;
   const char *cBootScript =
       [bootScript cStringUsingEncoding:NSUTF8StringEncoding];
   
-  self.engine = Engine_create(Mac_resource_path, DABProjectManager_path_func, cBootScript, NULL);
+  self.engine = Engine_create(Mac_resource_path, DABProjectManager_path_func,
+                              DABMacConsoleProto, cBootScript, NULL);
   
   self.engine->scripting->error_callback = Mac_script_error_cb;
   self.engine->scripting->panic_callback = Mac_script_panic_cb;

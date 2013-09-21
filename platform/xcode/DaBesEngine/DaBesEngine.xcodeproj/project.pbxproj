@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		CA03FAFE17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = CA03FAFC17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h */; };
 		CA03FAFF17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA03FAFD17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m */; };
+		CA0CEE0417EE23F5003E71AD /* console.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0317EE23F5003E71AD /* console.c */; };
+		CA0CEE0517EE23F5003E71AD /* console.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0317EE23F5003E71AD /* console.c */; };
+		CA0CEE0817EE2422003E71AD /* console_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0717EE2422003E71AD /* console_bindings.c */; };
+		CA0CEE0917EE2422003E71AD /* console_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0717EE2422003E71AD /* console_bindings.c */; };
+		CA0CEE0C17EE2950003E71AD /* DABMacConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = CA0CEE0A17EE2950003E71AD /* DABMacConsole.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA0CEE0D17EE2950003E71AD /* DABMacConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0B17EE2950003E71AD /* DABMacConsole.m */; };
 		CA2788851780FDB1005A242D /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788841780FDB1005A242D /* OpenAL.framework */; };
 		CA2788871780FDB6005A242D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788861780FDB6005A242D /* OpenGL.framework */; };
 		CA2788891780FDBF005A242D /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788881780FDBF005A242D /* libxml2.dylib */; };
@@ -93,7 +99,7 @@
 		CAB6AF3717CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */; };
 		CAB6AF3817CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB6AF3417CD42CA0000C3B5 /* telemetry_splash_scene.h */; };
 		CAB8494617EC337C00FCF11A /* libogg-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB8493C17EC330800FCF11A /* libogg-iOS.a */; };
-		CAB8494717EC337C00FCF11A /* liblibvorbis-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB8493F17EC330800FCF11A /* liblibvorbis-iOS.a */; };
+		CAB8494717EC337C00FCF11A /* libvorbis-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB8493F17EC330800FCF11A /* libvorbis-iOS.a */; };
 		CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
@@ -432,20 +438,6 @@
 			remoteGlobalIDString = CA5D232A17700BFC0044793D;
 			remoteInfo = "lua-mac";
 		};
-		CAFAF6B517EBA6C3002AA22A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CAFAF66117EBA5AA002AA22A;
-			remoteInfo = "Ogg-iOS";
-		};
-		CAFAF6B817EBA6C3002AA22A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CAFAF6AE17EBA63F002AA22A;
-			remoteInfo = "Vorbis-iOS";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -455,6 +447,12 @@
 		CA02010D176D86FC008F719D /* draw_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = draw_buffer.h; sourceTree = "<group>"; };
 		CA03FAFC17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABTouchpadControllerOverlayView.h; sourceTree = "<group>"; };
 		CA03FAFD17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABTouchpadControllerOverlayView.m; sourceTree = "<group>"; };
+		CA0CEDFE17EE23DD003E71AD /* console.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
+		CA0CEE0317EE23F5003E71AD /* console.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = console.c; sourceTree = "<group>"; };
+		CA0CEE0617EE2413003E71AD /* console_bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = console_bindings.h; sourceTree = "<group>"; };
+		CA0CEE0717EE2422003E71AD /* console_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = console_bindings.c; sourceTree = "<group>"; };
+		CA0CEE0A17EE2950003E71AD /* DABMacConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABMacConsole.h; sourceTree = "<group>"; };
+		CA0CEE0B17EE2950003E71AD /* DABMacConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABMacConsole.m; sourceTree = "<group>"; };
 		CA1A05851762E774007B4682 /* sfx_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfx_bindings.c; sourceTree = "<group>"; };
 		CA1A05861762E774007B4682 /* sfx_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfx_bindings.h; sourceTree = "<group>"; };
 		CA1D745917702B6500712C8D /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = "../../../third_party/libogg-1.3.1/macosx/Ogg.xcodeproj"; sourceTree = "<group>"; };
@@ -619,7 +617,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAB8494617EC337C00FCF11A /* libogg-iOS.a in Frameworks */,
-				CAB8494717EC337C00FCF11A /* liblibvorbis-iOS.a in Frameworks */,
+				CAB8494717EC337C00FCF11A /* libvorbis-iOS.a in Frameworks */,
 				CAFAF73B17EBB153002AA22A /* libChipmunk-iPhone.a in Frameworks */,
 				CA72C4201795210300255691 /* libFreetype2.a in Frameworks */,
 				CA705BEB1783505B00D2C6E4 /* liblcthw.a in Frameworks */,
@@ -654,7 +652,6 @@
 			children = (
 				CA1D745F17702B6500712C8D /* Ogg.framework */,
 				CA1D746117702B6500712C8D /* libogg.a */,
-				CAFAF6B617EBA6C3002AA22A /* Ogg.framework */,
 				CAB8493C17EC330800FCF11A /* libogg-iOS.a */,
 			);
 			name = Products;
@@ -667,8 +664,7 @@
 				CA1D746C17702B6E00712C8D /* libvorbis.a */,
 				CA1D746E17702B6E00712C8D /* libvorbisenc.a */,
 				CA1D747017702B6E00712C8D /* libvorbisfile.a */,
-				CAFAF6B917EBA6C3002AA22A /* Vorbis.framework */,
-				CAB8493F17EC330800FCF11A /* liblibvorbis-iOS.a */,
+				CAB8493F17EC330800FCF11A /* libvorbis-iOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -723,6 +719,10 @@
 		CA24C76116FC20900045D5DE /* core */ = {
 			isa = PBXGroup;
 			children = (
+				CA0CEE0617EE2413003E71AD /* console_bindings.h */,
+				CA0CEE0717EE2422003E71AD /* console_bindings.c */,
+				CA0CEDFE17EE23DD003E71AD /* console.h */,
+				CA0CEE0317EE23F5003E71AD /* console.c */,
 				CA5D22C8176ED86F0044793D /* easer_bindings.c */,
 				CA5D22C9176ED86F0044793D /* easer_bindings.h */,
 				CA5D22CA176ED86F0044793D /* easer.c */,
@@ -1011,6 +1011,8 @@
 		CAF4297C1780F36200C3220A /* DaBes-Mac */ = {
 			isa = PBXGroup;
 			children = (
+				CA0CEE0A17EE2950003E71AD /* DABMacConsole.h */,
+				CA0CEE0B17EE2950003E71AD /* DABMacConsole.m */,
 				CACE2B37178347DE00F36FA3 /* DABMacEngineView.h */,
 				CACE2B38178347DE00F36FA3 /* DABMacEngineView.m */,
 				CACE2B39178347DE00F36FA3 /* DABMacEngineViewController.h */,
@@ -1105,6 +1107,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA27888C178101DF005A242D /* DaBes-Mac.h in Headers */,
+				CA0CEE0C17EE2950003E71AD /* DABMacConsole.h in Headers */,
 				CACE2B3B178347DE00F36FA3 /* DABMacEngineView.h in Headers */,
 				CACE2B3D178347DE00F36FA3 /* DABMacEngineViewController.h in Headers */,
 				CAC3820A17861D670072E709 /* DABProjectManager.h in Headers */,
@@ -1387,26 +1390,11 @@
 			remoteRef = CAB8493B17EC330800FCF11A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CAB8493F17EC330800FCF11A /* liblibvorbis-iOS.a */ = {
+		CAB8493F17EC330800FCF11A /* libvorbis-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "liblibvorbis-iOS.a";
 			path = "libvorbis-iOS.a";
 			remoteRef = CAB8493E17EC330800FCF11A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CAFAF6B617EBA6C3002AA22A /* Ogg.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework.static;
-			path = Ogg.framework;
-			remoteRef = CAFAF6B517EBA6C3002AA22A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CAFAF6B917EBA6C3002AA22A /* Vorbis.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework.static;
-			path = Vorbis.framework;
-			remoteRef = CAFAF6B817EBA6C3002AA22A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1505,6 +1493,7 @@
 				CA705BF3178350BD00D2C6E4 /* audio.c in Sources */,
 				CA705BF4178350BD00D2C6E4 /* music_bindings.c in Sources */,
 				CA705BF5178350BD00D2C6E4 /* music.c in Sources */,
+				CA0CEE0917EE2422003E71AD /* console_bindings.c in Sources */,
 				CA705BF6178350BD00D2C6E4 /* ogg_stream.c in Sources */,
 				CA705BF7178350BD00D2C6E4 /* sfx_bindings.c in Sources */,
 				CA705BF8178350BD00D2C6E4 /* sfx.c in Sources */,
@@ -1547,6 +1536,7 @@
 				CA705C1E178350BE00D2C6E4 /* scripting.c in Sources */,
 				CA705C1F178350BE00D2C6E4 /* object.c in Sources */,
 				CA705C20178350BE00D2C6E4 /* util.c in Sources */,
+				CA0CEE0517EE23F5003E71AD /* console.c in Sources */,
 				CA51FC831783659A000C73E0 /* DABiOSEngineViewController.m in Sources */,
 				CAC3820D17861D670072E709 /* DABProjectManager.m in Sources */,
 				CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */,
@@ -1571,9 +1561,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA0CEE0D17EE2950003E71AD /* DABMacConsole.m in Sources */,
 				CAF429851780F36300C3220A /* DaBes-Mac.m in Sources */,
 				CAF429891780F37C00C3220A /* audio.c in Sources */,
 				CAF4298A1780F37C00C3220A /* music_bindings.c in Sources */,
+				CA0CEE0817EE2422003E71AD /* console_bindings.c in Sources */,
 				CAF4298B1780F37C00C3220A /* music.c in Sources */,
 				CAF4298C1780F37C00C3220A /* ogg_stream.c in Sources */,
 				CAF4298D1780F37C00C3220A /* sfx_bindings.c in Sources */,
@@ -1616,6 +1608,7 @@
 				CAF429FF1780F53400C3220A /* world_grid.c in Sources */,
 				CAF42A041780F53E00C3220A /* vpoint.c in Sources */,
 				CAF42A051780F53E00C3220A /* vrect.c in Sources */,
+				CA0CEE0417EE23F5003E71AD /* console.c in Sources */,
 				CAF42A061780F53E00C3220A /* vmatrix.c in Sources */,
 				CACE2B3C178347DE00F36FA3 /* DABMacEngineView.m in Sources */,
 				CACE2B3E178347DE00F36FA3 /* DABMacEngineViewController.m in Sources */,

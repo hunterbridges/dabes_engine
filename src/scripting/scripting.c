@@ -6,6 +6,7 @@
 // Import all the bindings so we can load them into our scripting env.
 #include "../audio/music_bindings.h"
 #include "../audio/sfx_bindings.h"
+#include "../core/console_bindings.h"
 #include "../core/engine_bindings.h"
 #include "../core/easer_bindings.h"
 #include "../input/controller_bindings.h"
@@ -29,6 +30,7 @@ const char *SCRIPTING_INSTANCE_MAP = "instances";
 
 void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_engine(scripting->L);
+    luaopen_dabes_console(scripting->L);
     luaopen_dabes_music(scripting->L);
     luaopen_dabes_sfx(scripting->L);
     luaopen_dabes_easer(scripting->L);
