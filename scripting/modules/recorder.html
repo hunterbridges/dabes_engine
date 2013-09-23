@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting API Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+<li><a href="#Constants">Constants </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/canvas.html">canvas</a></li>
+  <li><a href="../modules/collection.html">collection</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/parallax_layer.html">parallax_layer</a></li>
+  <li><strong>recorder</strong></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/shape.html">shape</a></li>
+  <li><a href="../modules/shape_matcher.html">shape_matcher</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
+  <li><a href="../modules/step_sequencer.html">step_sequencer</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>recorder</code></h1>
+
+<p>Records and replays the motion of an <a href="../modules/entity.html#">Entity</a></p>
+<p> <a href="../modules/recorder.html#">Recorder</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#state">state</a></td>
+	<td class="summary"><em>(readonly)</em> The current Recorder state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#entity">entity</a></td>
+	<td class="summary">The <a href="../modules/entity.html#">Entity</a> being captured or controlled by
+ the recorder.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Methods">Class Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Recorder:new">Recorder:new&nbsp;(preroll_ms)</a></td>
+	<td class="summary">Create a new <code>Recorder</code> instance.</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#recorder:play">recorder:play&nbsp;()</a></td>
+	<td class="summary">Play the <a href="../modules/recorder.html#">Recorder</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#recorder:pause">recorder:pause&nbsp;()</a></td>
+	<td class="summary">Pause the <a href="../modules/recorder.html#">Recorder</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#recorder:rewind">recorder:rewind&nbsp;()</a></td>
+	<td class="summary">Rewind the <a href="../modules/recorder.html#">Recorder</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#recorder:record">recorder:record&nbsp;()</a></td>
+	<td class="summary">Start recording.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#recorder:clear">recorder:clear&nbsp;()</a></td>
+	<td class="summary">Clear the recorded contents.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#finished_playing">finished_playing&nbsp;(self)</a></td>
+	<td class="summary">Called when the Recorder has reached the end of playback.</td>
+	</tr>
+</table>
+<h2><a href="#Constants">Constants </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STATE_IDLE">STATE_IDLE</a></td>
+	<td class="summary">A Recorder state in which it is idle/paused.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STATE_RECORDING">STATE_RECORDING</a></td>
+	<td class="summary">A Recorder state in which it is recording.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STATE_PLAYING">STATE_PLAYING</a></td>
+	<td class="summary">A Recorder state in which it playing.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "state"></a>
+    <strong>state</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The current Recorder state
+
+
+
+
+    <h3>see also:</h3>
+    <ul>
+         <li><a href="../modules/recorder.html#STATE_IDLE">STATE_IDLE</a></li>
+         <li><a href="../modules/recorder.html#STATE_RECORDING">STATE_RECORDING</a></li>
+         <li><a href="../modules/recorder.html#STATE_PLAYING">STATE_PLAYING</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "entity"></a>
+    <strong>entity</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/entity.html#">Entity</a> being captured or controlled by
+ the recorder.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Methods"></a>Class Methods </h2>
+        Class Methods.
+ Must be called on <code>Class</code>, with a capital leading character.
+ e.g. <code>Class:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "Recorder:new"></a>
+    <strong>Recorder:new&nbsp;(preroll_ms)</strong>
+    </dt>
+    <dd>
+    Create a new <code>Recorder</code> instance.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">preroll_ms</span>
+            <span class="types"><span class="type">number</span></span>
+         The amount of preroll for the recorder.
+ (Currently unused)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Recorder</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "recorder:play"></a>
+    <strong>recorder:play&nbsp;()</strong>
+    </dt>
+    <dd>
+    Play the <a href="../modules/recorder.html#">Recorder</a>.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "recorder:pause"></a>
+    <strong>recorder:pause&nbsp;()</strong>
+    </dt>
+    <dd>
+    Pause the <a href="../modules/recorder.html#">Recorder</a>.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "recorder:rewind"></a>
+    <strong>recorder:rewind&nbsp;()</strong>
+    </dt>
+    <dd>
+    Rewind the <a href="../modules/recorder.html#">Recorder</a>.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "recorder:record"></a>
+    <strong>recorder:record&nbsp;()</strong>
+    </dt>
+    <dd>
+    Start recording.  <strong>This actively gathers data and leaks memory if
+ left unpaused.</strong>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "recorder:clear"></a>
+    <strong>recorder:clear&nbsp;()</strong>
+    </dt>
+    <dd>
+    Clear the recorded contents.  This frees any memory allocated by
+ <code>record</code>.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "finished_playing"></a>
+    <strong>finished_playing&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when the Recorder has reached the end of playback.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">Recorder</span></span>
+         The <code>Recorder</code> instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Constants"></a>Constants </h2>
+        Constants.
+ Accessed at the class level e.g. <code>Class.CONSTANT</code>
+    <dl class="function">
+    <dt>
+    <a name = "STATE_IDLE"></a>
+    <strong>STATE_IDLE</strong>
+    </dt>
+    <dd>
+    A Recorder state in which it is idle/paused.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STATE_RECORDING"></a>
+    <strong>STATE_RECORDING</strong>
+    </dt>
+    <dd>
+    A Recorder state in which it is recording. </p>
+
+<p> Note that if a recorder is recording, it is actively gathering
+ data. Leaving a recorder recording accidentally will leak memory.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STATE_PLAYING"></a>
+    <strong>STATE_PLAYING</strong>
+    </dt>
+    <dd>
+    A Recorder state in which it playing.
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
