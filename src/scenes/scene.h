@@ -16,8 +16,14 @@
 #include "../math/vmatrix.h"
 #include "../recorder/recorder.h"
 
+typedef enum {
+    kSceneKindStatic = 0,
+    kSceneKindChipmunk = 1
+} SceneKind;
+
 struct Scene;
 typedef struct SceneProto {
+    SceneKind kind;
     void (*start)(struct Scene *scene, Engine *engine);
     void (*start_success_cb)(struct Scene *scene, Engine *engine);
     void (*stop)(struct Scene *scene, Engine *engine);
@@ -27,8 +33,9 @@ typedef struct SceneProto {
     void (*control)(struct Scene *scene, Engine *engine);
     void (*add_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
     void (*remove_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
+    void (*add_recorder)(struct Scene *scene, Engine *engine, Recorder *recorder);
+    void (*remove_recorder)(struct Scene *scene, Engine *engine, Recorder *recorder);
     Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
-    Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
     VPoint (*get_gravity)(struct Scene *scene);
     void (*set_gravity)(struct Scene *scene, VPoint gravity);
 } SceneProto;

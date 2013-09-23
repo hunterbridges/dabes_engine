@@ -11,6 +11,7 @@
 #include "telemetry_splash_scene.h"
 #include "../layers/canvas_bindings.h"
 #include "../layers/overlay_bindings.h"
+#include "../recorder/recorder_bindings.h"
 
 const char *luab_Scene_lib = "dab_scene";
 const char *luab_Scene_metatable = "DaBes.scene";
@@ -160,6 +161,38 @@ error:
     return 0;
 }
 
+int luab_Scene_add_recorder(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    lua_getfield(L, 2, "real");
+    Recorder *recorder = luaL_torecorder(L, -1);
+    check(recorder != NULL, "Recorder required");
+    if (scene->proto.add_recorder) {
+        scene->_(add_recorder)(scene, engine, recorder);
+    }
+
+    return 0;
+error:
+    return 0;
+}
+
+int luab_Scene_remove_recorder(lua_State *L) {
+    Engine *engine = luaL_get_engine(L);
+    Scene *scene = luaL_toscene(L, 1);
+    check(scene != NULL, "Scene required");
+    lua_getfield(L, 2, "real");
+    Recorder *recorder = luaL_torecorder(L, -1);
+    check(recorder != NULL, "Recorder required");
+    if (scene->proto.remove_recorder) {
+        scene->_(remove_recorder)(scene, engine, recorder);
+    }
+
+    return 0;
+error:
+    return 0;
+}
+
 int luab_Scene_get_music(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
@@ -180,7 +213,6 @@ int luab_Scene_set_music(lua_State *L) {
 
     lua_getfield(L, -1, "real");
     Music *music = luaL_tomusic(L, -1);
-    check(music != NULL, "Music required");
 
     lua_pop(L, 3);
 
@@ -209,18 +241,19 @@ int luab_Scene_set_parallax(lua_State *L) {
 
     lua_getfield(L, -1, "real");
     Parallax *parallax = luaL_toparallax(L, -1);
-    check(parallax != NULL, "Parallax required");
 
-    if (scene->tile_map) {
-        GfxSize level_size = {
-            scene->tile_map->cols * scene->tile_map->tile_size.w,
-            scene->tile_map->rows * scene->tile_map->tile_size.h
-        };
-        parallax->level_size = level_size;
+    if (parallax) {
+        if (scene->tile_map) {
+            GfxSize level_size = {
+                scene->tile_map->cols * scene->tile_map->tile_size.w,
+                scene->tile_map->rows * scene->tile_map->tile_size.h
+            };
+            parallax->level_size = level_size;
+        }
+        parallax->camera = scene->camera;
+
+        lua_pop(L, 3);
     }
-    parallax->camera = scene->camera;
-
-    lua_pop(L, 3);
 
     scene->parallax = parallax;
 error:
@@ -247,7 +280,6 @@ int luab_Scene_set_canvas(lua_State *L) {
 
     lua_getfield(L, -1, "real");
     Canvas *canvas = luaL_tocanvas(L, -1);
-    check(canvas != NULL, "Parallax required");
 
     scene->canvas = canvas;
     canvas->scene = scene;
@@ -312,6 +344,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"remove_entity", luab_Scene_remove_entity},
     {"add_overlay", luab_Scene_add_overlay},
     {"remove_overlay", luab_Scene_remove_overlay},
+    {"add_recorder", luab_Scene_add_recorder},
+    {"remove_recorder", luab_Scene_remove_recorder},
     {"load_map", luab_Scene_load_map},
     {"get_music", luab_Scene_get_music},
     {"set_music", luab_Scene_set_music},

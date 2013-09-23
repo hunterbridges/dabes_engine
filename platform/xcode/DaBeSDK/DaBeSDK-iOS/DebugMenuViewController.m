@@ -111,7 +111,10 @@ static const int kPages = 5;
       self.debugRecorder->_(rewind)(self.debugRecorder);
       self.debugRecorder->_(clear_frames)(self.debugRecorder);
     } else {
-      self.debugRecorder = self.engineVC.scene->_(gen_recorder)(self.engineVC.scene, entity);
+      self.debugRecorder = Recorder_create(5, FPS);
+      self.engineVC.scene->_(add_recorder)(self.engineVC.scene,
+                                           self.engineVC.engine,
+                                           self.debugRecorder);
     }
     
     Scene_set_selection_mode(self.engineVC.scene, kSceneNotSelecting);

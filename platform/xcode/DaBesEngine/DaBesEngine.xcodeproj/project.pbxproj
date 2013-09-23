@@ -15,6 +15,10 @@
 		CA0CEE0917EE2422003E71AD /* console_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0717EE2422003E71AD /* console_bindings.c */; };
 		CA0CEE0C17EE2950003E71AD /* DABMacConsole.h in Headers */ = {isa = PBXBuildFile; fileRef = CA0CEE0A17EE2950003E71AD /* DABMacConsole.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA0CEE0D17EE2950003E71AD /* DABMacConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0B17EE2950003E71AD /* DABMacConsole.m */; };
+		CA0CEE1017F049AD003E71AD /* recorder_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0E17F049AD003E71AD /* recorder_bindings.c */; };
+		CA0CEE1117F049AD003E71AD /* recorder_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA0CEE0E17F049AD003E71AD /* recorder_bindings.c */; };
+		CA0CEE1217F049AD003E71AD /* recorder_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA0CEE0F17F049AD003E71AD /* recorder_bindings.h */; };
+		CA0CEE1317F049AD003E71AD /* recorder_bindings.h in Headers */ = {isa = PBXBuildFile; fileRef = CA0CEE0F17F049AD003E71AD /* recorder_bindings.h */; };
 		CA2788851780FDB1005A242D /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788841780FDB1005A242D /* OpenAL.framework */; };
 		CA2788871780FDB6005A242D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788861780FDB6005A242D /* OpenGL.framework */; };
 		CA2788891780FDBF005A242D /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788881780FDBF005A242D /* libxml2.dylib */; };
@@ -453,6 +457,8 @@
 		CA0CEE0717EE2422003E71AD /* console_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = console_bindings.c; sourceTree = "<group>"; };
 		CA0CEE0A17EE2950003E71AD /* DABMacConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABMacConsole.h; sourceTree = "<group>"; };
 		CA0CEE0B17EE2950003E71AD /* DABMacConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABMacConsole.m; sourceTree = "<group>"; };
+		CA0CEE0E17F049AD003E71AD /* recorder_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder_bindings.c; sourceTree = "<group>"; };
+		CA0CEE0F17F049AD003E71AD /* recorder_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = recorder_bindings.h; sourceTree = "<group>"; };
 		CA1A05851762E774007B4682 /* sfx_bindings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfx_bindings.c; sourceTree = "<group>"; };
 		CA1A05861762E774007B4682 /* sfx_bindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sfx_bindings.h; sourceTree = "<group>"; };
 		CA1D745917702B6500712C8D /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = "../../../third_party/libogg-1.3.1/macosx/Ogg.xcodeproj"; sourceTree = "<group>"; };
@@ -976,6 +982,8 @@
 			children = (
 				CAEFD8F9178FA5E600D19B4D /* chipmunk_recorder.c */,
 				CAEFD8FA178FA5E600D19B4D /* chipmunk_recorder.h */,
+				CA0CEE0E17F049AD003E71AD /* recorder_bindings.c */,
+				CA0CEE0F17F049AD003E71AD /* recorder_bindings.h */,
 				CAEFD8FC178FA5E600D19B4D /* recorder.c */,
 				CAEFD8FD178FA5E600D19B4D /* recorder.h */,
 			);
@@ -1082,6 +1090,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */,
+				CA0CEE1317F049AD003E71AD /* recorder_bindings.h in Headers */,
 				CA51FC821783659A000C73E0 /* DABiOSEngineViewController.h in Headers */,
 				CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */,
 				CA8B9864178A08BA00CA41B4 /* static_scene.h in Headers */,
@@ -1128,6 +1137,7 @@
 				CAF42A1A1780F62500C3220A /* chipmunk_body.h in Headers */,
 				CAF42A1B1780F62500C3220A /* entity.h in Headers */,
 				CAF42A1C1780F62500C3220A /* entity_bindings.h in Headers */,
+				CA0CEE1217F049AD003E71AD /* recorder_bindings.h in Headers */,
 				CAF42A1D1780F62500C3220A /* sensor.h in Headers */,
 				CAF42A1E1780F62500C3220A /* sensor_bindings.h in Headers */,
 				CAF42A1F1780F62500C3220A /* camera.h in Headers */,
@@ -1497,6 +1507,7 @@
 				CA705BF6178350BD00D2C6E4 /* ogg_stream.c in Sources */,
 				CA705BF7178350BD00D2C6E4 /* sfx_bindings.c in Sources */,
 				CA705BF8178350BD00D2C6E4 /* sfx.c in Sources */,
+				CA0CEE1117F049AD003E71AD /* recorder_bindings.c in Sources */,
 				CA705BF9178350BD00D2C6E4 /* easer_bindings.c in Sources */,
 				CA705BFA178350BD00D2C6E4 /* easer.c in Sources */,
 				CA705BFB178350BD00D2C6E4 /* engine.c in Sources */,
@@ -1572,6 +1583,7 @@
 				CAF4298E1780F37C00C3220A /* sfx.c in Sources */,
 				CAF429A91780F3B800C3220A /* easer_bindings.c in Sources */,
 				CAF429AA1780F3B800C3220A /* easer.c in Sources */,
+				CA0CEE1017F049AD003E71AD /* recorder_bindings.c in Sources */,
 				CAF429AB1780F3B800C3220A /* engine.c in Sources */,
 				CAF429AD1780F3B800C3220A /* gzip.c in Sources */,
 				CAF429AE1780F3B800C3220A /* stepper.c in Sources */,

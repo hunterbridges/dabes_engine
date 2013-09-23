@@ -12,7 +12,7 @@ typedef struct ChipmunkRecorderFrame {
 
     short int has_delta_velo;
     VPoint velo;
-  
+
     short int has_sprite_frame;
     int sprite_frame;
 
@@ -29,5 +29,6 @@ typedef struct ChipmunkRecorderCtx {
 extern RecorderProto ChipmunkRecorderProto;
 
 Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
+int ChipmunkRecorder_contextualize(Recorder *recorder);
 
 #endif

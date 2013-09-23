@@ -149,6 +149,14 @@ Scene = BoundObject:extend({
             adder = BoundObject.fwd_func("add_overlay"),
             remover = BoundObject.fwd_func("remove_overlay")
         },
+
+        --- The @{collection|Collection} of the Scene's @{recorder|Recorders}
+        -- @class field
+        -- @name recorders
+        recorders = {
+            adder = BoundObject.fwd_func("add_recorder"),
+            remover = BoundObject.fwd_func("remove_recorder")
+        },
     },
 
 --- Class Methods.

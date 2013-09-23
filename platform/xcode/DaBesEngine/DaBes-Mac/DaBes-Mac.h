@@ -2740,6 +2740,7 @@ typedef struct Recorder {
     DArray *frames;
 
     void *context;
+    char *id;
 
     int current_frame;
     RecorderState state;
@@ -2749,7 +2750,7 @@ typedef struct Recorder {
     size_t total_frame_size;
 } Recorder;
 
-Recorder *Recorder_create(RecorderProto proto, int preroll_ms, int fps);
+Recorder *Recorder_create(int preroll_ms, int fps);
 void Recorder_destroy(Recorder *recorder);
 void Recorder_write_frame(Recorder *recorder, void *frame, size_t size);
 void *Recorder_read_frame(Recorder *recorder);
@@ -2762,8 +2763,14 @@ void Recorder_set_state(Recorder *recorder, RecorderState state);
 #include <lcthw/bstree.h>
 #include <lcthw/darray.h>
 
+typedef enum {
+    kSceneKindStatic = 0,
+    kSceneKindChipmunk = 1
+} SceneKind;
+
 struct Scene;
 typedef struct SceneProto {
+    SceneKind kind;
     void (*start)(struct Scene *scene, Engine *engine);
     void (*start_success_cb)(struct Scene *scene, Engine *engine);
     void (*stop)(struct Scene *scene, Engine *engine);
@@ -2773,8 +2780,9 @@ typedef struct SceneProto {
     void (*control)(struct Scene *scene, Engine *engine);
     void (*add_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
     void (*remove_entity_cb)(struct Scene *scene, Engine *engine, Entity *entity);
+    void (*add_recorder)(struct Scene *scene, Engine *engine, Recorder *recorder);
+    void (*remove_recorder)(struct Scene *scene, Engine *engine, Recorder *recorder);
     Entity *(*hit_test)(struct Scene *scene, VPoint g_point);
-    Recorder *(*gen_recorder)(struct Scene *scene, Entity *entity);
     VPoint (*get_gravity)(struct Scene *scene);
     void (*set_gravity)(struct Scene *scene, VPoint gravity);
 } SceneProto;
@@ -2957,7 +2965,7 @@ typedef struct ChipmunkRecorderFrame {
 
     short int has_delta_velo;
     VPoint velo;
-  
+
     short int has_sprite_frame;
     int sprite_frame;
 
@@ -2974,6 +2982,23 @@ typedef struct ChipmunkRecorderCtx {
 extern RecorderProto ChipmunkRecorderProto;
 
 Recorder *ChipmunkRecorder_create(int preroll_ms, int fps);
+int ChipmunkRecorder_contextualize(Recorder *recorder);
+
+#endif
+#ifndef __recorder_bindings_h
+#define __recorder_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Recorder_lib;
+extern const char *luab_Recorder_metatable;
+
+typedef Scripting_userdata_for(Recorder) Recorder_userdata;
+
+Scripting_caster_for(Recorder, luaL_torecorder);
+
+int luaopen_dabes_recorder(lua_State *L);
 
 #endif
 #ifndef __chipmunk_scene_h
