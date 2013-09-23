@@ -29,6 +29,7 @@ typedef struct Recorder {
     DArray *frames;
 
     void *context;
+    char *id;
 
     int current_frame;
     RecorderState state;
@@ -38,7 +39,7 @@ typedef struct Recorder {
     size_t total_frame_size;
 } Recorder;
 
-Recorder *Recorder_create(RecorderProto proto, int preroll_ms, int fps);
+Recorder *Recorder_create(int preroll_ms, int fps);
 void Recorder_destroy(Recorder *recorder);
 void Recorder_write_frame(Recorder *recorder, void *frame, size_t size);
 void *Recorder_read_frame(Recorder *recorder);

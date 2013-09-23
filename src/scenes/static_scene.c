@@ -43,11 +43,11 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
     }
 
     Scene_render_entities(scene, engine);
-    
+
     if (scene->canvas) {
         Canvas_render(scene->canvas, engine);
     }
-    
+
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_render_selected_entities(scene, engine);
@@ -82,6 +82,7 @@ error:
 }
 
 SceneProto StaticSceneProto = {
+    .kind = kSceneKindStatic,
     .start = NULL,
     .start_success_cb = NULL,
     .stop = NULL,
@@ -92,6 +93,8 @@ SceneProto StaticSceneProto = {
     .hit_test = StaticScene_hit_test,
     .add_entity_cb = NULL,
     .remove_entity_cb = NULL,
+    .add_recorder = NULL,
+    .remove_recorder = NULL,
     .get_gravity = StaticScene_get_gravity,
     .set_gravity = StaticScene_set_gravity
 };

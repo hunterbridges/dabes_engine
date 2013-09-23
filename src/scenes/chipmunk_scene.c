@@ -1,4 +1,5 @@
 #include <lcthw/darray_algos.h>
+#include <lcthw/bstree.h>
 #include "../core/engine.h"
 #include "../audio/audio.h"
 #include "../audio/sfx.h"
@@ -22,11 +23,17 @@ typedef struct ChipmunkSceneTraverseCtx {
 typedef struct ChipmunkSceneCtx {
     List *tile_shapes;
     cpSpace *space;
-    DArray *recorders;
+    BSTree *recorders;
 } ChipmunkSceneCtx;
 
 int ChipmunkScene_create_space(Scene *scene, Engine *engine);
 void ChipmunkScene_control(struct Scene *scene, Engine *engine);
+
+int recorder_destroy_cb(BSTreeNode *node, void *UNUSED(context)) {
+    Recorder *recorder = node->data;
+    Recorder_destroy(recorder);
+    return 0;
+}
 
 void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
@@ -35,12 +42,7 @@ void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
     ChipmunkSceneCtx *context = scene->context;
 
-    int i = 0;
-    for (i = 0; i < DArray_count(context->recorders); i++) {
-        Recorder *recorder = DArray_get(context->recorders, i);
-        Recorder_destroy(recorder);
-    }
-    DArray_destroy(context->recorders);
+    BSTree_destroy(context->recorders);
 
     LIST_FOREACH(context->tile_shapes, first, next, current) {
         cpShape *shape = current->value;
@@ -64,7 +66,7 @@ void ChipmunkScene_start(struct Scene *scene, Engine *UNUSED(engine)) {
     ChipmunkSceneCtx *context = calloc(1, sizeof(ChipmunkSceneCtx));
     scene->context = context;
     context->tile_shapes = List_create();
-    context->recorders = DArray_create(sizeof(Recorder), 4);
+    context->recorders = BSTree_create((BSTree_compare)strcmp);
 }
 
 void ChipmunkScene_start_success_cb(struct Scene *scene, Engine *engine) {
@@ -77,43 +79,62 @@ error:
     return;
 }
 
+int recorder_record_cb(BSTreeNode *node, void *UNUSED(context)) {
+    Recorder *recorder = node->data;
+
+    if (recorder->state == RecorderStateRecording) {
+        size_t size;
+        void *frame = recorder->_(capture_frame)(recorder, &size);
+        Recorder_write_frame(recorder, frame, size);
+    }
+
+    return 0;
+}
+
 void ChipmunkScene_record_recorders(Scene *scene, Engine *UNUSED(engine)) {
-    int i = 0;
     ChipmunkSceneCtx *context = scene->context;
-    for (i = 0; i < DArray_count(context->recorders); i++) {
-        Recorder *recorder = DArray_get(context->recorders, i);
-        if (recorder->state == RecorderStateRecording) {
-            size_t size;
-            void *frame = recorder->_(capture_frame)(recorder, &size);
-            Recorder_write_frame(recorder, frame, size);
-        }
-    }
+    BSTree_traverse(context->recorders, recorder_record_cb, NULL);
 }
 
-void ChipmunkScene_play_recorders(Scene *scene, Engine *UNUSED(engine)) {
-    int i = 0;
-    ChipmunkSceneCtx *context = scene->context;
-    for (i = 0; i < DArray_count(context->recorders); i++) {
-        Recorder *recorder = DArray_get(context->recorders, i);
-        if (recorder->state == RecorderStatePlaying) {
-            void *frame = Recorder_read_frame(recorder);
-            if (frame) {
-                recorder->_(apply_frame)(recorder, frame);
-            } else {
-                // We are done playing.
-                Recorder_set_state(recorder, RecorderStateIdle);
-            }
+int recorder_play_cb(BSTreeNode *node, void *context) {
+    Recorder *recorder = node->data;
+    Engine *engine = context;
+
+    if (recorder->state == RecorderStatePlaying) {
+        void *frame = Recorder_read_frame(recorder);
+        if (frame) {
+            recorder->_(apply_frame)(recorder, frame);
+        } else {
+            // We are done playing.
+            Recorder_set_state(recorder, RecorderStateIdle);
+            Scripting_call_hook(engine->scripting, recorder,
+                    "finished_playing");
         }
     }
+
+    return 0;
 }
 
-Recorder *ChipmunkScene_gen_recorder(Scene *scene, Entity *entity) {
-    Recorder *recorder = ChipmunkRecorder_create(5, FPS);
-    recorder->entity = entity;
+void ChipmunkScene_play_recorders(Scene *scene, Engine *engine) {
+    ChipmunkSceneCtx *context = scene->context;
+    BSTree_traverse(context->recorders, recorder_play_cb, engine);
+}
+
+void ChipmunkScene_add_recorder(Scene *scene, Engine *UNUSED(engine),
+        struct Recorder *recorder) {
+    assert(scene != NULL);
     ChipmunkSceneCtx *context = (ChipmunkSceneCtx *)scene->context;
-    DArray_push(context->recorders, recorder);
-    return recorder;
-};
+
+    BSTree_set(context->recorders, recorder->id, recorder);
+    ChipmunkRecorder_contextualize(recorder);
+}
+
+void ChipmunkScene_remove_recorder(Scene *scene, Engine *UNUSED(engine),
+                           struct Recorder *recorder) {
+    assert(scene != NULL);
+    ChipmunkSceneCtx *context = (ChipmunkSceneCtx *)scene->context;
+    BSTree_delete(context->recorders, recorder->id);
+}
 
 static inline int presolve_traverse_cb(BSTreeNode *node, void *context) {
     OCSTraverseCtx *ctx = (OCSTraverseCtx *)context;
@@ -233,15 +254,15 @@ void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
 
     Scene_render_entities(scene, engine);
     Scene_render_selected_entities(scene, engine);
-    
+
     if (scene->canvas) {
         Canvas_render(scene->canvas, engine);
     }
-    
+
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_fill(scene, engine, scene->cover_color);
-    
+
     if (scene->debug_camera) {
         Camera_debug(scene->camera, engine->graphics);
     }
@@ -517,6 +538,7 @@ error:
 }
 
 SceneProto ChipmunkSceneProto = {
+    .kind = kSceneKindChipmunk,
     .start = ChipmunkScene_start,
     .start_success_cb = ChipmunkScene_start_success_cb,
     .stop = ChipmunkScene_stop,
@@ -527,7 +549,8 @@ SceneProto ChipmunkSceneProto = {
     .add_entity_cb = ChipmunkScene_add_entity_cb,
     .remove_entity_cb = ChipmunkScene_remove_entity_cb,
     .hit_test = ChipmunkScene_hit_test,
-    .gen_recorder = ChipmunkScene_gen_recorder,
+    .add_recorder = ChipmunkScene_add_recorder,
+    .remove_recorder = ChipmunkScene_add_recorder,
     .get_gravity = ChipmunkScene_get_gravity,
     .set_gravity = ChipmunkScene_set_gravity
 };

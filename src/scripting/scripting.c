@@ -20,6 +20,7 @@
 #include "../graphics/parallax_bindings.h"
 #include "../graphics/sprite_bindings.h"
 #include "../math/shape_matcher_bindings.h"
+#include "../recorder/recorder_bindings.h"
 
 const char *SCRIPTING_CL_ENTITY_CONFIG = "entity_config";
 const char *SCRIPTING_CL_PARALLAX = "parallax";
@@ -45,6 +46,7 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_parallax(scripting->L);
     luaopen_dabes_sprite(scripting->L);
     luaopen_dabes_shape_matcher(scripting->L);
+    luaopen_dabes_recorder(scripting->L);
 }
 
 int Scripting_handle_panic(lua_State *L) {
@@ -228,7 +230,7 @@ int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
     check(scripting != NULL, "No scripting to call hook in");
     check(bound != NULL, "No bound object to call hook on");
     lua_State *L = scripting->L;
-    
+
     int result = luaL_lookup_instance(L, bound);
     if (!result) return 0;
 
@@ -239,7 +241,7 @@ int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
     }
 
     lua_pushvalue(L, -2);
-    
+
     va_list vl;
     int narg = 0;
     va_start(vl, fname);
@@ -252,19 +254,19 @@ int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
                 lua_pushnumber(L, num);
                 narg++;
             } break;
-                
+
             case LUA_TBOOLEAN: {
                 int b = va_arg(vl, int);
                 lua_pushboolean(L, b);
                 narg++;
             } break;
-                
+
             case LUA_TSTRING: {
                 char *str = va_arg(vl, char *);
                 lua_pushstring(L, str);
                 narg++;
             } break;
-            
+
             case LUA_TUSERDATA: {
                 void *obj = va_arg(vl, void *);
                 int result = luaL_lookup_instance(L, obj);
@@ -273,17 +275,17 @@ int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
                 }
                 narg++;
             } break;
-            
+
             default: {
                 done = 1;
             } break;
         }
-        
+
         ltype = va_arg(vl, int);
     }
 
     va_end(vl);
-    
+
     result = lua_pcall(L, 1 + narg, 0, 0);
     if (result != 0) {
         const char *error = lua_tostring(L, -1);
@@ -295,7 +297,7 @@ int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
         lua_pop(L, 1);
         return 0;
     }
-    
+
     lua_pop(L, 1);
 
 error:

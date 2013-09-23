@@ -1,10 +1,28 @@
 #include "recorder.h"
 
-Recorder *Recorder_create(RecorderProto proto, int preroll_ms, int fps) {
+RecorderProto RecorderNullProto = {
+    .capture_frame = NULL,
+    .apply_frame = NULL,
+    .clear_frames = NULL,
+    .rewind = NULL,
+    .start_play_cb = NULL,
+    .stop_play_cb = NULL,
+    .pack = NULL,
+    .unpack = NULL
+};
+
+Recorder *Recorder_create(int preroll_ms, int fps) {
     Recorder *recorder = calloc(1, sizeof(Recorder));
     check(recorder != NULL, "Couldn't create Recorder");
-    recorder->proto = proto;
+    recorder->proto = RecorderNullProto;
     recorder->frames = DArray_create(sizeof(void *), preroll_ms * fps);
+
+    // Generate id
+    int strlen = sizeof(Recorder *) * 2 + 2;
+    char *id = calloc(1, sizeof(char) * (strlen + 1));
+    sprintf(id, "%p", recorder);
+    recorder->id = id;
+
     return recorder;
 error:
     return NULL;
@@ -16,6 +34,7 @@ void Recorder_destroy(Recorder *recorder) {
     recorder->_(clear_frames)(recorder);
     if (recorder->context) free(recorder->context);
     DArray_destroy(recorder->frames);
+    free(recorder->id);
     free(recorder);
 
     return;
