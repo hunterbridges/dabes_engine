@@ -163,7 +163,8 @@ void Canvas_update(Canvas *canvas, Engine *engine) {
         }
     }
 
-    if (released_touch && DArray_count(canvas->raw_points) >= 2) {
+    if (released_touch && canvas->raw_points &&
+        DArray_count(canvas->raw_points) >= 2) {
         VPoint path[2] = {
             *(VPoint *)DArray_get(canvas->raw_points, 0),
             *(VPoint *)DArray_last(canvas->raw_points)
@@ -264,7 +265,8 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
         Graphics_stroke_path(engine->graphics, staged_path, num_staged,
                              VPointZero, path_draw_color.raw,
                              canvas->draw_width, 0, 0);
-
+    }
+    if (staged_path) {
         free(staged_path);
     }
 
