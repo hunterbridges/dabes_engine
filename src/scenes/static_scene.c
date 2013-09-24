@@ -17,6 +17,13 @@ error:
     return;
 }
 
+void StaticScene_stop(struct Scene *scene, Engine *engine) {
+  if (!scene->started) return;
+}
+
+void StaticScene_start(struct Scene *scene, Engine *UNUSED(engine)) {
+}
+
 void StaticScene_control(struct Scene *UNUSED(scene),
         Engine *UNUSED(engine)) { }
 
@@ -83,9 +90,9 @@ error:
 
 SceneProto StaticSceneProto = {
     .kind = kSceneKindStatic,
-    .start = NULL,
+    .start = StaticScene_start,
     .start_success_cb = NULL,
-    .stop = NULL,
+    .stop = StaticScene_stop,
     .cleanup = StaticScene_cleanup,
     .update = StaticScene_update,
     .render = StaticScene_render,
