@@ -22,5 +22,7 @@ extern NSString *kEngineHasScriptPanicNotification;
 - (void)initEngine;
 - (void)reboot;
 - (void)tearDown;
+
++ (DABMacEngineViewController *)sharedInstance;
   
 @end

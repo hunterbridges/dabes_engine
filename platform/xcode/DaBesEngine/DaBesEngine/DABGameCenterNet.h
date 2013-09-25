@@ -8,8 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef DABES_MAC
+#import <DaBes-Mac.h>
+#endif
+#ifdef DABES_IOS
+#import <DaBes-iOS.h>
+#endif
+
 @interface DABGameCenterNet : NSObject
 
+@property (nonatomic, assign, readonly) Engine *engine;
+
+- (id)initWithEngine:(Engine *)engine;
+
 - (void)authenticate;
+- (void)findMatches;
 
 @end

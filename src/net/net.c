@@ -44,5 +44,7 @@ NetProto DefaultNetProto = {
     .init = NULL,
     .cleanup = NULL,
     .authenticate = NULL,
-    .authenticate_cb = NULL
+    .authenticate_cb = NULL,
+    .find_matches = NULL,
+    .find_matches_cb = NULL,
 };

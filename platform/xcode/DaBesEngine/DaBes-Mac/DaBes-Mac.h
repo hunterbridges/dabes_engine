@@ -1105,6 +1105,8 @@ typedef struct NetProto {
     int (*cleanup)(struct Net *net);
     int (*authenticate)(struct Net *net, struct Engine *engine);
     int (*authenticate_cb)(struct Net *net, struct Engine *engine);
+    int (*find_matches)(struct Net *net, struct Engine *engine);
+    int (*find_matches_cb)(struct Net *net, struct Engine *engine);
 } NetProto;
 
 typedef struct Net {
