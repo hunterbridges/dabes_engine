@@ -4,7 +4,7 @@
 const char *luab_Console_lib = "console";
 
 
-void concat_log_message(lua_State *L, bstring *message) {
+void concat_log_message(lua_State *L, bstring message) {
   
   int c = lua_gettop(L);
   
