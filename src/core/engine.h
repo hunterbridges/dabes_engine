@@ -8,6 +8,7 @@
 #include "../audio/audio.h"
 #include "../scripting/scripting.h"
 #include "../input/input.h"
+#include "../net/net.h"
 #include "../graphics/graphics.h"
 #include "../physics/physics.h"
 #include "easer.h"
@@ -25,6 +26,7 @@ typedef struct Engine {
     Console *console;
     Input *input;
     Graphics *graphics;
+    Net *net;
     Physics *physics;
     Scripting *scripting;
 

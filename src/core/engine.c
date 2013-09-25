@@ -47,6 +47,7 @@ Engine *Engine_create(Engine_resource_path_func path_func,
     engine->console = Console_create(console_proto);
     engine->input = Input_create();
     engine->graphics = Graphics_create(engine);
+    engine->net = Net_create(engine);
     engine->physics = Physics_create();
     engine->easers = List_create();
 
@@ -75,13 +76,15 @@ void Engine_destroy(Engine *engine) {
 
     List_clear_destroy(engine->easers);
 
-    // Scripting has to go first, as it
-    // manages all the objects that leverage other things.
+    // Scripting has to go first, as it memory manages all the objects that
+    // leverage other subsystems.
     Scripting_destroy(engine->scripting);
 
     Audio_destroy(engine->audio);
+    Console_destroy(engine->console);
     Input_destroy(engine->input);
     Graphics_destroy(engine->graphics);
+    Net_destroy(engine->net);
     Physics_destroy(engine->physics);
 
 #ifdef DABES_SDL

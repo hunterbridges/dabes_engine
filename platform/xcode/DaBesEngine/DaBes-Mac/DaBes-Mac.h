@@ -1095,6 +1095,29 @@ void Input_reset(Input *input);
 void Input_change_preferred_style(Input *input, InputStyle preferred);
 
 #endif
+#ifndef __net_h
+#define __net_h
+
+struct Net;
+struct Engine;
+typedef struct NetProto {
+    int (*init)(struct Net *net, struct Engine *engine);
+    int (*cleanup)(struct Net *net);
+    int (*authenticate)(struct Net *net, struct Engine *engine);
+    int (*authenticate_cb)(struct Net *net, struct Engine *engine);
+} NetProto;
+
+typedef struct Net {
+    NetProto proto;
+    void *context;
+} Net;
+
+Net *Net_create(struct Engine *engine);
+void Net_destroy(Net *net);
+
+extern NetProto DefaultNetProto;
+
+#endif
 #ifndef __vrect_h
 #define __vrect_h
 
@@ -1484,6 +1507,7 @@ typedef struct Engine {
     Console *console;
     Input *input;
     Graphics *graphics;
+    Net *net;
     Physics *physics;
     Scripting *scripting;
 
@@ -2951,6 +2975,60 @@ void VPolygon_set_point(VPolygon *poly, int i, VPoint point);
 VPoint VPolygon_get_point(VPolygon *poly, int i);
 void VPolygon_wind(VPolygon *poly, short int clockwise);
 int VPolygon_is_clockwise(VPolygon *poly);
+
+#endif
+#ifndef __net_bindings_h
+#define __net_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_Net_lib;
+extern const char *luab_Net_metatable;
+typedef Scripting_userdata_for(Net) Net_userdata;
+Scripting_caster_for(Net, luaL_tonet);
+
+int luaopen_dabes_net(lua_State *L);
+
+#endif
+#ifndef __net_match_h
+#define __net_match_h
+
+struct Engine;
+struct NetMatch;
+typedef struct NetMatchProto {
+    int (*init)(struct NetMatch *net, struct Engine *engine);
+    int (*cleanup)(struct NetMatch *net);
+    int (*send_data)(struct NetMatch *match, struct Engine *engine,
+                     unsigned char *data, size_t size);
+    int (*rcv_data_cb)(struct NetMatch *match, struct Engine *engine,
+                       unsigned char *data, size_t size);
+} NetMatchProto;
+
+typedef struct NetMatch {
+    NetMatchProto proto;
+    void *context;
+} NetMatch;
+
+NetMatch *NetMatch_create(struct Engine *engine);
+void NetMatch_destroy(NetMatch *match);
+
+extern NetMatchProto DefaultNetMatchProto;
+
+#endif
+#ifndef __net_match_bindings_h
+#define __net_match_bindings_h
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
+
+extern const char *luab_NetMatch_lib;
+extern const char *luab_NetMatch_metatable;
+typedef Scripting_userdata_for(NetMatch) NetMatch_userdata;
+Scripting_caster_for(NetMatch, luaL_tonetmatch);
+
+int luaopen_dabes_netmatch(lua_State *L);
+
 
 #endif
 #ifndef __chipmunk_recorder_h
