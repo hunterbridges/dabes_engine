@@ -40,6 +40,10 @@ Net = BoundObject:extend({
     
     --- Called when `Net` finds a match
     found_match = function(self, match)
+    end,
+    
+    --- Called when `Net` fails to find a match
+    find_failed = function(self)
     end
 })
 
