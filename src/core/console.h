@@ -4,7 +4,7 @@
 struct Console;
 struct Engine;
 typedef struct ConsoleProto {
-  void (*log)(struct Console *console, char *str);
+  void (*log)(struct Console *console, char *str, char *level);
 } ConsoleProto;
 
 typedef struct Console {

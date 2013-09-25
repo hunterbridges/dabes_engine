@@ -301,7 +301,8 @@
     self.consolePanel.isVisible = YES;
   
     NSString *msg = notif.userInfo[@"message"];
-    NSLog(@"I got this message: %@", msg);
+    NSString *level = notif.userInfo[@"level"];
+    [self.consolePanel log:msg withLevel:level];
 }
 
 #pragma mark - Window Delegate
