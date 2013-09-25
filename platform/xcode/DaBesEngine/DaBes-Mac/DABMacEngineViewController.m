@@ -77,6 +77,14 @@ void Mac_handle_abort_trap(int err) {
 char *bundlePath__;
 @implementation DABMacEngineViewController
 
+static DABMacEngineViewController *sharedMacEngineVC = nil;
+
++ (DABMacEngineViewController *)sharedInstance
+{
+    // HACK The worst;
+    return sharedMacEngineVC;
+}
+
 - (id)init {
   self = [super init];
   if (self) {
@@ -84,6 +92,9 @@ char *bundlePath__;
                              [[NSBundle mainBundle] bundlePath]]
                    cStringUsingEncoding:NSASCIIStringEncoding];
     self.touchInput = Input_create();
+      
+    // HACK The worst;
+    sharedMacEngineVC = self;
   }
   
   return self;

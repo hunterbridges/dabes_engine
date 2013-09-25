@@ -8,12 +8,10 @@ typedef struct GameCenterNetCtx {
 } GameCenterNetCtx;
 
 int GameCenterNet_init(Net *net, Engine *engine) {
-    check(net != NULL, "No Net to init");
-    
     GameCenterNetCtx *ctx = calloc(1, sizeof(GameCenterNetCtx));
-    check(ctx != NULL, "Couldn't create GameCenterNetCtx");
     
-    ctx->game_center_net = CFBridgingRetain([[DABGameCenterNet alloc] init]);
+    DABGameCenterNet *gcn = [[DABGameCenterNet alloc] initWithEngine:engine];
+    ctx->game_center_net = CFBridgingRetain(gcn);
     
     net->context = ctx;
     
@@ -50,6 +48,29 @@ error:
 int GameCenterNet_authenticate_cb(Net *net, Engine *engine) {
     check(net != NULL, "No Net for authenticate callback");
     
+    Scripting_call_hook(engine->scripting, net, "authenticated");
+    
+    return 1;
+error:
+    return 0;
+}
+
+int GameCenterNet_find_matches(Net *net, Engine *engine) {
+    GameCenterNetCtx *ctx = net->context;
+    DABGameCenterNet *gcn = (__bridge DABGameCenterNet *)ctx->game_center_net;
+    
+    [gcn findMatches];
+    
+    return 1;
+error:
+    return 0;
+}
+
+int GameCenterNet_find_matches_cb(Net *net, Engine *engine) {
+    check(net != NULL, "No Net for find_matches callback");
+    
+    Scripting_call_hook(engine->scripting, net, "find_matchesd");
+    
     return 1;
 error:
     return 0;
@@ -59,5 +80,7 @@ NetProto GameCenterNetProto = {
     .init = GameCenterNet_init,
     .cleanup = GameCenterNet_cleanup,
     .authenticate = GameCenterNet_authenticate,
-    .authenticate_cb = GameCenterNet_authenticate_cb
+    .authenticate_cb = GameCenterNet_authenticate_cb,
+    .find_matches = GameCenterNet_find_matches,
+    .find_matches_cb = GameCenterNet_find_matches_cb
 };

@@ -9,6 +9,7 @@ extern NSString *kEntitySelectedNotification;
 @interface DABiOSEngineViewController : GLKViewController <UIGestureRecognizerDelegate,
                                               GLKViewDelegate>
 
++ (DABiOSEngineViewController *)sharedInstance;
 - (id)initWithTouchInput:(Input *)input;
 - (void)didEnterBackground;
 - (void)willEnterForeground;

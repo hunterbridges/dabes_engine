@@ -78,6 +78,7 @@
 		CAFAF64617EBA0AA002AA22A /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF63A17EBA0AA002AA22A /* OpenAL.framework */; };
 		CAFAF64717EBA0AA002AA22A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF63B17EBA0AA002AA22A /* QuartzCore.framework */; };
 		CAFAF64817EBA0AA002AA22A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF63C17EBA0AA002AA22A /* UIKit.framework */; };
+		CAFC4EB017F2803B00CE740E /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFC4EAF17F2803B00CE740E /* GameKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -271,6 +272,8 @@
 		CAFAF63A17EBA0AA002AA22A /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/OpenAL.framework; sourceTree = DEVELOPER_DIR; };
 		CAFAF63B17EBA0AA002AA22A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		CAFAF63C17EBA0AA002AA22A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		CAFC4EAF17F2803B00CE740E /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		CAFC4EB117F2803B00CE740E /* DaBeSDK.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = DaBeSDK.entitlements; path = DaBeSDK/DaBeSDK.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +308,7 @@
 				CA705CEE17835C5500D2C6E4 /* PSMTabBarControl.framework in Frameworks */,
 				CA705CEB17835AEE00D2C6E4 /* CoreGraphics.framework in Frameworks */,
 				CA705CE917835A6C00D2C6E4 /* Foundation.framework in Frameworks */,
+				CAFC4EB017F2803B00CE740E /* GameKit.framework in Frameworks */,
 				CA705CD417835A6B00D2C6E4 /* DaBes-Mac.framework in Frameworks */,
 				CA705CD517835A6B00D2C6E4 /* Carbon.framework in Frameworks */,
 				CA705CD617835A6B00D2C6E4 /* Cocoa.framework in Frameworks */,
@@ -531,6 +535,7 @@
 		CAF42A671780F6D800C3220A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CAFC4EB117F2803B00CE740E /* DaBeSDK.entitlements */,
 				CAF42AB11780F92400C3220A /* DaBeSDK-Prefix.pch */,
 				CAF42AAF1780F90E00C3220A /* DaBeSDK-Info.plist */,
 				CAF42A941780F88C00C3220A /* Credits.rtf */,
@@ -565,6 +570,7 @@
 		CAF42AAE1780F8D600C3220A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CAFC4EAF17F2803B00CE740E /* GameKit.framework */,
 				CA705CEA17835AEE00D2C6E4 /* CoreGraphics.framework */,
 				CA705CE117835A6B00D2C6E4 /* CoreFoundation.framework */,
 				CA705CE217835A6B00D2C6E4 /* Foundation.framework */,
@@ -642,6 +648,19 @@
 				CLASSPREFIX = SDK;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "The Telemetry Group";
+				TargetAttributes = {
+					CAF42A451780F67700C3220A = {
+						DevelopmentTeam = M3KD47PA4B;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = CAF42A411780F67700C3220A /* Build configuration list for PBXProject "DaBeSDK" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1005,6 +1024,9 @@
 		CAF42A641780F67700C3220A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DaBeSDK/DaBeSDK.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1018,6 +1040,7 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DDABES_MAC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1025,6 +1048,9 @@
 		CAF42A651780F67700C3220A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DaBeSDK/DaBeSDK.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1038,6 +1064,7 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DDABES_MAC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

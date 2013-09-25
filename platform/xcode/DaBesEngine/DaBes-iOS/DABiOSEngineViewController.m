@@ -69,6 +69,15 @@ char *bundlePath__;
 @synthesize engine = engine_;
 @synthesize scene = scene_;
 
+// HACK The worst;
+static DABiOSEngineViewController *sharediOSEngineVC = nil;
+
++ (DABiOSEngineViewController *)sharedInstance
+{
+    // HACK The worst;
+    return sharediOSEngineVC;
+}
+
 - (id)initWithTouchInput:(Input *)input {
   self = [super init];
   if (self) {
@@ -79,6 +88,9 @@ char *bundlePath__;
         selector:@selector(handleChangePreferredInputStyle:)
         name:kInputChangedPreferredStyleNotification
         object:nil];
+      
+    // HACK The worst;
+    sharediOSEngineVC = self;
   }
   return self;
 }

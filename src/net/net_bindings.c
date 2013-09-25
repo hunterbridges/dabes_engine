@@ -39,9 +39,25 @@ error:
     return 0;
 }
 
+int luab_Net_find_matches(lua_State *L) {
+    Net *net = luaL_tonet(L, 1);
+    check(net != NULL, "Net required");
+    
+    if (net->proto.find_matches) {
+        Engine *engine = luaL_get_engine(L);
+        net->_(find_matches)(net, engine);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 0;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_Net_meths[] = {
     {"__gc", luab_Net_close},
     {"authenticate", luab_Net_authenticate},
+    {"find_matches", luab_Net_find_matches},
     {NULL, NULL}
 };
 
