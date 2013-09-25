@@ -8,9 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class SDKConsoleView;
 @interface SDKConsolePanel : NSPanel
 
-@property (nonatomic, weak) IBOutlet SDKConsoleView *consoleView;
+@property (nonatomic, assign) IBOutlet NSTextView *consoleView;
+
+
+- (void)log:(NSString *)message withLevel:(NSString *)level;
 
 @end

@@ -22,8 +22,8 @@ error:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void STDIOConsole_log(Console *console, char *str) {
-  printf("%s\n", str);
+void STDIOConsole_log(Console *console, char *str, char *level) {
+  printf("%s: %s\n", level, str);
 }
 
 ConsoleProto STDIOConsoleProto = {

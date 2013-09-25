@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12E55" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
@@ -140,15 +140,57 @@
                 <rect key="frame" x="0.0" y="0.0" width="583" height="347"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0JK-gc-vVR" customClass="SDKConsoleView">
-                        <rect key="frame" x="0.0" y="0.0" width="583" height="347"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    </customView>
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ci6-DO-stU">
+                        <rect key="frame" x="-1" y="-1" width="585" height="349"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <clipView key="contentView" id="MJO-ZN-yIE">
+                            <rect key="frame" x="1" y="1" width="583" height="347"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView importsGraphics="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="jQL-sa-ial">
+                                    <rect key="frame" x="0.0" y="0.0" width="583" height="347"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="567" height="347"/>
+                                    <size key="maxSize" width="585" height="10000000"/>
+                                    <color key="insertionPointColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="567" height="347"/>
+                                    <size key="maxSize" width="585" height="10000000"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" id="deX-yj-BB6">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" id="3Ia-s4-w9p">
+                            <rect key="frame" x="568" y="1" width="16" height="347"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="ci6-DO-stU" firstAttribute="top" secondItem="GJp-Z6-GgQ" secondAttribute="top" constant="-1" id="GbR-x8-uOg"/>
+                    <constraint firstAttribute="bottom" secondItem="ci6-DO-stU" secondAttribute="bottom" constant="-1" id="Yt3-sN-DWq"/>
+                    <constraint firstAttribute="trailing" secondItem="ci6-DO-stU" secondAttribute="trailing" constant="-1" id="czw-dB-jta"/>
+                    <constraint firstItem="ci6-DO-stU" firstAttribute="leading" secondItem="GJp-Z6-GgQ" secondAttribute="leading" constant="-1" id="gOL-Xq-VBd"/>
+                </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="65D47862-F758-4AA4-A03C-349449C0D258" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="1c5-J7-llN">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="F3D23F3A-B0C7-4859-AAE2-1B4ADE9A4154" label="Clear Output" paletteLabel="Toolbar Item" tag="-1" image="NSTrashFull" id="eWp-7B-NQ7"/>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="eWp-7B-NQ7"/>
+                </defaultToolbarItems>
+            </toolbar>
             <connections>
-                <outlet property="consoleView" destination="0JK-gc-vVR" id="28S-bc-Tbf"/>
+                <outlet property="consoleView" destination="jQL-sa-ial" id="vtI-Vh-iOs"/>
             </connections>
         </window>
     </objects>
+    <resources>
+        <image name="NSTrashFull" width="32" height="32"/>
+    </resources>
 </document>
