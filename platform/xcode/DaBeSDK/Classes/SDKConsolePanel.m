@@ -29,14 +29,18 @@
   }
   
   NSDictionary *attrs = @{
-                          NSForegroundColorAttributeName: color,
-                          NSFontAttributeName: font
+      NSForegroundColorAttributeName: color,
+      NSFontAttributeName: font
   };
   
-  NSAttributedString *coloredMessage = [[NSAttributedString alloc] initWithString:[message copy] attributes: attrs];
-  
+  NSAttributedString *coloredMessage =
+      [[NSAttributedString alloc] initWithString:[message copy]
+                                      attributes: attrs];
+    
+  [self.consoleView setEditable:YES];
   [self.consoleView insertText:coloredMessage];
   [self.consoleView insertText:@"\n"];
+  [self.consoleView setEditable:NO];
 }
 
 @end
