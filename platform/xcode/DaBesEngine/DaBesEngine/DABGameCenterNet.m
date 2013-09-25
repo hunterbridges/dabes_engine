@@ -18,8 +18,6 @@
 
 @interface DABGameCenterNet () <GKMatchmakerViewControllerDelegate>
 
-@property (nonatomic, strong) NSWindow *popup;
-
 @end
 
 @implementation DABGameCenterNet
@@ -34,17 +32,15 @@
     return self;
 }
 
-#ifdef DABES_IOS
-#endif
-
-#ifdef DABES_MAC
-
 - (void)authenticate
 {
-    /*
-    DABMacEngineViewController *vc =
-        [DABMacEngineViewController sharedInstance];
-     */
+    if ([GKLocalPlayer localPlayer].isAuthenticated) {
+        Net *net = self.engine->net;
+        net->_(authenticate_cb)(net, self.engine);
+        return;
+    }
+    
+#ifdef DABES_MAC
     [GKLocalPlayer localPlayer].authenticateHandler =
         ^(NSViewController *viewController, NSError *error) {
             if (error) {
@@ -60,14 +56,33 @@
             }
         
         };
+#endif
+    
+#ifdef DABES_IOS
+    [GKLocalPlayer localPlayer].authenticateHandler =
+        ^(UIViewController *viewController, NSError *error) {
+            if (error) {
+                NSLog(@"%@", [error description]);
+            }
+            
+            if (viewController) {
+                [[DABiOSEngineViewController sharedInstance]
+                    presentViewController:viewController
+                    animated:YES
+                    completion:^{
+                     
+                    }];
+            } else {
+                Net *net = self.engine->net;
+                net->_(authenticate_cb)(net, self.engine);
+            }
+        
+        };
+#endif
 }
 
 - (void)findMatches
 {
-    /*
-    DABMacEngineViewController *vc =
-        [DABMacEngineViewController sharedInstance];
-     */
     GKMatchRequest *request = [[GKMatchRequest alloc] init];
     request.minPlayers = 2;
     request.maxPlayers = 4;
@@ -75,17 +90,29 @@
     GKMatchmakerViewController *mmvc =
         [[GKMatchmakerViewController alloc] initWithMatchRequest:request];
     mmvc.matchmakerDelegate = self;
+#ifdef DABES_MAC
     [[GKDialogController sharedDialogController] presentViewController:mmvc];
-}
-
-- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    
-}
-
 #endif
+#ifdef DABES_IOS
+    [[DABiOSEngineViewController sharedInstance]
+         presentViewController:mmvc animated:YES completion:^{
+             
+         }];
+#endif
+}
 
 #pragma mark - Matchmaker Delegate
+
+- (void)dismiss
+{
+#ifdef DABES_MAC
+    [[GKDialogController sharedDialogController] dismiss:viewController];
+#endif
+#ifdef DABES_IOS
+    [[DABiOSEngineViewController sharedInstance] dismissViewControllerAnimated:YES completion:nil];
+#endif
+    
+}
 
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
                 didFailWithError:(NSError *)error
@@ -96,7 +123,9 @@
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
                     didFindMatch:(GKMatch *)match
 {
-    
+    [self dismiss];
+    Net *net = self.engine->net;
+    net->_(find_matches_cb)(net, self.engine, 1);
 }
 
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
@@ -113,9 +142,9 @@
 
 - (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController
 {
-#ifdef DABES_MAC
-    [[GKDialogController sharedDialogController] dismiss:viewController];
-#endif
+    [self dismiss];
+    Net *net = self.engine->net;
+    net->_(find_matches_cb)(net, self.engine, 0);
 }
 
 @end

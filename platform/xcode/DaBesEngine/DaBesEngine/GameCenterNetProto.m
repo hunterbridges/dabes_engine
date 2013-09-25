@@ -66,10 +66,14 @@ error:
     return 0;
 }
 
-int GameCenterNet_find_matches_cb(Net *net, Engine *engine) {
+int GameCenterNet_find_matches_cb(Net *net, Engine *engine, int success) {
     check(net != NULL, "No Net for find_matches callback");
     
-    Scripting_call_hook(engine->scripting, net, "find_matchesd");
+    if (success) {
+        Scripting_call_hook(engine->scripting, net, "found_match");
+    } else {
+        Scripting_call_hook(engine->scripting, net, "find_failed");
+    }
     
     return 1;
 error:
