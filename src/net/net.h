@@ -10,7 +10,7 @@ typedef struct NetProto {
     int (*authenticate)(struct Net *net, struct Engine *engine);
     int (*authenticate_cb)(struct Net *net, struct Engine *engine);
     int (*find_matches)(struct Net *net, struct Engine *engine);
-    int (*find_matches_cb)(struct Net *net, struct Engine *engine, int success);
+    int (*find_matches_cb)(struct Net *net, struct Engine *engine, void *assoc);
 } NetProto;
 
 typedef struct Net {

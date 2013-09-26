@@ -44,7 +44,7 @@ error:
 
 int luab_Music_close(lua_State *L) {
     Music_userdata *music_ud = (Music_userdata *)
-        luaL_checkudata(L, 1, luab_Music_metatable);
+        luaL_testudata(L, 1, luab_Music_metatable);
     if (music_ud->p) {
         // The Audio engine will clean this up
         Music_end(music_ud->p);

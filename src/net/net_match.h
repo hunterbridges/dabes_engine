@@ -7,6 +7,7 @@ struct NetMatch;
 typedef struct NetMatchProto {
     int (*init)(struct NetMatch *net, struct Engine *engine);
     int (*cleanup)(struct NetMatch *net);
+    int (*associate_native)(struct NetMatch *net, void *assoc);
     int (*send_data)(struct NetMatch *match, struct Engine *engine,
                      unsigned char *data, size_t size);
     int (*rcv_data_cb)(struct NetMatch *match, struct Engine *engine,

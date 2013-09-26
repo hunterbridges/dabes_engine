@@ -34,7 +34,7 @@ error:
 
 int luab_ParallaxLayer_close(lua_State *L) {
     ParallaxLayer_userdata *ud = (ParallaxLayer_userdata *)
-        luaL_checkudata(L, 1, luab_ParallaxLayer_metatable);
+        luaL_testudata(L, 1, luab_ParallaxLayer_metatable);
     if (ud->p) {
         // TODO: unload texture?
         free(ud->p);
@@ -111,7 +111,7 @@ error:
 
 int luab_Parallax_close(lua_State *L) {
     Parallax_userdata *ud = (Parallax_userdata *)
-        luaL_checkudata(L, 1, luab_Parallax_metatable);
+        luaL_testudata(L, 1, luab_Parallax_metatable);
     if (ud->p) {
         Parallax_destroy(ud->p);
     }

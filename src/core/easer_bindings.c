@@ -30,7 +30,7 @@ error:
 
 int luab_Easer_close(lua_State *L) {
     Easer_userdata *ud = (Easer_userdata *)
-        luaL_checkudata(L, 1, luab_Easer_metatable);
+        luaL_testudata(L, 1, luab_Easer_metatable);
     ud->p = NULL;
     return 0;
 }

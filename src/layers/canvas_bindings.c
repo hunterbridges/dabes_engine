@@ -25,7 +25,7 @@ error:
 
 int luab_Canvas_close(lua_State *L) {
     Canvas_userdata *ud = (Canvas_userdata *)
-        luaL_checkudata(L, 1, luab_Canvas_metatable);
+        luaL_testudata(L, 1, luab_Canvas_metatable);
     if (ud->p) {
         Canvas_destroy(ud->p);
     }

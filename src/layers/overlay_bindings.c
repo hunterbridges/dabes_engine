@@ -35,7 +35,7 @@ error:
 
 int luab_Overlay_close(lua_State *L) {
     Overlay_userdata *ud = (Overlay_userdata *)
-        luaL_checkudata(L, 1, luab_Overlay_metatable);
+        luaL_testudata(L, 1, luab_Overlay_metatable);
     if (ud->p) {
         Overlay_destroy(ud->p);
     }
