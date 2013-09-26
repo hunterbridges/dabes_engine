@@ -29,7 +29,7 @@ error:
 
 int luab_Entity_close(lua_State *L) {
     Entity_userdata *ud = (Entity_userdata *)
-        luaL_checkudata(L, 1, luab_Entity_metatable);
+        luaL_testudata(L, 1, luab_Entity_metatable);
     if (ud->p) {
         Entity_destroy(ud->p);
     }

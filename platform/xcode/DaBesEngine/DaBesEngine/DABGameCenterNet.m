@@ -106,7 +106,7 @@
 - (void)dismiss
 {
 #ifdef DABES_MAC
-    [[GKDialogController sharedDialogController] dismiss:viewController];
+    [[GKDialogController sharedDialogController] dismiss:nil];
 #endif
 #ifdef DABES_IOS
     [[DABiOSEngineViewController sharedInstance] dismissViewControllerAnimated:YES completion:nil];
@@ -125,7 +125,7 @@
 {
     [self dismiss];
     Net *net = self.engine->net;
-    net->_(find_matches_cb)(net, self.engine, 1);
+    net->_(find_matches_cb)(net, self.engine, (__bridge void *)match);
 }
 
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
@@ -144,7 +144,7 @@
 {
     [self dismiss];
     Net *net = self.engine->net;
-    net->_(find_matches_cb)(net, self.engine, 0);
+    net->_(find_matches_cb)(net, self.engine, NULL);
 }
 
 @end

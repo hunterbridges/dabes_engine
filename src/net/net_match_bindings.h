@@ -14,5 +14,4 @@ Scripting_caster_for(NetMatch, luaL_tonetmatch);
 
 int luaopen_dabes_netmatch(lua_State *L);
 
-
 #endif

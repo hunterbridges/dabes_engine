@@ -380,7 +380,7 @@ struct STYPE ## _userdata { \
 #define Scripting_caster_for(STYPE, FNAME) \
 static inline STYPE *FNAME(lua_State *L, int narg) { \
     STYPE ## _userdata *ud = (STYPE ## _userdata *) \
-        luaL_checkudata(L, narg, luab_ ## STYPE ## _metatable); \
+        luaL_testudata(L, narg, luab_ ## STYPE ## _metatable); \
     check(ud != NULL, "Object at %d is not type %s", narg, #STYPE); \
     check(ud->p != NULL, "Userdata has no %s object", #STYPE); \
     return ud->p; \
@@ -390,14 +390,14 @@ error: \
 
 #define Scripting_null_closer(STYPE) \
 static inline int luab_ ## STYPE ## _close(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     ud->p = NULL; \
     return 0; \
 }
 
 #define Scripting_destroy_closer(STYPE) \
 static inline int luab_ ## STYPE ## _close(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     if (ud->p) { \
         STYPE ## _destroy(ud->p); \
     } \
@@ -408,7 +408,7 @@ static inline int luab_ ## STYPE ## _close(lua_State *L) { \
 // Property accessor generation, basic types
 #define Scripting_num_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     check(lua_isnumber(L, 2), \
             "Please provide a number to set "#STYPE"->"#SPROP); \
     lua_Number num = lua_tonumber(L, 2); \
@@ -421,7 +421,7 @@ error: \
 
 #define Scripting_num_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     lua_Number ret = s->SPROP; \
     lua_pushnumber(L, ret); \
@@ -430,7 +430,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 
 #define Scripting_bool_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     check(lua_isboolean(L, 2), \
             "Please provide a boolean to set "#STYPE"->"#SPROP); \
     int num = lua_toboolean(L, 2); \
@@ -443,7 +443,7 @@ error: \
 
 #define Scripting_bool_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     int ret = s->SPROP; \
     lua_pushboolean(L, ret); \
@@ -452,7 +452,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 
 #define Scripting_string_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     check(lua_isstring(L, 2), \
             "Please provide a string to set "#STYPE"->"#SPROP); \
     char *string = lua_tostring(L, 2); \
@@ -465,7 +465,7 @@ error: \
 
 #define Scripting_string_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     char *ret = s->SPROP; \
     lua_pushstring(L, ret); \
@@ -475,7 +475,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 // Property synthesis, complex types
 #define Scripting_VPoint_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     lua_newtable(L); \
     lua_pushinteger(L, 1); \
@@ -489,7 +489,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 
 #define Scripting_VPoint_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     check(luaL_unpack_exact(L, 2), \
             "Please provide 2 numbers to set " #STYPE "->" #SPROP ); \
@@ -503,7 +503,7 @@ error: \
 
 #define Scripting_VVector4_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     lua_newtable(L); \
     lua_pushinteger(L, 1); \
@@ -523,7 +523,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 
 #define Scripting_VVector4_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     check(luaL_unpack_exact(L, 4), \
             "Please provide 4 numbers to set " #STYPE "->" #SPROP ); \
@@ -538,7 +538,7 @@ error: \
 
 #define Scripting_GfxSize_getter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     lua_newtable(L); \
     lua_pushinteger(L, 1); \
@@ -552,7 +552,7 @@ static inline int luab_ ## STYPE ## _get_ ## SPROP(lua_State *L) { \
 
 #define Scripting_GfxSize_setter(STYPE, SPROP) \
 static inline int luab_ ## STYPE ## _set_ ## SPROP(lua_State *L) { \
-    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_checkudata(L, 1, luab_ ## STYPE ## _metatable); \
+    STYPE ## _userdata *ud = (STYPE ## _userdata *) luaL_testudata(L, 1, luab_ ## STYPE ## _metatable); \
     STYPE *s = ud->p; \
     check(luaL_unpack_exact(L, 2), \
             "Please provide 2 numbers to set " #STYPE "->" #SPROP ); \
@@ -1106,7 +1106,7 @@ typedef struct NetProto {
     int (*authenticate)(struct Net *net, struct Engine *engine);
     int (*authenticate_cb)(struct Net *net, struct Engine *engine);
     int (*find_matches)(struct Net *net, struct Engine *engine);
-    int (*find_matches_cb)(struct Net *net, struct Engine *engine, int success);
+    int (*find_matches_cb)(struct Net *net, struct Engine *engine, void *assoc);
 } NetProto;
 
 typedef struct Net {
@@ -2992,6 +2992,10 @@ Scripting_caster_for(Net, luaL_tonet);
 
 int luaopen_dabes_net(lua_State *L);
 
+struct Engine;
+struct NetMatch;
+int Net_call_found_match_hook(Net *net, struct Engine *engine, void *assoc);
+
 #endif
 #ifndef __net_match_h
 #define __net_match_h
@@ -3001,6 +3005,7 @@ struct NetMatch;
 typedef struct NetMatchProto {
     int (*init)(struct NetMatch *net, struct Engine *engine);
     int (*cleanup)(struct NetMatch *net);
+    int (*associate_native)(struct NetMatch *net, void *assoc);
     int (*send_data)(struct NetMatch *match, struct Engine *engine,
                      unsigned char *data, size_t size);
     int (*rcv_data_cb)(struct NetMatch *match, struct Engine *engine,
@@ -3030,7 +3035,6 @@ typedef Scripting_userdata_for(NetMatch) NetMatch_userdata;
 Scripting_caster_for(NetMatch, luaL_tonetmatch);
 
 int luaopen_dabes_netmatch(lua_State *L);
-
 
 #endif
 #ifndef __chipmunk_recorder_h

@@ -39,7 +39,7 @@ error:
 
 int luab_Body_close(lua_State *L) {
     Body_userdata *ud = (Body_userdata *)
-        luaL_checkudata(L, 1, luab_Body_metatable);
+        luaL_testudata(L, 1, luab_Body_metatable);
     if (ud->p) {
         Body_destroy(ud->p);
     }

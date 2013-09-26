@@ -21,6 +21,7 @@
 #include "../graphics/sprite_bindings.h"
 #include "../math/shape_matcher_bindings.h"
 #include "../net/net_bindings.h"
+#include "../net/net_match_bindings.h"
 #include "../recorder/recorder_bindings.h"
 
 const char *SCRIPTING_CL_ENTITY_CONFIG = "entity_config";
@@ -48,6 +49,7 @@ void Scripting_load_engine_libs(Scripting *scripting) {
     luaopen_dabes_sprite(scripting->L);
     luaopen_dabes_shape_matcher(scripting->L);
     luaopen_dabes_net(scripting->L);
+    luaopen_dabes_netmatch(scripting->L);
     luaopen_dabes_recorder(scripting->L);
 }
 

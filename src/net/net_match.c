@@ -2,7 +2,7 @@
 
 #if defined(DABES_MAC) || defined(DABES_IOS)
 #include <GameCenterNetMatchProto.h>
-//#define NET_MATCH_PROTO GameCenterNetMatchProto
+#define NET_MATCH_PROTO GameCenterNetMatchProto
 #endif
 
 #ifndef NET_MATCH_PROTO
@@ -43,6 +43,7 @@ error:
 NetMatchProto DefaultNetMatchProto = {
     .init = NULL,
     .cleanup = NULL,
+    .associate_native = NULL,
     .send_data = NULL,
     .rcv_data_cb = NULL
 };
