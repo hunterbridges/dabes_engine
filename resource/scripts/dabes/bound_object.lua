@@ -117,6 +117,9 @@ BoundObject = Object:extend({
     fwd_func = function(name)
         return function(self, ...)
             if not self.real then return nil end
+            if not self.real[name] then
+                error("Couldn't find `"..name.."` in lib", 2)
+            end
 
             return self.real[name](self.real, ...)
         end
@@ -131,6 +134,9 @@ BoundObject = Object:extend({
     fwd_func_real = function(name)
         return function(self, ...)
             if not self.real then return nil end
+            if not self.real[name] then
+                error("Couldn't find `"..name.."` in lib", 2)
+            end
 
             return self.real[name](self.real, map_real(...))
         end
@@ -155,6 +161,9 @@ BoundObject = Object:extend({
     fwd_func_opts = function(name, keys, defaults)
         return function(self, opts)
             if not self.real then return nil end
+            if not self.real[name] then
+                error("Couldn't find `"..name.."` in lib", 2)
+            end
             local fwded = self.real[name]
 
             local args = nil
@@ -184,6 +193,9 @@ BoundObject = Object:extend({
     fwd_adder = function(name)
         return function(self, member, ...)
             if not self.real then return nil end
+            if not self.real[name] then
+                error("Couldn't find `"..name.."` in lib", 2)
+            end
             local fwded = self.real[name]
 
             local cachekey = '_'..name..'_cache'
@@ -206,6 +218,9 @@ BoundObject = Object:extend({
     fwd_remover = function(name)
         return function(self, member, ...)
             if not self.real then return nil end
+            if not self.real[name] then
+                error("Couldn't find `"..name.."` in lib", 2)
+            end
             local fwded = self.real[name]
 
             local cachekey = '_'..name..'_cache'

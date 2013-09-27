@@ -11,10 +11,8 @@ typedef struct RecorderProto {
     void (*rewind)(struct Recorder *recorder);
     void (*start_play_cb)(struct Recorder *recorder);
     void (*stop_play_cb)(struct Recorder *recorder);
-    void (*pack)(struct Recorder *recorder, unsigned char **buffer,
-                 size_t *size);
-    void (*unpack)(struct Recorder *recorder, unsigned char *buffer,
-                   size_t size);
+    void (*pack)(struct Recorder *recorder, uint8_t **buffer, size_t *size);
+    void (*unpack)(struct Recorder *recorder, uint8_t *buffer, size_t size);
 } RecorderProto;
 
 typedef enum {

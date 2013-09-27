@@ -18,6 +18,8 @@
   #define DABES_SDL
 #endif
 
+#include "core/types.h"
+
 #include "constants.h"
 #include "dbg.h"
 #include "object.h"
