@@ -24,8 +24,77 @@ error:
 
 Scripting_destroy_closer(NetMatch);
 
+int luab_NetMatch_handshake(lua_State *L) {
+    NetMatch *match = luaL_tonetmatch(L, 1);
+    check(match != NULL, "NetMatch required");
+    
+    if (match->proto.handshake) {
+        Engine *engine = luaL_get_engine(L);
+        match->_(handshake)(match, engine);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 0;
+error:
+    return 0;
+}
+
+int luab_NetMatch_get_player_count(lua_State *L) {
+    NetMatch *match = luaL_tonetmatch(L, 1);
+    check(match != NULL, "NetMatch required");
+    
+    if (match->proto.get_player_count) {
+        Engine *engine = luaL_get_engine(L);
+        int count = match->_(get_player_count)(match, engine);
+        lua_pushinteger(L, count);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 1;
+error:
+    return 0;
+}
+
+int luab_NetMatch_get_player_number(lua_State *L) {
+    NetMatch *match = luaL_tonetmatch(L, 1);
+    check(match != NULL, "NetMatch required");
+    
+    if (match->proto.get_player_number) {
+        Engine *engine = luaL_get_engine(L);
+        int n = match->_(get_player_number)(match, engine);
+        lua_pushinteger(L, n);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 1;
+error:
+    return 0;
+}
+
+int luab_NetMatch_send_msg(lua_State *L) {
+    NetMatch *match = luaL_tonetmatch(L, 1);
+    check(match != NULL, "NetMatch required");
+    
+    if (match->proto.send_msg) {
+        // TODO
+        assert(1 == 0);
+        // Engine *engine = luaL_get_engine(L);
+        // match->_(send_msg)(match, engine);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 0;
+error:
+    return 0;
+}
+
+
 static const struct luaL_Reg luab_NetMatch_meths[] = {
     {"__gc", luab_NetMatch_close},
+    {"handshake", luab_NetMatch_handshake},
+    {"get_player_count", luab_NetMatch_get_player_count},
+    {"get_player_number", luab_NetMatch_get_player_number},
+    {"send_msg", luab_NetMatch_send_msg},
     {NULL, NULL}
 };
 

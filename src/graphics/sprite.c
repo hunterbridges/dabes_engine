@@ -29,6 +29,9 @@ error:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+SpriteDirection SPRITE_DIR_FACING_RIGHT = 0;
+SpriteDirection SPRITE_DIR_FACING_LEFT = 180;
+
 Sprite *Sprite_create(GfxTexture *texture, GfxSize cell_size, int padding) {
     check(texture != NULL, "Need texture to build sprite");
     int cols = floor(texture->size.w / cell_size.w);

@@ -159,16 +159,16 @@ void ChipmunkRecorder_stop_play_cb(struct Recorder *recorder) {
     body->_(set_is_rogue)(body, 0);
 }
 
-void ChipmunkRecorder_pack(struct Recorder *recorder, unsigned char **buffer,
+void ChipmunkRecorder_pack(struct Recorder *recorder, dab_uchar **buffer,
                            size_t *size) {
     check(recorder != NULL, "No recorder to pack");
 
     size_t bufcap = sizeof(ChipmunkRecorderCtx) +
         recorder->num_frames * sizeof(ChipmunkRecorderFrame);
-    unsigned char *buf = malloc(bufcap);
+    dab_uchar *buf = malloc(bufcap);
     check(buf != NULL, "Unable to create recorder pack buffer");
 
-    unsigned char *run = buf;
+    dab_uchar *run = buf;
     size_t bufsize = 0;
 
     // First thing is copy over the context, this is our buffer header.
@@ -180,7 +180,7 @@ void ChipmunkRecorder_pack(struct Recorder *recorder, unsigned char **buffer,
     for (i = 0; i < recorder->num_frames && bufsize < bufcap; i++) {
         ChipmunkRecorderFrame *frame = DArray_get(recorder->frames, i);
 
-        uint8_t flags = 0;
+        dab_uint8 flags = 0;
 
         // Flags
         // 00000000
@@ -212,9 +212,9 @@ void ChipmunkRecorder_pack(struct Recorder *recorder, unsigned char **buffer,
         }
 
         if (frame->keyframe || frame->has_sprite_frame) {
-            memcpy(run, &frame->sprite_frame, sizeof(int));
-            run += sizeof(int);
-            bufsize += sizeof(int);
+            memcpy(run, &frame->sprite_frame, sizeof(dab_uint16));
+            run += sizeof(dab_uint16);
+            bufsize += sizeof(dab_uint16);
         }
 
         if (frame->keyframe || frame->has_sprite_direction) {
@@ -234,7 +234,7 @@ error:
     return;
 }
 
-void ChipmunkRecorder_unpack(struct Recorder *recorder, unsigned char *buffer,
+void ChipmunkRecorder_unpack(struct Recorder *recorder, dab_uchar *buffer,
                              size_t size) {
     check(recorder != NULL, "No recorder to pack");
     check(buffer != NULL, "No buffer to unpack");
@@ -244,8 +244,12 @@ void ChipmunkRecorder_unpack(struct Recorder *recorder, unsigned char *buffer,
     size_t has_read = 0;
 
     // Read out the buffer header
-    unsigned char *run = buffer;
+    dab_uchar *run = buffer;
     memcpy(recorder->context, buffer, sizeof(ChipmunkRecorderCtx));
+    
+    // Might be a bogus pointer.
+    ((ChipmunkRecorderCtx *)recorder->context)->prev_frame = NULL;
+    
     run += sizeof(ChipmunkRecorderCtx);
     has_read += sizeof(ChipmunkRecorderCtx);
 
@@ -254,7 +258,7 @@ void ChipmunkRecorder_unpack(struct Recorder *recorder, unsigned char *buffer,
         ChipmunkRecorderFrame *frame = calloc(1, sizeof(ChipmunkRecorderFrame));
 
         // Read the flags
-        uint8_t flags = *run;
+        dab_uint8 flags = *run;
         frame->keyframe             = (flags & 1 << 7) != 0;
         frame->has_delta_pos        = (flags & 1 << 6) != 0;
         frame->has_delta_velo       = (flags & 1 << 5) != 0;
@@ -276,9 +280,9 @@ void ChipmunkRecorder_unpack(struct Recorder *recorder, unsigned char *buffer,
         }
 
         if (frame->keyframe || frame->has_sprite_frame) {
-            memcpy(&frame->sprite_frame, run, sizeof(int));
-            run += sizeof(int);
-            has_read += sizeof(int);
+            memcpy(&frame->sprite_frame, run, sizeof(dab_uint16));
+            run += sizeof(dab_uint16);
+            has_read += sizeof(dab_uint16);
         }
 
         if (frame->keyframe || frame->has_sprite_direction) {

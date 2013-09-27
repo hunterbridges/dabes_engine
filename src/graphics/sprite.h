@@ -23,10 +23,9 @@ void SpriteAnimation_destroy(SpriteAnimation *animation);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
-    SPRITE_DIR_FACING_RIGHT = 0,
-    SPRITE_DIR_FACING_LEFT  = 180
-} SpriteDirection;
+typedef dab_uint16 SpriteDirection;
+extern SpriteDirection SPRITE_DIR_FACING_RIGHT;
+extern SpriteDirection SPRITE_DIR_FACING_LEFT;
 
 typedef struct Sprite {
     GfxTexture *texture;

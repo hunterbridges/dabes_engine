@@ -121,7 +121,7 @@ VPointRel VPoint_rel(VPoint a, VPoint b) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-VPath *VPath_create(VPoint *points, int num_points) {
+VPath *VPath_create(VPoint *points, dab_int num_points) {
     check(points != NULL, "Points required");
     check(num_points > 0, "More than 0 points required");
     VPath *path = malloc(sizeof(VPath) + num_points * sizeof(VPoint));

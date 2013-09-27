@@ -88,14 +88,16 @@ void Recorder_set_state(Recorder *recorder, RecorderState state) {
     if (recorder->state == RecorderStatePlaying) {
         recorder->_(stop_play_cb)(recorder);
     }
+#ifdef DEBUG
     if (recorder->state == RecorderStateRecording) {
         // This shouldn't mess anything up.
-        unsigned char *buf = NULL;
+        dab_uchar *buf = NULL;
         size_t sz = 0;
         recorder->_(pack)(recorder, &buf, &sz);
         recorder->_(unpack)(recorder, buf, sz);
         free(buf);
     }
+#endif
 
     recorder->state = state;
     recorder->_(rewind)(recorder);

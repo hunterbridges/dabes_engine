@@ -12,41 +12,41 @@ typedef enum {
 } VPointRel;
 
 typedef struct VPoint {
-    float x;
-    float y;
+    dab_float x;
+    dab_float y;
 } VPoint;
 
 static const VPoint VPointZero = {0,0};
 
-VPoint VPoint_make(float x, float y);
+VPoint VPoint_make(dab_float x, dab_float y);
 VPoint VPoint_add(VPoint a, VPoint b);
 VPoint VPoint_subtract(VPoint a, VPoint b);
 VPoint VPoint_multiply(VPoint a, VPoint b);
-double VPoint_angle(VPoint a, VPoint b);
-VPoint VPoint_scale(VPoint a, double b);
-double VPoint_dot(VPoint a, VPoint b);
-double VPoint_cross(VPoint a, VPoint b);
+dab_double VPoint_angle(VPoint a, VPoint b);
+VPoint VPoint_scale(VPoint a, dab_double b);
+dab_double VPoint_dot(VPoint a, VPoint b);
+dab_double VPoint_cross(VPoint a, VPoint b);
 VPoint VPoint_mid(VPoint a, VPoint b);
-VPoint VPoint_rotate(VPoint point, VPoint pivot, double angle_in_rads);
+VPoint VPoint_rotate(VPoint point, VPoint pivot, dab_double angle_in_rads);
 VPoint VPoint_perp(VPoint a);
 VPoint VPoint_normalize(VPoint a);
-double VPoint_magnitude(VPoint a);
-double VPoint_distance(VPoint a, VPoint b);
-VPoint VPoint_look_from(VPoint start_point, float angle_rads, float mag);
+dab_double VPoint_magnitude(VPoint a);
+dab_double VPoint_distance(VPoint a, VPoint b);
+VPoint VPoint_look_from(VPoint start_point, dab_float angle_rads, dab_float mag);
 VPointRel VPoint_rel(VPoint a, VPoint b);
 
-static inline void VPoint_debug(VPoint point, char *msg) {
+static inline void VPoint_debug(VPoint point, dab_char *msg) {
     debug("<%f, %f> %s", point.x, point.y, msg);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 typedef struct VPath {
-    int num_points;
+    dab_int num_points;
     VPoint points[];
 } VPath;
 
-VPath *VPath_create(VPoint *points, int num_points);
+VPath *VPath_create(VPoint *points, dab_int num_points);
 void VPath_destroy(VPath *path);
 void VPath_translate(VPath *path, VPoint trans);
 

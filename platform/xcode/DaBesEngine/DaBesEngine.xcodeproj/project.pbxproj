@@ -610,6 +610,7 @@
 		CACE2B38178347DE00F36FA3 /* DABMacEngineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABMacEngineView.m; sourceTree = "<group>"; };
 		CACE2B39178347DE00F36FA3 /* DABMacEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABMacEngineViewController.h; sourceTree = "<group>"; };
 		CACE2B3A178347DE00F36FA3 /* DABMacEngineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABMacEngineViewController.m; sourceTree = "<group>"; };
+		CADD1C1A17F5050300DDAE1A /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		CAE3234C171CFB0B00E7F7FB /* vmatrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vmatrix.h; path = ../../../../src/math/vmatrix.h; sourceTree = "<group>"; };
 		CAE3234D171CFB2400E7F7FB /* vmatrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vmatrix.c; path = ../../../../src/math/vmatrix.c; sourceTree = "<group>"; };
 		CAEA954C173475E100C90B8C /* sfx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sfx.c; sourceTree = "<group>"; };
@@ -794,6 +795,7 @@
 				CA30660F17054C1E00629F80 /* gzip.c */,
 				CAEA95601737630D00C90B8C /* stepper.c */,
 				CAEA95611737630D00C90B8C /* stepper.h */,
+				CADD1C1A17F5050300DDAE1A /* types.h */,
 			);
 			name = core;
 			path = ../../../../src/core;
