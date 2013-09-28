@@ -49,6 +49,10 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 @property (nonatomic, strong) NSMapTable *updateMap;
 @property (nonatomic, strong) NSMapTable *usingControls;
 
+@property (nonatomic, strong) IBOutlet NSSlider *audioSfxVolSlider;
+@property (nonatomic, strong) IBOutlet NSSlider *audioMusicVolSlider;
+@property (nonatomic, strong) IBOutlet NSSlider *audioMasterVolSlider;
+
 @end
 
 @implementation SDKInspectorView
@@ -398,6 +402,27 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     
     Scene_set_selection_mode(self.engineVC.scene, kSceneSelectingForCamera);
   }
+}
+
+- (IBAction)sfxVolSliderChanged:(id)sender {
+    if (!self.engineVC.engine) return;
+    
+    NSSlider *slider = sender;
+    Audio_set_sfx_volume(self.engineVC.engine->audio, slider.doubleValue);
+}
+
+- (IBAction)musicVolSliderChanged:(id)sender {
+    if (!self.engineVC.engine) return;
+    
+    NSSlider *slider = sender;
+    Audio_set_music_volume(self.engineVC.engine->audio, slider.doubleValue);
+}
+
+- (IBAction)masterVolSliderChanged:(id)sender {
+    if (!self.engineVC.engine) return;
+    
+    NSSlider *slider = sender;
+    Audio_set_master_volume(self.engineVC.engine->audio, slider.doubleValue);
 }
 
 #pragma mark - Recorder Panel Actions

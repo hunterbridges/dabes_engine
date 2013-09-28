@@ -59,7 +59,18 @@ void Sfx_set_volume(Sfx *sfx, double volume) {
 
     if (sfx->initialized) {
         // TODO: Lock? This might be thread safe
-        alSourcef(sfx->source, AL_GAIN, volume);
+        alSourcef(sfx->source, AL_GAIN, volume * sfx->vol_adjust);
+    }
+    pthread_mutex_unlock(&sfx->lock);
+}
+
+void Sfx_set_vol_adjust(Sfx *sfx, double vol_adjust) {
+    pthread_mutex_lock(&sfx->lock);
+    sfx->vol_adjust = vol_adjust;
+
+    if (sfx->initialized) {
+        // TODO: Lock? This might be thread safe
+        alSourcef(sfx->source, AL_GAIN, sfx->volume * vol_adjust);
     }
     pthread_mutex_unlock(&sfx->lock);
 }
@@ -113,7 +124,7 @@ void Sfx_t_initialize(Sfx *sfx) {
     alSource3f(sfx->source, AL_DIRECTION, 0.0, 0.0, 0.0);
     alSourcef(sfx->source, AL_ROLLOFF_FACTOR, 0.0);
     alSourcei(sfx->source, AL_SOURCE_RELATIVE, AL_TRUE);
-    alSourcef(sfx->source, AL_GAIN, sfx->volume);
+    alSourcef(sfx->source, AL_GAIN, sfx->volume * sfx->vol_adjust);
 
     sfx->ogg_stream = OggStream_create(sfx->filename, sfx->source);
     check(sfx->ogg_stream != NULL, "Couldn't create Sfx OGG stream");

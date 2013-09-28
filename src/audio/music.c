@@ -1,6 +1,7 @@
 #include "music.h"
 #include <stdlib.h>
 #include "../scenes/scene.h"
+#include "../audio/audio.h"
 
 void Music_t_end(Music *music);
 void Music_t_initialize(Music *music);
@@ -74,7 +75,17 @@ void Music_set_volume(Music *music, double volume) {
     music->volume = volume;
     if (music->initialized) {
         // TODO: Lock? This might be thread safe
-        alSourcef(music->source, AL_GAIN, volume);
+        alSourcef(music->source, AL_GAIN, volume * music->vol_adjust);
+    }
+    pthread_mutex_unlock(&music->lock);
+}
+
+void Music_set_vol_adjust(Music *music, double vol_adjust) {
+    pthread_mutex_lock(&music->lock);
+    music->vol_adjust = vol_adjust;
+    if (music->initialized) {
+        // TODO: Lock? This might be thread safe
+        alSourcef(music->source, AL_GAIN, music->volume * vol_adjust);
     }
     pthread_mutex_unlock(&music->lock);
 }
@@ -180,7 +191,8 @@ void Music_t_initialize(Music *music) {
     alSource3f(music->source, AL_DIRECTION, 0.0, 0.0, 0.0);
     alSourcef(music->source, AL_ROLLOFF_FACTOR, 0.0);
     alSourcei(music->source, AL_SOURCE_RELATIVE, AL_TRUE);
-    alSourcef(music->source, AL_GAIN, music->volume);
+    alSourcef(music->source, AL_GAIN,
+              music->volume * music->vol_adjust);
 
     int i = 0;
     for (i = 0; i < music->num_files; i++) {

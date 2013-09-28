@@ -8,6 +8,7 @@
 struct Scene;
 typedef struct Music {
     double volume;
+    double vol_adjust;
     List *ogg_streams;
     int playing;
     int _needs_play;
@@ -28,6 +29,8 @@ typedef struct Music {
     char *ogg_files[];
 } Music;
 
+struct Audio;
+
 #pragma mark - Main thread
 Music *Music_load(int num_files, char *ogg_files[]);
 void Music_destroy(Music *music);
@@ -35,6 +38,7 @@ void Music_play(Music *music);
 void Music_pause(Music *music);
 void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
+void Music_set_vol_adjust(Music *music, double volume);
 void Music_set_loop(Music *music, int loop);
 
 #pragma mark - Audio thread

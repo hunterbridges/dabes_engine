@@ -39,6 +39,10 @@ Audio *Audio_create() {
     audio->musics = List_create();
     audio->active_sfx = List_create();
 
+    audio->master_volume = 1.0;
+    audio->music_volume = 1.0;
+    audio->sfx_volume = 1.0;
+
     Audio_t_create(audio);
 
     return audio;
@@ -56,24 +60,24 @@ error:
       case AL_INVALID_VALUE:
         log_err("OpenAL AL_INVALID_VALUE");
         break;
-        
+
       case AL_INVALID_OPERATION:
         log_err("OpenAL AL_INVALID_OPERATION");
         break;
-        
+
       case AL_INVALID_NAME:
         log_err("OpenAL AL_INVALID_NAME");
         break;
-        
+
       case AL_INVALID_ENUM:
         log_err("OpenAL AL_INVALID_ENUM");
         break;
-        
+
       default:
         log_err("OpenAL error code %X", error);
         break;
     }
-  
+
     return 0;
 }
 
@@ -150,6 +154,8 @@ Music *Audio_gen_music(Audio *audio, int num_files, char *files[]) {
     Music *music = Music_load(num_files, files);
     check(music != NULL, "Couldn't load music");
 
+    Music_set_vol_adjust(music, audio->music_volume * audio->master_volume);
+
     pthread_mutex_lock(&audio->music_lock);
     List_push(audio->musics, music);
     pthread_mutex_unlock(&audio->music_lock);
@@ -168,6 +174,8 @@ struct Sfx *Audio_gen_sfx(Audio *audio, char *filename) {
     Sfx *sfx = Sfx_load(filename);
     check(sfx != NULL, "Couldn't load Sfx");
 
+    Sfx_set_vol_adjust(sfx, audio->sfx_volume * audio->master_volume);
+
     pthread_mutex_lock(&audio->sfx_lock);
     List_push(audio->active_sfx, sfx);
     pthread_mutex_unlock(&audio->sfx_lock);
@@ -180,6 +188,32 @@ error:
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx) {
     int result = List_remove_value(audio->active_sfx, sfx);
     if (result) Sfx_destroy(sfx);
+}
+
+void Audio_set_master_volume(Audio *audio, double vol) {
+    audio->master_volume = vol;
+
+    // Cascade the updates down.
+    Audio_set_music_volume(audio, audio->music_volume);
+    Audio_set_sfx_volume(audio, audio->sfx_volume);
+}
+
+void Audio_set_music_volume(Audio *audio, double vol) {
+    audio->music_volume = vol;
+
+    LIST_FOREACH(audio->musics, first, next, current) {
+        Music *music = current->value;
+        Music_set_vol_adjust(music, audio->music_volume * audio->master_volume);
+    }
+}
+
+void Audio_set_sfx_volume(Audio *audio, double vol) {
+    audio->sfx_volume = vol;
+
+    LIST_FOREACH(audio->active_sfx, first, next, current) {
+        Sfx *sfx = current->value;
+        Sfx_set_vol_adjust(sfx, audio->sfx_volume * audio->master_volume);
+    }
 }
 
 #pragma mark - Audio thread
