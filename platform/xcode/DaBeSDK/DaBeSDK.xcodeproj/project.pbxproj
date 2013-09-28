@@ -923,7 +923,7 @@
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 armv7s armv6";
+				VALID_ARCHS = "armv7 armv7s armv6 armv64 i386";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -957,7 +957,7 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "armv7 armv7s armv6";
+				VALID_ARCHS = "armv7 armv7s armv6 armv64 i386";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

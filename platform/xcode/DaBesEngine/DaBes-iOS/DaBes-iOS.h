@@ -22,8 +22,13 @@ typedef dab_uint32 dab_ulong;
 typedef int8_t dab_char;
 typedef uint8_t dab_uchar;
 
+#ifdef DABES_SDL
+typedef float dab_float;
+typedef double dab_double;
+#else
 typedef Float32 dab_float;
 typedef Float64 dab_double;
+#endif
 
 #endif
 #ifndef __constants_h
@@ -238,6 +243,10 @@ typedef struct Audio {
     ALCdevice *device;
     ALCcontext *context;
 
+    double master_volume;
+    double music_volume;
+    double sfx_volume;
+
     pthread_t thread;
     pthread_mutex_t run_lock;
     pthread_mutex_t music_lock;
@@ -259,6 +268,10 @@ struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 void Audio_sweep(Audio *audio, struct Engine *engine);
+
+void Audio_set_master_volume(Audio *audio, double vol);
+void Audio_set_music_volume(Audio *audio, double vol);
+void Audio_set_sfx_volume(Audio *audio, double vol);
 
 #endif
 #ifndef __ogg_stream_h
@@ -330,6 +343,10 @@ typedef struct Audio {
     ALCdevice *device;
     ALCcontext *context;
 
+    double master_volume;
+    double music_volume;
+    double sfx_volume;
+
     pthread_t thread;
     pthread_mutex_t run_lock;
     pthread_mutex_t music_lock;
@@ -352,6 +369,10 @@ void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 void Audio_sweep(Audio *audio, struct Engine *engine);
 
+void Audio_set_master_volume(Audio *audio, double vol);
+void Audio_set_music_volume(Audio *audio, double vol);
+void Audio_set_sfx_volume(Audio *audio, double vol);
+
 #endif
 #ifndef __music_h
 #define __music_h
@@ -362,6 +383,7 @@ void Audio_sweep(Audio *audio, struct Engine *engine);
 struct Scene;
 typedef struct Music {
     double volume;
+    double vol_adjust;
     List *ogg_streams;
     int playing;
     int _needs_play;
@@ -382,6 +404,8 @@ typedef struct Music {
     char *ogg_files[];
 } Music;
 
+struct Audio;
+
 #pragma mark - Main thread
 Music *Music_load(int num_files, char *ogg_files[]);
 void Music_destroy(Music *music);
@@ -389,6 +413,7 @@ void Music_play(Music *music);
 void Music_pause(Music *music);
 void Music_end(Music *music);
 void Music_set_volume(Music *music, double volume);
+void Music_set_vol_adjust(Music *music, double volume);
 void Music_set_loop(Music *music, int loop);
 
 #pragma mark - Audio thread
@@ -802,6 +827,7 @@ int luaopen_dabes_music(lua_State *L);
 
 typedef struct Sfx {
     double volume;
+    double vol_adjust;
     int playing;
     int _needs_play;
 
@@ -817,12 +843,15 @@ typedef struct Sfx {
     OggStream *ogg_stream;
 } Sfx;
 
+struct Audio;
+
 #pragma mark - Main Thread
 Sfx *Sfx_load(char *filename);
 void Sfx_destroy(Sfx *sfx);
 void Sfx_play(Sfx *sfx);
 void Sfx_end(Sfx *sfx);
 void Sfx_set_volume(Sfx *sfx, double volume);
+void Sfx_set_vol_adjust(Sfx *sfx, double vol_adjust);
 
 #pragma mark - Audio thread
 void Sfx_t_update(Sfx *sfx);

@@ -19,6 +19,10 @@ typedef struct Audio {
     ALCdevice *device;
     ALCcontext *context;
 
+    double master_volume;
+    double music_volume;
+    double sfx_volume;
+
     pthread_t thread;
     pthread_mutex_t run_lock;
     pthread_mutex_t music_lock;
@@ -40,5 +44,9 @@ struct Sfx *Audio_gen_sfx(Audio *audio, char *filename);
 void Audio_destroy_sfx(Audio *audio, struct Sfx *sfx);
 
 void Audio_sweep(Audio *audio, struct Engine *engine);
+
+void Audio_set_master_volume(Audio *audio, double vol);
+void Audio_set_music_volume(Audio *audio, double vol);
+void Audio_set_sfx_volume(Audio *audio, double vol);
 
 #endif

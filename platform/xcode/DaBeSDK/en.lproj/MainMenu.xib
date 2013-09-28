@@ -663,7 +663,7 @@
                             <tabViewItem label="Recorder" identifier="" id="1260">
                                 <view key="view" id="1261">
                                     <rect key="frame" x="10" y="33" width="228" height="266"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1262">
                                             <rect key="frame" x="157" y="232" width="23" height="32"/>
@@ -845,8 +845,92 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Audio" identifier="" id="qcZ-zB-qra">
+                                <view key="view" id="dsN-si-owy">
+                                    <rect key="frame" x="10" y="33" width="228" height="266"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HFh-AG-hbE">
+                                            <rect key="frame" x="14" y="246" width="200" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Mixer" id="PVL-jF-rCY">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MAd-va-fJb">
+                                            <rect key="frame" x="192" y="144" width="21" height="96"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="FoG-Pu-DLQ"/>
+                                            <connections>
+                                                <action selector="masterVolSliderChanged:" target="539" id="PLl-Ct-Nmg"/>
+                                            </connections>
+                                        </slider>
+                                        <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6x5-Ex-aIJ">
+                                            <rect key="frame" x="15" y="144" width="21" height="96"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="XON-XH-f0K"/>
+                                            <connections>
+                                                <action selector="sfxVolSliderChanged:" target="539" id="Jz3-jM-dkN"/>
+                                            </connections>
+                                        </slider>
+                                        <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zYj-lt-6DT">
+                                            <rect key="frame" x="104" y="144" width="21" height="96"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="qAs-II-hQ9"/>
+                                            <connections>
+                                                <action selector="musicVolSliderChanged:" target="539" id="TOM-GD-FSf"/>
+                                            </connections>
+                                        </slider>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CeS-Dt-Pq5">
+                                            <rect key="frame" x="177" y="122" width="51" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Master" id="f9U-mH-1B5">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o66-8f-7wg">
+                                            <rect key="frame" x="6" y="122" width="38" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Sfx" id="vLU-DW-tPw">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eBf-63-ZaH">
+                                            <rect key="frame" x="94" y="122" width="41" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Music" id="RG2-Ju-ngq">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="MAd-va-fJb" secondAttribute="trailing" constant="17" id="D7h-vl-t1d"/>
+                                        <constraint firstItem="MAd-va-fJb" firstAttribute="height" secondItem="6x5-Ex-aIJ" secondAttribute="height" id="GFO-l3-K61"/>
+                                        <constraint firstItem="MAd-va-fJb" firstAttribute="centerX" secondItem="CeS-Dt-Pq5" secondAttribute="centerX" id="JaN-sT-hVC"/>
+                                        <constraint firstItem="MAd-va-fJb" firstAttribute="height" secondItem="zYj-lt-6DT" secondAttribute="height" id="Mcc-yR-JEu"/>
+                                        <constraint firstItem="zYj-lt-6DT" firstAttribute="top" secondItem="dsN-si-owy" secondAttribute="top" constant="28" id="Orh-zX-5OQ"/>
+                                        <constraint firstItem="o66-8f-7wg" firstAttribute="centerX" secondItem="6x5-Ex-aIJ" secondAttribute="centerX" id="TvL-CH-ymR"/>
+                                        <constraint firstItem="6x5-Ex-aIJ" firstAttribute="leading" secondItem="dsN-si-owy" secondAttribute="leading" constant="17" id="VGr-8c-Pal"/>
+                                        <constraint firstAttribute="centerX" secondItem="zYj-lt-6DT" secondAttribute="centerX" id="cDs-Qx-P7Y"/>
+                                        <constraint firstItem="6x5-Ex-aIJ" firstAttribute="top" secondItem="dsN-si-owy" secondAttribute="top" constant="28" id="mAh-85-yZA"/>
+                                        <constraint firstItem="MAd-va-fJb" firstAttribute="top" secondItem="dsN-si-owy" secondAttribute="top" constant="28" id="nPZ-Vc-dPM"/>
+                                        <constraint firstItem="eBf-63-ZaH" firstAttribute="centerX" secondItem="zYj-lt-6DT" secondAttribute="centerX" id="smv-Hp-CWA"/>
+                                    </constraints>
+                                </view>
+                            </tabViewItem>
                         </tabViewItems>
                         <connections>
+                            <outlet property="audioMasterVolSlider" destination="MAd-va-fJb" id="wL6-re-NYX"/>
+                            <outlet property="audioMusicVolSlider" destination="zYj-lt-6DT" id="34x-ZN-MHj"/>
+                            <outlet property="audioSfxVolSlider" destination="6x5-Ex-aIJ" id="tis-Vx-k0O"/>
                             <outlet property="cameraDebugCheckbox" destination="826" id="846"/>
                             <outlet property="cameraFocalLabel" destination="775" id="813"/>
                             <outlet property="cameraFocalPanner" destination="725" id="812"/>

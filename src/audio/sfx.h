@@ -6,6 +6,7 @@
 
 typedef struct Sfx {
     double volume;
+    double vol_adjust;
     int playing;
     int _needs_play;
 
@@ -21,12 +22,15 @@ typedef struct Sfx {
     OggStream *ogg_stream;
 } Sfx;
 
+struct Audio;
+
 #pragma mark - Main Thread
 Sfx *Sfx_load(char *filename);
 void Sfx_destroy(Sfx *sfx);
 void Sfx_play(Sfx *sfx);
 void Sfx_end(Sfx *sfx);
 void Sfx_set_volume(Sfx *sfx, double volume);
+void Sfx_set_vol_adjust(Sfx *sfx, double vol_adjust);
 
 #pragma mark - Audio thread
 void Sfx_t_update(Sfx *sfx);

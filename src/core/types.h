@@ -20,7 +20,12 @@ typedef dab_uint32 dab_ulong;
 typedef int8_t dab_char;
 typedef uint8_t dab_uchar;
 
+#ifdef DABES_SDL
+typedef float dab_float;
+typedef double dab_double;
+#else
 typedef Float32 dab_float;
 typedef Float64 dab_double;
+#endif
 
 #endif
