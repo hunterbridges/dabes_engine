@@ -1,4 +1,5 @@
 #include "overlay_bindings.h"
+#include "../graphics/graphics.h"
 #include "../graphics/sprite_bindings.h"
 #include "../entities/entity_bindings.h"
 #include "../math/vrect.h"
@@ -156,7 +157,7 @@ int luab_Overlay_get_track_entity(lua_State *L) {
     if (rc == 0) {
         lua_pushnil(L);
     }
-    
+
     return 1;
 error:
     return 0;
@@ -165,10 +166,8 @@ error:
 int luab_Overlay_set_track_entity(lua_State *L) {
     Overlay *overlay = luaL_tooverlay(L, 1);
     check(overlay != NULL, "Overlay required");
-    
-    lua_getfield(L, 2, "real");
+
     Entity *entity = luaL_toentity(L, -1);
-    
     overlay->track_entity = entity;
 
     return 0;

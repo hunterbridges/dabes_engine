@@ -37,7 +37,7 @@
 
 #pragma mark - Public
 
-- (NSInteger)playerCount {
+- (dab_uint8)playerCount {
     return self.gkMatch.playerIDs.count + 1;
 }
 
@@ -56,8 +56,14 @@
 }
 
 - (BOOL)sendMsg:(NetMatchMsg *)msg {
+    if (msg->from == 0) {
+        // Mark it as coming from local player.
+        msg->from = self.localPlayerNumber;
+    }
+    
     NSData *data = [self dataFromNetMsg:msg];
     NSError *error = nil;
+    
     if (msg->to == 0) {
         // Send to all players
         [self.gkMatch sendDataToAllPlayers:data
@@ -187,7 +193,6 @@
     dataRange.length -= el_sz;
     memcpy(&msg->kind, tmp.bytes, el_sz);
     
-    
     if (dataRange.length) {
         // Body
         tmp = [data subdataWithRange:dataRange];
@@ -203,6 +208,10 @@
 - (void)assignPlayerNumber:(dab_uint8)num toPlayerID:(NSString *)pid {
     self.playerAssignments[@(num)] = pid;
     self.idNumbers[pid] = @(num);
+    
+    if ([pid isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
+       self.localPlayerNumber = num;
+    }
 }
 
 - (void)derivePlayerNumberIfNeeded {
@@ -213,8 +222,6 @@
     [self.gkMatch chooseBestHostPlayerWithCompletionHandler:^(NSString *playerID) {
         if ([playerID isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
             // I am the host, I am player 1 and need to order the others
-            self.localPlayerNumber = 1;
-            
             NSMutableArray *orderedIDs = [NSMutableArray array];
             [orderedIDs addObject:playerID];
             [orderedIDs addObjectsFromArray:self.gkMatch.playerIDs];
@@ -262,7 +269,8 @@
         [self assignPlayerNumber:1 toPlayerID:playerID];
         [self markReady:msg->from];
         
-        self.localPlayerNumber = msg->to;
+        [self assignPlayerNumber:msg->to
+                      toPlayerID:[GKLocalPlayer localPlayer].playerID];
         [self readyUp];
     }
     

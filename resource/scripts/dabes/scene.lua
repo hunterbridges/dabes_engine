@@ -123,12 +123,12 @@ Scene = BoundObject:extend({
     _setters = {
         bg_color = BoundObject.fwd_func("set_bg_color"),
         cover_color = BoundObject.fwd_func("set_cover_color"),
-        canvas = BoundObject.fwd_func("set_canvas"),
+        canvas = BoundObject.fwd_func_real("set_canvas"),
         debug_camera = BoundObject.fwd_func("set_debug_camera"),
         draw_grid = BoundObject.fwd_func("set_draw_grid"),
         gravity = BoundObject.fwd_func("set_gravity"),
         music = BoundObject.fwd_zeroing_setter("set_music", "music"),
-        parallax = BoundObject.fwd_func("set_parallax"),
+        parallax = BoundObject.fwd_func_real("set_parallax"),
         space = BoundObject.readonly,
         started_at = BoundObject.readonly
     },

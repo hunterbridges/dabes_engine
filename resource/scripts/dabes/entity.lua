@@ -63,13 +63,13 @@ Entity = BoundObject:extend({
    _setters = {
        alpha = BoundObject.fwd_func('set_alpha'),
        auto_control = BoundObject.fwd_func('set_auto_control'),
-       body = BoundObject.fwd_func('set_body'),
+       body = BoundObject.fwd_func_real('set_body'),
        center = BoundObject.fwd_func('set_center'),
-       controller = BoundObject.fwd_func('set_controller'),
+       controller = BoundObject.fwd_func_real('set_controller'),
        force_keyframe = BoundObject.fwd_func('set_force_keyframe'),
        scene = BoundObject.readonly,
        size = BoundObject.fwd_func('set_size'),
-       sprite = BoundObject.fwd_func('set_sprite'),
+       sprite = BoundObject.fwd_func_real('set_sprite'),
        z_index = BoundObject.fwd_func('set_z_index'),
    },
 

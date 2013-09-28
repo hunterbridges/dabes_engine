@@ -3074,6 +3074,7 @@ int luaopen_dabes_net(lua_State *L);
 extern dab_uint8 NET_MATCH_MSG_NULL;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_ASSIGN;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_READY;
+extern dab_uint8 NET_MATCH_MSG_PACKED_RECORDER;
 typedef dab_uint8 NetMatchMsgType;
 
 typedef struct NetMatchMsg {
@@ -3086,6 +3087,12 @@ typedef struct NetMatchMsg {
 
 NetMatchMsg *NetMatchMsg_player_assign(dab_uint8 from, dab_uint8 player);
 NetMatchMsg *NetMatchMsg_player_ready(dab_uint8 from);
+NetMatchMsg *NetMatchMsg_null(dab_uint8 from, dab_uint8 to);
+
+struct Recorder;
+NetMatchMsg *NetMatchMsg_packed_recorder(dab_uint8 from, dab_uint8 to,
+        struct Recorder *recorder);
+
 void NetMatchMsg_destroy(NetMatchMsg *msg);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3176,12 +3183,12 @@ int ChipmunkRecorder_contextualize(Recorder *recorder);
 
 extern const char *luab_Recorder_lib;
 extern const char *luab_Recorder_metatable;
-
 typedef Scripting_userdata_for(Recorder) Recorder_userdata;
-
 Scripting_caster_for(Recorder, luaL_torecorder);
 
 int luaopen_dabes_recorder(lua_State *L);
+
+Recorder *luaL_instantiate_recorder(lua_State *L);
 
 #endif
 #ifndef __chipmunk_scene_h

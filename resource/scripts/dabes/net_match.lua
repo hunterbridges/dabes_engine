@@ -13,6 +13,21 @@ require 'dabes.bound_object'
 NetMatch = BoundObject:extend({
     lib = dab_net_match,
 
+--- Constants.
+-- Accessed at the class level e.g. `Class.CONSTANT`
+-- @section constants
+
+    --- A `null` message kind. Doesn't contain any data.
+    MSG_NULL = 0;
+
+    --- A message kind that contains a @{recorder|Recorder} in the `payload`.
+    --
+    -- **Sending:** Provide a @{recorder|Recorder} instance in the payload.
+    --
+    -- **Receiving:** A new @{recorder|Recorder} instance.  It still needs to
+    -- be added to a @{scene|Scene} and assigned an @{entity|Entity}.
+    MSG_PACKED_RECORDER = 3;
+
 --- Properties.
 -- Significant fields on an instance.
 -- @section properties
@@ -54,7 +69,31 @@ NetMatch = BoundObject:extend({
     -- @treturn nil
     get_metadata = BoundObject.fwd_func("get_metadata"),
 
-    send_msg = BoundObject.fwd_func("send_msg"),
+    --- Send a message to one or all players of the `NetMatch`.
+    --
+    -- @tparam number to The player number to send the message to. If you pass
+    -- `0`, the message will be sent to all players.
+    --
+    -- @tparam number kind The kind of message to be sent. This may incur
+    -- additional type checking for the `payload`
+    -- @param payload The contents of the message to be sent. This will be
+    -- different depending on the `kind` of message being sent.
+    -- @function net_match:handshake
+    send_msg = function(self, to, kind, payload)
+        if kind == NetMatch.MSG_NULL then
+            local fwded = BoundObject.fwd_func("send_null_msg")
+            fwded(self, to)
+        elseif kind == NetMatch.MSG_PACKED_RECORDER then
+            local fwded = BoundObject.fwd_func("send_packed_recorder_msg")
+
+            if not payload:iskindof(Recorder) then
+                error("MSG_PACKED_RECORDER requires Recorder "..
+                      "in payload.", 2)
+            end
+
+            fwded(self, to, payload.real)
+        end
+    end,
 
 --- Hooks.
 -- Callbacks implemented in subclasses to customize behavior. Hooks are called
@@ -89,6 +128,13 @@ NetMatch = BoundObject:extend({
     got_metadata = function(self, metadata)
     end,
 
+    --- Called when a message is received from another player.
+    --
+    -- @function got_metadata
+    -- @tparam NetMatch self The @{net_match|NetMatch} instance.
+    -- @tparam number from The player number of the player who sent the message.
+    -- @tparam number kind The kind of the received message.
+    -- @param payload The payload of the message.
     receive_msg = function(self)
     end,
 })

@@ -54,10 +54,9 @@ error:
 int luab_Entity_set_controller(lua_State *L) {
     Entity *entity = luaL_toentity(L, 1);
     check(entity != NULL, "Entity required");
-    lua_getfield(L, 2, "real");
+
     Controller *controller = luaL_tocontroller(L, -1);
     entity->controller = controller;
-    lua_pop(L, 1);
 
     return 0;
 error:
@@ -100,10 +99,9 @@ error:
 int luab_Entity_set_sprite(lua_State *L) {
     Entity *entity = luaL_toentity(L, 1);
     check(entity != NULL, "Entity required");
-    lua_getfield(L, 2, "real");
+
     Sprite *sprite = luaL_tosprite(L, -1);
     entity->sprite = sprite;
-    lua_pop(L, 1);
 
     return 0;
 error:
@@ -127,10 +125,8 @@ error:
 int luab_Entity_set_body(lua_State *L) {
     Entity *entity = luaL_toentity(L, 1);
     check(entity != NULL, "Entity required");
-    lua_getfield(L, 2, "real");
     Body *body = luaL_tobody(L, -1);
     entity->body = body;
-    lua_pop(L, 1);
 
     return 0;
 error:

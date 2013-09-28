@@ -9,8 +9,15 @@ require 'dabes.global'
 
 -- Added this at 5 AM
 -- iskindof(obj, "Entity")
-iskindof = function(obj, tstr)
-    return obj["_is_"..tstr] == true
+iskindof = function(obj, t)
+    if type(t) == 'string' then
+        return obj["_is_"..t] == true
+    elseif type(t) == 'table' and t._isobject then
+        local typestr = t["_type_str"]
+        return obj["_is_"..typestr] == true
+    else
+        return false
+    end
 end
 
 -- TODO: Use this to typecheck object methods.
@@ -127,7 +134,8 @@ Object = {
     _isobject = true,
 
     -- Added this at 5 AM
-    istypeof = typeof
+    iskindof = iskindof
 
 }
 Object.__index = Object
+

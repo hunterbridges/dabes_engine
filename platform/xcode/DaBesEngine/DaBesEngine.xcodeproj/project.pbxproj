@@ -87,6 +87,8 @@
 		CA705C1F178350BE00D2C6E4 /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77E16FC20900045D5DE /* object.c */; };
 		CA705C20178350BE00D2C6E4 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
 		CA705C2A1783566D00D2C6E4 /* DaBes-iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CA705C291783566C00D2C6E4 /* DaBes-iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA71ED0A17F78C4E0072564B /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D746117702B6500712C8D /* libogg.a */; };
+		CA71ED0B17F78C4E0072564B /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D746C17702B6E00712C8D /* libvorbis.a */; };
 		CA72C4201795210300255691 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA72C3231794FBBD00255691 /* libFreetype2.a */; };
 		CA8B9861178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
 		CA8B9862178A08BA00CA41B4 /* static_scene.c in Sources */ = {isa = PBXBuildFile; fileRef = CA8B985F178A08BA00CA41B4 /* static_scene.c */; };
@@ -165,8 +167,6 @@
 		CAF429E71780F41400C3220A /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C77E16FC20900045D5DE /* object.c */; };
 		CAF429E81780F41400C3220A /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78E16FC20900045D5DE /* util.c */; };
 		CAF429F51780F48400C3220A /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA5E5E9A17211BFA00CAF6A2 /* libChipmunk.a */; };
-		CAF429F81780F48400C3220A /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D745F17702B6500712C8D /* Ogg.framework */; };
-		CAF429F91780F48400C3220A /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D746A17702B6E00712C8D /* Vorbis.framework */; };
 		CAF429FC1780F53400C3220A /* fixture.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78116FC20900045D5DE /* fixture.c */; };
 		CAF429FD1780F53400C3220A /* physics.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78416FC20900045D5DE /* physics.c */; };
 		CAF429FE1780F53400C3220A /* world.c in Sources */ = {isa = PBXBuildFile; fileRef = CA24C78716FC20900045D5DE /* world.c */; };
@@ -384,6 +384,20 @@
 			remoteGlobalIDString = CABF2BD316FC2ECF0012C3C7;
 			remoteInfo = lcthw;
 		};
+		CA71ED0617F78C320072564B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 738835E30B18F870005C7A69;
+			remoteInfo = "libvorbis (static)";
+		};
+		CA71ED0817F78C320072564B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 734FB2E40B18B33E00D561D7;
+			remoteInfo = "libogg (static)";
+		};
 		CA72C3221794FBBD00255691 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA72C31E1794FBBD00255691 /* freetype2.xcodeproj */;
@@ -440,13 +454,6 @@
 			remoteGlobalIDString = CAB8491317EC32CF00FCF11A;
 			remoteInfo = "libogg-iOS";
 		};
-		CAF429EB1780F45500C3220A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 730F23A1091827B100AB638C;
-			remoteInfo = Vorbis;
-		};
 		CAF429ED1780F45500C3220A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA5E5E9117211BF900CAF6A2 /* Chipmunk6.xcodeproj */;
@@ -460,13 +467,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CA5D235817700C270044793D;
 			remoteInfo = "lcthw-mac";
-		};
-		CAF429F11780F45500C3220A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
-			remoteInfo = Ogg;
 		};
 		CAF429F31780F45500C3220A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -687,6 +687,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA71ED0A17F78C4E0072564B /* libogg.a in Frameworks */,
+				CA71ED0B17F78C4E0072564B /* libvorbis.a in Frameworks */,
 				CAFC4E7317F2573C00CE740E /* GameKit.framework in Frameworks */,
 				CAFAF64F17EBA179002AA22A /* libFreetype2-Mac.a in Frameworks */,
 				CAFAF65017EBA179002AA22A /* liblcthw-mac.a in Frameworks */,
@@ -697,8 +699,6 @@
 				CA2788871780FDB6005A242D /* OpenGL.framework in Frameworks */,
 				CA2788851780FDB1005A242D /* OpenAL.framework in Frameworks */,
 				CAF429F51780F48400C3220A /* libChipmunk.a in Frameworks */,
-				CAF429F81780F48400C3220A /* Ogg.framework in Frameworks */,
-				CAF429F91780F48400C3220A /* Vorbis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1331,11 +1331,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				CA71ED0717F78C320072564B /* PBXTargetDependency */,
+				CA71ED0917F78C320072564B /* PBXTargetDependency */,
 				CA72C4221795210A00255691 /* PBXTargetDependency */,
-				CAF429EC1780F45500C3220A /* PBXTargetDependency */,
 				CAF429EE1780F45500C3220A /* PBXTargetDependency */,
 				CAF429F01780F45500C3220A /* PBXTargetDependency */,
-				CAF429F21780F45500C3220A /* PBXTargetDependency */,
 				CAF429F41780F45500C3220A /* PBXTargetDependency */,
 			);
 			name = "DaBes-Mac";
@@ -1777,6 +1777,16 @@
 			name = lcthw;
 			targetProxy = CA705BE81783502F00D2C6E4 /* PBXContainerItemProxy */;
 		};
+		CA71ED0717F78C320072564B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libvorbis (static)";
+			targetProxy = CA71ED0617F78C320072564B /* PBXContainerItemProxy */;
+		};
+		CA71ED0917F78C320072564B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libogg (static)";
+			targetProxy = CA71ED0817F78C320072564B /* PBXContainerItemProxy */;
+		};
 		CA72C41F179520FE00255691 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Freetype2;
@@ -1797,11 +1807,6 @@
 			name = "libogg-iOS";
 			targetProxy = CAB8494217EC331600FCF11A /* PBXContainerItemProxy */;
 		};
-		CAF429EC1780F45500C3220A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Vorbis;
-			targetProxy = CAF429EB1780F45500C3220A /* PBXContainerItemProxy */;
-		};
 		CAF429EE1780F45500C3220A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ChipmunkStatic;
@@ -1811,11 +1816,6 @@
 			isa = PBXTargetDependency;
 			name = "lcthw-mac";
 			targetProxy = CAF429EF1780F45500C3220A /* PBXContainerItemProxy */;
-		};
-		CAF429F21780F45500C3220A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Ogg;
-			targetProxy = CAF429F11780F45500C3220A /* PBXContainerItemProxy */;
 		};
 		CAF429F41780F45500C3220A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1999,6 +1999,8 @@
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-Mac/DaBes-Mac-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -2032,6 +2034,8 @@
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
 				);
 				INFOPLIST_FILE = "DaBes-Mac/DaBes-Mac-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;

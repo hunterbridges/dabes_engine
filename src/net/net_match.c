@@ -1,4 +1,5 @@
 #include "net_match.h"
+#include "../recorder/recorder.h"
 
 #if defined(DABES_MAC) || defined(DABES_IOS)
 #include <GameCenterNetMatchProto.h>
@@ -12,15 +13,16 @@
 dab_uint8 NET_MATCH_MSG_NULL = 0;
 dab_uint8 NET_MATCH_MSG_PLAYER_ASSIGN = 1;
 dab_uint8 NET_MATCH_MSG_PLAYER_READY = 2;
+dab_uint8 NET_MATCH_MSG_PACKED_RECORDER = 3;
 
 NetMatchMsg *NetMatchMsg_player_assign(dab_uint8 from, dab_uint8 player) {
     NetMatchMsg *msg = calloc(1, sizeof(NetMatchMsg));
     check(msg != NULL, "Couldn't create NetMatchMsg");
-    
+
     msg->from = from;
     msg->to = player;
     msg->kind = NET_MATCH_MSG_PLAYER_ASSIGN;
-    
+
     return msg;
 error:
     return NULL;
@@ -29,11 +31,39 @@ error:
 NetMatchMsg *NetMatchMsg_player_ready(dab_uint8 from) {
     NetMatchMsg *msg = calloc(1, sizeof(NetMatchMsg));
     check(msg != NULL, "Couldn't create NetMatchMsg");
-    
+
     msg->from = from;
     msg->to = 0;
     msg->kind = NET_MATCH_MSG_PLAYER_READY;
-    
+
+    return msg;
+error:
+    return NULL;
+}
+
+NetMatchMsg *NetMatchMsg_null(dab_uint8 from, dab_uint8 to) {
+    NetMatchMsg *msg = calloc(1, sizeof(NetMatchMsg));
+    check(msg != NULL, "Couldn't create NetMatchMsg");
+
+    msg->from = from;
+    msg->to = to;
+    msg->kind = NET_MATCH_MSG_NULL;
+
+    return msg;
+error:
+    return NULL;
+}
+
+NetMatchMsg *NetMatchMsg_packed_recorder(dab_uint8 from, dab_uint8 to,
+        struct Recorder *recorder) {
+    NetMatchMsg *msg = calloc(1, sizeof(NetMatchMsg));
+    check(msg != NULL, "Couldn't create NetMatchMsg");
+
+    msg->from = from;
+    msg->to = to;
+    msg->kind = NET_MATCH_MSG_PACKED_RECORDER;
+    recorder->_(pack)(recorder, &msg->body, &msg->size);
+
     return msg;
 error:
     return NULL;
@@ -44,7 +74,7 @@ void NetMatchMsg_destroy(NetMatchMsg *msg) {
     if (msg->body) {
         free(msg->body);
     }
-    
+
     free(msg);
     return;
 error:
@@ -56,13 +86,13 @@ error:
 NetMatch *NetMatch_create(struct Engine *engine) {
     NetMatch *match = calloc(1, sizeof(NetMatch));
     check(match != NULL, "Couldn't create NetMatch");
-    
+
     match->proto = NET_MATCH_PROTO;
-  
+
     if (match->proto.init) {
         match->_(init)(match, engine);
     }
-    
+
     return match;
 error:
     return NULL;
@@ -70,13 +100,13 @@ error:
 
 void NetMatch_destroy(NetMatch *match) {
     check(match != NULL, "No NetMatch to destroy");
-    
+
     if (match->proto.cleanup) {
         match->_(cleanup)(match);
     }
-    
+
     free(match);
-  
+
     return;
 error:
     return;

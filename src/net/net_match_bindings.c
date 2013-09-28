@@ -1,5 +1,6 @@
 #include "net_match_bindings.h"
 #include "../core/engine.h"
+#include "../recorder/recorder_bindings.h"
 
 const char *luab_NetMatch_lib = "dab_net_match";
 const char *luab_NetMatch_metatable = "DaBes.net_match";
@@ -112,15 +113,40 @@ error:
     return 0;
 }
 
-int luab_NetMatch_send_msg(lua_State *L) {
+int luab_NetMatch_send_null_msg(lua_State *L) {
     NetMatch *match = luaL_tonetmatch(L, 1);
     check(match != NULL, "NetMatch required");
 
     if (match->proto.send_msg) {
-        // TODO
-        assert(1 == 0);
-        // Engine *engine = luaL_get_engine(L);
-        // match->_(send_msg)(match, engine);
+        lua_Integer to = lua_tointeger(L, 2);
+        NetMatchMsg *msg = NetMatchMsg_null(0, to);
+
+        Engine *engine = luaL_get_engine(L);
+        match->_(send_msg)(match, engine, msg);
+
+        NetMatchMsg_destroy(msg);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 0;
+error:
+    return 0;
+}
+
+int luab_NetMatch_send_packed_recorder_msg(lua_State *L) {
+    NetMatch *match = luaL_tonetmatch(L, 1);
+    check(match != NULL, "NetMatch required");
+
+    if (match->proto.send_msg) {
+        lua_Integer to = lua_tointeger(L, 2);
+        Recorder *recorder = luaL_torecorder(L, 3);
+
+        NetMatchMsg *msg = NetMatchMsg_packed_recorder(0, to, recorder);
+        Engine *engine = luaL_get_engine(L);
+
+        match->_(send_msg)(match, engine, msg);
+
+        NetMatchMsg_destroy(msg);
     } else {
         luaL_error(L, "Method not supported on this platform.");
     }
@@ -135,7 +161,10 @@ static const struct luaL_Reg luab_NetMatch_meths[] = {
     {"get_metadata", luab_NetMatch_get_metadata},
     {"get_player_count", luab_NetMatch_get_player_count},
     {"get_player_number", luab_NetMatch_get_player_number},
-    {"send_msg", luab_NetMatch_send_msg},
+
+    {"send_null_msg", luab_NetMatch_send_null_msg},
+    {"send_packed_recorder_msg", luab_NetMatch_send_packed_recorder_msg},
+
     {NULL, NULL}
 };
 

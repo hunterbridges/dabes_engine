@@ -63,7 +63,7 @@ Canvas = BoundObject:extend({
         simplified_path_color =
             BoundObject.fwd_func("set_simplified_path_color"),
         shape_matcher =
-            BoundObject.fwd_func("set_shape_matcher"),
+            BoundObject.fwd_func_real("set_shape_matcher"),
     },
 
 --- Class Methods.

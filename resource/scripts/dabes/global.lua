@@ -46,6 +46,7 @@ rawset(_injector, "__newindex", function(table, key, val)
             -- Added this at 5 AM
             if (type(val) == "table" and val._isobject) then
                 val["_is_"..key] = true
+                val["_type_str"] = key
             end
         end
     else
