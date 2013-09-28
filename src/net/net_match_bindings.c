@@ -4,6 +4,32 @@
 const char *luab_NetMatch_lib = "dab_net_match";
 const char *luab_NetMatch_metatable = "DaBes.net_match";
 
+NetMatch *luaL_instantiate_netmatch(lua_State *L) {
+    int irc = luaL_dostring(L, "require 'dabes.net_match'");
+    check(irc == 0, "Unable to require 'dabes.net_match'");
+
+    lua_getglobal(L, "NetMatch");
+    lua_getfield(L, -1, "new");
+    lua_pushvalue(L, -2);
+    lua_remove(L, -3);
+
+    irc = lua_pcall(L, 1, 1, 1);
+    if (irc != 0) {
+        const char *error = lua_tostring(L, -1);
+        debug("Error instantiating NetMatch programatically: %s", error);
+        lua_pop(L, 1);
+        return NULL;
+    }
+
+    lua_getfield(L, -1, "real");
+    NetMatch *match = luaL_tonetmatch(L, -1);
+    lua_pop(L, 1);
+
+    return match;
+error:
+    return NULL;
+}
+
 int luab_NetMatch_new(lua_State *L) {
     NetMatch_userdata *ud = NULL;
     Engine *engine = luaL_get_engine(L);
@@ -11,7 +37,7 @@ int luab_NetMatch_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(NetMatch_userdata));
     check(ud != NULL, "Could not make NetMatch userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_NetMatch_metatable);
     lua_setmetatable(L, -2);
 
@@ -27,7 +53,7 @@ Scripting_destroy_closer(NetMatch);
 int luab_NetMatch_handshake(lua_State *L) {
     NetMatch *match = luaL_tonetmatch(L, 1);
     check(match != NULL, "NetMatch required");
-    
+
     if (match->proto.handshake) {
         Engine *engine = luaL_get_engine(L);
         match->_(handshake)(match, engine);
@@ -42,7 +68,7 @@ error:
 int luab_NetMatch_get_player_count(lua_State *L) {
     NetMatch *match = luaL_tonetmatch(L, 1);
     check(match != NULL, "NetMatch required");
-    
+
     if (match->proto.get_player_count) {
         Engine *engine = luaL_get_engine(L);
         int count = match->_(get_player_count)(match, engine);
@@ -58,7 +84,7 @@ error:
 int luab_NetMatch_get_player_number(lua_State *L) {
     NetMatch *match = luaL_tonetmatch(L, 1);
     check(match != NULL, "NetMatch required");
-    
+
     if (match->proto.get_player_number) {
         Engine *engine = luaL_get_engine(L);
         int n = match->_(get_player_number)(match, engine);
@@ -74,7 +100,7 @@ error:
 int luab_NetMatch_send_msg(lua_State *L) {
     NetMatch *match = luaL_tonetmatch(L, 1);
     check(match != NULL, "NetMatch required");
-    
+
     if (match->proto.send_msg) {
         // TODO
         assert(1 == 0);

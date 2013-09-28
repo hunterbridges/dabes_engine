@@ -3062,10 +3062,6 @@ Scripting_caster_for(Net, luaL_tonet);
 
 int luaopen_dabes_net(lua_State *L);
 
-struct Engine;
-struct NetMatch;
-int Net_call_found_match_hook(Net *net, struct Engine *engine, void *assoc);
-
 #endif
 #ifndef __net_match_h
 #define __net_match_h
@@ -3128,6 +3124,8 @@ typedef Scripting_userdata_for(NetMatch) NetMatch_userdata;
 Scripting_caster_for(NetMatch, luaL_tonetmatch);
 
 int luaopen_dabes_netmatch(lua_State *L);
+
+NetMatch *luaL_instantiate_netmatch(lua_State *L);
 
 #endif
 #ifndef __chipmunk_recorder_h

@@ -3129,6 +3129,8 @@ Scripting_caster_for(NetMatch, luaL_tonetmatch);
 
 int luaopen_dabes_netmatch(lua_State *L);
 
+NetMatch *luaL_instantiate_netmatch(lua_State *L);
+
 #endif
 #ifndef __chipmunk_recorder_h
 #define __chipmunk_recorder_h

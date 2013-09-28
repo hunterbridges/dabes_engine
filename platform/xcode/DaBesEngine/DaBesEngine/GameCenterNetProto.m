@@ -70,7 +70,13 @@ int GameCenterNet_find_matches_cb(Net *net, Engine *engine, void *assoc) {
     check(net != NULL, "No Net for find_matches callback");
     
     if (assoc) {
-        Net_call_found_match_hook(net, engine, assoc);
+        NetMatch *match = luaL_instantiate_netmatch(engine->scripting->L);
+        match->_(associate_native)(match, assoc);
+        
+        Scripting_call_dhook(engine->scripting, net, "found_match",
+                             LUA_TUSERDATA, match, nil);
+        
+        lua_pop(engine->scripting->L, 1);
     } else {
         Scripting_call_hook(engine->scripting, net, "find_failed");
     }
