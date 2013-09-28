@@ -33,15 +33,36 @@ Overlay = BoundObject:extend({
         --- *(read only)* The @{scene|Scene} that contains `Overlay`
         scene = BoundObject.fwd_func("get_scene"),
 
-       --- Just like in CSS, the highest `z_index` gets drawn in front.
-       --
-       -- Overlays are always drawn in front of @{entity|Entities}.
-        z_index = BoundObject.fwd_func("get_z_index")
+        --- Just like in CSS, the highest `z_index` gets drawn in front.
+        --
+        -- Overlays are always drawn in front of @{entity|Entities}.
+        z_index = BoundObject.fwd_func("get_z_index"),
+        
+        --- The @{entity|Entity} tracked by `Overlay`.
+        --
+        -- This will make point ```{0, 0}``` `track_entity_edge`'s point on the
+        -- `track_entity`'s bounding box.
+        track_entity = BoundObject.fwd_func("get_track_entity"),
+
+        --- The edge of the `track_entity` used to determine ```{0, 0}```
+        --
+        --
+        -- The edges are relative to the bounding box as follows:
+        --     0---1---2
+        --     |   |   |
+        --     3---4---5
+        --     |   |   |
+        --     6---7---8
+        --
+        -- (```0``` is top left, ```4``` is center, ```8``` is bottom right)
+        track_entity_edge = BoundObject.fwd_func("get_track_entity_edge")
     },
 
     _setters = {
         scene = BoundObject.readonly,
-        z_index = BoundObject.fwd_func("set_z_index")
+        z_index = BoundObject.fwd_func("set_z_index"),
+        track_entity = BoundObject.fwd_func("set_track_entity"),
+        track_entity_edge = BoundObject.fwd_func("set_track_entity_edge")
     },
 
 --- Class Methods.
@@ -91,7 +112,7 @@ Overlay = BoundObject:extend({
     -- Default `{1, 1, 1, 1}` (white).
     --
     -- * `origin` = `{x, y}` baseline origin point relative to the
-    -- center of the screen in pixels. Default `{0, 0}`
+    -- screen center or entity edge in pixels. Default `{0, 0}`
     --
     -- * `align` = The text alignment. Can be `"left"`, `"right"` or
     -- `"center"`. Default `"left"`
@@ -132,8 +153,8 @@ Overlay = BoundObject:extend({
     -- * `color` = `{r, g, b, a}` vector representing the background color.
     -- Default `{0, 0, 0, 0}` (clear).
     --
-    -- * `center` = `{x, y}` point relative to the center of the screen in
-    -- pixels. Default `{0, 0}`
+    -- * `center` = `{x, y}` point relative to the screen center or entity edge
+    -- in pixels. Default `{0, 0}`
     --
     -- * `rotation` = The angle of the sprite in **degrees**. Default `0`
     --

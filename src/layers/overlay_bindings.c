@@ -1,5 +1,6 @@
 #include "overlay_bindings.h"
 #include "../graphics/sprite_bindings.h"
+#include "../entities/entity_bindings.h"
 #include "../math/vrect.h"
 
 const char *luab_Overlay_lib = "dab_overlay";
@@ -66,7 +67,6 @@ int luab_Overlay_draw_string(lua_State *L) {
 
     GfxShader *txshader = Graphics_get_shader(engine->graphics, "text");
     Graphics_use_shader(engine->graphics, txshader);
-    Graphics_reset_modelview_matrix(engine->graphics);
     Graphics_draw_string(engine->graphics, (char *)str, overlay->font,
             color.raw, origin, text_align, shadow_color.raw, shadow_offset);
 
@@ -149,6 +149,36 @@ error:
     return 0;
 }
 
+int luab_Overlay_get_track_entity(lua_State *L) {
+    Overlay *overlay = luaL_tooverlay(L, 1);
+    check(overlay != NULL, "Overlay required");
+    int rc = luaL_lookup_instance(L, overlay->track_entity);
+    if (rc == 0) {
+        lua_pushnil(L);
+    }
+    
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Overlay_set_track_entity(lua_State *L) {
+    Overlay *overlay = luaL_tooverlay(L, 1);
+    check(overlay != NULL, "Overlay required");
+    
+    lua_getfield(L, 2, "real");
+    Entity *entity = luaL_toentity(L, -1);
+    
+    overlay->track_entity = entity;
+
+    return 0;
+error:
+    return 0;
+}
+
+Scripting_num_getter(Overlay, track_entity_edge);
+Scripting_num_setter(Overlay, track_entity_edge);
+
 static const struct luaL_Reg luab_Overlay_meths[] = {
     {"__gc", luab_Overlay_close},
     {"draw_string", luab_Overlay_draw_string},
@@ -157,6 +187,10 @@ static const struct luaL_Reg luab_Overlay_meths[] = {
     {"get_z_index", luab_Overlay_get_z_index},
     {"set_z_index", luab_Overlay_set_z_index},
     {"add_sprite", luab_Overlay_add_sprite},
+    {"get_track_entity", luab_Overlay_get_track_entity},
+    {"set_track_entity", luab_Overlay_set_track_entity},
+    {"get_track_entity_edge", luab_Overlay_get_track_entity_edge},
+    {"set_track_entity_edge", luab_Overlay_set_track_entity_edge},
     {NULL, NULL}
 };
 

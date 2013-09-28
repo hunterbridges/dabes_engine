@@ -33,7 +33,6 @@ TODOs:
 * Audio - spatialization/panning
 * Scripting - space bindings
 * Scripting - tile map bindings
-* Overlay - entity tracking
 
 Bugs:
 * Tile maps should be disposed of more thoroughly (destroy is leaking)
