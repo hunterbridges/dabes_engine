@@ -279,6 +279,13 @@ int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
                 }
                 narg++;
             } break;
+                
+            case LUA_TFUNCTION: {
+                Scripting_dhook_arg_closure *closure =
+                    va_arg(vl, Scripting_dhook_arg_closure *);
+                int result = closure->function(L, closure->context);
+                narg += result;
+            } break;
 
             default: {
                 done = 1;
