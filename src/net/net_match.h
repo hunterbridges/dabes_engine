@@ -5,6 +5,7 @@
 extern dab_uint8 NET_MATCH_MSG_NULL;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_ASSIGN;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_READY;
+extern dab_uint8 NET_MATCH_MSG_PACKED_RECORDER;
 typedef dab_uint8 NetMatchMsgType;
 
 typedef struct NetMatchMsg {
@@ -17,6 +18,12 @@ typedef struct NetMatchMsg {
 
 NetMatchMsg *NetMatchMsg_player_assign(dab_uint8 from, dab_uint8 player);
 NetMatchMsg *NetMatchMsg_player_ready(dab_uint8 from);
+NetMatchMsg *NetMatchMsg_null(dab_uint8 from, dab_uint8 to);
+
+struct Recorder;
+NetMatchMsg *NetMatchMsg_packed_recorder(dab_uint8 from, dab_uint8 to,
+        struct Recorder *recorder);
+
 void NetMatchMsg_destroy(NetMatchMsg *msg);
 
 ////////////////////////////////////////////////////////////////////////////////

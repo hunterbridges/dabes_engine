@@ -37,7 +37,7 @@ Overlay = BoundObject:extend({
         --
         -- Overlays are always drawn in front of @{entity|Entities}.
         z_index = BoundObject.fwd_func("get_z_index"),
-        
+
         --- The @{entity|Entity} tracked by `Overlay`.
         --
         -- This will make point ```{0, 0}``` `track_entity_edge`'s point on the
@@ -61,7 +61,7 @@ Overlay = BoundObject:extend({
     _setters = {
         scene = BoundObject.readonly,
         z_index = BoundObject.fwd_func("set_z_index"),
-        track_entity = BoundObject.fwd_func("set_track_entity"),
+        track_entity = BoundObject.fwd_func_real("set_track_entity"),
         track_entity_edge = BoundObject.fwd_func("set_track_entity_edge")
     },
 

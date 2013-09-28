@@ -49,8 +49,15 @@ end
 -- @return Variable list of userdata
 function map_real(...)
     local uds = {}
+    local n = 0
     for i = 1, select("#", ...) do
-        uds[i] = select(i, ...).real
+        local v = select(i, ...)
+        if type(v) == 'table' then
+            uds[i] = v.real
+        else
+            uds[i] = nil
+        end
+        n = i
     end
     return unpack(uds)
 end

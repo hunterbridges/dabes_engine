@@ -8,11 +8,11 @@
 
 extern const char *luab_Recorder_lib;
 extern const char *luab_Recorder_metatable;
-
 typedef Scripting_userdata_for(Recorder) Recorder_userdata;
-
 Scripting_caster_for(Recorder, luaL_torecorder);
 
 int luaopen_dabes_recorder(lua_State *L);
+
+Recorder *luaL_instantiate_recorder(lua_State *L);
 
 #endif

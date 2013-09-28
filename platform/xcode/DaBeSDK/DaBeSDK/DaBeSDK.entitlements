@@ -4,11 +4,17 @@
 <dict>
 	<key>com.apple.security.app-sandbox</key>
 	<false/>
+	<key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+	<string>/Coding/**</string>
 	<key>com.apple.security.device.microphone</key>
 	<true/>
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<key>com.apple.security.device.bluetooth</key>
 	<true/>
 </dict>
 </plist>

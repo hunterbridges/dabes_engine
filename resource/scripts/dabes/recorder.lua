@@ -46,7 +46,7 @@ Recorder = BoundObject:extend({
     },
 
     _setters = {
-        entity = BoundObject.fwd_func("set_entity"),
+        entity = BoundObject.fwd_func_real("set_entity"),
     },
 
 --- Class Methods.

@@ -264,9 +264,10 @@ BoundObject = Object:extend({
                     end
                     mself._zeroable = nil
                 end
+                return fwded(self.real, member.real, ...)
+            else
+                return fwded(self.real, nil, ...)
             end
-
-            return fwded(self.real, member, ...)
         end
     end,
 

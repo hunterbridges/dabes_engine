@@ -119,7 +119,10 @@ void ChipmunkRecorder_clear_frames(Recorder *recorder) {
     check(recorder != NULL, "No recorder to clear");
 
     // Destroy frames
-    DArray_clear_destroy(recorder->frames);
+    if (recorder->frames) {
+        DArray_clear_destroy(recorder->frames);
+    }
+
     recorder->frames = DArray_create(sizeof(ChipmunkRecorderFrame), 60 * 5);
 
     recorder->num_frames = 0;
@@ -240,16 +243,17 @@ void ChipmunkRecorder_unpack(struct Recorder *recorder, dab_uchar *buffer,
     check(buffer != NULL, "No buffer to unpack");
     check(size > 0, "Buffer can not be empty");
     recorder->_(clear_frames)(recorder);
+    Recorder_set_state(recorder, RecorderStateRecording);
 
     size_t has_read = 0;
 
     // Read out the buffer header
     dab_uchar *run = buffer;
     memcpy(recorder->context, buffer, sizeof(ChipmunkRecorderCtx));
-    
+
     // Might be a bogus pointer.
     ((ChipmunkRecorderCtx *)recorder->context)->prev_frame = NULL;
-    
+
     run += sizeof(ChipmunkRecorderCtx);
     has_read += sizeof(ChipmunkRecorderCtx);
 
@@ -295,6 +299,7 @@ void ChipmunkRecorder_unpack(struct Recorder *recorder, dab_uchar *buffer,
     }
 
     assert(has_read == size);
+    Recorder_set_state(recorder, RecorderStateIdle);
     return;
 error:
     return;
@@ -326,6 +331,10 @@ error:
 
 int ChipmunkRecorder_contextualize(Recorder *recorder) {
     check(recorder != NULL, "Couldn't create chipmunk recorder");
+    if (memcmp(&recorder->proto, &ChipmunkRecorderProto,
+               sizeof(RecorderProto)) == 0) {
+        return 0;
+    }
 
     recorder->proto = ChipmunkRecorderProto;
 

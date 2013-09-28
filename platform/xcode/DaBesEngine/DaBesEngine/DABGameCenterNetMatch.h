@@ -18,12 +18,12 @@
 
 @interface DABGameCenterNetMatch : NSObject
 
-@property (nonatomic, assign, readonly) NSInteger playerCount;
 @property (nonatomic, assign, readonly) Engine *engine;
 @property (nonatomic, strong) GKMatch *gkMatch;
 @property (nonatomic, assign) NetMatch *netMatch;
 
-@property (nonatomic, assign) NSInteger localPlayerNumber;
+@property (nonatomic, assign, readonly) dab_uint8 playerCount;
+@property (nonatomic, assign) dab_uint8 localPlayerNumber;
 
 - (id)initWithEngine:(Engine *)engine;
 - (BOOL)sendMsg:(NetMatchMsg *)msg;

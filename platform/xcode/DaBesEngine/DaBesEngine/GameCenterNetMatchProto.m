@@ -72,7 +72,7 @@ static int metadata_unpack_players(lua_State *L, void *context) {
     NSArray *arr = (__bridge NSArray *)context;
     // Expected an ordered NSArray of GKPlayers
     
-    lua_createtable(L, arr.count, 0);
+    lua_createtable(L, (int)arr.count, 0);
     int player_number = 1;
     for (GKPlayer *player in arr) {
         lua_pushinteger(L, player_number);
@@ -134,7 +134,26 @@ int GameCenterNetMatch_send_msg(struct NetMatch *match, struct Engine *engine,
 
 int GameCenterNetMatch_rcv_msg_cb(struct NetMatch *match, struct Engine *engine,
                                   NetMatchMsg *msg) {
-    Scripting_call_hook(engine->scripting, match, "received_msg");
+    if (msg->kind == NET_MATCH_MSG_NULL) {
+        Scripting_call_dhook(engine->scripting, match, "received_msg",
+                             LUA_TNUMBER, (float)msg->from,
+                             LUA_TNUMBER, (float)msg->kind,
+                             nil);
+    } else if (msg->kind == NET_MATCH_MSG_PACKED_RECORDER) {
+        Recorder *recorder = luaL_instantiate_recorder(engine->scripting->L);
+        
+        // TODO This is not a flexible solution.
+        ChipmunkRecorder_contextualize(recorder);
+        recorder->_(unpack)(recorder, msg->body, msg->size);
+    
+        Scripting_call_dhook(engine->scripting, match, "received_msg",
+                             LUA_TNUMBER, (float)msg->from,
+                             LUA_TNUMBER, (float)msg->kind,
+                             LUA_TUSERDATA, recorder,
+                             nil);
+        
+        lua_pop(engine->scripting->L, 1);
+    }
     
     return 1;
 }

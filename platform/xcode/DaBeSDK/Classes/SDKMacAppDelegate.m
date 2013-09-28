@@ -102,10 +102,28 @@
   }
 }
 
+- (BOOL)openProjectInDirectoryWithPath:(NSString *)path {
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSError *error = nil;
+    NSArray *contents = [manager contentsOfDirectoryAtPath:path error:&error];
+    
+    NSPredicate *dabesPredicate =
+        [NSPredicate predicateWithFormat:@"self LIKE '*.dabes'"];
+    contents = [contents filteredArrayUsingPredicate:dabesPredicate];
+    if (contents.count) {
+        NSString *newPath = [path stringByAppendingPathComponent:contents[0]];
+        [self.documentController noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
+        [self openProjectWithPath:newPath];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 - (void)openProjectWithPath:(NSString *)path {
   [self closeCurrentProject];
   
-  [self.documentController noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
   self.curentProject = path;
   if (self.welcomeWindow.isVisible) {
     [self.welcomeWindow performClose:nil];
@@ -115,9 +133,13 @@
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
   NSFileManager *fileManager = [[NSFileManager alloc] init];
-  if (![fileManager fileExistsAtPath:filename]) return NO;
-  
-  [self openProjectWithPath:filename];
+  BOOL isDir = NO;
+  if (![fileManager fileExistsAtPath:filename isDirectory:&isDir]) return NO;
+  if (isDir) {
+    [self openProjectInDirectoryWithPath:filename];
+  } else {
+    [self openProjectWithPath:filename];
+  }
   return YES;
 }
 
@@ -190,11 +212,13 @@
 - (IBAction)openProjectClicked:(id)sender {
   NSWindow *current = [NSApp keyWindow];
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-  openPanel.allowedFileTypes = @[@"dabes"];
+  openPanel.canChooseDirectories = YES;
+  openPanel.canChooseFiles = NO;
+  openPanel.title = @"Choose a directory that contains a .dabes project";
   [openPanel beginSheetModalForWindow:current
       completionHandler:^(NSInteger result) {
         if (result) {
-          [self openProjectWithPath:openPanel.URL.path];
+          [self openProjectInDirectoryWithPath:openPanel.URL.path];
         }
       }];
 }

@@ -91,16 +91,9 @@ int luab_Canvas_set_shape_matcher(lua_State *L) {
     Canvas *canvas = luaL_tocanvas(L, 1);
     check(canvas != NULL, "Canvas required");
 
-    if (lua_isnil(L, -1)) {
-        canvas->shape_matcher = NULL;
-    } else {
-        lua_getfield(L, -1, "real");
-        ShapeMatcher *matcher = luaL_toshapematcher(L, -1);
-        check(matcher != NULL, "Shape Matcher required");
+    ShapeMatcher *matcher = luaL_toshapematcher(L, -1);
+    canvas->shape_matcher = matcher;
 
-        canvas->shape_matcher = matcher;
-    }
-    lua_pop(L, 3);
 error:
     return 0;
 }

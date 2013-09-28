@@ -5,6 +5,32 @@
 const char *luab_Recorder_lib = "dab_recorder";
 const char *luab_Recorder_metatable = "DaBes.recorder";
 
+Recorder *luaL_instantiate_recorder(lua_State *L) {
+    int irc = luaL_dostring(L, "require 'dabes.recorder'");
+    check(irc == 0, "Unable to require 'dabes.recorder'");
+
+    lua_getglobal(L, "Recorder");
+    lua_getfield(L, -1, "new");
+    lua_pushvalue(L, -2);
+    lua_remove(L, -3);
+
+    irc = lua_pcall(L, 1, 1, 1);
+    if (irc != 0) {
+        const char *error = lua_tostring(L, -1);
+        debug("Error instantiating Recorder via injection: %s", error);
+        lua_pop(L, 1);
+        return NULL;
+    }
+
+    lua_getfield(L, -1, "real");
+    Recorder *match = luaL_torecorder(L, -1);
+    lua_pop(L, 1);
+
+    return match;
+error:
+    return NULL;
+}
+
 int luab_Recorder_new(lua_State *L) {
     Recorder_userdata *ud = NULL;
 
@@ -90,12 +116,10 @@ int luab_Recorder_set_entity(lua_State *L) {
     Recorder *recorder = luaL_torecorder(L, 1);
     check(recorder != NULL, "Recorder required");
 
-    lua_getfield(L, -1, "real");
     Entity *entity = luaL_toentity(L, -1);
-
     recorder->entity = entity;
 
-    lua_pop(L, 3);
+    return 0;
 error:
     return 0;
 }

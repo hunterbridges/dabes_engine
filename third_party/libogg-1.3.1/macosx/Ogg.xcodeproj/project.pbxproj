@@ -7,14 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		730F236309181A8D00AB638C /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 730F236109181A8D00AB638C /* bitwise.c */; };
-		730F236409181A8D00AB638C /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 730F236209181A8D00AB638C /* framing.c */; };
-		730F236709181ABE00AB638C /* ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 730F236509181ABE00AB638C /* ogg.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		730F236809181ABE00AB638C /* os_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 730F236609181ABE00AB638C /* os_types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		734FB2E70B18B36F00D561D7 /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 730F236109181A8D00AB638C /* bitwise.c */; };
 		734FB2E80B18B36F00D561D7 /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 730F236209181A8D00AB638C /* framing.c */; };
-		8D07F2BE0486CC7A007CD1D0 /* Ogg_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 32BAE0B70371A74B00C91783 /* Ogg_Prefix.pch */; };
-		8D07F2C00486CC7A007CD1D0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		CAB8491517EC32CF00FCF11A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFAF6F617EBA8C0002AA22A /* Foundation.framework */; };
 		CAB8491A17EC32CF00FCF11A /* libogg_iOS.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = CAB8491917EC32CF00FCF11A /* libogg_iOS.h */; };
 		CAB8493817EC32ED00FCF11A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 730F236109181A8D00AB638C /* bitwise.c */; };
@@ -43,7 +37,6 @@
 		730F236609181ABE00AB638C /* os_types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = os_types.h; path = ../include/ogg/os_types.h; sourceTree = SOURCE_ROOT; };
 		734FB2E50B18B33E00D561D7 /* libogg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libogg.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D07F2C70486CC7A007CD1D0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D07F2C80486CC7A007CD1D0 /* Ogg.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Ogg.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAB8491417EC32CF00FCF11A /* libogg-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libogg-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAB8491817EC32CF00FCF11A /* libogg-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "libogg-iOS-Prefix.pch"; sourceTree = "<group>"; };
 		CAB8491917EC32CF00FCF11A /* libogg_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libogg_iOS.h; sourceTree = "<group>"; };
@@ -67,13 +60,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8D07F2C30486CC7A007CD1D0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CAB8491117EC32CF00FCF11A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -88,7 +74,6 @@
 		034768DDFF38A45A11DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D07F2C80486CC7A007CD1D0 /* Ogg.framework */,
 				734FB2E50B18B33E00D561D7 /* libogg.a */,
 				CAB8491417EC32CF00FCF11A /* libogg-iOS.a */,
 			);
@@ -220,16 +205,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8D07F2BD0486CC7A007CD1D0 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D07F2BE0486CC7A007CD1D0 /* Ogg_Prefix.pch in Headers */,
-				730F236709181ABE00AB638C /* ogg.h in Headers */,
-				730F236809181ABE00AB638C /* os_types.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -249,26 +224,6 @@
 			productName = ogg;
 			productReference = 734FB2E50B18B33E00D561D7 /* libogg.a */;
 			productType = "com.apple.product-type.library.static";
-		};
-		8D07F2BC0486CC7A007CD1D0 /* Ogg */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 730F235409181A3A00AB638C /* Build configuration list for PBXNativeTarget "Ogg" */;
-			buildPhases = (
-				8D07F2BD0486CC7A007CD1D0 /* Headers */,
-				8D07F2BF0486CC7A007CD1D0 /* Resources */,
-				8D07F2C10486CC7A007CD1D0 /* Sources */,
-				8D07F2C30486CC7A007CD1D0 /* Frameworks */,
-				8D07F2C50486CC7A007CD1D0 /* Rez */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Ogg;
-			productInstallPath = "$(HOME)/Library/Frameworks";
-			productName = Ogg;
-			productReference = 8D07F2C80486CC7A007CD1D0 /* Ogg.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 		CAB8491317EC32CF00FCF11A /* ogg-iOS */ = {
 			isa = PBXNativeTarget;
@@ -307,33 +262,11 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D07F2BC0486CC7A007CD1D0 /* Ogg */,
 				734FB2E40B18B33E00D561D7 /* libogg (static) */,
 				CAB8491317EC32CF00FCF11A /* ogg-iOS */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		8D07F2BF0486CC7A007CD1D0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D07F2C00486CC7A007CD1D0 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXRezBuildPhase section */
-		8D07F2C50486CC7A007CD1D0 /* Rez */ = {
-			isa = PBXRezBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXRezBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		734FB2E20B18B33E00D561D7 /* Sources */ = {
@@ -342,15 +275,6 @@
 			files = (
 				734FB2E70B18B36F00D561D7 /* bitwise.c in Sources */,
 				734FB2E80B18B36F00D561D7 /* framing.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8D07F2C10486CC7A007CD1D0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				730F236309181A8D00AB638C /* bitwise.c in Sources */,
-				730F236409181A8D00AB638C /* framing.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,51 +317,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		730F235509181A3A00AB638C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Ogg_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /Library/Frameworks;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = Ogg;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
-		730F235609181A3A00AB638C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Ogg_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /Library/Frameworks;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = Ogg;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		730F235909181A3A00AB638C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -569,15 +448,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		730F235409181A3A00AB638C /* Build configuration list for PBXNativeTarget "Ogg" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				730F235509181A3A00AB638C /* Debug */,
-				730F235609181A3A00AB638C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		730F235809181A3A00AB638C /* Build configuration list for PBXProject "Ogg" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

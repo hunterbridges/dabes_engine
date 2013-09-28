@@ -211,12 +211,9 @@ int luab_Scene_set_music(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
 
-    lua_getfield(L, -1, "real");
     Music *music = luaL_tomusic(L, -1);
-
-    lua_pop(L, 3);
-
     Scene_set_music(scene, music);
+
 error:
     return 0;
 }
@@ -239,7 +236,6 @@ int luab_Scene_set_parallax(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
 
-    lua_getfield(L, -1, "real");
     Parallax *parallax = luaL_toparallax(L, -1);
 
     if (parallax) {
@@ -278,12 +274,11 @@ int luab_Scene_set_canvas(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
 
-    lua_getfield(L, -1, "real");
     Canvas *canvas = luaL_tocanvas(L, -1);
 
     scene->canvas = canvas;
     canvas->scene = scene;
-    lua_pop(L, 3);
+
 error:
     return 0;
 }
