@@ -529,6 +529,7 @@
 				PRODUCT_NAME = "Chipmunk-iPhone";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s armv6 i386";
 			};
 			name = Debug;
 		};
@@ -546,6 +547,7 @@
 				PRODUCT_NAME = "Chipmunk-iPhone";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s armv6 i386";
 				ZERO_LINK = NO;
 			};
 			name = Release;
