@@ -31,6 +31,11 @@ void Scripting_update_paths(Scripting *scripting, struct Engine *engine);
 int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname);
 void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
         const char *fname);
+
+typedef struct Scripting_dhook_arg_closure {
+    int (*function)(lua_State *L, void *context);
+    void *context;
+} Scripting_dhook_arg_closure;
 int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
                          ...);
 

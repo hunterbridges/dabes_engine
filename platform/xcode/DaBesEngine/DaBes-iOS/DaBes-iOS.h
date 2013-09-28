@@ -780,6 +780,11 @@ void Scripting_update_paths(Scripting *scripting, struct Engine *engine);
 int Scripting_call_hook(Scripting *scripting, void *bound, const char *fname);
 void *Scripting_ud_return_hook(Scripting *scripting, void *bound,
         const char *fname);
+
+typedef struct Scripting_dhook_arg_closure {
+    int (*function)(lua_State *L, void *context);
+    void *context;
+} Scripting_dhook_arg_closure;
 int Scripting_call_dhook(Scripting *scripting, void *bound, const char *fname,
                          ...);
 
@@ -3093,6 +3098,9 @@ typedef struct NetMatchProto {
     int (*associate_native)(struct NetMatch *net, void *assoc);
     int (*handshake)(struct NetMatch *net, struct Engine *engine);
     int (*all_ready_cb)(struct NetMatch *net, struct Engine *engine);
+    int (*get_metadata)(struct NetMatch *net, struct Engine *engine);
+    int (*got_metadata_cb)(struct NetMatch *net, struct Engine *engine,
+                           void *metadata);
     int (*get_player_count)(struct NetMatch *net, struct Engine *engine);
     int (*get_player_number)(struct NetMatch *net, struct Engine *engine);
     int (*send_msg)(struct NetMatch *match, struct Engine *engine,

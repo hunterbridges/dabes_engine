@@ -47,6 +47,13 @@ NetMatch = BoundObject:extend({
     -- @treturn nil
     handshake = BoundObject.fwd_func("handshake"),
 
+    --- Fetch metadata for all the players in the match. When the metadata
+    -- is retrieved, the `got_metadata` hook is called.
+    --
+    -- @function net_match:get_metadata
+    -- @treturn nil
+    get_metadata = BoundObject.fwd_func("get_metadata"),
+
     send_msg = BoundObject.fwd_func("send_msg"),
 
 --- Hooks.
@@ -60,6 +67,26 @@ NetMatch = BoundObject:extend({
     -- @function all_ready
     -- @tparam NetMatch self The NetMatch instance
     all_ready = function(self)
+    end,
+
+    --- Called when metadata for players has been retrieved in response to
+    -- `get_metadata`. This returns metadata with the following structure:
+    --
+    --     {
+    --         {
+    --             "display_name" = "foo",
+    --             "alias" = "bar"
+    --         },
+    --         ...
+    --     }
+    --
+    -- The player metadata in the array is indexed by the corresponding
+    -- player numbers.
+    --
+    -- @function got_metadata
+    -- @tparam NetMatch self The NetMatch instance
+    -- @tparam table metadata An array of player metadata
+    got_metadata = function(self, metadata)
     end,
 
     receive_msg = function(self)

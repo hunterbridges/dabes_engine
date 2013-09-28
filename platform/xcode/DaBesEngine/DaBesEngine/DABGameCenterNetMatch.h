@@ -28,5 +28,6 @@
 - (id)initWithEngine:(Engine *)engine;
 - (BOOL)sendMsg:(NetMatchMsg *)msg;
 - (void)derivePlayerNumber;
+- (void)getMetadataForAllPlayers;
 
 @end

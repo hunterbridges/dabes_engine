@@ -58,6 +58,56 @@ int GameCenterNetMatch_all_ready_cb(NetMatch *match, struct Engine *engine) {
     return 1;
 }
 
+int GameCenterNetMatch_get_metadata(NetMatch *match, struct Engine *engine) {
+    GameCenterNetMatchCtx *ctx = match->context;
+    DABGameCenterNetMatch *gcn_match =
+        (__bridge DABGameCenterNetMatch *)ctx->gcn_match;
+    
+    [gcn_match getMetadataForAllPlayers];
+    
+    return 1;
+}
+
+static int metadata_unpack_players(lua_State *L, void *context) {
+    NSArray *arr = (__bridge NSArray *)context;
+    // Expected an ordered NSArray of GKPlayers
+    
+    lua_createtable(L, arr.count, 0);
+    int player_number = 1;
+    for (GKPlayer *player in arr) {
+        lua_pushinteger(L, player_number);
+        lua_newtable(L);
+        
+        const char *name_str =
+            [[player displayName] cStringUsingEncoding:NSUTF8StringEncoding];
+        lua_pushstring(L, name_str);
+        lua_setfield(L, -2, "display_name");
+        
+        const char *alias_str =
+            [[player alias] cStringUsingEncoding:NSUTF8StringEncoding];
+        lua_pushstring(L, alias_str);
+        lua_setfield(L, -2, "alias");
+        
+        lua_settable(L, -3);
+        player_number++;
+    }
+    
+    return 1;
+}
+
+int GameCenterNetMatch_got_metadata_cb(NetMatch *match, struct Engine *engine,
+                                       void *metadata) {
+    Scripting_dhook_arg_closure closure = {
+        .function = metadata_unpack_players,
+        .context = metadata
+    };
+    Scripting_call_dhook(engine->scripting, match, "got_metadata",
+                         LUA_TFUNCTION, &closure, nil);
+    
+    return 1;
+}
+
+
 int GameCenterNetMatch_get_player_count(NetMatch *match, struct Engine *engine) {
     GameCenterNetMatchCtx *ctx = match->context;
     DABGameCenterNetMatch *gcn_match =
@@ -95,6 +145,8 @@ NetMatchProto GameCenterNetMatchProto = {
     .associate_native = GameCenterNetMatch_associate_native,
     .handshake = GameCenterNetMatch_handshake,
     .all_ready_cb = GameCenterNetMatch_all_ready_cb,
+    .get_metadata = GameCenterNetMatch_get_metadata,
+    .got_metadata_cb = GameCenterNetMatch_got_metadata_cb,
     .get_player_count = GameCenterNetMatch_get_player_count,
     .get_player_number = GameCenterNetMatch_get_player_number,
     .send_msg = GameCenterNetMatch_send_msg,

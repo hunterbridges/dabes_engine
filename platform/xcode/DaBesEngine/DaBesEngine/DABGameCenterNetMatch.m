@@ -86,6 +86,33 @@
     return YES;
 }
 
+- (void)getMetadataForAllPlayers {
+    NSArray *allPlayers = [self.gkMatch.playerIDs arrayByAddingObject:
+                           [GKLocalPlayer localPlayer].playerID];
+    [GKPlayer loadPlayersForIdentifiers:allPlayers
+        withCompletionHandler:^(NSArray *players, NSError *error) {
+            if (error) {
+                NSAssert(self, @"Metadata error: %@", error);
+                return;
+            }
+            
+            NSArray *orderedPlayers =
+                [players sortedArrayWithOptions:0
+                    usingComparator:^NSComparisonResult(id obj1, id obj2) {
+                        GKPlayer *left = obj1;
+                        GKPlayer *right = obj2;
+                        NSNumber *leftNum =
+                            @([self numberForPlayer:left.playerID]);
+                        NSNumber *rightNum =
+                            @([self numberForPlayer:right.playerID]);
+                        return [leftNum compare:rightNum];
+                    }];
+            
+            self.netMatch->_(got_metadata_cb)(self.netMatch, self.engine,
+                                              (__bridge void *)orderedPlayers);
+        }];
+}
+
 #pragma mark - Private
 
 - (NSString *)getPlayerWithNumber:(dab_uint8)number {
