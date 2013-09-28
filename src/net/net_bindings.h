@@ -14,8 +14,4 @@ Scripting_caster_for(Net, luaL_tonet);
 
 int luaopen_dabes_net(lua_State *L);
 
-struct Engine;
-struct NetMatch;
-int Net_call_found_match_hook(Net *net, struct Engine *engine, void *assoc);
-
 #endif
