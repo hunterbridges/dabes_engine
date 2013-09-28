@@ -84,7 +84,7 @@
 - (void)findMatches
 {
     GKMatchRequest *request = [[GKMatchRequest alloc] init];
-    request.minPlayers = 2;
+    request.minPlayers = 4;
     request.maxPlayers = 4;
     
     GKMatchmakerViewController *mmvc =
