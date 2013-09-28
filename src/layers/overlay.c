@@ -13,6 +13,7 @@ Overlay *Overlay_create(Engine *engine, char *font_name, int px_size) {
     overlay->alpha = 1;
     overlay->sprites = DArray_create(sizeof(Sprite *), 8);
     overlay->timestamp = (uint32_t)Engine_get_ticks(engine);
+    overlay->track_entity_edge = OVERLAY_ENTITY_EDGE_MC;
     Overlay_set_z_index(overlay, 1);
 
     return overlay;
@@ -50,9 +51,56 @@ void Overlay_update(Overlay *overlay, Engine *engine) {
     Scripting_call_hook(engine->scripting, overlay, "update");
 }
 
+VPoint point_from_edge_of_rect(VRect rect, OverlayEntityEdge edge) {
+    switch (edge) {
+        case OVERLAY_ENTITY_EDGE_TL:
+            return rect.tl;
+            
+        case OVERLAY_ENTITY_EDGE_TC:
+            return VPoint_mid(rect.tl, rect.tr);
+            
+        case OVERLAY_ENTITY_EDGE_TR:
+            return rect.tr;
+            
+        case OVERLAY_ENTITY_EDGE_ML:
+            return VPoint_mid(rect.tl, rect.bl);
+            
+        case OVERLAY_ENTITY_EDGE_MC:
+            return VPoint_mid(rect.tl, rect.br);
+            
+        case OVERLAY_ENTITY_EDGE_MR:
+            return VPoint_mid(rect.tr, rect.br);
+            
+        case OVERLAY_ENTITY_EDGE_BL:
+            return rect.bl;
+            
+        case OVERLAY_ENTITY_EDGE_BC:
+            return VPoint_mid(rect.bl, rect.br);
+            
+        case OVERLAY_ENTITY_EDGE_BR:
+            return rect.br;
+    }
+}
+
 void Overlay_render(Overlay *overlay, Engine *engine) {
     Graphics_project_screen_camera(engine->graphics, overlay->scene->camera);
     Graphics_reset_modelview_matrix(engine->graphics);
+    
+    if (overlay->track_entity && overlay->track_entity->scene) {
+        VPoint world = VPointZero;
+        if (overlay->track_entity_edge == OVERLAY_ENTITY_EDGE_MC) {
+            world = Entity_center(overlay->track_entity);
+        } else {
+            VRect bounding = Entity_bounding_rect(overlay->track_entity);
+            world = point_from_edge_of_rect(bounding,
+                                            overlay->track_entity_edge);
+        }
+        VPoint screen =
+            Camera_project_point(overlay->track_entity->scene->camera,
+                                 world, 1);
+        Graphics_translate_modelview_matrix(engine->graphics,
+                                            screen.x, screen.y, 0);
+    }
 
     Scripting_call_hook(engine->scripting, overlay, "render");
 }

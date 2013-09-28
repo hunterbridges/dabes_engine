@@ -208,6 +208,7 @@
             // I need to wait for a player assign message
         } else if (playerID == nil) {
             // Retry
+            // TODO Limit retries and eventually error out if it fails too much
             [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(derivePlayerNumberIfNeeded) userInfo:nil repeats:NO];
         }
        }];
