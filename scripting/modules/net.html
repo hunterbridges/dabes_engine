@@ -32,10 +32,9 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Properties">Properties </a></li>
-<li><a href="#Class_Methods">Class Methods </a></li>
 <li><a href="#Instance_Methods">Instance Methods </a></li>
 <li><a href="#Hooks">Hooks </a></li>
+<li><a href="#Globals">Globals </a></li>
 </ul>
 
 
@@ -50,7 +49,7 @@
   <li><a href="../modules/easer.html">easer</a></li>
   <li><a href="../modules/entity.html">entity</a></li>
   <li><a href="../modules/music.html">music</a></li>
-  <li><a href="../modules/net.html">net</a></li>
+  <li><strong>net</strong></li>
   <li><a href="../modules/net_match.html">net_match</a></li>
   <li><a href="../modules/object.html">object</a></li>
   <li><a href="../modules/overlay.html">overlay</a></li>
@@ -60,7 +59,7 @@
   <li><a href="../modules/scene.html">scene</a></li>
   <li><a href="../modules/scene_manager.html">scene_manager</a></li>
   <li><a href="../modules/sensor.html">sensor</a></li>
-  <li><strong>sfx</strong></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
   <li><a href="../modules/shape.html">shape</a></li>
   <li><a href="../modules/shape_matcher.html">shape_matcher</a></li>
   <li><a href="../modules/sprite.html">sprite</a></li>
@@ -73,38 +72,43 @@
 
 <div id="content">
 
-<h1>Module <code>sfx</code></h1>
+<h1>Module <code>net</code></h1>
 
-<p>A one-shot OGG Vorbis audio sample.</p>
-<p> <a href="../modules/sfx.html#">Sfx</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+<p>An interface for implementing multiplayer games over the internet.</p>
+<p> <a href="../modules/net.html#">Net</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
 
-<h2><a href="#Properties">Properties </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#volume">volume</a></td>
-	<td class="summary">Minimum <code>0</code>, maximum <code>1</code></td>
-	</tr>
-</table>
-<h2><a href="#Class_Methods">Class Methods </a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#Sfx:new">Sfx:new&nbsp;(filename)</a></td>
-	<td class="summary">Create a new <code>Sfx</code> by loading an OGG file</td>
-	</tr>
-</table>
 <h2><a href="#Instance_Methods">Instance Methods </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#sfx:play">sfx:play&nbsp;()</a></td>
-	<td class="summary">Play the <code>Sfx</code></td>
+	<td class="name" nowrap><a href="#net:authenticate">net:authenticate&nbsp;()</a></td>
+	<td class="summary">Authenticate the local player.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#net:authenticate">net:authenticate&nbsp;()</a></td>
+	<td class="summary">Find matches</td>
 	</tr>
 </table>
 <h2><a href="#Hooks">Hooks </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#ended">ended&nbsp;(self)</a></td>
-	<td class="summary">Called when the <code>Music</code> ends.</td>
+	<td class="name" nowrap><a href="#authenticated">authenticated&nbsp;(self)</a></td>
+	<td class="summary">Called when <code>Net</code> authenticates successfully.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#found_match">found_match&nbsp;(self, match)</a></td>
+	<td class="summary">Called when <code>Net</code> finds a match</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#find_failed">find_failed&nbsp;(self)</a></td>
+	<td class="summary">Called when <code>Net</code> fails to find a match</td>
+	</tr>
+</table>
+<h2><a href="#Globals">Globals </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#net">net</a></td>
+	<td class="summary">The "singleton" instance of <code>Net</code>.</td>
 	</tr>
 </table>
 
@@ -112,78 +116,32 @@
 <br/>
 
 
-    <h2><a name="Properties"></a>Properties </h2>
-        Properties.
- Significant fields on an instance.
-    <dl class="function">
-    <dt>
-    <a name = "volume"></a>
-    <strong>volume</strong>
-    </dt>
-    <dd>
-    Minimum <code>0</code>, maximum <code>1</code>
-
-
-
-
-
-
-</dd>
-</dl>
-    <h2><a name="Class_Methods"></a>Class Methods </h2>
-        Class Methods.
- Must be called on <code>Class</code>, with a capital leading character.
- e.g. <code>Class:method("foo")</code>
-    <dl class="function">
-    <dt>
-    <a name = "Sfx:new"></a>
-    <strong>Sfx:new&nbsp;(filename)</strong>
-    </dt>
-    <dd>
-    Create a new <code>Sfx</code> by loading an OGG file
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">filename</span>
-            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
-         The filename of the OGG file</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">Sfx</span></span>
-
-
-
-    </ol>
-
-
-
-
-</dd>
-</dl>
     <h2><a name="Instance_Methods"></a>Instance Methods </h2>
         Instance Methods.
  Must be called on an instance of <code>Class</code>.
  e.g. <code>instance:method("foo")</code>
     <dl class="function">
     <dt>
-    <a name = "sfx:play"></a>
-    <strong>sfx:play&nbsp;()</strong>
+    <a name = "net:authenticate"></a>
+    <strong>net:authenticate&nbsp;()</strong>
     </dt>
     <dd>
-    Play the <code>Sfx</code>
-
-
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
+    Authenticate the local player.
 
 
 
-    </ol>
+
+
+
+</dd>
+    <dt>
+    <a name = "net:authenticate"></a>
+    <strong>net:authenticate&nbsp;()</strong>
+    </dt>
+    <dd>
+    Find matches
+
+
 
 
 
@@ -196,18 +154,82 @@
  on individual instances.
     <dl class="function">
     <dt>
-    <a name = "ended"></a>
-    <strong>ended&nbsp;(self)</strong>
+    <a name = "authenticated"></a>
+    <strong>authenticated&nbsp;(self)</strong>
     </dt>
     <dd>
-    Called when the <code>Music</code> ends.
+    Called when <code>Net</code> authenticates successfully.
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">self</span>
-            <span class="types"><span class="type">Music</span></span>
-         The instance</li>
+
+
+</li>
     </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "found_match"></a>
+    <strong>found_match&nbsp;(self, match)</strong>
+    </dt>
+    <dd>
+    Called when <code>Net</code> finds a match
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+
+
+</li>
+        <li><span class="parameter">match</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "find_failed"></a>
+    <strong>find_failed&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called when <code>Net</code> fails to find a match
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Globals"></a>Globals </h2>
+        Globals.
+ Variables that are stored in the global namespace, usually for special
+ purposes.
+    <dl class="function">
+    <dt>
+    <a name = "net"></a>
+    <strong>net</strong>
+    </dt>
+    <dd>
+    The "singleton" instance of <code>Net</code>.
+
 
 
 

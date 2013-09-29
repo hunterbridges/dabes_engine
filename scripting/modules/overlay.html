@@ -51,6 +51,8 @@
   <li><a href="../modules/easer.html">easer</a></li>
   <li><a href="../modules/entity.html">entity</a></li>
   <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/net.html">net</a></li>
+  <li><a href="../modules/net_match.html">net_match</a></li>
   <li><a href="../modules/object.html">object</a></li>
   <li><strong>overlay</strong></li>
   <li><a href="../modules/parallax.html">parallax</a></li>
@@ -87,6 +89,14 @@
 	<tr>
 	<td class="name" nowrap><a href="#z_index">z_index</a></td>
 	<td class="summary">Just like in CSS, the highest <a href="../modules/overlay.html#z_index">z_index</a>  gets drawn in front.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#track_entity">track_entity</a></td>
+	<td class="summary">The <a href="../modules/entity.html#">Entity</a> tracked by <code>Overlay</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#track_entity_edge">track_entity_edge</a></td>
+	<td class="summary">The edge of the <a href="../modules/overlay.html#track_entity">track_entity</a>  used to determine <code>{0, 0}</code></td>
 	</tr>
 </table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
@@ -163,6 +173,44 @@
     Just like in CSS, the highest <a href="../modules/overlay.html#z_index">z_index</a>  gets drawn in front. </p>
 
 <p> Overlays are always drawn in front of <a href="../modules/entity.html#">Entities</a>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "track_entity"></a>
+    <strong>track_entity</strong>
+    </dt>
+    <dd>
+    The <a href="../modules/entity.html#">Entity</a> tracked by <code>Overlay</code>. </p>
+
+<p> This will make point <code>{0, 0}</code> <code>track_entity_edge</code>'s point on the
+ <code>track_entity</code>'s bounding box.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "track_entity_edge"></a>
+    <strong>track_entity_edge</strong>
+    </dt>
+    <dd>
+    The edge of the <a href="../modules/overlay.html#track_entity">track_entity</a>  used to determine <code>{0, 0}</code>
+ The edges are relative to the bounding box as follows:</p>
+<pre><code> 0---1---2
+ |   |   |
+ 3---4---5
+ |   |   |
+ 6---7---8
+</code></pre>
+
+<p> (<code>0</code> is top left, <code>4</code> is center, <code>8</code> is bottom right)
 
 
 
@@ -252,7 +300,7 @@
     <li><p><code>color</code> = <code>{r, g, b, a}</code> vector representing the text color.
     Default <code>{1, 1, 1, 1}</code> (white).</p></li>
     <li><p><code>origin</code> = <code>{x, y}</code> baseline origin point relative to the
-    center of the screen in pixels. Default <code>{0, 0}</code></p></li>
+    screen center or entity edge in pixels. Default <code>{0, 0}</code></p></li>
     <li><p><code>align</code> = The text alignment. Can be <code>"left"</code>, <code>"right"</code> or
     <code>"center"</code>. Default <code>"left"</code></p></li>
     <li><p><code>shadow_color</code> = <code>{r, g, b, a}</code> vector representing the shadow
@@ -313,8 +361,8 @@
     <li><p><a href="../modules/sprite.html#">sprite</a>  = The <a href="../modules/sprite.html#">Sprite</a> to draw. <em>(required)</em></p></li>
     <li><p><code>color</code> = <code>{r, g, b, a}</code> vector representing the background color.
     Default <code>{0, 0, 0, 0}</code> (clear).</p></li>
-    <li><p><code>center</code> = <code>{x, y}</code> point relative to the center of the screen in
-    pixels. Default <code>{0, 0}</code></p></li>
+    <li><p><code>center</code> = <code>{x, y}</code> point relative to the screen center or entity edge
+    in pixels. Default <code>{0, 0}</code></p></li>
     <li><p><code>rotation</code> = The angle of the sprite in <strong>degrees</strong>. Default <code>0</code></p></li>
     <li><p><code>scale</code> = Either a number or an <code>{x, y}</code> vector representing a scale
     factor. Default <code>1</code></p></li>

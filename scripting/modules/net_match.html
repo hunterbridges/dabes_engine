@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>DaBes Engine Scripting API Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>DaBes Scripting</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Properties">Properties </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
+<li><a href="#Hooks">Hooks </a></li>
+<li><a href="#Constants">Constants </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/body.html">body</a></li>
+  <li><a href="../modules/bound_object.html">bound_object</a></li>
+  <li><a href="../modules/camera.html">camera</a></li>
+  <li><a href="../modules/canvas.html">canvas</a></li>
+  <li><a href="../modules/collection.html">collection</a></li>
+  <li><a href="../modules/controller.html">controller</a></li>
+  <li><a href="../modules/easer.html">easer</a></li>
+  <li><a href="../modules/entity.html">entity</a></li>
+  <li><a href="../modules/music.html">music</a></li>
+  <li><a href="../modules/net.html">net</a></li>
+  <li><strong>net_match</strong></li>
+  <li><a href="../modules/object.html">object</a></li>
+  <li><a href="../modules/overlay.html">overlay</a></li>
+  <li><a href="../modules/parallax.html">parallax</a></li>
+  <li><a href="../modules/parallax_layer.html">parallax_layer</a></li>
+  <li><a href="../modules/recorder.html">recorder</a></li>
+  <li><a href="../modules/scene.html">scene</a></li>
+  <li><a href="../modules/scene_manager.html">scene_manager</a></li>
+  <li><a href="../modules/sensor.html">sensor</a></li>
+  <li><a href="../modules/sfx.html">sfx</a></li>
+  <li><a href="../modules/shape.html">shape</a></li>
+  <li><a href="../modules/shape_matcher.html">shape_matcher</a></li>
+  <li><a href="../modules/sprite.html">sprite</a></li>
+  <li><a href="../modules/sprite_animation.html">sprite_animation</a></li>
+  <li><a href="../modules/step_sequencer.html">step_sequencer</a></li>
+  <li><a href="../modules/util.html">util</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>net_match</code></h1>
+
+<p>Represents an individual internet multiplayer game.</p>
+<p> You should never construct this object yourself. It comes from <a href="../modules/net.html#">Net</a>
+ matchmaking.</p>
+
+<p> <a href="../modules/net_match.html#">NetMatch</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
+
+
+<h2><a href="#Properties">Properties </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#player_count">player_count</a></td>
+	<td class="summary"><em>(readonly)</em> The number of players in the match.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#player_number">player_number</a></td>
+	<td class="summary"><em>(readonly)</em> The assigned player number of the local player.</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#net_match:handshake">net_match:handshake&nbsp;()</a></td>
+	<td class="summary">Begin the player handshake process.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#net_match:get_metadata">net_match:get_metadata&nbsp;()</a></td>
+	<td class="summary">Fetch metadata for all the players in the match.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#net_match:handshake">net_match:handshake&nbsp;(to, kind, payload)</a></td>
+	<td class="summary">Send a message to one or all players of the <code>NetMatch</code>.</td>
+	</tr>
+</table>
+<h2><a href="#Hooks">Hooks </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#all_ready">all_ready&nbsp;(self)</a></td>
+	<td class="summary">Called once all players have informed each other of their player
+ numbers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#got_metadata">got_metadata&nbsp;(self, metadata)</a></td>
+	<td class="summary">Called when metadata for players has been retrieved in response to
+ <code>get_metadata</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#got_metadata">got_metadata&nbsp;(self, from, kind, payload)</a></td>
+	<td class="summary">Called when a message is received from another player.</td>
+	</tr>
+</table>
+<h2><a href="#Constants">Constants </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#MSG_NULL">MSG_NULL</a></td>
+	<td class="summary">A <code>null</code> message kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MSG_PACKED_RECORDER">MSG_PACKED_RECORDER</a></td>
+	<td class="summary">A message kind that contains a <a href="../modules/recorder.html#">Recorder</a> in the <code>payload</code>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Properties"></a>Properties </h2>
+        Properties.
+ Significant fields on an instance.
+    <dl class="function">
+    <dt>
+    <a name = "player_count"></a>
+    <strong>player_count</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The number of players in the match.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "player_number"></a>
+    <strong>player_number</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> The assigned player number of the local player.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "net_match:handshake"></a>
+    <strong>net_match:handshake&nbsp;()</strong>
+    </dt>
+    <dd>
+    Begin the player handshake process.  This process assigns each player
+ in the match their <a href="../modules/net_match.html#player_number">player_number</a> . When all players have been assigned,
+ the <a href="../modules/net_match.html#all_ready">all_ready</a>  hook is called.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "net_match:get_metadata"></a>
+    <strong>net_match:get_metadata&nbsp;()</strong>
+    </dt>
+    <dd>
+    Fetch metadata for all the players in the match.  When the metadata
+ is retrieved, the <a href="../modules/net_match.html#got_metadata">got_metadata</a>  hook is called.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "net_match:handshake"></a>
+    <strong>net_match:handshake&nbsp;(to, kind, payload)</strong>
+    </dt>
+    <dd>
+    Send a message to one or all players of the <code>NetMatch</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">to</span>
+            <span class="types"><span class="type">number</span></span>
+         The player number to send the message to. If you pass
+ <code>0</code>, the message will be sent to all players.</li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><span class="type">number</span></span>
+         The kind of message to be sent. This may incur
+ additional type checking for the <code>payload</code></li>
+        <li><span class="parameter">payload</span>
+         The contents of the message to be sent. This will be
+ different depending on the <code>kind</code> of message being sent.</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Hooks"></a>Hooks </h2>
+        Hooks.
+ Callbacks implemented in subclasses to customize behavior. Hooks are called
+ on individual instances.
+    <dl class="function">
+    <dt>
+    <a name = "all_ready"></a>
+    <strong>all_ready&nbsp;(self)</strong>
+    </dt>
+    <dd>
+    Called once all players have informed each other of their player
+ numbers.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">NetMatch</span></span>
+         The NetMatch instance</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "got_metadata"></a>
+    <strong>got_metadata&nbsp;(self, metadata)</strong>
+    </dt>
+    <dd>
+    Called when metadata for players has been retrieved in response to
+ <code>get_metadata</code>.  This returns metadata with the following structure:</p>
+
+<pre><code> {
+     {
+         "display_name" = "foo",
+         "alias" = "bar"
+     },
+     ...
+ }
+</code></pre>
+
+<p> The player metadata in the array is indexed by the corresponding
+ player numbers.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">NetMatch</span></span>
+         The NetMatch instance</li>
+        <li><span class="parameter">metadata</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.5">table</a></span>
+         An array of player metadata</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "got_metadata"></a>
+    <strong>got_metadata&nbsp;(self, from, kind, payload)</strong>
+    </dt>
+    <dd>
+    Called when a message is received from another player.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">NetMatch</span></span>
+         The <a href="../modules/net_match.html#">NetMatch</a> instance.</li>
+        <li><span class="parameter">from</span>
+            <span class="types"><span class="type">number</span></span>
+         The player number of the player who sent the message.</li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><span class="type">number</span></span>
+         The kind of the received message.</li>
+        <li><span class="parameter">payload</span>
+         The payload of the message.</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Constants"></a>Constants </h2>
+        Constants.
+ Accessed at the class level e.g. <code>Class.CONSTANT</code>
+    <dl class="function">
+    <dt>
+    <a name = "MSG_NULL"></a>
+    <strong>MSG_NULL</strong>
+    </dt>
+    <dd>
+    A <code>null</code> message kind.  Doesn't contain any data.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MSG_PACKED_RECORDER"></a>
+    <strong>MSG_PACKED_RECORDER</strong>
+    </dt>
+    <dd>
+    A message kind that contains a <a href="../modules/recorder.html#">Recorder</a> in the <code>payload</code>. </p>
+
+<p> <strong>Sending:</strong> Provide a <a href="../modules/recorder.html#">Recorder</a> instance in the payload.</p>
+
+<p> <strong>Receiving:</strong> A new <a href="../modules/recorder.html#">Recorder</a> instance.  It still needs to
+ be added to a <a href="../modules/scene.html#">Scene</a> and assigned an <a href="../modules/entity.html#">Entity</a>.
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3.12</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
