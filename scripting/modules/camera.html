@@ -103,6 +103,10 @@
 	<td class="summary">The zoom factor of the <code>Camera</code>.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#lerp">lerp</a></td>
+	<td class="summary">The lerp factor of the <code>Camera</code>.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#screen_size">screen_size</a></td>
 	<td class="summary"><em>(read only)</em> An <code>{x, y}</code> vector of the screen size in pixels.</td>
 	</tr>
@@ -121,6 +125,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#camera:track_entities">camera:track_entities&nbsp;(...)</a></td>
 	<td class="summary">Provide a list of <a href="../modules/entity.html#">Entities</a> for the camera to track.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#camera:snap_tracking">camera:snap_tracking&nbsp;()</a></td>
+	<td class="summary">Force the camera to its destination position, ignoring <a href="../modules/camera.html#lerp">lerp</a> .</td>
 	</tr>
 </table>
 
@@ -216,6 +224,26 @@
 
 </dd>
     <dt>
+    <a name = "lerp"></a>
+    <strong>lerp</strong>
+    </dt>
+    <dd>
+    The lerp factor of the <code>Camera</code>.  This controls how smoothly
+ the Camera approaches a new <a href="../modules/camera.html#focal">focal</a>  and <a href="../modules/camera.html#scale">scale</a>  over time.</p>
+
+<p> <code>1</code> means instantly, <code>0</code> means the camera stays stationary.
+ <code>0.5</code> means the camera moves half the distance between its current
+ point and the destination point every frame.</p>
+
+<p> Minimum is 0. Maximum is 1. Default is <code>1</code>.
+
+
+
+
+
+
+</dd>
+    <dt>
     <a name = "screen_size"></a>
     <strong>screen_size</strong>
     </dt>
@@ -290,14 +318,19 @@
          The <a href="../modules/entity.html#">Entities</a> to track, or <code>nil</code></li>
     </ul>
 
-    <h3>Returns:</h3>
-    <ol>
-
-          <span class="types"><span class="type">nil</span></span>
 
 
 
-    </ol>
+
+</dd>
+    <dt>
+    <a name = "camera:snap_tracking"></a>
+    <strong>camera:snap_tracking&nbsp;()</strong>
+    </dt>
+    <dd>
+    Force the camera to its destination position, ignoring <a href="../modules/camera.html#lerp">lerp</a> .
+
+
 
 
 

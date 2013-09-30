@@ -139,6 +139,10 @@ solver.</td>
  second)</em>.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#collision_layers">collision_layers</a></td>
+	<td class="summary">Set the collision bit-plane of the <code>Body</code>.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#sensors">sensors</a></td>
 	<td class="summary">The <a href="../modules/collection.html#">Collection</a> of the Body's <a href="../modules/sensor.html#">Sensors</a></td>
 	</tr>
@@ -335,6 +339,24 @@ solver. </p>
 <pre><code>  body.velo[1] = 5
 </code></pre>
 
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "collision_layers"></a>
+    <strong>collision_layers</strong>
+    </dt>
+    <dd>
+    Set the collision bit-plane of the <code>Body</code>. </p>
+
+<p> <a href="../modules/body.html#">Bodies</a> only collide if they are in the same bit-planes.
+ i.e. (a.collision_layers &amp; b.collision_layers) != 0.</p>
+
+<p> By default, a <code>Body</code> occupies all bit-planes.
 
 
 
