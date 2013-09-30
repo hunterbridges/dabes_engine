@@ -15,6 +15,8 @@ Recorder *Recorder_create(int preroll_ms, int fps) {
     Recorder *recorder = calloc(1, sizeof(Recorder));
     check(recorder != NULL, "Couldn't create Recorder");
     recorder->proto = RecorderNullProto;
+    // TODO: This Max thing is weird. Figure out what to do about this param
+    // when instantiating in Lua from C.
     recorder->frames = DArray_create(sizeof(void *), MAX(preroll_ms, 5) * fps);
 
     // Generate id

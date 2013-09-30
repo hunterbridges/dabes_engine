@@ -550,7 +550,7 @@ SceneProto ChipmunkSceneProto = {
     .remove_entity_cb = ChipmunkScene_remove_entity_cb,
     .hit_test = ChipmunkScene_hit_test,
     .add_recorder = ChipmunkScene_add_recorder,
-    .remove_recorder = ChipmunkScene_add_recorder,
+    .remove_recorder = ChipmunkScene_remove_recorder,
     .get_gravity = ChipmunkScene_get_gravity,
     .set_gravity = ChipmunkScene_set_gravity
 };
