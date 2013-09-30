@@ -67,7 +67,7 @@ NetMatchMsg *NetMatchMsg_json(dab_uint8 from, dab_uint8 to, const char *json) {
 
     msg->from = from;
     msg->to = to;
-    msg->kind = NET_MATCH_MSG_PACKED_RECORDER;
+    msg->kind = NET_MATCH_MSG_JSON;
 
     msg->size = sizeof(char) * (strlen(json) + 1);
     msg->body = calloc(1, msg->size);
