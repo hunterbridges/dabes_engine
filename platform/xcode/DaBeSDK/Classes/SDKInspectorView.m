@@ -23,6 +23,8 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 @property (nonatomic, strong) IBOutlet NSSlider *cameraRotateSlider;
 @property (nonatomic, strong) IBOutlet NSTextField *cameraRotateLabel;
 @property (nonatomic, strong) IBOutlet NSButton *cameraResetRotateButton;
+@property (nonatomic, strong) IBOutlet NSSlider *cameraLerpSlider;
+@property (nonatomic, strong) IBOutlet NSTextField *cameraLerpLabel;
 @property (nonatomic, strong) IBOutlet SDKPanner *cameraFocalPanner;
 @property (nonatomic, strong) IBOutlet NSTextField *cameraFocalLabel;
 @property (nonatomic, strong) IBOutlet SDKPanner *cameraOffsetPanner;
@@ -142,6 +144,15 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 
 - (void)handleNewSceneNotification:(NSNotification *)notif {
   [self updateAllLabels:YES];
+  
+  if (self.engineVC.engine) {
+      self.audioMasterVolSlider.doubleValue = self.engineVC.engine->audio->master_volume;
+      self.audioMusicVolSlider.doubleValue = self.engineVC.engine->audio->music_volume;
+      self.audioSfxVolSlider.doubleValue = self.engineVC.engine->audio->sfx_volume;
+  }
+  if (self.engineVC.scene) {
+      self.cameraLerpSlider.doubleValue = self.engineVC.scene->camera->lerp;
+  }
 }
 
 - (void)handleEntitySelectedNotification:(NSNotification *)notif {
@@ -189,6 +200,8 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
                      forKey:(id)self.cameraZoomSlider];
   [self.updateMap setObject:NSStringFromSelector(@selector(updateCameraRotateLabel))
                      forKey:(id)self.cameraRotateSlider];
+  [self.updateMap setObject:NSStringFromSelector(@selector(updateCameraLerpLabel))
+                        forKey:(id)self.cameraLerpSlider];
   [self.updateMap setObject:NSStringFromSelector(@selector(updateCameraFocalLabel))
                      forKey:(id)self.cameraFocalPanner];
   [self.updateMap setObject:NSStringFromSelector(@selector(updateCameraOffsetLabel))
@@ -312,6 +325,13 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
   [self.cameraRotateLabel setNeedsDisplay];
 }
 
+- (void)updateCameraLerpLabel {
+  Scene *scene = self.engineVC.scene;
+  self.cameraLerpLabel.stringValue =
+      [NSString stringWithFormat:@"%.2f", scene ? scene->camera->lerp : 0];
+  [self.cameraLerpLabel setNeedsDisplay];
+}
+
 - (void)updateCameraFocalLabel {
   Scene *scene = self.engineVC.scene;
   VPoint focal = scene ? scene->camera->focal : VPointZero;
@@ -339,6 +359,13 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 
 - (IBAction)rotSliderChanged:(id)sender {
   [self updateInt:&(self.touchInput->cam_rotate) withSlider:sender];
+}
+
+- (IBAction)lerpSliderChanged:(id)sender {
+  if (!self.engineVC.scene) return;
+  NSSlider *slider = sender;
+  self.engineVC.scene->camera->lerp = [slider doubleValue];
+  [self updateCameraLerpLabel];
 }
 
 - (IBAction)resetRotateClicked:(id)sender {

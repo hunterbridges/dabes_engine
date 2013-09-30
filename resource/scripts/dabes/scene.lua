@@ -310,6 +310,7 @@ Scene = BoundObject:extend({
         camera.translation = {0, 0}
         camera.snap_to_scene = true
         camera.max_scale = 1
+        camera:snap_tracking()
     end,
 
     --- Called every update during a `fade_in` transition.

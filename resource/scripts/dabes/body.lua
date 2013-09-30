@@ -78,8 +78,9 @@ Body = BoundObject:extend({
         --- Set the collision bit-plane of the `Body`.
         --
         -- @{body|Bodies} only collide if they are in the same bit-planes.
-        -- i.e. (a.layers & b.layers) != 0 By default, a `Body` occupies all
-        -- bit-planes.
+        -- i.e. (a.collision\_layers & b.collision\_layers) != 0.
+        --
+        -- By default, a `Body` occupies all bit-planes.
         collision_layers = BoundObject.fwd_func("get_collision_layers"),
     },
 

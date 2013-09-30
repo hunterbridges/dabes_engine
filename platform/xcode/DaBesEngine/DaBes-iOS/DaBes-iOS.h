@@ -1792,6 +1792,9 @@ typedef struct BodyProto {
     void (*set_is_rogue)(struct Body *body, int is_rogue);
     int (*get_is_static)(struct Body *body);
     void (*set_is_static)(struct Body *body, int is_static);
+    int (*get_collision_layers)(struct Body *body);
+    void (*set_collision_layers)(struct Body *body, int collision_layers);
+
 } BodyProto;
 
 typedef struct Body {
@@ -1804,6 +1807,7 @@ typedef struct Body {
     cpShape *cp_shape;
     cpBody *cp_body;
 
+    int collision_layers;
     int is_rogue;
     int is_static;
     int can_rotate;
@@ -1814,7 +1818,7 @@ typedef struct Body {
     VPoint draw_offset;
 
     void *context;
-  
+
     List *sensors;
 } Body;
 
@@ -2012,9 +2016,8 @@ int luaopen_dabes_sensor(lua_State *L);
 
 struct Entity;
 typedef struct Camera {
-    VPoint focal;
     struct GfxSize screen_size;
-  
+
     int has_scene_size;
     struct GfxSize scene_size;
 
@@ -2025,10 +2028,20 @@ typedef struct Camera {
     double max_scale;
     double min_scale;
 
+    double lerp;
+
     VRectInset margin;
+    VPoint focal;
     double scale;
     double rotation_radians;
     VPoint translation;
+
+    struct {
+        VPoint focal;
+        double scale;
+        double rotation_radians;
+        VPoint translation;
+    } tracking;
 } Camera;
 
 Camera *Camera_create(int width, int height);
@@ -2036,20 +2049,23 @@ void Camera_set_scene_size(Camera *camera, GfxSize scene_size);
 void Camera_track_entities(Camera *camera, int num_entities,
         struct Entity **entities);
 void Camera_track(Camera *camera);
+void Camera_snap_tracking(Camera *camera);
 void Camera_destroy(Camera *camera);
 void Graphics_project_camera(Graphics *graphics, Camera *camera);
 void Graphics_project_screen_camera(Graphics *graphics, Camera *camera);
 VRect Camera_base_rect(Camera *camera);
-VRect Camera_visible_rect(Camera *camera);
+VRect Camera_visible_rect(Camera *camera, int lerped);
 VRect Camera_tracking_rect(Camera *camera);
-VRect Camera_project_rect(Camera *camera, VRect rect, int translation);
+VRect Camera_project_rect(Camera *camera, VRect rect, int apply_translation,
+                          int lerped);
 void Camera_debug(Camera *camera, Graphics *graphics);
 
 // World point -> screen point
-VPoint Camera_project_point(Camera *camera, VPoint point, int translation);
+VPoint Camera_project_point(Camera *camera, VPoint point, int apply_translation,
+                            int lerped);
 
 // Screen point -> world point
-VPoint Camera_cast_point(Camera *camera, VPoint point);
+VPoint Camera_cast_point(Camera *camera, VPoint point, int lerped);
 
 #endif
 #ifndef __camera_bindings_h
@@ -3074,6 +3090,7 @@ int luaopen_dabes_net(lua_State *L);
 extern dab_uint8 NET_MATCH_MSG_NULL;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_ASSIGN;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_READY;
+extern dab_uint8 NET_MATCH_MSG_PACKED_RECORDER;
 typedef dab_uint8 NetMatchMsgType;
 
 typedef struct NetMatchMsg {
@@ -3086,6 +3103,12 @@ typedef struct NetMatchMsg {
 
 NetMatchMsg *NetMatchMsg_player_assign(dab_uint8 from, dab_uint8 player);
 NetMatchMsg *NetMatchMsg_player_ready(dab_uint8 from);
+NetMatchMsg *NetMatchMsg_null(dab_uint8 from, dab_uint8 to);
+
+struct Recorder;
+NetMatchMsg *NetMatchMsg_packed_recorder(dab_uint8 from, dab_uint8 to,
+        struct Recorder *recorder);
+
 void NetMatchMsg_destroy(NetMatchMsg *msg);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3176,12 +3199,12 @@ int ChipmunkRecorder_contextualize(Recorder *recorder);
 
 extern const char *luab_Recorder_lib;
 extern const char *luab_Recorder_metatable;
-
 typedef Scripting_userdata_for(Recorder) Recorder_userdata;
-
 Scripting_caster_for(Recorder, luaL_torecorder);
 
 int luaopen_dabes_recorder(lua_State *L);
+
+Recorder *luaL_instantiate_recorder(lua_State *L);
 
 #endif
 #ifndef __chipmunk_scene_h
