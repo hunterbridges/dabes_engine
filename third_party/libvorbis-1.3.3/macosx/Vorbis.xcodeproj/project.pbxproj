@@ -696,6 +696,7 @@
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = vorbis;
+				USER_HEADER_SEARCH_PATHS = "../include/**";
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -713,6 +714,7 @@
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = vorbis;
+				USER_HEADER_SEARCH_PATHS = "../include/**";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -830,6 +832,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = "../include/**";
 				VALID_ARCHS = "arm64 armv7 armv7s armv6 i386";
 			};
 			name = Debug;
@@ -872,6 +875,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = "../include/**";
 				VALID_ARCHS = "arm64 armv7 armv7s armv6 i386";
 			};
 			name = Release;
