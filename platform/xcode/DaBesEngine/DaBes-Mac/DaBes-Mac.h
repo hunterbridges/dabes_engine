@@ -3084,13 +3084,14 @@ Scripting_caster_for(Net, luaL_tonet);
 int luaopen_dabes_net(lua_State *L);
 
 #endif
-#ifndef __net_match_h
-#define __net_match_h
+#ifndef __net_match_msg_h
+#define __net_match_msg_h
 
 extern dab_uint8 NET_MATCH_MSG_NULL;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_ASSIGN;
 extern dab_uint8 NET_MATCH_MSG_PLAYER_READY;
 extern dab_uint8 NET_MATCH_MSG_PACKED_RECORDER;
+extern dab_uint8 NET_MATCH_MSG_JSON;
 typedef dab_uint8 NetMatchMsgType;
 
 typedef struct NetMatchMsg {
@@ -3109,9 +3110,13 @@ struct Recorder;
 NetMatchMsg *NetMatchMsg_packed_recorder(dab_uint8 from, dab_uint8 to,
         struct Recorder *recorder);
 
+NetMatchMsg *NetMatchMsg_json(dab_uint8 from, dab_uint8 to, const char *json);
+
 void NetMatchMsg_destroy(NetMatchMsg *msg);
 
-////////////////////////////////////////////////////////////////////////////////
+#endif
+#ifndef __net_match_h
+#define __net_match_h
 
 struct Engine;
 struct NetMatch;

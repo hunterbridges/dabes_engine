@@ -110,6 +110,10 @@
 		CAC3820B17861D670072E709 /* DABProjectManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3820817861D660072E709 /* DABProjectManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC3820C17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
 		CAC3820D17861D670072E709 /* DABProjectManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3820917861D660072E709 /* DABProjectManager.m */; };
+		CAC7690717F94C6800F6F06F /* net_match_msg.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC7690517F94C6800F6F06F /* net_match_msg.c */; };
+		CAC7690817F94C6800F6F06F /* net_match_msg.c in Sources */ = {isa = PBXBuildFile; fileRef = CAC7690517F94C6800F6F06F /* net_match_msg.c */; };
+		CAC7690917F94C6800F6F06F /* net_match_msg.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC7690617F94C6800F6F06F /* net_match_msg.h */; };
+		CAC7690A17F94C6800F6F06F /* net_match_msg.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC7690617F94C6800F6F06F /* net_match_msg.h */; };
 		CACE2B3B178347DE00F36FA3 /* DABMacEngineView.h in Headers */ = {isa = PBXBuildFile; fileRef = CACE2B37178347DE00F36FA3 /* DABMacEngineView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CACE2B3C178347DE00F36FA3 /* DABMacEngineView.m in Sources */ = {isa = PBXBuildFile; fileRef = CACE2B38178347DE00F36FA3 /* DABMacEngineView.m */; };
 		CACE2B3D178347DE00F36FA3 /* DABMacEngineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CACE2B39178347DE00F36FA3 /* DABMacEngineViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -279,26 +283,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CA1D745E17702B6500712C8D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
-			remoteInfo = Ogg;
-		};
 		CA1D746017702B6500712C8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA1D745917702B6500712C8D /* Ogg.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
 			remoteInfo = "libogg (static)";
-		};
-		CA1D746917702B6E00712C8D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CA1D746217702B6E00712C8D /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 730F23F1091827B100AB638C;
-			remoteInfo = Vorbis;
 		};
 		CA1D746B17702B6E00712C8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -606,6 +596,8 @@
 		CAC581D21758607F004A8161 /* binding_macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binding_macros.h; sourceTree = "<group>"; };
 		CAC581D31758607F004A8161 /* scripting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scripting.c; sourceTree = "<group>"; };
 		CAC581D41758607F004A8161 /* scripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scripting.h; sourceTree = "<group>"; };
+		CAC7690517F94C6800F6F06F /* net_match_msg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = net_match_msg.c; path = ../../../../src/net/net_match_msg.c; sourceTree = "<group>"; };
+		CAC7690617F94C6800F6F06F /* net_match_msg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = net_match_msg.h; path = ../../../../src/net/net_match_msg.h; sourceTree = "<group>"; };
 		CACE2B37178347DE00F36FA3 /* DABMacEngineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABMacEngineView.h; sourceTree = "<group>"; };
 		CACE2B38178347DE00F36FA3 /* DABMacEngineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DABMacEngineView.m; sourceTree = "<group>"; };
 		CACE2B39178347DE00F36FA3 /* DABMacEngineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DABMacEngineViewController.h; sourceTree = "<group>"; };
@@ -708,7 +700,6 @@
 		CA1D745A17702B6500712C8D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CA1D745F17702B6500712C8D /* Ogg.framework */,
 				CA1D746117702B6500712C8D /* libogg.a */,
 				CAB8493C17EC330800FCF11A /* libogg-iOS.a */,
 			);
@@ -718,7 +709,6 @@
 		CA1D746317702B6E00712C8D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CA1D746A17702B6E00712C8D /* Vorbis.framework */,
 				CA1D746C17702B6E00712C8D /* libvorbis.a */,
 				CA1D746E17702B6E00712C8D /* libvorbisenc.a */,
 				CA1D747017702B6E00712C8D /* libvorbisfile.a */,
@@ -1149,6 +1139,8 @@
 				CAFC4E8A17F2589E00CE740E /* net_match.h */,
 				CAFC4E8717F2589E00CE740E /* net_match_bindings.c */,
 				CAFC4E8817F2589E00CE740E /* net_match_bindings.h */,
+				CAC7690517F94C6800F6F06F /* net_match_msg.c */,
+				CAC7690617F94C6800F6F06F /* net_match_msg.h */,
 			);
 			name = net;
 			sourceTree = "<group>";
@@ -1189,6 +1181,7 @@
 				CAEFD91C1790A56100D19B4D /* vpolygon.h in Headers */,
 				CAFC4EA617F26D5B00CE740E /* GameCenterNetMatchProto.h in Headers */,
 				CA9EB70017CAFACA00CA273F /* DABPlatformerControllerOverlayView.h in Headers */,
+				CAC7690A17F94C6800F6F06F /* net_match_msg.h in Headers */,
 				CAB6AF3817CD42CA0000C3B5 /* telemetry_splash_scene.h in Headers */,
 				CAF915F517D46BA000EE204E /* canvas_bindings.h in Headers */,
 				CAF915F917D46BA000EE204E /* canvas.h in Headers */,
@@ -1271,6 +1264,7 @@
 				CAF42A3A1780F62500C3220A /* object.h in Headers */,
 				CAF42A3B1780F62500C3220A /* prefix.h in Headers */,
 				CAF42A3C1780F62500C3220A /* util.h in Headers */,
+				CAC7690917F94C6800F6F06F /* net_match_msg.h in Headers */,
 				CA8B9863178A08BA00CA41B4 /* static_scene.h in Headers */,
 				CAAF8C87178A325000BBB143 /* engine_bindings.h in Headers */,
 				CAEFD901178FA5E600D19B4D /* chipmunk_recorder.h in Headers */,
@@ -1397,25 +1391,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		CA1D745F17702B6500712C8D /* Ogg.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Ogg.framework;
-			remoteRef = CA1D745E17702B6500712C8D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CA1D746117702B6500712C8D /* libogg.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libogg.a;
 			remoteRef = CA1D746017702B6500712C8D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CA1D746A17702B6E00712C8D /* Vorbis.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Vorbis.framework;
-			remoteRef = CA1D746917702B6E00712C8D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CA1D746C17702B6E00712C8D /* libvorbis.a */ = {
@@ -1669,6 +1649,7 @@
 				CAFC4E8E17F2589E00CE740E /* net_bindings.c in Sources */,
 				CAF915F317D46BA000EE204E /* canvas_bindings.c in Sources */,
 				CAF915F717D46BA000EE204E /* canvas.c in Sources */,
+				CAC7690817F94C6800F6F06F /* net_match_msg.c in Sources */,
 				CAF915FB17D46BA000EE204E /* overlay_bindings.c in Sources */,
 				CAF915FF17D46BA000EE204E /* overlay.c in Sources */,
 				CA03FAFF17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.m in Sources */,
@@ -1748,6 +1729,7 @@
 				CAEFD9191790A56100D19B4D /* vpolygon.c in Sources */,
 				CAB6AF3517CD42CA0000C3B5 /* telemetry_splash_scene.c in Sources */,
 				CAF915F217D46BA000EE204E /* canvas_bindings.c in Sources */,
+				CAC7690717F94C6800F6F06F /* net_match_msg.c in Sources */,
 				CAF915F617D46BA000EE204E /* canvas.c in Sources */,
 				CAF915FA17D46BA000EE204E /* overlay_bindings.c in Sources */,
 				CAFC4E7C17F2583100CE740E /* DABGameCenterNetMatch.m in Sources */,

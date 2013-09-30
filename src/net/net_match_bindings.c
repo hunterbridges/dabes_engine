@@ -155,6 +155,28 @@ error:
     return 0;
 }
 
+int luab_NetMatch_send_json_msg(lua_State *L) {
+    NetMatch *match = luaL_tonetmatch(L, 1);
+    check(match != NULL, "NetMatch required");
+
+    if (match->proto.send_msg) {
+        lua_Integer to = lua_tointeger(L, 2);
+        const char *json = lua_tostring(L, 3);
+
+        NetMatchMsg *msg = NetMatchMsg_json(0, to, json);
+        Engine *engine = luaL_get_engine(L);
+
+        match->_(send_msg)(match, engine, msg);
+
+        NetMatchMsg_destroy(msg);
+    } else {
+        luaL_error(L, "Method not supported on this platform.");
+    }
+    return 0;
+error:
+    return 0;
+}
+
 static const struct luaL_Reg luab_NetMatch_meths[] = {
     {"__gc", luab_NetMatch_close},
     {"handshake", luab_NetMatch_handshake},
@@ -164,6 +186,7 @@ static const struct luaL_Reg luab_NetMatch_meths[] = {
 
     {"send_null_msg", luab_NetMatch_send_null_msg},
     {"send_packed_recorder_msg", luab_NetMatch_send_packed_recorder_msg},
+    {"send_json_msg", luab_NetMatch_send_json_msg},
 
     {NULL, NULL}
 };
