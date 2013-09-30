@@ -16,8 +16,11 @@ Camera *Camera_create(int width, int height) {
     camera->num_entities = 0;
     camera->max_scale = -1;
     camera->min_scale = -1;
+    camera->lerp = 1.0;
     VRectInset margin = {100, 100, 100, 100};
     camera->margin = margin;
+
+    Camera_snap_tracking(camera);
 
     return camera;
 error:
@@ -86,7 +89,7 @@ static void Camera_track_single(Camera *camera) {
     VRect t_rect = Camera_tracking_rect(camera);
     VRect e_rect = Entity_real_rect(entity);
     VRect t_bound = VRect_bounding_box(t_rect);
-    VRect e_bound = Camera_project_rect(camera, e_rect, 0);
+    VRect e_bound = Camera_project_rect(camera, e_rect, 0, 0);
     e_bound = VRect_bounding_box(e_bound);
     if (VRect_contains_rect(t_bound, e_bound)) return;
 
@@ -171,15 +174,39 @@ static void Camera_track_multi(Camera *camera) {
                             screen_bound_size.h * bound_coef / track_size.h));
 }
 
+void Camera_lerp(Camera *camera) {
+    camera->tracking.focal = VPoint_add(
+        camera->tracking.focal,
+        VPoint_scale(VPoint_subtract(camera->focal, camera->tracking.focal),
+                     camera->lerp)
+    );
+    camera->tracking.scale += ((camera->scale - camera->tracking.scale) *
+                               camera->lerp);
+
+    // Rotation does not lerp
+    camera->tracking.rotation_radians = camera->rotation_radians;
+
+    // Translation does not lerp
+    camera->tracking.translation = camera->translation;
+}
+
+void Camera_snap_tracking(Camera *camera) {
+    camera->tracking.focal = camera->focal;
+    camera->tracking.scale = camera->scale;
+    camera->tracking.rotation_radians = camera->rotation_radians;
+    camera->tracking.translation = camera->translation;
+}
+
 void Camera_track(Camera *camera) {
     if (!camera->has_scene_size) {
         camera->scene_size = camera->screen_size;
         VPoint center = {camera->screen_size.w / 2.0,
                          camera->screen_size.h / 2.0};
         camera->focal = center;
+        Camera_snap_tracking(camera);
         return;
     }
-  
+
     if (camera->track_entities && camera->num_entities == 1) {
         Camera_track_single(camera);
     } else if (camera->track_entities && camera->num_entities > 0) {
@@ -190,6 +217,7 @@ void Camera_track(Camera *camera) {
         Camera_correct_focal(camera);
     }
     Camera_correct_scale(camera);
+    Camera_lerp(camera);
 }
 
 void Camera_destroy(Camera *camera) {
@@ -208,18 +236,19 @@ void Graphics_project_camera(Graphics *graphics, Camera *camera) {
             -camera->screen_size.h / 2.0,
             camera->screen_size.h / 2.0,
             1.0, -1.0);
-    Graphics_scale_projection_matrix(graphics, camera->scale,
-            camera->scale, 1);
+    Graphics_scale_projection_matrix(graphics, camera->tracking.scale,
+            camera->tracking.scale, 1);
     Graphics_rotate_projection_matrix(graphics,
-                                      camera->rotation_radians * 180 / M_PI,
+                                      camera->tracking.rotation_radians *
+                                          180 / M_PI,
                                       0, 0, -1);
     Graphics_translate_projection_matrix(graphics,
-                                         -camera->focal.x,
-                                         -camera->focal.y,
+                                         -camera->tracking.focal.x,
+                                         -camera->tracking.focal.y,
                                          0);
     Graphics_translate_projection_matrix(graphics,
-                                         -camera->translation.x,
-                                         -camera->translation.y,
+                                         -camera->tracking.translation.x,
+                                         -camera->tracking.translation.y,
                                          0);
 }
 
@@ -235,13 +264,27 @@ VRect Camera_base_rect(Camera *camera) {
   return cam_rect;
 }
 
-VRect Camera_visible_rect(Camera *camera) {
+VRect Camera_visible_rect(Camera *camera, int lerped) {
   VRect cam_rect = Camera_base_rect(camera);
-  cam_rect = VRect_scale(cam_rect, 1 / camera->scale);
-  cam_rect = VRect_rotate(cam_rect, VRect_center(cam_rect),
-                          camera->rotation_radians);
-  cam_rect = VRect_move(cam_rect, camera->translation);
-  cam_rect = VRect_move(cam_rect, camera->focal);
+
+  double scale, rotation;
+  VPoint focal, translation;
+  if (lerped) {
+      scale = camera->tracking.scale;
+      rotation = camera->tracking.rotation_radians;
+      focal = camera->tracking.focal;
+      translation = camera->tracking.translation;
+  } else {
+      scale = camera->scale;
+      rotation = camera->rotation_radians;
+      focal = camera->focal;
+      translation = camera->translation;
+  }
+
+  cam_rect = VRect_scale(cam_rect, 1 / scale);
+  cam_rect = VRect_rotate(cam_rect, VRect_center(cam_rect), rotation);
+  cam_rect = VRect_move(cam_rect, translation);
+  cam_rect = VRect_move(cam_rect, focal);
   return cam_rect;
 }
 
@@ -250,42 +293,71 @@ VRect Camera_tracking_rect(Camera *camera) {
   return new;
 }
 
-VPoint Camera_project_point(Camera *camera, VPoint point, int translation) {
-  VPoint cam_center = camera->focal;
-  VPoint new = VPoint_subtract(point, cam_center);
-  if (translation) {
-    new = VPoint_subtract(new, camera->translation);
+VPoint Camera_project_point(Camera *camera, VPoint point,
+        int apply_translation, int lerped) {
+  double scale, rotation;
+  VPoint focal, translation;
+  if (lerped) {
+      scale = camera->tracking.scale;
+      rotation = camera->tracking.rotation_radians;
+      focal = camera->tracking.focal;
+      translation = camera->tracking.translation;
+  } else {
+      scale = camera->scale;
+      rotation = camera->rotation_radians;
+      focal = camera->focal;
+      translation = camera->translation;
   }
 
-  new = VPoint_rotate(new, VPointZero, -camera->rotation_radians);
-  new = VPoint_scale(new, camera->scale);
+  VPoint new = VPoint_subtract(point, focal);
+  if (apply_translation) {
+    new = VPoint_subtract(new, translation);
+  }
+
+  new = VPoint_rotate(new, VPointZero, -rotation);
+  new = VPoint_scale(new, scale);
 
   return new;
 }
 
-VPoint Camera_cast_point(Camera *camera, VPoint point) {
+VPoint Camera_cast_point(Camera *camera, VPoint point, int lerped) {
+  double scale, rotation;
+  VPoint focal, translation;
+  if (lerped) {
+      scale = camera->tracking.scale;
+      rotation = camera->tracking.rotation_radians;
+      focal = camera->tracking.focal;
+      translation = camera->tracking.translation;
+  } else {
+      scale = camera->scale;
+      rotation = camera->rotation_radians;
+      focal = camera->focal;
+      translation = camera->translation;
+  }
+
   VPoint correction = {-camera->screen_size.w / 2.0,
                        -camera->screen_size.h / 2.0};
-  correction = VPoint_scale(correction, 1 / camera->scale);
-  correction = VPoint_rotate(correction, VPointZero, camera->rotation_radians);
-  
-  VPoint top_left = VPoint_add(camera->focal, camera->translation);
+  correction = VPoint_scale(correction, 1 / scale);
+  correction = VPoint_rotate(correction, VPointZero, rotation);
+
+  VPoint top_left = VPoint_add(focal, translation);
   top_left = VPoint_add(top_left, correction);
-  
+
   VPoint new = point;
-  new = VPoint_scale(new, 1 / camera->scale);
-  new = VPoint_rotate(new, VPointZero, camera->rotation_radians);
+  new = VPoint_scale(new, 1 / scale);
+  new = VPoint_rotate(new, VPointZero, rotation);
   new = VPoint_add(new, top_left);
-  
+
   return new;
 }
 
-VRect Camera_project_rect(Camera *camera, VRect rect, int translation) {
+VRect Camera_project_rect(Camera *camera, VRect rect,
+        int apply_translation, int lerped) {
   VRect new = rect;
-  new.tl = Camera_project_point(camera, rect.tl, translation);
-  new.tr = Camera_project_point(camera, rect.tr, translation);
-  new.br = Camera_project_point(camera, rect.br, translation);
-  new.bl = Camera_project_point(camera, rect.bl, translation);
+  new.tl = Camera_project_point(camera, rect.tl, apply_translation, lerped);
+  new.tr = Camera_project_point(camera, rect.tr, apply_translation, lerped);
+  new.br = Camera_project_point(camera, rect.br, apply_translation, lerped);
+  new.bl = Camera_project_point(camera, rect.bl, apply_translation, lerped);
   return new;
 }
 
@@ -298,7 +370,8 @@ void Graphics_project_screen_camera(Graphics *graphics, Camera *camera) {
       .margin = camera->margin,
       .translation = {0, 0}
     };
-  
+    Camera_snap_tracking(&screen_cam);
+
     Graphics_reset_projection_matrix(graphics);
     Graphics_project_camera(graphics, &screen_cam);
 }
@@ -306,7 +379,7 @@ void Graphics_project_screen_camera(Graphics *graphics, Camera *camera) {
 void Camera_debug(Camera *camera, Graphics *graphics) {
     Graphics_project_screen_camera(graphics, camera);
     Graphics_reset_modelview_matrix(graphics);
-  
+
     Camera screen_cam = {
       .focal = {0, 0},
       .screen_size = camera->screen_size,
@@ -325,7 +398,7 @@ void Camera_debug(Camera *camera, Graphics *graphics) {
         int i = 0;
         for (i = 0; i < camera->num_entities; i++, entity++) {
             VRect e_rect = Entity_real_rect(*entity);
-            VRect e_bound = Camera_project_rect(camera, e_rect, 1);
+            VRect e_bound = Camera_project_rect(camera, e_rect, 1, 1);
             e_bound = VRect_bounding_box(e_bound);
             Graphics_stroke_rect(graphics, e_bound, e_color, 1, 0);
         }

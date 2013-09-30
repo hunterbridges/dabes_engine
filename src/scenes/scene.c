@@ -139,7 +139,7 @@ static inline int overlay_update_traverse_cb(BSTreeNode *node, void *context) {
 void Scene_update(Scene *scene, Engine *engine) {
     if (scene->started == 0) return;
     Scene_control(scene, engine);
-    
+
     if (scene->canvas) {
         Canvas_update(scene->canvas, engine);
     }
@@ -237,7 +237,7 @@ void Scene_stop(Scene *scene, Engine *engine) {
 
     BSTree_destroy(scene->overlays);
     scene->overlays = NULL;
-    
+
     scene->canvas = NULL;
 
     scene->started = 0;
@@ -287,7 +287,7 @@ void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode) {
 int Scene_select_entities_at(Scene *scene, VPoint screen_point) {
     if (scene->selection_mode == kSceneNotSelecting) return 0;
 
-    VPoint graphics_point = Camera_cast_point(scene->camera, screen_point);
+    VPoint graphics_point = Camera_cast_point(scene->camera, screen_point, 1);
     Entity *hit = NULL;
     if (scene->proto.hit_test) {
         hit = scene->_(hit_test)(scene, graphics_point);

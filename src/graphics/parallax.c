@@ -82,13 +82,14 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         .scale = 1.0,
         .rotation_radians = parallax->camera->rotation_radians
     };
+    Camera_snap_tracking(&bg_camera);
     Graphics_project_camera(graphics, &bg_camera);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
-    
+
     VPoint cam_pos = {
-        floorf(parallax->camera->focal.x) / parallax->level_size.w,
-        floorf(parallax->camera->focal.y) / parallax->level_size.h
+        floorf(parallax->camera->tracking.focal.x) / parallax->level_size.w,
+        floorf(parallax->camera->tracking.focal.y) / parallax->level_size.h
     };
 
     GfxSize screen_size = parallax->camera->screen_size;
@@ -115,10 +116,10 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         NULL, VPointZero, GfxSizeZero, 0, 0, 1);
     DrawBuffer_draw(dshader->draw_buffer);
     DrawBuffer_empty(dshader->draw_buffer);
-    
+
     Graphics_use_shader(graphics, pshader);
     Graphics_reset_modelview_matrix(graphics);
-    
+
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX], 1,
@@ -126,7 +127,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS],
             cam_pos.x, cam_pos.y);
     glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
-  
+
     VPoint stretch = {
         hyp / screen_size.w,
         hyp / screen_size.h
@@ -162,21 +163,21 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
             parallax->camera->screen_size.w;
         glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEAT_SIZE],
                 repeat_width, 1.0);
-      
+
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_SCALE],
                 final_scale);
-      
+
         VPoint pot_scale = {
             texture->size.w / texture->pot_size.w,
             texture->size.h / texture->pot_size.h
         };
         glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION],
                 pot_scale.x, pot_scale.y);
-      
+
         double repeats =
             parallax->level_size.w / (texture->size.w * final_scale);
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS], repeats);
-      
+
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR],
                 layer->p_factor);
 

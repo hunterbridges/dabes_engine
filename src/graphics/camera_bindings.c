@@ -11,7 +11,7 @@ int luab_Camera_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(Camera_userdata));
     check(ud != NULL, "Could not make Camera userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_Camera_metatable);
     lua_setmetatable(L, -2);
 
@@ -48,6 +48,17 @@ error:
     return 0;
 }
 
+int luab_Camera_snap_tracking(lua_State *L) {
+    Camera *camera = luaL_tocamera(L, 1);
+    check(camera != NULL, "Camera required");
+    Camera_snap_tracking(camera);
+
+    return 0;
+error:
+    return 0;
+}
+
+
 Scripting_bool_getter(Camera, snap_to_scene);
 Scripting_bool_setter(Camera, snap_to_scene);
 Scripting_num_getter(Camera, max_scale);
@@ -62,12 +73,15 @@ Scripting_VPoint_getter(Camera, translation);
 Scripting_VPoint_setter(Camera, translation);
 Scripting_VPoint_getter(Camera, focal);
 Scripting_VPoint_setter(Camera, focal);
+Scripting_num_getter(Camera, lerp);
+Scripting_num_setter(Camera, lerp);
 
 Scripting_GfxSize_getter(Camera, screen_size);
 
 static const struct luaL_Reg luab_Camera_meths[] = {
     {"__gc", luab_Camera_close},
     {"track_entities", luab_Camera_track_entities},
+    {"snap_tracking", luab_Camera_snap_tracking},
     {"get_snap_to_scene", luab_Camera_get_snap_to_scene},
     {"set_snap_to_scene", luab_Camera_set_snap_to_scene},
     {"get_max_scale", luab_Camera_get_max_scale},
@@ -83,6 +97,8 @@ static const struct luaL_Reg luab_Camera_meths[] = {
     {"get_focal", luab_Camera_get_focal},
     {"set_focal", luab_Camera_set_focal},
     {"get_screen_size", luab_Camera_get_screen_size},
+    {"get_lerp", luab_Camera_get_lerp},
+    {"set_lerp", luab_Camera_set_lerp},
     {NULL, NULL}
 };
 

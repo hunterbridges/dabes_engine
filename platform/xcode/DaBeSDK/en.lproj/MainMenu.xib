@@ -376,14 +376,14 @@
         <window title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="536" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="1077" y="272" width="254" height="312"/>
+            <rect key="contentRect" x="1077" y="272" width="254" height="326"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <view key="contentView" id="537">
-                <rect key="frame" x="0.0" y="0.0" width="254" height="312"/>
+                <rect key="frame" x="0.0" y="0.0" width="254" height="326"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView translatesAutoresizingMaskIntoConstraints="NO" id="539" customClass="SDKInspectorView">
-                        <rect key="frame" x="3" y="0.0" width="248" height="312"/>
+                        <rect key="frame" x="3" y="0.0" width="248" height="326"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="234" id="909"/>
@@ -392,11 +392,11 @@
                         <tabViewItems>
                             <tabViewItem label="Camera" identifier="1" id="540">
                                 <view key="view" id="543">
-                                    <rect key="frame" x="10" y="33" width="228" height="266"/>
+                                    <rect key="frame" x="10" y="33" width="228" height="280"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="594">
-                                            <rect key="frame" x="9" y="246" width="55" height="17"/>
+                                            <rect key="frame" x="9" y="260" width="55" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Camera" id="595">
                                                 <font key="font" metaFont="systemBold"/>
@@ -405,7 +405,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="609">
-                                            <rect key="frame" x="9" y="227" width="40" height="17"/>
+                                            <rect key="frame" x="9" y="241" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Zoom" id="610">
                                                 <font key="font" metaFont="system"/>
@@ -414,7 +414,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="620">
-                                            <rect key="frame" x="59" y="225" width="89" height="20"/>
+                                            <rect key="frame" x="59" y="239" width="89" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="85" id="1120"/>
@@ -425,7 +425,7 @@
                                             </connections>
                                         </slider>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="663">
-                                            <rect key="frame" x="151" y="227" width="38" height="17"/>
+                                            <rect key="frame" x="151" y="241" width="38" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="32" id="669"/>
@@ -437,8 +437,21 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5DP-2Y-0t6">
+                                            <rect key="frame" x="176" y="77" width="38" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="32" id="Ps8-49-SAv"/>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="32" id="nfj-QW-JDx"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="1.00" id="lv6-bi-r35">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlShadowColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="695">
-                                            <rect key="frame" x="9" y="202" width="26" height="17"/>
+                                            <rect key="frame" x="9" y="216" width="26" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rot" id="702">
                                                 <font key="font" metaFont="system"/>
@@ -447,15 +460,35 @@
                                             </textFieldCell>
                                         </textField>
                                         <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="696">
-                                            <rect key="frame" x="59" y="200" width="89" height="20"/>
+                                            <rect key="frame" x="59" y="214" width="89" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-2" maxValue="2" tickMarkPosition="below" sliderType="linear" id="700"/>
                                             <connections>
                                                 <action selector="rotSliderChanged:" target="539" id="724"/>
                                             </connections>
                                         </slider>
+                                        <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SML-mJ-7Z9">
+                                            <rect key="frame" x="9" y="77" width="55" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="26" id="gTC-bM-FPF"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Lerp" id="491-qi-pdV">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <slider verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EYC-Ct-ovv">
+                                            <rect key="frame" x="59" y="75" width="114" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="below" sliderType="linear" id="eAL-x5-pvx"/>
+                                            <connections>
+                                                <action selector="lerpSliderChanged:" target="539" id="Ixb-Dx-lbF"/>
+                                            </connections>
+                                        </slider>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="697">
-                                            <rect key="frame" x="150" y="202" width="39" height="17"/>
+                                            <rect key="frame" x="150" y="216" width="39" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="0.00°" id="699">
                                                 <font key="font" metaFont="system"/>
@@ -464,7 +497,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="725" customClass="SDKPanner">
-                                            <rect key="frame" x="12" y="130" width="64" height="64"/>
+                                            <rect key="frame" x="12" y="144" width="64" height="64"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="64" id="734"/>
@@ -475,7 +508,7 @@
                                             </connections>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="737" customClass="SDKPanner">
-                                            <rect key="frame" x="122" y="130" width="64" height="64"/>
+                                            <rect key="frame" x="122" y="144" width="64" height="64"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="64" id="738"/>
@@ -486,7 +519,7 @@
                                             </connections>
                                         </customView>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="749">
-                                            <rect key="frame" x="9" y="105" width="70" height="17"/>
+                                            <rect key="frame" x="9" y="119" width="70" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Focal" id="750">
                                                 <font key="font" metaFont="system"/>
@@ -495,7 +528,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="775">
-                                            <rect key="frame" x="9" y="88" width="70" height="17"/>
+                                            <rect key="frame" x="9" y="102" width="70" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="&lt;0, 0>" id="776">
                                                 <font key="font" metaFont="system"/>
@@ -504,7 +537,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="756">
-                                            <rect key="frame" x="119" y="105" width="70" height="17"/>
+                                            <rect key="frame" x="119" y="119" width="70" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Offset" id="757">
                                                 <font key="font" metaFont="system"/>
@@ -513,7 +546,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="803">
-                                            <rect key="frame" x="119" y="88" width="70" height="17"/>
+                                            <rect key="frame" x="119" y="102" width="70" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="&lt;0, 0>" id="804">
                                                 <font key="font" metaFont="system"/>
@@ -521,8 +554,8 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="818">
-                                            <rect key="frame" x="10" y="64" width="208" height="18"/>
+                                        <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="818">
+                                            <rect key="frame" x="10" y="53" width="208" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Snap to Scene Edges" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="819">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -532,8 +565,8 @@
                                                 <action selector="snapSceneChanged:" target="539" id="850"/>
                                             </connections>
                                         </button>
-                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="826">
-                                            <rect key="frame" x="10" y="44" width="208" height="18"/>
+                                        <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="826">
+                                            <rect key="frame" x="10" y="33" width="208" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Debug Overlay" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="827">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -543,8 +576,8 @@
                                                 <action selector="debugOverlayChanged:" target="539" id="849"/>
                                             </connections>
                                         </button>
-                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="834">
-                                            <rect key="frame" x="12" y="11" width="204" height="19"/>
+                                        <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="834">
+                                            <rect key="frame" x="12" y="8" width="204" height="19"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="roundRect" title="Track Entities" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="835">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -555,7 +588,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="884">
-                                            <rect key="frame" x="195" y="224" width="21" height="23"/>
+                                            <rect key="frame" x="195" y="238" width="21" height="23"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="21" id="889"/>
@@ -569,7 +602,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="895">
-                                            <rect key="frame" x="195" y="201" width="21" height="23"/>
+                                            <rect key="frame" x="195" y="215" width="21" height="23"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="21" id="896"/>
@@ -583,7 +616,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="911">
-                                            <rect key="frame" x="195" y="102" width="21" height="23"/>
+                                            <rect key="frame" x="195" y="116" width="21" height="23"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="21" id="913"/>
@@ -628,11 +661,9 @@
                                         <constraint firstItem="803" firstAttribute="leading" secondItem="756" secondAttribute="leading" id="809"/>
                                         <constraint firstItem="803" firstAttribute="baseline" secondItem="775" secondAttribute="baseline" id="810"/>
                                         <constraint firstItem="803" firstAttribute="width" secondItem="756" secondAttribute="width" id="811"/>
-                                        <constraint firstItem="818" firstAttribute="top" secondItem="775" secondAttribute="bottom" constant="8" symbolic="YES" id="820"/>
                                         <constraint firstItem="818" firstAttribute="leading" secondItem="775" secondAttribute="leading" id="821"/>
                                         <constraint firstItem="818" firstAttribute="leading" secondItem="543" secondAttribute="leading" constant="12" id="823"/>
                                         <constraint firstAttribute="trailing" secondItem="818" secondAttribute="trailing" constant="12" id="824"/>
-                                        <constraint firstItem="818" firstAttribute="top" secondItem="775" secondAttribute="bottom" constant="8" id="825"/>
                                         <constraint firstItem="826" firstAttribute="leading" secondItem="818" secondAttribute="leading" id="831"/>
                                         <constraint firstItem="826" firstAttribute="trailing" secondItem="818" secondAttribute="trailing" id="832"/>
                                         <constraint firstItem="826" firstAttribute="top" secondItem="818" secondAttribute="bottom" constant="6" symbolic="YES" id="833"/>
@@ -657,6 +688,13 @@
                                         <constraint firstItem="697" firstAttribute="trailing" secondItem="663" secondAttribute="trailing" id="1171"/>
                                         <constraint firstItem="696" firstAttribute="trailing" secondItem="620" secondAttribute="trailing" id="1172"/>
                                         <constraint firstItem="697" firstAttribute="trailing" secondItem="737" secondAttribute="trailing" id="1173"/>
+                                        <constraint firstItem="SML-mJ-7Z9" firstAttribute="baseline" secondItem="EYC-Ct-ovv" secondAttribute="baseline" id="5Ev-qN-ymt"/>
+                                        <constraint firstItem="EYC-Ct-ovv" firstAttribute="baseline" secondItem="SML-mJ-7Z9" secondAttribute="baseline" id="5t3-MO-MC2"/>
+                                        <constraint firstItem="826" firstAttribute="top" secondItem="818" secondAttribute="bottom" constant="6" id="6Mu-7B-cR4"/>
+                                        <constraint firstItem="SML-mJ-7Z9" firstAttribute="top" secondItem="775" secondAttribute="bottom" constant="8" id="DzO-Sz-QS0"/>
+                                        <constraint firstItem="818" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="543" secondAttribute="leading" constant="12" id="cIe-Ig-5RT"/>
+                                        <constraint firstItem="EYC-Ct-ovv" firstAttribute="baseline" secondItem="5DP-2Y-0t6" secondAttribute="baseline" id="g52-8z-OpG"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="818" secondAttribute="trailing" constant="12" id="vjh-rf-Nhy"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>
@@ -862,7 +900,7 @@
                                         <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MAd-va-fJb">
                                             <rect key="frame" x="192" y="144" width="21" height="96"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="FoG-Pu-DLQ"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="left" sliderType="linear" id="FoG-Pu-DLQ"/>
                                             <connections>
                                                 <action selector="masterVolSliderChanged:" target="539" id="PLl-Ct-Nmg"/>
                                             </connections>
@@ -870,7 +908,7 @@
                                         <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6x5-Ex-aIJ">
                                             <rect key="frame" x="15" y="144" width="21" height="96"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="XON-XH-f0K"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="left" sliderType="linear" id="XON-XH-f0K"/>
                                             <connections>
                                                 <action selector="sfxVolSliderChanged:" target="539" id="Jz3-jM-dkN"/>
                                             </connections>
@@ -878,7 +916,7 @@
                                         <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zYj-lt-6DT">
                                             <rect key="frame" x="104" y="144" width="21" height="96"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="qAs-II-hQ9"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="left" sliderType="linear" id="qAs-II-hQ9"/>
                                             <connections>
                                                 <action selector="musicVolSliderChanged:" target="539" id="TOM-GD-FSf"/>
                                             </connections>
@@ -934,6 +972,8 @@
                             <outlet property="cameraDebugCheckbox" destination="826" id="846"/>
                             <outlet property="cameraFocalLabel" destination="775" id="813"/>
                             <outlet property="cameraFocalPanner" destination="725" id="812"/>
+                            <outlet property="cameraLerpLabel" destination="5DP-2Y-0t6" id="HU9-AM-f3M"/>
+                            <outlet property="cameraLerpSlider" destination="EYC-Ct-ovv" id="9Df-sH-V3m"/>
                             <outlet property="cameraOffsetLabel" destination="803" id="815"/>
                             <outlet property="cameraOffsetPanner" destination="737" id="814"/>
                             <outlet property="cameraResetOffsetButton" destination="911" id="921"/>

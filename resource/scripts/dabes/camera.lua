@@ -55,6 +55,16 @@ Camera = BoundObject:extend({
         -- Minimum is 0. Default is `1`.
         scale = BoundObject.fwd_func("get_scale"),
 
+        --- The lerp factor of the `Camera`. This controls how smoothly
+        -- the Camera approaches a new `focal` and `scale` over time.
+        --
+        -- `1` means instantly, `0` means the camera stays stationary.
+        -- `0.5` means the camera moves half the distance between its current
+        -- point and the destination point every frame.
+        --
+        -- Minimum is 0. Maximum is 1. Default is `1`.
+        lerp = BoundObject.fwd_func("get_lerp"),
+
         --- *(read only)* An `{x, y}` vector of the screen size in pixels.
         screen_size = BoundObject.fwd_func("get_screen_size"),
 
@@ -79,6 +89,7 @@ Camera = BoundObject:extend({
         min_scale = BoundObject.fwd_func("set_min_scale"),
         rotation = BoundObject.fwd_func("set_rotation"),
         scale = BoundObject.fwd_func("set_scale"),
+        lerp = BoundObject.fwd_func("set_lerp"),
         screen_size = BoundObject.readonly,
         snap_to_scene = BoundObject.fwd_func("set_snap_to_scene"),
         translation = BoundObject.fwd_func("set_translation"),
@@ -102,7 +113,11 @@ Camera = BoundObject:extend({
     --
     -- @function camera:track_entities
     -- @param ... The @{entity|Entities} to track, or `nil`
-    -- @treturn nil
     track_entities = BoundObject.fwd_func_real("track_entities"),
+
+    --- Force the camera to its destination position, ignoring `lerp`.
+    --
+    -- @function camera:snap_tracking
+    snap_tracking = BoundObject.fwd_func("snap_tracking"),
 
 })
