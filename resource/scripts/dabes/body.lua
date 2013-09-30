@@ -74,6 +74,13 @@ Body = BoundObject:extend({
         -- **Not** this:
         --      body.velo[1] = 5
         velo = BoundObject.fwd_func("get_velo"),
+
+        --- Set the collision bit-plane of the `Body`.
+        --
+        -- @{body|Bodies} only collide if they are in the same bit-planes.
+        -- i.e. (a.layers & b.layers) != 0 By default, a `Body` occupies all
+        -- bit-planes.
+        collision_layer = BoundObject.fwd_func("get_collision_layer"),
     },
 
     _setters = {
@@ -88,6 +95,7 @@ Body = BoundObject:extend({
         mass = BoundObject.fwd_func("set_mass"),
         pos = BoundObject.fwd_func("set_pos"),
         velo = BoundObject.fwd_func("set_velo"),
+        collision_layer = BoundObject.fwd_func("set_collision_layer"),
     },
 
     _collections = {

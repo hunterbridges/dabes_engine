@@ -7,20 +7,20 @@ typedef struct GroundingContext {
 	cpVect normal;
 	cpVect impulse;
 	cpFloat penetration;
-	
+
 	cpBody *body;
 } GroundingContext;
 
 void GroundingContext_callback(cpBody *UNUSED(body), cpArbiter *arb, GroundingContext *grounding){
 	CP_ARBITER_GET_BODIES(arb, b1, b2);
 	cpVect n = cpvneg(cpArbiterGetNormal(arb, 0));
-	
+
 	if(n.y < grounding->normal.y){
 		grounding->normal = n;
 		grounding->penetration = -cpArbiterGetDepth(arb, 0);
 		grounding->body = b2;
 	}
-	
+
 	grounding->impulse = cpvadd(grounding->impulse, cpArbiterTotalImpulseWithFriction(arb));
 }
 
@@ -40,7 +40,7 @@ void ChipmunkBody_update_velocity(cpBody *body, cpVect gravity, cpFloat damping,
     Body *dab_body = cpBodyGetUserData(body);
     ChipmunkBodyContext *context = (ChipmunkBodyContext *)dab_body->context;
     GroundingContext_update(&context->grounding, body);
-    
+
     // TODO: Fancier stuff
     cpBodyUpdateVelocity(body, gravity, damping, dt);
 }
@@ -160,9 +160,9 @@ void body_clear_shapes(cpBody *UNUSED(cpBody), cpShape *shape, void *data) {
 
 void ChipmunkBody_cleanup(Body *body) {
     if (!body->cp_body) return;
-  
+
     free(body->context);
-  
+
     cpBodyEachShape(body->cp_body, body_clear_shapes, body);
 
     if (body->cp_shape) {
@@ -398,6 +398,15 @@ void ChipmunkBody_set_is_static(Body *body, int is_static) {
     }
 }
 
+int ChipmunkBody_get_collision_layers(Body *body) {
+    return cpShapeGetLayers(body->cp_shape);
+}
+
+void ChipmunkBody_set_collision_layers(Body *body, int collision_layers) {
+    body->collision_layers = collision_layers;
+    cpShapeSetLayers(body->cp_shape, collision_layers);
+}
+
 BodyProto ChipmunkBodyProto = {
     .init = ChipmunkBody_init,
     .cleanup = ChipmunkBody_cleanup,
@@ -430,6 +439,8 @@ BodyProto ChipmunkBodyProto = {
     .get_is_rogue = ChipmunkBody_get_is_rogue,
     .set_is_rogue = ChipmunkBody_set_is_rogue,
     .get_is_static = ChipmunkBody_get_is_static,
-    .set_is_static = ChipmunkBody_set_is_static
+    .set_is_static = ChipmunkBody_set_is_static,
+    .get_collision_layers = ChipmunkBody_get_collision_layers,
+    .set_collision_layers = ChipmunkBody_set_collision_layers
 };
 

@@ -18,7 +18,7 @@ int luab_Body_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(Body_userdata));
     check(ud != NULL, "Could not make Body userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_Body_metatable);
     lua_setmetatable(L, -2);
 
@@ -321,6 +321,28 @@ error:
     return 0;
 }
 
+int luab_Body_get_collision_layers(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    lua_pushinteger(L, body->_(get_collision_layers)(body));
+
+    return 1;
+error:
+    return 0;
+}
+
+int luab_Body_set_collision_layers(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    int collision_layers = lua_tointeger(L, 2);
+    body->_(set_collision_layers)(body, collision_layers);
+
+    return 0;
+error:
+    return 0;
+}
+
+
 static const struct luaL_Reg luab_Body_meths[] = {
     {"__gc", luab_Body_close},
     {"add_sensor", luab_Body_add_sensor},
@@ -348,6 +370,8 @@ static const struct luaL_Reg luab_Body_meths[] = {
     {"set_is_rogue", luab_Body_set_is_rogue},
     {"get_is_static", luab_Body_get_is_static},
     {"set_is_static", luab_Body_set_is_static},
+    {"get_collision_layers", luab_Body_get_collision_layers},
+    {"set_collision_layers", luab_Body_set_collision_layers},
     {NULL, NULL}
 };
 
