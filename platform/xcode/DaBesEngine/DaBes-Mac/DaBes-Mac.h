@@ -1792,6 +1792,9 @@ typedef struct BodyProto {
     void (*set_is_rogue)(struct Body *body, int is_rogue);
     int (*get_is_static)(struct Body *body);
     void (*set_is_static)(struct Body *body, int is_static);
+    int (*get_collision_layers)(struct Body *body);
+    void (*set_collision_layers)(struct Body *body, int collision_layers);
+
 } BodyProto;
 
 typedef struct Body {
@@ -1804,6 +1807,7 @@ typedef struct Body {
     cpShape *cp_shape;
     cpBody *cp_body;
 
+    int collision_layers;
     int is_rogue;
     int is_static;
     int can_rotate;
@@ -1814,7 +1818,7 @@ typedef struct Body {
     VPoint draw_offset;
 
     void *context;
-  
+
     List *sensors;
 } Body;
 
