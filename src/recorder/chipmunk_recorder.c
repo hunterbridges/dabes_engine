@@ -123,7 +123,7 @@ void ChipmunkRecorder_clear_frames(Recorder *recorder) {
         DArray_clear_destroy(recorder->frames);
     }
 
-    recorder->frames = DArray_create(sizeof(ChipmunkRecorderFrame), 60 * 5);
+    recorder->frames = DArray_create(sizeof(ChipmunkRecorderFrame), FPS * 5);
 
     recorder->num_frames = 0;
     recorder->avg_frame_size = 0;
