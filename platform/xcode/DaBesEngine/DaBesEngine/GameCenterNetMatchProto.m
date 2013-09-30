@@ -132,6 +132,29 @@ int GameCenterNetMatch_send_msg(struct NetMatch *match, struct Engine *engine,
     return [gcn_match sendMsg:msg];
 }
 
+int json_decode_func(lua_State *L, void *context) {
+    NetMatchMsg *msg = context;
+    
+    if (msg->size == 0) {
+        lua_pushnil(L);
+        return 1;
+    }
+    
+    lua_getglobal(L, "json");
+    lua_getfield(L, -1, "decode");
+    lua_remove(L, -2);
+    lua_pushstring(L, (const char *)msg->body);
+    int rc = lua_pcall(L, 1, 1, 1);
+    if (rc) {
+        const char *error = lua_tostring(L, -1);
+        printf("JSON Decode error: %s", error);
+        lua_pop(L, 1);
+        lua_pushnil(L);
+    }
+    
+    return 1;
+}
+
 int GameCenterNetMatch_rcv_msg_cb(struct NetMatch *match, struct Engine *engine,
                                   NetMatchMsg *msg) {
     if (msg->kind == NET_MATCH_MSG_NULL) {
@@ -150,6 +173,25 @@ int GameCenterNetMatch_rcv_msg_cb(struct NetMatch *match, struct Engine *engine,
                              LUA_TNUMBER, (float)msg->from,
                              LUA_TNUMBER, (float)msg->kind,
                              LUA_TUSERDATA, recorder,
+                             nil);
+        
+        lua_pop(engine->scripting->L, 1);
+    } else if (msg->kind == NET_MATCH_MSG_JSON) {
+        lua_State *L = engine->scripting->L;
+        int irc = luaL_dostring(L, "require 'lib.json'");
+        if (irc) {
+            return 0;
+        }
+        
+        Scripting_dhook_arg_closure closure = {
+            .function = json_decode_func,
+            .context = msg
+        };
+        
+        Scripting_call_dhook(engine->scripting, match, "received_msg",
+                             LUA_TNUMBER, (float)msg->from,
+                             LUA_TNUMBER, (float)msg->kind,
+                             LUA_TFUNCTION, &closure,
                              nil);
         
         lua_pop(engine->scripting->L, 1);

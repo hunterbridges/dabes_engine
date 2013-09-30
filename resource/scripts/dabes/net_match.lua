@@ -9,6 +9,7 @@
 -- @type Controller
 
 require 'dabes.bound_object'
+require 'lib.json'
 
 NetMatch = BoundObject:extend({
     lib = dab_net_match,
@@ -18,7 +19,7 @@ NetMatch = BoundObject:extend({
 -- @section constants
 
     --- A `null` message kind. Doesn't contain any data.
-    MSG_NULL = 0;
+    MSG_NULL = 0,
 
     --- A message kind that contains a @{recorder|Recorder} in the `payload`.
     --
@@ -26,7 +27,15 @@ NetMatch = BoundObject:extend({
     --
     -- **Receiving:** A new @{recorder|Recorder} instance.  It still needs to
     -- be added to a @{scene|Scene} and assigned an @{entity|Entity}.
-    MSG_PACKED_RECORDER = 3;
+    MSG_PACKED_RECORDER = 3,
+
+    --- A general-purpose JSON message.
+    --
+    -- **Sending:** Will encode `payload` into JSON.
+    --
+    -- **Receiving:** Will decode the JSON and pass the decoded object as
+    -- the `payload`.
+    MSG_JSON = 4,
 
 --- Properties.
 -- Significant fields on an instance.
@@ -92,6 +101,14 @@ NetMatch = BoundObject:extend({
             end
 
             fwded(self, to, payload.real)
+        elseif kind == NetMatch.MSG_JSON then
+            local fwded = BoundObject.fwd_func("send_json_msg")
+
+            if type(payload) ~= "table" then
+                error("MSG_JSON requires table in payload.", 2)
+            end
+
+            fwded(self, to, json.encode(payload))
         end
     end,
 
