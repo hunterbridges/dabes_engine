@@ -75,7 +75,7 @@ error:
     return;
 }
 
-void DrawBufferLayer_draw(DrawBufferLayer *layer) {
+void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics) {
     int i = 0;
     
     for (i = 0; i < DArray_count(layer->textures); i++) {
@@ -102,11 +102,13 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer) {
         }
         
         int has_texture = buftex->texture ? 1 : 0;
-        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
-                    has_texture);
+        Graphics_uniform1i(graphics, UNIFORM_DECAL_HAS_TEXTURE, has_texture);
       
         GLint gl_tex = 0;
-        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+      
+        // I don't think this shader needs this set.
+        // glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+      
         if (buftex->texture) {
             gl_tex = buftex->texture->gl_tex;
             glBindTexture(GL_TEXTURE_2D, gl_tex);
@@ -197,12 +199,12 @@ void DrawBuffer_empty(DrawBuffer *buffer) {
     buffer->layers = NULL;
 }
 
-void DrawBuffer_draw(DrawBuffer *buffer) {
+void DrawBuffer_draw(DrawBuffer *buffer, Graphics *graphics) {
     assert(buffer != NULL);
     if (!buffer->layers) return;
     
     LIST_FOREACH(buffer->layers, first, next, current) {
-        DrawBufferLayer_draw(current->value);
+        DrawBufferLayer_draw(current->value, graphics);
     }
 }
 

@@ -101,8 +101,10 @@ int luab_Overlay_draw_sprite(lua_State *L) {
                                  sprite->cell_size.h * scale.y);
     GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
     Graphics_use_shader(engine->graphics, dshader);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, engine->graphics->projection_matrix.gl);
+    Graphics_uniformMatrix4fv(engine->graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              engine->graphics->projection_matrix.gl,
+                              GL_FALSE);
     Graphics_draw_sprite(engine->graphics, sprite, NULL,
             rect, color.raw, rotation, 0, overlay->alpha);
 

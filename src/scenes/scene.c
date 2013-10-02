@@ -318,14 +318,16 @@ static inline int entity_render_traverse_cb(BSTreeNode *node, void *context) {
 void Scene_render_entities(Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
     Graphics_use_shader(engine->graphics, dshader);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, engine->graphics->projection_matrix.gl);
+    Graphics_uniformMatrix4fv(engine->graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              engine->graphics->projection_matrix.gl,
+                              GL_FALSE);
 
     SceneTraverseCtx ctx = {.engine = engine,
         .draw_buffer = dshader->draw_buffer};
     BSTree_traverse(scene->entities, entity_render_traverse_cb, &ctx);
 
-    DrawBuffer_draw(dshader->draw_buffer);
+    DrawBuffer_draw(dshader->draw_buffer, engine->graphics);
     DrawBuffer_empty(dshader->draw_buffer);
 }
 
@@ -354,7 +356,7 @@ void Scene_project_screen(Scene *scene, Engine *engine) {
 }
 
 void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
-    if (color.rgba.a > 0.0) {
+    if (color.a > 0.0) {
         GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
         Graphics_use_shader(engine->graphics, dshader);
         Graphics_reset_modelview_matrix(engine->graphics);
@@ -363,8 +365,10 @@ void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
                                            -scene->camera->screen_size.h / 2.0,
                                            scene->camera->screen_size.w,
                                            scene->camera->screen_size.h);
-        glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX],
-                           1, GL_FALSE, engine->graphics->projection_matrix.gl);
+        Graphics_uniformMatrix4fv(engine->graphics,
+                                  UNIFORM_DECAL_PROJECTION_MATRIX,
+                                  engine->graphics->projection_matrix.gl,
+                                  GL_FALSE);
         Graphics_draw_rect(engine->graphics, NULL, cover_rect,
                 color.raw, NULL, VPointZero, GfxSizeZero,
                 0, 0, 1);

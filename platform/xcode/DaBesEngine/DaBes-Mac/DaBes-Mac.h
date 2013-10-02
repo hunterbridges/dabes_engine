@@ -1346,8 +1346,9 @@ enum {
     UNIFORM_PARALLAX_MODELVIEW_MATRIX,
     UNIFORM_PARALLAX_TEXTURE,
     UNIFORM_PARALLAX_TEX_PORTION,
-    UNIFORM_PARALLAX_CASCADE,
-    UNIFORM_PARALLAX_CASCADE_PORTION,
+    UNIFORM_PARALLAX_CASCADE_TOP,
+    UNIFORM_PARALLAX_CASCADE_BOTTOM,
+    UNIFORM_PARALLAX_ORIG_PIXEL,
     UNIFORM_PARALLAX_REPEAT_SIZE,
     UNIFORM_PARALLAX_REPEATS,
     UNIFORM_PARALLAX_X_SHIFT,
@@ -2134,12 +2135,13 @@ void DrawBuffer_draw(DrawBuffer *buffer);
 
 typedef struct ParallaxLayer {
     GfxTexture *texture;
-    GfxTexture *cascade;
     GfxSize texture_size;
     VPoint offset;
     double scale;
     double p_factor;
     double y_wiggle;
+    double cascade_top;
+    double cascade_bottom;
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);

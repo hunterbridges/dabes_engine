@@ -700,13 +700,13 @@ typedef union VVector4 {
     float y;
     float z;
     float w;
-  } packed;
+  };
   struct {
     float r;
     float g;
     float b;
     float a;
-  } rgba;
+  };
   float raw[4];
 } VVector4;
 
@@ -1294,8 +1294,8 @@ typedef struct GfxTexture {
 } GfxTexture;
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
-        GLenum source_format);
-GfxTexture *GfxTexture_from_image(const char *image_name);
+        GLenum source_format, int mipmap);
+GfxTexture *GfxTexture_from_image(const char *image_name, int mipmap);
 void GfxTexture_destroy(GfxTexture *texture);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1330,7 +1330,7 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-enum {
+typedef enum {
     UNIFORM_DECAL_PROJECTION_MATRIX,
     UNIFORM_DECAL_HAS_TEXTURE,
     UNIFORM_DECAL_TEXTURE,
@@ -1346,8 +1346,9 @@ enum {
     UNIFORM_PARALLAX_MODELVIEW_MATRIX,
     UNIFORM_PARALLAX_TEXTURE,
     UNIFORM_PARALLAX_TEX_PORTION,
-    UNIFORM_PARALLAX_CASCADE,
-    UNIFORM_PARALLAX_CASCADE_PORTION,
+    UNIFORM_PARALLAX_CASCADE_TOP,
+    UNIFORM_PARALLAX_CASCADE_BOTTOM,
+    UNIFORM_PARALLAX_ORIG_PIXEL,
     UNIFORM_PARALLAX_REPEAT_SIZE,
     UNIFORM_PARALLAX_REPEATS,
     UNIFORM_PARALLAX_X_SHIFT,
@@ -1357,7 +1358,7 @@ enum {
     UNIFORM_TEXT_PROJECTION_MATRIX,
     UNIFORM_TEXT_TEXTURE,
     NUM_UNIFORMS
-} UNIFORMS;
+} GraphicsUniform;
 
 enum {
     ATTRIB_DECAL_VERTEX,
@@ -1417,6 +1418,9 @@ typedef struct Graphics {
     Hashmap *shaders;
     List *shader_list;
     Hashmap *sprites;
+  
+    int num_uniforms;
+    void **uniforms;
 
     int gl_vao_enabled;
     void (*gen_vao)(GLsizei n, GLuint *arrays);
@@ -1441,6 +1445,20 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
         GLfloat shadow_color[4], VPoint shadow_offset);
+
+// Uniforms
+void Graphics_get_uniform(Graphics *graphics, GLint program, const GLchar *name,
+                          GraphicsUniform uniform);
+void Graphics_clear_uniforms(Graphics *graphics);
+void Graphics_uniformMatrix4fv(Graphics *graphics, GraphicsUniform uniform,
+                               GLfloat vector[16], GLboolean transpose);
+void Graphics_uniform1i(Graphics *graphics, GraphicsUniform uniform,
+                        GLint x);
+void Graphics_uniform1f(Graphics *graphics, GraphicsUniform uniform,
+                        GLfloat x);
+void Graphics_uniform2f(Graphics *graphics, GraphicsUniform uniform,
+                        GLfloat x, GLfloat y);
+
 
 // Projection matrix
 void Graphics_reset_projection_matrix(Graphics *graphics);
@@ -1477,7 +1495,7 @@ void Graphics_log_shader(GLuint shader);
 void Graphics_log_program(GLuint program);
 
 // Textures
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name);
+GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name, int mipmap);
 
 // Sprites
 struct Sprite;
@@ -2114,7 +2132,7 @@ DrawBufferLayer *DrawBufferLayer_create(int z_index);
 void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
                             int num_points, int num_attrs, VVector4 vectors[]);
 void DrawBufferLayer_destroy(DrawBufferLayer *layer);
-void DrawBufferLayer_draw(DrawBufferLayer *layer);
+void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics);
 
 typedef struct DrawBuffer {
     List *layers;
@@ -2125,7 +2143,7 @@ void DrawBuffer_destroy(DrawBuffer *buffer);
 void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture, int z_index,
                        int num_points, int num_attrs, VVector4 vectors[]);
 void DrawBuffer_empty(DrawBuffer *buffer);
-void DrawBuffer_draw(DrawBuffer *buffer);
+void DrawBuffer_draw(DrawBuffer *buffer, Graphics *graphics);
 
 #endif
 #ifndef __parallax_h
@@ -2134,12 +2152,13 @@ void DrawBuffer_draw(DrawBuffer *buffer);
 
 typedef struct ParallaxLayer {
     GfxTexture *texture;
-    GfxTexture *cascade;
     GfxSize texture_size;
     VPoint offset;
     double scale;
     double p_factor;
     double y_wiggle;
+    double cascade_top;
+    double cascade_bottom;
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);

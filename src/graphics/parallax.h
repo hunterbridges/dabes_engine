@@ -8,12 +8,13 @@
 
 typedef struct ParallaxLayer {
     GfxTexture *texture;
-    GfxTexture *cascade;
     GfxSize texture_size;
     VPoint offset;
     double scale;
     double p_factor;
     double y_wiggle;
+    double cascade_top;
+    double cascade_bottom;
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);

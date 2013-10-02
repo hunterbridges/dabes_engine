@@ -30,7 +30,7 @@ DrawBufferLayer *DrawBufferLayer_create(int z_index);
 void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
                             int num_points, int num_attrs, VVector4 vectors[]);
 void DrawBufferLayer_destroy(DrawBufferLayer *layer);
-void DrawBufferLayer_draw(DrawBufferLayer *layer);
+void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics);
 
 typedef struct DrawBuffer {
     List *layers;
@@ -41,6 +41,6 @@ void DrawBuffer_destroy(DrawBuffer *buffer);
 void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture, int z_index,
                        int num_points, int num_attrs, VVector4 vectors[]);
 void DrawBuffer_empty(DrawBuffer *buffer);
-void DrawBuffer_draw(DrawBuffer *buffer);
+void DrawBuffer_draw(DrawBuffer *buffer, Graphics *graphics);
 
 #endif

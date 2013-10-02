@@ -57,10 +57,10 @@ VMatrix VMatrix_multiply(VMatrix a, VMatrix b) {
 
 VMatrix VMatrix_transpose(VMatrix m) {
     VMatrix mout = {.gl = {
-        m.v[0].packed.x, m.v[1].packed.x, m.v[2].packed.x, m.v[3].packed.x,
-        m.v[0].packed.y, m.v[1].packed.y, m.v[2].packed.y, m.v[3].packed.y,
-        m.v[0].packed.z, m.v[1].packed.z, m.v[2].packed.z, m.v[3].packed.z,
-        m.v[0].packed.w, m.v[1].packed.w, m.v[2].packed.w, m.v[3].packed.w
+        m.v[0].x, m.v[1].x, m.v[2].x, m.v[3].x,
+        m.v[0].y, m.v[1].y, m.v[2].y, m.v[3].y,
+        m.v[0].z, m.v[1].z, m.v[2].z, m.v[3].z,
+        m.v[0].w, m.v[1].w, m.v[2].w, m.v[3].w
     }};
     return mout;
 }

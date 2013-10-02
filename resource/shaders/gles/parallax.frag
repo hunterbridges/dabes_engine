@@ -11,16 +11,18 @@ uniform float xShift;
 uniform sampler2D texture;
 uniform vec2 texPortion;
 
-uniform sampler2D cascade;
-uniform vec2 cascadePortion;
+uniform vec2 origPixel;
+uniform float cascadeTop;
+uniform float cascadeBottom;
 
 void main()
 {
   vec2 texCoord = textureVarying;
-  vec2 cascadeCoord = vec2(0.5, texCoord.y) * cascadePortion;
-  vec4 cascadeColor = texture2D(cascade, cascadeCoord);
+  float slope = cascadeBottom - cascadeTop;
+  float snapY = texCoord.y - mod(texCoord.y, origPixel.y);
+  float cascade = cascadeTop + slope * texCoord.y;
     
-  texCoord.x = texCoord.x + (cameraPos.x * parallaxFactor * cascadeColor.r * texScale) +
+  texCoord.x = texCoord.x + (cameraPos.x * parallaxFactor * cascade * texScale) +
     (xShift * texScale) - 0.618;
   texCoord.x = mod(texCoord.x, repeatSize.x) / repeatSize.x;
   vec2 realCoord = texCoord * texPortion;

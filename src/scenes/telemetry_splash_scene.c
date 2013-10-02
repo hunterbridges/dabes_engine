@@ -87,7 +87,7 @@ void TelemetrySplashScene_update(struct Scene *scene,
   
     float a = MIN((scene_ticks - initial_delay) / color_fade, 1);
     float na_eased = ease_out_cubic(a, 1.0, -1.0, 1.0);
-    context->line_color.rgba.a = a;
+    context->line_color.a = a;
     scene->camera->translation.x = AXIS_CENTERING.x * na_eased * 1.8;
     scene->camera->translation.y = -AXIS_CENTERING.y * na_eased;
   
@@ -98,15 +98,15 @@ void TelemetrySplashScene_update(struct Scene *scene,
   
     if (scene_ticks < initial_delay + color_fade) return;
     a = MIN((scene_ticks - initial_delay - color_fade) / text_fade, 1);
-    context->text_color.rgba.a = a * 1;
+    context->text_color.a = a * 1;
 }
 
 static void draw_lines(Scene *scene, VVector3 *points, int num_points, Engine *engine) {
     TelemetrySplashSceneCtx *context = (TelemetrySplashSceneCtx *)scene->context;
-    GLfloat color[4] = {context->line_color.rgba.r,
-                        context->line_color.rgba.g,
-                        context->line_color.rgba.b,
-                        context->line_color.rgba.a};
+    GLfloat color[4] = {context->line_color.r,
+                        context->line_color.g,
+                        context->line_color.b,
+                        context->line_color.a};
     VMatrix tmvm = engine->graphics->modelview_matrix;
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
@@ -205,8 +205,10 @@ void TelemetrySplashScene_render(struct Scene *scene, Engine *engine) {
                                          -camera->translation.x,
                                          camera->translation.y,
                                          0);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, engine->graphics->projection_matrix.gl);
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              engine->graphics->projection_matrix.gl,
+                              GL_FALSE);
     draw_axis(scene, engine);
 
     Graphics_project_screen_camera(engine->graphics, scene->camera);

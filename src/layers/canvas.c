@@ -197,14 +197,15 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                         -screen_diff.y,
                         canvas->scene->camera->screen_size.w,
                         canvas->scene->camera->screen_size.h);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, engine->graphics->projection_matrix.gl);
+    Graphics_uniformMatrix4fv(engine->graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              engine->graphics->projection_matrix.gl, GL_FALSE);
     Graphics_draw_rect(engine->graphics, NULL, bg_rect, canvas->bg_color.raw,
                        NULL, VPointZero, GfxSizeZero, 0, 1, canvas->alpha);
 
     if (canvas->raw_points) {
         int num_points = DArray_count(canvas->raw_points);
-        if (canvas->draw_color.rgba.a > 0.0) {
+        if (canvas->draw_color.a > 0.0) {
             // Adjust each point cause canvas points are relative to screen top left
             // and projection matrix thinks <0, 0> is screen center
             VPoint *path =
@@ -216,7 +217,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
             }
 
             VVector4 path_draw_color = canvas->draw_color;
-            path_draw_color.rgba.a *= canvas->alpha;
+            path_draw_color.a *= canvas->alpha;
 
             Graphics_stroke_path(engine->graphics, path, num_points,
                                  VPointZero, path_draw_color.raw,
@@ -225,7 +226,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
             free(path);
         }
 
-        if (canvas->angle_color.rgba.a > 0.0 && num_points >= 2) {
+        if (canvas->angle_color.a > 0.0 && num_points >= 2) {
             VPoint path[2] = {
                 *(VPoint *)DArray_get(canvas->raw_points, 0),
                 *(VPoint *)DArray_last(canvas->raw_points)
@@ -234,7 +235,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
             float r = VPoint_distance(path[0], path[1]);
 
             VVector4 path_draw_color = canvas->angle_color;
-            path_draw_color.rgba.a *= canvas->alpha;
+            path_draw_color.a *= canvas->alpha;
 
             VPoint inv_diff = VPoint_scale(screen_diff, -1);
             Graphics_stroke_path(engine->graphics, path, 2,
@@ -252,7 +253,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
 
     int num_staged;
     VPoint *staged_path = simplifier_staged_path(canvas, &num_staged);
-    if (staged_path && canvas->simplified_path_color.rgba.a > 0.0) {
+    if (staged_path && canvas->simplified_path_color.a > 0.0) {
         int i = 0;
         for (i = 0; i < num_staged; i++) {
             VPoint point = staged_path[i];
@@ -260,7 +261,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
         }
 
         VVector4 path_draw_color = canvas->simplified_path_color;
-        path_draw_color.rgba.a *= canvas->alpha;
+        path_draw_color.a *= canvas->alpha;
 
         Graphics_stroke_path(engine->graphics, staged_path, num_staged,
                              VPointZero, path_draw_color.raw,

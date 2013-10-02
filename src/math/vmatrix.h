@@ -28,13 +28,13 @@ typedef union VVector4 {
     float y;
     float z;
     float w;
-  } packed;
+  };
   struct {
     float r;
     float g;
     float b;
     float a;
-  } rgba;
+  };
   float raw[4];
 } VVector4;
 

@@ -199,7 +199,7 @@ TileMapParseStatus TileMap_parse_tileset(xmlTextReaderPtr reader,
                     fclose(fileexists);
 
                     ppath = engine->project_path(cpath);
-                    tileset->texture = Graphics_texture_from_image(engine->graphics, ppath);
+                    tileset->texture = Graphics_texture_from_image(engine->graphics, ppath, 0);
                     free(ppath);
                     tileset->img_src = cpath;
                 }

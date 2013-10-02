@@ -8,6 +8,6 @@ uniform mat4 modelView;
 void main()
 {
   gl_Position = projection * modelView * position;
-  vec2 texCoord = vec2(texture.x, texture.y);
-  textureVarying = texCoord;
+  
+  textureVarying = texture.xy;
 }

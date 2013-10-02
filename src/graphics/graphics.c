@@ -121,7 +121,7 @@ error:
 }
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
-        GLenum source_format) {
+        GLenum source_format, int mipmap) {
     GfxTexture *texture = calloc(1, sizeof(GfxTexture));
     check(texture != NULL, "Couldn't not allocate texture");
     texture->size.w = width;
@@ -148,10 +148,20 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#if defined(DABES_MAC) || defined(DABES_IOS)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL_APPLE, mipmap ? 8 : 0);
+#endif
+    if (mipmap) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    } else {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pot_width,
                  pot_height, 0, color_format,
                  GL_UNSIGNED_BYTE, *data);
+    if (mipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
     er = Graphics_check();
     check(er == GL_NO_ERROR, "Error loading texture: %d", er);
     return texture;
@@ -163,11 +173,11 @@ error:
     return NULL;
 }
 
-GfxTexture *GfxTexture_from_image(const char *image_name) {
+GfxTexture *GfxTexture_from_image(const char *image_name, int mipmap) {
     int x, y, n;
     unsigned char *data = stbi_load(image_name, &x, &y, &n, 4);
     GfxTexture *texture =
-        GfxTexture_from_data(&data, x, y, GL_RGBA);
+        GfxTexture_from_data(&data, x, y, GL_RGBA, mipmap);
     stbi_image_free(data);
     return texture;
 }
@@ -195,7 +205,7 @@ GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance, float bitm
     uint8_t *buf = calloc(1, sz);
     memcpy(buf, bitmap->buffer, sz);
     fontchar->texture =
-        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_LUMINANCE);
+        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_LUMINANCE, 1);
 
     fontchar->advance = advance;
     fontchar->bitmap_top = bitmap_top;
@@ -326,6 +336,8 @@ error:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#pragma mark - Drawing Commands
+
 void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
                           VPoint center, GLfloat color[4], double line_width, double rotation,
                           int loop) {
@@ -336,9 +348,10 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
 
     VVector4 tex = {.raw = {0,0,0,0}};
 
-    glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE], 0);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
-                       GL_FALSE, graphics->projection_matrix.gl);
+    Graphics_uniform1i(graphics, UNIFORM_DECAL_HAS_TEXTURE, 0);
+    Graphics_uniformMatrix4fv(graphics, UNIFORM_DECAL_PROJECTION_MATRIX,
+                              graphics->projection_matrix.gl,
+                              GL_FALSE);
 
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
     VVector4 aVertex = {.raw = {1, 1, 1, 1}};
@@ -553,11 +566,12 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     if (draw_buffer) {
         DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 8, vertices);
     } else {
-        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE],
-                    texture ? texture->gl_tex : 0);
+        Graphics_uniform1i(graphics,
+                           UNIFORM_DECAL_HAS_TEXTURE,
+                           texture ? texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
         if (texture) {
+          // glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
           glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         } else {
           glBindTexture(GL_TEXTURE_2D, 0);
@@ -582,8 +596,10 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
     }
 
     char *c = text;
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX], 1,
-                       GL_FALSE, graphics->projection_matrix.gl);
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_TEXT_PROJECTION_MATRIX,
+                              graphics->projection_matrix.gl,
+                              GL_FALSE);
 
     // Unfortunately we need to do a pre-pass for right and center.
     float line_width = 0;
@@ -704,7 +720,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         };
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-        glUniform1i(GfxShader_uniforms[UNIFORM_TEXT_TEXTURE], 0);
+        Graphics_uniform1i(graphics, UNIFORM_TEXT_TEXTURE, 0);
         glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -714,6 +730,100 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
 
     return;
 }
+
+#pragma mark - Uniforms
+
+void Graphics_get_uniform(Graphics *graphics, GLint program, const GLchar *name,
+                          GraphicsUniform uniform) {
+  GLint loc = glGetUniformLocation(program, name);
+  GfxShader_uniforms[uniform] = loc;
+  graphics->num_uniforms = MAX(graphics->num_uniforms, loc + 1);
+}
+
+void Graphics_clear_uniforms(Graphics *graphics) {
+  int i = 0;
+  for (i = 0; i < graphics->num_uniforms; i++) {
+    if (graphics->uniforms[i] != NULL) {
+      free(graphics->uniforms[i]);
+      graphics->uniforms[i] = NULL;
+    }
+  }
+}
+
+void Graphics_uniformMatrix4fv(Graphics *graphics, GraphicsUniform uniform,
+                               GLfloat vector[16], GLboolean transpose) {
+  int loc = GfxShader_uniforms[uniform];
+  if (loc < 0) return;
+  
+  if (graphics->uniforms[loc]) {
+     int cmp = memcmp(vector, graphics->uniforms[loc], sizeof(GLfloat) * 16);
+     if (cmp == 0) {
+       return;
+     }
+  }
+  
+  GLfloat *buf = realloc(graphics->uniforms[loc], 16 * sizeof(GLfloat));
+  memcpy(buf, vector, sizeof(GLfloat) * 16);
+  graphics->uniforms[loc] = buf;
+  glUniformMatrix4fv(loc, 1, transpose, vector);
+}
+
+void Graphics_uniform1i(Graphics *graphics, GraphicsUniform uniform,
+                        GLint x) {
+  int loc = GfxShader_uniforms[uniform];
+  if (loc < 0) return;
+  
+  if (graphics->uniforms[loc]) {
+    int cmp = memcmp(&x, graphics->uniforms[loc], sizeof(GLint));
+    if (cmp == 0) {
+      return;
+    }
+  }
+  
+  GLint *buf = realloc(graphics->uniforms[loc], sizeof(GLint));
+  memcpy(buf, &x, sizeof(GLint));
+  graphics->uniforms[loc] = buf;
+  glUniform1i(loc, x);
+}
+
+void Graphics_uniform1f(Graphics *graphics, GraphicsUniform uniform,
+                        GLfloat x) {
+  int loc = GfxShader_uniforms[uniform];
+  if (loc < 0) return;
+  
+  if (graphics->uniforms[loc]) {
+    int cmp = memcmp(&x, graphics->uniforms[loc], sizeof(GLfloat));
+    if (cmp == 0) {
+      return;
+    }
+  }
+  
+  GLfloat *buf = realloc(graphics->uniforms[loc], sizeof(GLfloat));
+  memcpy(buf, &x, sizeof(GLfloat));
+  graphics->uniforms[loc] = buf;
+  glUniform1f(loc, x);
+}
+
+void Graphics_uniform2f(Graphics *graphics, GraphicsUniform uniform,
+                        GLfloat x, GLfloat y) {
+  int loc = GfxShader_uniforms[uniform];
+  if (loc < 0) return;
+  
+  GLfloat vector[2] = {x, y};
+  if (graphics->uniforms[loc]) {
+    int cmp = memcmp(vector, graphics->uniforms[loc], sizeof(GLfloat) * 2);
+    if (cmp == 0) {
+      return;
+    }
+  }
+  
+  GLfloat *buf = realloc(graphics->uniforms[loc], 2 * sizeof(GLfloat));
+  memcpy(buf, vector, sizeof(GLfloat) * 2);
+  graphics->uniforms[loc] = buf;
+  glUniform2f(loc, x, y);
+}
+
+#pragma mark - Matrices
 
 void Graphics_reset_projection_matrix(Graphics *graphics) {
     graphics->projection_matrix = VMatrixIdentity;
@@ -855,10 +965,12 @@ void Graphics_build_decal_shader(Graphics *graphics) {
     List_push(graphics->shader_list, shader);
 
     GLuint program = shader->gl_program;
-    GfxShader_uniforms[UNIFORM_DECAL_HAS_TEXTURE] =
-        glGetUniformLocation(program, "hasTexture");
-    GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX] =
-        glGetUniformLocation(program, "projection");
+    Graphics_get_uniform(graphics, program,
+                         "hasTexture",
+                         UNIFORM_DECAL_HAS_TEXTURE);
+    Graphics_get_uniform(graphics, program,
+                         "projection",
+                          UNIFORM_DECAL_PROJECTION_MATRIX);
     GfxShader_attributes[ATTRIB_DECAL_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_DECAL_COLOR] =
@@ -920,22 +1032,31 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
     List_push(graphics->shader_list, shader);
 
     GLuint program = shader->gl_program;
-    GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX] =
-        glGetUniformLocation(program, "modelView");
-    GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX] =
-        glGetUniformLocation(program, "projection");
-    GfxShader_uniforms[UNIFORM_TILEMAP_TILE_SIZE] =
-        glGetUniformLocation(program, "tileSize");
-    GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_ROWS_COLS] =
-        glGetUniformLocation(program, "sheetRowsCols");
-    GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_POT_SIZE] =
-        glGetUniformLocation(program, "sheetPotSize");
-    GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS] =
-        glGetUniformLocation(program, "mapRowsCols");
-    GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS] =
-        glGetUniformLocation(program, "atlas");
-    GfxShader_uniforms[UNIFORM_TILEMAP_TILESET] =
-        glGetUniformLocation(program, "tileset");
+    Graphics_get_uniform(graphics, program,
+                         "modelView",
+                         UNIFORM_TILEMAP_MODELVIEW_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "projection",
+                         UNIFORM_TILEMAP_PROJECTION_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "tileSize",
+                         UNIFORM_TILEMAP_TILE_SIZE);
+    Graphics_get_uniform(graphics, program,
+                         "sheetRowsCols",
+                         UNIFORM_TILEMAP_SHEET_ROWS_COLS);
+    Graphics_get_uniform(graphics, program,
+                         "sheetPotSize",
+                         UNIFORM_TILEMAP_SHEET_POT_SIZE);
+    Graphics_get_uniform(graphics, program,
+                         "mapRowsCols",
+                         UNIFORM_TILEMAP_MAP_ROWS_COLS);
+    Graphics_get_uniform(graphics, program,
+                         "atlas",
+                         UNIFORM_TILEMAP_ATLAS);
+    Graphics_get_uniform(graphics, program,
+                         "tileset",
+                         UNIFORM_TILEMAP_TILESET);
+  
     GfxShader_attributes[ATTRIB_TILEMAP_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE] =
@@ -989,30 +1110,45 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
     List_push(graphics->shader_list, shader);
 
     GLuint program = shader->gl_program;
-    GfxShader_uniforms[UNIFORM_PARALLAX_MODELVIEW_MATRIX] =
-        glGetUniformLocation(program, "modelView");
-    GfxShader_uniforms[UNIFORM_PARALLAX_PROJECTION_MATRIX] =
-        glGetUniformLocation(program, "projection");
-    GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE] =
-        glGetUniformLocation(program, "texture");
-    GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION] =
-        glGetUniformLocation(program, "texPortion");
-    GfxShader_uniforms[UNIFORM_PARALLAX_CASCADE] =
-        glGetUniformLocation(program, "cascade");
-    GfxShader_uniforms[UNIFORM_PARALLAX_CASCADE_PORTION] =
-        glGetUniformLocation(program, "cascadePortion");
-    GfxShader_uniforms[UNIFORM_PARALLAX_REPEAT_SIZE] =
-        glGetUniformLocation(program, "repeatSize");
-    GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS] =
-        glGetUniformLocation(program, "repeats");
-    GfxShader_uniforms[UNIFORM_PARALLAX_X_SHIFT] =
-        glGetUniformLocation(program, "xShift");
-    GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS] =
-        glGetUniformLocation(program, "cameraPos");
-    GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR] =
-        glGetUniformLocation(program, "parallaxFactor");
-    GfxShader_uniforms[UNIFORM_PARALLAX_TEX_SCALE] =
-        glGetUniformLocation(program, "texScale");
+    Graphics_get_uniform(graphics, program,
+                         "modelView",
+                         UNIFORM_PARALLAX_MODELVIEW_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "projection",
+                         UNIFORM_PARALLAX_PROJECTION_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "texture",
+                         UNIFORM_PARALLAX_TEXTURE);
+    Graphics_get_uniform(graphics, program,
+                         "texPortion",
+                         UNIFORM_PARALLAX_TEX_PORTION);
+    Graphics_get_uniform(graphics, program,
+                         "cascadeTop",
+                         UNIFORM_PARALLAX_CASCADE_TOP);
+    Graphics_get_uniform(graphics, program,
+                         "cascadeBottom",
+                         UNIFORM_PARALLAX_CASCADE_BOTTOM);
+    Graphics_get_uniform(graphics, program,
+                         "origPixel",
+                         UNIFORM_PARALLAX_ORIG_PIXEL);
+    Graphics_get_uniform(graphics, program,
+                         "repeatSize",
+                         UNIFORM_PARALLAX_REPEAT_SIZE);
+    Graphics_get_uniform(graphics, program,
+                         "repeats",
+                         UNIFORM_PARALLAX_REPEATS);
+    Graphics_get_uniform(graphics, program,
+                         "xShift",
+                         UNIFORM_PARALLAX_X_SHIFT);
+    Graphics_get_uniform(graphics, program,
+                         "cameraPos",
+                         UNIFORM_PARALLAX_CAMERA_POS);
+    Graphics_get_uniform(graphics, program,
+                         "parallaxFactor",
+                          UNIFORM_PARALLAX_FACTOR);
+    Graphics_get_uniform(graphics, program,
+                         "texScale",
+                          UNIFORM_PARALLAX_TEX_SCALE);
     GfxShader_attributes[ATTRIB_PARALLAX_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE] =
@@ -1100,10 +1236,12 @@ void Graphics_build_text_shader(Graphics *graphics) {
     List_push(graphics->shader_list, shader);
 
     GLuint program = shader->gl_program;
-    GfxShader_uniforms[UNIFORM_TEXT_PROJECTION_MATRIX] =
-        glGetUniformLocation(program, "projection");
-    GfxShader_uniforms[UNIFORM_TEXT_TEXTURE] =
-        glGetUniformLocation(program, "texture");
+    Graphics_get_uniform(graphics, program,
+                         "texture",
+                         UNIFORM_TEXT_TEXTURE);
+    Graphics_get_uniform(graphics, program,
+                         "projection",
+                         UNIFORM_TEXT_PROJECTION_MATRIX);
     GfxShader_attributes[ATTRIB_TEXT_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_TEXT_COLOR] =
@@ -1125,6 +1263,8 @@ error:
     if (shader) free(shader);
     return;
 }
+
+#pragma mark - Graphics
 
 Graphics *Graphics_create(Engine *engine) {
     Graphics *graphics = calloc(1, sizeof(Graphics));
@@ -1172,10 +1312,16 @@ Graphics *Graphics_create(Engine *engine) {
     }
 #endif
 
+    // graphics->num_uniforms is still 0 here. It gets populated by the shader
+    // compiles.
+  
     Graphics_build_decal_shader(graphics);
     Graphics_build_tilemap_shader(graphics);
     Graphics_build_parallax_shader(graphics);
     Graphics_build_text_shader(graphics);
+  
+    // Now we have the uniform count
+    graphics->uniforms = calloc(graphics->num_uniforms, sizeof(void *));
 
     FT_Library ft = NULL;
     if (FT_Init_FreeType(&ft)) {
@@ -1278,6 +1424,8 @@ GfxShader *Graphics_get_shader(Graphics *graphics, char *name) {
 
 void Graphics_use_shader(Graphics *graphics, GfxShader *shader) {
     if (shader == graphics->current_shader) return;
+  
+    Graphics_clear_uniforms(graphics);
     if (shader == NULL) {
         graphics->bind_vao(0);
 
@@ -1316,7 +1464,7 @@ void Graphics_log_program(GLuint program) {
     }
 }
 
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name) {
+GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name, int mipmap) {
     bstring bimage_name = bfromcstr(image_name);
 
     void *val = Hashmap_get(graphics->textures, bimage_name);
@@ -1325,7 +1473,7 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
       return (GfxTexture *)val;
     }
 
-    GfxTexture *texture = GfxTexture_from_image(image_name);
+    GfxTexture *texture = GfxTexture_from_image(image_name, mipmap);
     Hashmap_set(graphics->textures, bimage_name, texture);
 
     return texture;
@@ -1333,7 +1481,7 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
 
 Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
         GfxSize cell_size, int padding) {
-    GfxTexture *texture = Graphics_texture_from_image(graphics, image_name);
+    GfxTexture *texture = Graphics_texture_from_image(graphics, image_name, 1);
     Sprite *sprite = Sprite_create(texture, cell_size, padding);
     check(sprite != NULL, "Couldn't create sprite");
 

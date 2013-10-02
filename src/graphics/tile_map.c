@@ -59,7 +59,7 @@ GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
     layer->raw_atlas[i]   = (diff_gid & 0xff000000) >> 24;
   }
   return GfxTexture_from_data((unsigned char **)&layer->raw_atlas,
-                              map->cols, map->rows, GL_RGBA);
+                              map->cols, map->rows, GL_RGBA, 0);
 error:
   return NULL;
 }
@@ -194,10 +194,14 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
     };
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
 
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_PROJECTION_MATRIX], 1,
-                       GL_FALSE, graphics->projection_matrix.gl);
-    glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_TILEMAP_MODELVIEW_MATRIX], 1,
-                   GL_FALSE, graphics->modelview_matrix.gl);
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_TILEMAP_PROJECTION_MATRIX,
+                              graphics->projection_matrix.gl,
+                              GL_FALSE);
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_TILEMAP_MODELVIEW_MATRIX,
+                              graphics->modelview_matrix.gl,
+                              GL_FALSE);
 
     int layer_idx = 0;
     for (layer_idx = 0; layer_idx < map->layers->end;
@@ -211,11 +215,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       VVector4 tex_tr = {.raw = {1,0,0,0}};
       VVector4 tex_bl = {.raw = {0,1,0,0}};
       VVector4 tex_br = {.raw = {1,1,0,0}};
-      glActiveTexture(GL_TEXTURE0);
-      glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_ATLAS], 0);
+      Graphics_uniform1i(graphics, UNIFORM_TILEMAP_ATLAS, 0);
       if (layer->atlas) {
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS],
-                      layer->atlas->pot_size.w, layer->atlas->pot_size.h);
+          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS,
+                             layer->atlas->pot_size.w, layer->atlas->pot_size.h);
 
           glBindTexture(GL_TEXTURE_2D, layer->atlas->gl_tex);
 
@@ -223,14 +226,14 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
               layer->atlas->size.w / layer->atlas->pot_size.w,
               layer->atlas->size.h / layer->atlas->pot_size.h
           };
-          tex_tl.packed.x *= pot_scale.x;
-          tex_tr.packed.x *= pot_scale.x;
-          tex_bl.packed.x *= pot_scale.x;
-          tex_br.packed.x *= pot_scale.x;
-          tex_tl.packed.y *= pot_scale.y;
-          tex_tr.packed.y *= pot_scale.y;
-          tex_bl.packed.y *= pot_scale.y;
-          tex_br.packed.y *= pot_scale.y;
+          tex_tl.x *= pot_scale.x;
+          tex_tr.x *= pot_scale.x;
+          tex_bl.x *= pot_scale.x;
+          tex_br.x *= pot_scale.x;
+          tex_tl.y *= pot_scale.y;
+          tex_tr.y *= pot_scale.y;
+          tex_bl.y *= pot_scale.y;
+          tex_br.y *= pot_scale.y;
       } else {
           glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS], 1, 1);
           glBindTexture(GL_TEXTURE_2D, 0);
@@ -238,27 +241,33 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
 
 
       if (layer->tileset) {
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_TILE_SIZE],
-                      layer->tileset->tile_size.w, layer->tileset->tile_size.h);
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_ROWS_COLS],
-              layer->tileset->texture->size.w / layer->tileset->tile_size.w,
-              layer->tileset->texture->size.h / layer->tileset->tile_size.h
-          );
-
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_POT_SIZE],
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_TILE_SIZE,
+                             layer->tileset->tile_size.w,
+                             layer->tileset->tile_size.h);
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_SHEET_ROWS_COLS,
+                             layer->tileset->texture->size.w / layer->tileset->tile_size.w,
+                             layer->tileset->texture->size.h / layer->tileset->tile_size.h);
+          Graphics_uniform2f(graphics,
+              UNIFORM_TILEMAP_SHEET_POT_SIZE,
               layer->tileset->texture->pot_size.w / layer->tileset->tile_size.w,
-              layer->tileset->texture->pot_size.h / layer->tileset->tile_size.h
-          );
+              layer->tileset->texture->pot_size.h / layer->tileset->tile_size.h);
       } else {
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_TILE_SIZE], 1, 1);
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_ROWS_COLS],
-                  1, 1);
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_SHEET_POT_SIZE],
-                  1, 1);
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_TILE_SIZE,
+                             1, 1);
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_SHEET_ROWS_COLS,
+                             1, 1);
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_SHEET_POT_SIZE,
+                             1, 1);
       }
 
       glActiveTexture(GL_TEXTURE1);
-      glUniform1i(GfxShader_uniforms[UNIFORM_TILEMAP_TILESET], 1);
+      Graphics_uniform1i(graphics,
+                         UNIFORM_TILEMAP_TILESET, 1);
       if (layer->tileset && layer->tileset->texture) {
           glBindTexture(GL_TEXTURE_2D, layer->tileset->texture->gl_tex);
       } else {
