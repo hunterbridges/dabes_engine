@@ -20,7 +20,7 @@ void main()
   vec2 texCoord = textureVarying;
   float slope = cascadeBottom - cascadeTop;
   float snapY = texCoord.y - mod(texCoord.y, origPixel.y);
-  float cascade = cascadeTop + slope * texCoord.y;
+  float cascade = cascadeTop + slope * snapY;
     
   texCoord.x = texCoord.x + (cameraPos.x * parallaxFactor * cascade * texScale) +
     (xShift * texScale) - 0.618;

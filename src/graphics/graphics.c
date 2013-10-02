@@ -44,9 +44,12 @@ int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
 
 #if defined(DABES_MAC) || defined(DABES_SDL)
     glEnable(GL_MULTISAMPLE);
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_FOG);
 #endif
     glDisable(GL_DEPTH_TEST);
-    error = glGetError();
+    glDisable(GL_DITHER);
+    glDisable(GL_STENCIL_TEST);
 
     error = glGetError();
     check(error == GL_NO_ERROR, "OpenGL init error...");
@@ -148,8 +151,12 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-#if defined(DABES_MAC) || defined(DABES_IOS)
+#if defined(DABES_IOS)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL_APPLE, mipmap ? 8 : 0);
+#endif
+#if !defined(DABES_IOS)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipmap ? 8 : 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 #endif
     if (mipmap) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);

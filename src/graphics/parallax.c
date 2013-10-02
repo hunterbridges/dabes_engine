@@ -1,7 +1,7 @@
 #include "parallax.h"
 #include "draw_buffer.h"
 #include "../util.h"
-#include "scene.h"
+#include "../scenes/scene.h"
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex) {
     ParallaxLayer *layer = calloc(1, sizeof(ParallaxLayer));

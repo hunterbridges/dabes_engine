@@ -21,6 +21,11 @@ static unsigned short int keysDown[128];
   self = [super initWithFrame:frameRect pixelFormat:format];
   if (self) {
     self.touchInput = touchInput;
+    self.wantsBestResolutionOpenGLSurface = YES;
+    
+    GLint swapInterval = 1;
+    [[self openGLContext] setValues:&swapInterval
+                       forParameter:NSOpenGLCPSwapInterval];
   }
   return self;
 }
@@ -91,7 +96,8 @@ static unsigned short int keysDown[128];
   if (scene) {
     scene->camera->screen_size = screen_size;
   }
-  glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
+  NSRect conv = [self convertRectToBacking:self.bounds];
+  glViewport(0, 0, conv.size.width, conv.size.height);
 }
 
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview {
