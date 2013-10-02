@@ -171,7 +171,7 @@ void ChipmunkBody_cleanup(Body *body) {
         body->cp_shape= NULL;
     }
 
-    if (body->cp_space) {
+    if (cpBodyGetSpace(body->cp_body)) {
         if (!body->is_rogue) {
             cpSpaceRemoveBody(body->cp_space, body->cp_body);
             body->cp_body = NULL;
@@ -224,7 +224,7 @@ void ChipmunkBody_add_sensor(Body *body, Sensor *sensor) {
 }
 
 void ChipmunkBody_remove_sensor(Body *UNUSED(body), Sensor *sensor) {
-    if (sensor->cp_space) {
+    if (cpShapeGetSpace(sensor->cp_shape)) {
         cpSpaceRemoveShape(sensor->cp_space, sensor->cp_shape);
     }
 

@@ -8,6 +8,8 @@
 
 typedef struct ParallaxLayer {
     GfxTexture *texture;
+    GfxTexture *cascade;
+    GfxSize texture_size;
     VPoint offset;
     double scale;
     double p_factor;
@@ -15,7 +17,9 @@ typedef struct ParallaxLayer {
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
+void ParallaxLayer_p_cascade(ParallaxLayer *layer, double top, double bot);
 
+struct Scene;
 typedef struct Parallax {
     DArray *layers;
     Camera *camera;
@@ -24,6 +28,7 @@ typedef struct Parallax {
     VVector4 sea_color;
     double y_wiggle;
     double sea_level;
+    struct Scene *scene;
 } Parallax;
 
 Parallax *Parallax_create();

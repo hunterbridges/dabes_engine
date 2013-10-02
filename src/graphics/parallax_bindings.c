@@ -43,14 +43,31 @@ int luab_ParallaxLayer_close(lua_State *L) {
     return 0;
 }
 
+int luab_ParallaxLayer_p_cascade(lua_State *L) {
+    ParallaxLayer *layer = luaL_toparallaxlayer(L, 1);
+    check(layer != NULL, "ParallaxLayer required");
+    
+    double top = lua_tonumber(L, 2);
+    double bot = lua_tonumber(L, 3);
+    
+    ParallaxLayer_p_cascade(layer, top, bot);
+
+    return 0;
+error:
+    return 0;
+}
+
 Scripting_VPoint_getter(ParallaxLayer, offset);
 Scripting_VPoint_setter(ParallaxLayer, offset);
+Scripting_GfxSize_getter(ParallaxLayer, texture_size);
 
 Scripting_num_getter(ParallaxLayer, y_wiggle);
 Scripting_num_setter(ParallaxLayer, y_wiggle);
 
 static const struct luaL_Reg luab_ParallaxLayer_meths[] = {
     {"__gc", luab_ParallaxLayer_close},
+    {"p_cascade", luab_ParallaxLayer_p_cascade},
+    {"get_texture_size", luab_ParallaxLayer_get_texture_size},
     {"get_p_factor", luab_ParallaxLayer_get_p_factor},
     {"set_p_factor", luab_ParallaxLayer_set_p_factor},
     {"get_offset", luab_ParallaxLayer_get_offset},

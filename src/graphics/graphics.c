@@ -850,7 +850,7 @@ void Graphics_build_decal_shader(Graphics *graphics) {
 
     int rc = Graphics_load_shader(graphics, shader_path("decal.vert"),
         shader_path("decal.frag"), &shader->gl_program);
-    check(rc == 1, "Could not build decal shader");
+    assert(rc == 1);
     Hashmap_set(graphics->shaders, bfromcstr("decal"), shader);
     List_push(graphics->shader_list, shader);
 
@@ -915,7 +915,7 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
 
     int rc = Graphics_load_shader(graphics, shader_path("tilemap.vert"),
         shader_path("tilemap.frag"), &shader->gl_program);
-    check(rc == 1, "Could not build tilemap shader");
+    assert(rc == 1);
     Hashmap_set(graphics->shaders, bfromcstr("tilemap"), shader);
     List_push(graphics->shader_list, shader);
 
@@ -984,7 +984,7 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
 
     int rc = Graphics_load_shader(graphics, shader_path("parallax.vert"),
         shader_path("parallax.frag"), &shader->gl_program);
-    check(rc == 1, "Could not build parallax shader");
+    assert(rc == 1);
     Hashmap_set(graphics->shaders, bfromcstr("parallax"), shader);
     List_push(graphics->shader_list, shader);
 
@@ -997,10 +997,16 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
         glGetUniformLocation(program, "texture");
     GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION] =
         glGetUniformLocation(program, "texPortion");
+    GfxShader_uniforms[UNIFORM_PARALLAX_CASCADE] =
+        glGetUniformLocation(program, "cascade");
+    GfxShader_uniforms[UNIFORM_PARALLAX_CASCADE_PORTION] =
+        glGetUniformLocation(program, "cascadePortion");
     GfxShader_uniforms[UNIFORM_PARALLAX_REPEAT_SIZE] =
         glGetUniformLocation(program, "repeatSize");
     GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS] =
         glGetUniformLocation(program, "repeats");
+    GfxShader_uniforms[UNIFORM_PARALLAX_X_SHIFT] =
+        glGetUniformLocation(program, "xShift");
     GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS] =
         glGetUniformLocation(program, "cameraPos");
     GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR] =
@@ -1089,7 +1095,7 @@ void Graphics_build_text_shader(Graphics *graphics) {
 
     int rc = Graphics_load_shader(graphics, shader_path("text.vert"),
         shader_path("text.frag"), &shader->gl_program);
-    check(rc == 1, "Could not build text shader");
+    assert(rc == 1);
     Hashmap_set(graphics->shaders, bfromcstr("text"), shader);
     List_push(graphics->shader_list, shader);
 

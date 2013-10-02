@@ -50,13 +50,18 @@ ParallaxLayer = BoundObject:extend({
         -- one.
         --
         -- Default `0`
-        y_wiggle = BoundObject.fwd_func("get_y_wiggle")
+        y_wiggle = BoundObject.fwd_func("get_y_wiggle"),
+
+        --- *(readonly)* A `{w, h}` vector representing the size of the layer's
+        -- texture in pixels.
+        texture_size = BoundObject.fwd_func("get_texture_size")
     },
 
     _setters = {
         p_factor = BoundObject.fwd_func("set_p_factor"),
         offset = BoundObject.fwd_func("set_offset"),
-        y_wiggle = BoundObject.fwd_func("set_y_wiggle")
+        y_wiggle = BoundObject.fwd_func("set_y_wiggle"),
+        texture_size = BoundObject.readonly
     },
 
 --- Class Methods.
@@ -76,7 +81,26 @@ ParallaxLayer = BoundObject:extend({
         end
 
         return realized
-    end
+    end,
+
+--- Instance Methods.
+-- Must be called on an instance of `Class`.
+-- e.g. `instance:method("foo")`
+-- @section instancemethods
+
+    --- Create a linear `p_factor` interpolation across the height of the
+    -- `ParallaxLayer`.
+    --
+    -- This allows fine-grained control over a layer's parallax behavior with
+    -- a simple interface. First, `p_cascade` will set the `p_factor` of the
+    -- layer to be MAX(`top`, `bottom`). Then it will interpolate between
+    -- the two values and set a parallax factor for each row of pixels in the
+    -- layer's texture.
+    --
+    -- @function parallax_layer:p_cascade
+    -- @tparam number top The p_factor for the top row of layer's pixels
+    -- @tparam number bottom The p_factor for the bottom row of layer's pixels
+    p_cascade = BoundObject.fwd_func("p_cascade"),
 
 })
 

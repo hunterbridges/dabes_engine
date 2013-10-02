@@ -247,6 +247,7 @@ int luab_Scene_set_parallax(lua_State *L) {
             parallax->level_size = level_size;
         }
         parallax->camera = scene->camera;
+        parallax->scene = scene;
 
         lua_pop(L, 3);
     }

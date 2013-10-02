@@ -35,6 +35,16 @@ int recorder_destroy_cb(BSTreeNode *node, void *UNUSED(context)) {
     return 0;
 }
 
+static void remove_all_shapes_cb(cpShape *shape, void *data) {
+    DArray *arr = data;
+    DArray_push(arr, shape);
+}
+
+static void remove_all_bodies_cb(cpBody *body, void *data) {
+    DArray *arr = data;
+    DArray_push(arr, body);
+}
+
 void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     if (!scene->started) return;
 
@@ -43,21 +53,36 @@ void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     ChipmunkSceneCtx *context = scene->context;
 
     BSTree_destroy(context->recorders);
-
-    LIST_FOREACH(context->tile_shapes, first, next, current) {
-        cpShape *shape = current->value;
-        cpSpaceRemoveShape(context->space, shape);
-        cpShapeFree(shape);
-    }
-    List_destroy(context->tile_shapes);
-    free(context);
-    scene->context = NULL;
-
     if (scene->space) {
+        DArray *shapes = DArray_create(sizeof(cpShape *), 128);
+        cpSpaceEachShape(scene->space, remove_all_shapes_cb, shapes);
+        int i = 0;
+        for (i = 0; i < DArray_count(shapes); i++) {
+            cpShape *shape = DArray_get(shapes, i);
+            cpSpaceRemoveShape(scene->space, shape);
+        }
+        DArray_destroy(shapes);
+        
+        DArray *bodies = DArray_create(sizeof(cpBody *), 128);
+        cpSpaceEachBody(scene->space, remove_all_bodies_cb, bodies);
+        for (i = 0; i < DArray_count(bodies); i++) {
+            cpBody *body = DArray_get(bodies, i);
+            cpSpaceRemoveBody(scene->space, body);
+        }
+        DArray_destroy(bodies);
+
+        LIST_FOREACH(context->tile_shapes, first, next, current) {
+            cpShape *shape = current->value;
+            cpShapeFree(shape);
+        }
+        List_destroy(context->tile_shapes);
+        free(context);
+
       cpSpaceFree(scene->space);
       scene->space = NULL;
     }
 
+    scene->context = NULL;
     Stepper_reset(engine->physics->stepper);
     scene->started = 0;
 }

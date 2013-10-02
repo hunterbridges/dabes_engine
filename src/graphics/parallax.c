@@ -1,6 +1,7 @@
 #include "parallax.h"
 #include "draw_buffer.h"
 #include "../util.h"
+#include "scene.h"
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex) {
     ParallaxLayer *layer = calloc(1, sizeof(ParallaxLayer));
@@ -8,10 +9,53 @@ ParallaxLayer *ParallaxLayer_create(GfxTexture *tex) {
 
     layer->scale = 1;
     layer->texture = tex;
+    memcpy(&layer->texture_size, &layer->texture->size, sizeof(GfxSize));
 
+    ParallaxLayer_p_cascade(layer, 1, 1);
+    
     return layer;
 error:
     return NULL;
+}
+
+void ParallaxLayer_p_cascade(ParallaxLayer *layer, double top, double bot) {
+    check(layer != NULL, "No ParallaxLayer to cascade");
+    
+    double factor = MAX(top, bot);
+    layer->p_factor = factor;
+    
+    double h = layer->texture->size.h;
+    
+    double s_top = top / factor;
+    double s_bot = bot / factor;
+    double slope = (s_bot - s_top) / h;
+    
+    printf("P factor: %f\n", factor);
+    printf("Cascade: ");
+    unsigned char *buf = calloc(h, sizeof(unsigned char));
+    int i = 0;
+    for (i = 0; i < h; i++) {
+        double this_point = s_top + slope * (i + 1);
+        unsigned char this_int = this_point * 255;
+        
+        buf[i] = this_int;
+        
+        printf("%d ", this_int);
+    }
+    printf("\n");
+    
+    GfxTexture *cascade = GfxTexture_from_data(&buf, 1, h, GL_LUMINANCE);
+    
+    if (layer->cascade) {
+        GfxTexture_destroy(layer->cascade);
+    }
+    layer->cascade = cascade;
+    
+    free(buf);
+    
+    return;
+error:
+    return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,8 +131,12 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     glUniformMatrix4fv(GfxShader_uniforms[UNIFORM_DECAL_PROJECTION_MATRIX], 1,
                        GL_FALSE, graphics->projection_matrix.gl);
 
+    
+    float pixel_x =
+        parallax->camera->tracking.focal.x
+        / parallax->camera->screen_size.w;
     VPoint cam_pos = {
-        floorf(parallax->camera->tracking.focal.x) / parallax->level_size.w,
+        pixel_x,
         floorf(parallax->camera->tracking.focal.y) / parallax->level_size.h
     };
 
@@ -126,7 +174,6 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
                    GL_FALSE, graphics->modelview_matrix.gl);
     glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_CAMERA_POS],
             cam_pos.x, cam_pos.y);
-    glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
 
     VPoint stretch = {
         hyp / screen_size.w,
@@ -142,6 +189,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         ParallaxLayer *layer = DArray_get(parallax->layers, i);
         assert(layer->texture != NULL);
         GfxTexture *texture = layer->texture;
+        GfxTexture *cascade = layer->cascade;
 
         double sx = (layer->scale * bg_scale);
         double final_scale = sx;
@@ -151,7 +199,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         double layer_wiggle = layer->y_wiggle * bg_scale * wiggle_factor;
 
         VRect rect = VRect_from_xywh(
-                layer->offset.x - (hyp - parallax->camera->screen_size.w) / 2.0,
+                0 - (hyp - parallax->camera->screen_size.w) / 2.0,
                 screen_center.y + layer->offset.y * final_scale
                     - (y_wiggle + layer_wiggle),
                 hyp,
@@ -174,10 +222,21 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_TEX_PORTION],
                 pot_scale.x, pot_scale.y);
 
+        VPoint cascade_pot_scale = {
+            cascade->size.w / cascade->pot_size.w,
+            cascade->size.h / cascade->pot_size.h
+        };
+        glUniform2f(GfxShader_uniforms[UNIFORM_PARALLAX_CASCADE_PORTION],
+                cascade_pot_scale.x, cascade_pot_scale.y);
+        
         double repeats =
             parallax->level_size.w / (texture->size.w * final_scale);
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_REPEATS], repeats);
-
+        
+        // Seems odd that I have to flip the sign here...
+        glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_X_SHIFT],
+                    -layer->offset.x);
+        
         glUniform1f(GfxShader_uniforms[UNIFORM_PARALLAX_FACTOR],
                 layer->p_factor);
 
@@ -194,8 +253,14 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(VVector4), vertices,
                 GL_STATIC_DRAW);
 
+        glActiveTexture(GL_TEXTURE1);
+        glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_CASCADE], 1);
+        glBindTexture(GL_TEXTURE_2D, layer->cascade->gl_tex);
+        
+        glActiveTexture(GL_TEXTURE0);
         glUniform1i(GfxShader_uniforms[UNIFORM_PARALLAX_TEXTURE], 0);
         glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
+        
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 }

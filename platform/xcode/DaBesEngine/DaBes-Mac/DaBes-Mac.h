@@ -1346,8 +1346,11 @@ enum {
     UNIFORM_PARALLAX_MODELVIEW_MATRIX,
     UNIFORM_PARALLAX_TEXTURE,
     UNIFORM_PARALLAX_TEX_PORTION,
+    UNIFORM_PARALLAX_CASCADE,
+    UNIFORM_PARALLAX_CASCADE_PORTION,
     UNIFORM_PARALLAX_REPEAT_SIZE,
     UNIFORM_PARALLAX_REPEATS,
+    UNIFORM_PARALLAX_X_SHIFT,
     UNIFORM_PARALLAX_CAMERA_POS,
     UNIFORM_PARALLAX_FACTOR,
     UNIFORM_PARALLAX_TEX_SCALE,
@@ -2131,6 +2134,8 @@ void DrawBuffer_draw(DrawBuffer *buffer);
 
 typedef struct ParallaxLayer {
     GfxTexture *texture;
+    GfxTexture *cascade;
+    GfxSize texture_size;
     VPoint offset;
     double scale;
     double p_factor;
@@ -2138,7 +2143,9 @@ typedef struct ParallaxLayer {
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
+void ParallaxLayer_p_cascade(ParallaxLayer *layer, double top, double bot);
 
+struct Scene;
 typedef struct Parallax {
     DArray *layers;
     Camera *camera;
@@ -2147,6 +2154,7 @@ typedef struct Parallax {
     VVector4 sea_color;
     double y_wiggle;
     double sea_level;
+    struct Scene *scene;
 } Parallax;
 
 Parallax *Parallax_create();
