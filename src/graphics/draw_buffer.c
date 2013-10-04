@@ -101,9 +101,6 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics) {
             v_head += shape->num_vectors;
         }
         
-        int has_texture = buftex->texture ? 1 : 0;
-        Graphics_uniform1i(graphics, UNIFORM_DECAL_HAS_TEXTURE, has_texture);
-      
         GLint gl_tex = 0;
       
         // I don't think this shader needs this set.
@@ -111,8 +108,14 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics) {
       
         if (buftex->texture) {
             gl_tex = buftex->texture->gl_tex;
+            Graphics_uniform1f(graphics,
+                               UNIFORM_DECAL_TEX_ALPHA_ADJ,
+                               1.0);
             glBindTexture(GL_TEXTURE_2D, gl_tex);
         } else {
+            Graphics_uniform1f(graphics,
+                               UNIFORM_DECAL_TEX_ALPHA_ADJ,
+                               0.0);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
         glBufferData(GL_ARRAY_BUFFER, num_vectors * sizeof(VVector4), vectors,

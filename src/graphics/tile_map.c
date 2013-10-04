@@ -37,29 +37,61 @@ GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
   int i = 0;
 
   if (layer->raw_atlas == NULL) {
-      layer->raw_atlas = malloc(sizeof(uint8_t) * layer->gid_count * 4);
+      layer->raw_atlas = malloc(sizeof(GLfloat) * layer->gid_count * 4);
       check(layer->raw_atlas != NULL, "Could not alloc raw atlas");
   }
-
+  
+  int sheet_cols, sheet_rows;
   for (i = 0; i < layer->gid_count * 4; i += 4) {
     int tile_idx = i / 4;
     TilesetTile *tile = TileMap_resolve_tile_gid(map, layer->tile_gids[tile_idx]);
     uint32_t first_gid = 0;
     uint32_t diff_gid = UINT32_MAX;
+    uint32_t this_gid = 0;
+    
+    int flip_x = 0;
+    int flip_y = 0;
+    int flip_xy = 0;
+    float base_x = 0;
+    float base_y = 0;
     if (tile) {
       layer->tileset = tile->tileset;
+      
+      sheet_cols = layer->tileset->texture->size.w / layer->tileset->tile_size.w;
+      sheet_rows = layer->tileset->texture->size.h / layer->tileset->tile_size.h;
+      
       first_gid = tile->tileset->first_gid;
-      diff_gid = layer->tile_gids[tile_idx] - first_gid;
+      this_gid = layer->tile_gids[tile_idx];
+      
+      flip_x = this_gid & FLIPPED_HORIZONTALLY_FLAG;
+      flip_y = this_gid & FLIPPED_VERTICALLY_FLAG;
+      flip_xy = this_gid & FLIPPED_DIAGONALLY_FLAG;
+      
+      this_gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
+                    FLIPPED_VERTICALLY_FLAG |
+                    FLIPPED_DIAGONALLY_FLAG);
+      
+      diff_gid = this_gid - first_gid;
+      
+      int col = diff_gid % sheet_cols;
+      int row = diff_gid / sheet_rows;
+      base_x = col * layer->tileset->tile_size.w;
+      base_y = row * layer->tileset->tile_size.h;
+      base_x /= layer->tileset->texture->size.w;
+      base_y /= layer->tileset->texture->size.h;
+      
       free(tile);
     }
+    
+    // TODO support flipping
 
-    layer->raw_atlas[i+3] = (diff_gid & 0x000000ff);
-    layer->raw_atlas[i+2] = (diff_gid & 0x0000ff00) >> 8;
-    layer->raw_atlas[i+1] = (diff_gid & 0x00ff0000) >> 16;
-    layer->raw_atlas[i]   = (diff_gid & 0xff000000) >> 24;
+    layer->raw_atlas[i]   = base_x;
+    layer->raw_atlas[i+1] = base_y;
+    layer->raw_atlas[i+2] = 0.0;
+    layer->raw_atlas[i+3] = tile ? 1.0 : 0.0;
   }
   return GfxTexture_from_data((unsigned char **)&layer->raw_atlas,
-                              map->cols, map->rows, GL_RGBA, 0);
+                              map->cols, map->rows, GL_RGBA, 0, sizeof(float));
 error:
   return NULL;
 }
@@ -69,7 +101,7 @@ void TileMapLayer_dump_raw_atlas(TileMapLayer *layer) {
   if (layer->raw_atlas == NULL) return;
   int i = 0;
   for (i = 0; i < layer->gid_count * 4; i += 4) {
-    printf("%d %d %d %d\n", layer->raw_atlas[i], layer->raw_atlas[i+1],
+    printf("%f %f %f %f\n", layer->raw_atlas[i], layer->raw_atlas[i+1],
            layer->raw_atlas[i+2], layer->raw_atlas[i+3]);
   }
 }
@@ -219,6 +251,8 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       if (layer->atlas) {
           Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS,
                              layer->atlas->pot_size.w, layer->atlas->pot_size.h);
+          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_TEXEL_PER_MAP,
+                             1.0 / layer->atlas->pot_size.w, 1.0 / layer->atlas->pot_size.h);
 
           glBindTexture(GL_TEXTURE_2D, layer->atlas->gl_tex);
 
@@ -235,7 +269,8 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
           tex_bl.y *= pot_scale.y;
           tex_br.y *= pot_scale.y;
       } else {
-          glUniform2f(GfxShader_uniforms[UNIFORM_TILEMAP_MAP_ROWS_COLS], 1, 1);
+          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS, 1, 1);
+          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_TEXEL_PER_MAP, 1, 1);
           glBindTexture(GL_TEXTURE_2D, 0);
       }
 
@@ -243,16 +278,20 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       if (layer->tileset) {
           Graphics_uniform2f(graphics,
                              UNIFORM_TILEMAP_TILE_SIZE,
-                             layer->tileset->tile_size.w,
-                             layer->tileset->tile_size.h);
+                             layer->tileset->tile_size.w / layer->tileset->texture->size.w,
+                             layer->tileset->tile_size.h / layer->tileset->texture->size.h);
           Graphics_uniform2f(graphics,
                              UNIFORM_TILEMAP_SHEET_ROWS_COLS,
                              layer->tileset->texture->size.w / layer->tileset->tile_size.w,
                              layer->tileset->texture->size.h / layer->tileset->tile_size.h);
           Graphics_uniform2f(graphics,
               UNIFORM_TILEMAP_SHEET_POT_SIZE,
-              layer->tileset->texture->pot_size.w / layer->tileset->tile_size.w,
-              layer->tileset->texture->pot_size.h / layer->tileset->tile_size.h);
+              layer->tileset->texture->size.w / layer->tileset->texture->pot_size.w,
+              layer->tileset->texture->size.h / layer->tileset->texture->pot_size.h);
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_SHEET_PORTION,
+                             layer->tileset->tile_size.w / layer->tileset->texture->pot_size.w ,
+                             layer->tileset->tile_size.h / layer->tileset->texture->pot_size.h);
       } else {
           Graphics_uniform2f(graphics,
                              UNIFORM_TILEMAP_TILE_SIZE,
@@ -262,6 +301,9 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
                              1, 1);
           Graphics_uniform2f(graphics,
                              UNIFORM_TILEMAP_SHEET_POT_SIZE,
+                             1, 1);
+          Graphics_uniform2f(graphics,
+                             UNIFORM_TILEMAP_SHEET_PORTION,
                              1, 1);
       }
 

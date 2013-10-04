@@ -98,10 +98,11 @@ void Overlay_render(Overlay *overlay, Engine *engine) {
         VPoint screen =
             Camera_project_point(overlay->track_entity->scene->camera,
                                  world, 1, 1);
-        Graphics_translate_modelview_matrix(engine->graphics,
-                                            screen.x, screen.y, 0);
+        overlay->track_entity_offset = screen;
+    } else {
+        overlay->track_entity_offset = VPointZero;
     }
-
+  
     Scripting_call_hook(engine->scripting, overlay, "render");
 }
 

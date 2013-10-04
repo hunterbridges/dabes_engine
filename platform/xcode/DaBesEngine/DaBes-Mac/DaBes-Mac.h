@@ -1294,7 +1294,7 @@ typedef struct GfxTexture {
 } GfxTexture;
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
-        GLenum source_format, int mipmap);
+        GLenum source_format, int mipmap, size_t size);
 GfxTexture *GfxTexture_from_image(const char *image_name, int mipmap);
 void GfxTexture_destroy(GfxTexture *texture);
 
@@ -1332,20 +1332,23 @@ GfxFontChar *GfxFont_get_char(GfxFont *font, char c, int stroke,
 
 typedef enum {
     UNIFORM_DECAL_PROJECTION_MATRIX,
-    UNIFORM_DECAL_HAS_TEXTURE,
     UNIFORM_DECAL_TEXTURE,
+    UNIFORM_DECAL_TEX_ALPHA_ADJ,
     UNIFORM_TILEMAP_PROJECTION_MATRIX,
     UNIFORM_TILEMAP_MODELVIEW_MATRIX,
     UNIFORM_TILEMAP_TILE_SIZE,
     UNIFORM_TILEMAP_SHEET_ROWS_COLS,
+    UNIFORM_TILEMAP_SHEET_PORTION,
     UNIFORM_TILEMAP_SHEET_POT_SIZE,
     UNIFORM_TILEMAP_MAP_ROWS_COLS,
+    UNIFORM_TILEMAP_TEXEL_PER_MAP,
     UNIFORM_TILEMAP_ATLAS,
     UNIFORM_TILEMAP_TILESET,
     UNIFORM_PARALLAX_PROJECTION_MATRIX,
     UNIFORM_PARALLAX_MODELVIEW_MATRIX,
     UNIFORM_PARALLAX_TEXTURE,
     UNIFORM_PARALLAX_TEX_PORTION,
+    UNIFORM_PARALLAX_STRETCH,
     UNIFORM_PARALLAX_CASCADE_TOP,
     UNIFORM_PARALLAX_CASCADE_BOTTOM,
     UNIFORM_PARALLAX_ORIG_PIXEL,
@@ -1356,7 +1359,10 @@ typedef enum {
     UNIFORM_PARALLAX_FACTOR,
     UNIFORM_PARALLAX_TEX_SCALE,
     UNIFORM_TEXT_PROJECTION_MATRIX,
+    UNIFORM_TEXT_MODELVIEW_MATRIX,
     UNIFORM_TEXT_TEXTURE,
+    UNIFORM_TEXT_STRETCH,
+    UNIFORM_TEXT_COLOR,
     NUM_UNIFORMS
 } GraphicsUniform;
 
@@ -1371,9 +1377,7 @@ enum {
     ATTRIB_PARALLAX_VERTEX,
     ATTRIB_PARALLAX_TEXTURE,
     ATTRIB_TEXT_VERTEX,
-    ATTRIB_TEXT_COLOR,
     ATTRIB_TEXT_TEX_POS,
-    ATTRIB_TEXT_MODELVIEW_MATRIX,
 	NUM_ATTRIBUTES
 } ATTRIBS;
 
@@ -1394,6 +1398,7 @@ typedef struct GfxShader {
     void (*tear_down)(struct GfxShader *shader, struct Graphics *graphics);
     GLuint gl_program;
     GLuint gl_vertex_array;
+    GLuint gl_vertex_buffer;
     struct DrawBuffer *draw_buffer;
 } GfxShader;
 
@@ -1458,6 +1463,8 @@ void Graphics_uniform1f(Graphics *graphics, GraphicsUniform uniform,
                         GLfloat x);
 void Graphics_uniform2f(Graphics *graphics, GraphicsUniform uniform,
                         GLfloat x, GLfloat y);
+void Graphics_uniform4f(Graphics *graphics, GraphicsUniform uniform,
+                        GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
 
 // Projection matrix
@@ -2165,6 +2172,7 @@ ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
 void ParallaxLayer_p_cascade(ParallaxLayer *layer, double top, double bot);
 
 struct Scene;
+struct Engine;
 typedef struct Parallax {
     DArray *layers;
     Camera *camera;
@@ -2176,7 +2184,7 @@ typedef struct Parallax {
     struct Scene *scene;
 } Parallax;
 
-Parallax *Parallax_create();
+Parallax *Parallax_create(struct Engine *engine);
 void Parallax_destroy(Parallax *parallax);
 int Parallax_add_layer(Parallax *parallax, ParallaxLayer *layer);
 void Parallax_render(Parallax *parallax, Graphics *graphics);
@@ -2530,7 +2538,7 @@ typedef struct TileMapLayer {
     int gid_count;
     uint32_t *tile_gids;
     GfxTexture *atlas;
-    uint8_t *raw_atlas;
+    GLfloat *raw_atlas;
     Tileset *tileset;
 } TileMapLayer;
 
@@ -3025,6 +3033,7 @@ typedef struct Overlay {
     
     Entity *track_entity;
     OverlayEntityEdge track_entity_edge;
+    VPoint track_entity_offset;
   
     float alpha;
   

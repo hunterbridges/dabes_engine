@@ -53,6 +53,8 @@ int luab_Overlay_draw_string(lua_State *L) {
     VVector4 color = luaL_tovvector4(L, 3);
     VPoint origin = luaL_tovpoint(L, 4);
     const char *align = lua_tostring(L, 5);
+  
+    origin = VPoint_add(origin, overlay->track_entity_offset);
 
     GfxTextAlign text_align = GfxTextAlignLeft;
     if (streq(align, "center")) text_align = GfxTextAlignCenter;
@@ -95,8 +97,10 @@ int luab_Overlay_draw_sprite(lua_State *L) {
 
     Engine *engine = luaL_get_engine(L);
 
-    VRect rect = VRect_from_xywh(center.x - scale.x * sprite->cell_size.w / 2.0,
-                                 center.y - scale.y * sprite->cell_size.h / 2.0,
+    VRect rect = VRect_from_xywh(center.x - scale.x * sprite->cell_size.w / 2.0
+                                     + overlay->track_entity_offset.x,
+                                 center.y - scale.y * sprite->cell_size.h / 2.0
+                                     + overlay->track_entity_offset.y,
                                  sprite->cell_size.w * scale.x,
                                  sprite->cell_size.h * scale.y);
     GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");

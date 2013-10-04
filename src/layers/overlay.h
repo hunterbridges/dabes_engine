@@ -3,6 +3,7 @@
 #include "../graphics/graphics.h"
 #include "../entities/entity.h"
 #include "../scenes/scene.h"
+#include "../math/vpoint.h"
 
 struct Sprite;
 
@@ -27,6 +28,7 @@ typedef struct Overlay {
     
     Entity *track_entity;
     OverlayEntityEdge track_entity_edge;
+    VPoint track_entity_offset;
   
     float alpha;
   

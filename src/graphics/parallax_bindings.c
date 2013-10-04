@@ -89,6 +89,7 @@ const char *luab_Parallax_metatable = "DaBes.parallax";
 
 int luab_Parallax_new(lua_State *L) {
     Parallax_userdata *ud = NULL;
+    Engine *engine = luaL_get_engine(L);
 
     int c = lua_gettop(L);
 
@@ -99,7 +100,7 @@ int luab_Parallax_new(lua_State *L) {
     luaL_getmetatable(L, luab_Parallax_metatable);
     lua_setmetatable(L, -2);
 
-    Parallax *parallax = Parallax_create();
+    Parallax *parallax = Parallax_create(engine);
 
     int i = 0;
     for (i = 0; i < c; i++) {

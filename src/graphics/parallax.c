@@ -32,10 +32,10 @@ error:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Parallax *Parallax_create() {
+Parallax *Parallax_create(Engine *engine) {
     Parallax *parallax = malloc(sizeof(Parallax));
     check(parallax != NULL, "Could not create parallax");
-
+  
     parallax->layers = DArray_create(sizeof(ParallaxLayer *), 8);
     parallax->camera = NULL;
     GfxSize level = {1, 1};
@@ -62,7 +62,7 @@ error:
 
 void Parallax_destroy(Parallax *parallax) {
     check(parallax != NULL, "No parallax to destroy");
-
+  
     DArray_destroy(parallax->layers);
     free(parallax);
 
@@ -88,6 +88,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     GfxShader *pshader = Graphics_get_shader(graphics, "parallax");
 
     Graphics_use_shader(graphics, dshader);
+  
     double bg_scale = parallax->camera->scale;
     VPoint screen_center = {
       .x = parallax->camera->screen_size.w / 2.0,
@@ -140,15 +141,10 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
     DrawBuffer_empty(dshader->draw_buffer);
 
     Graphics_use_shader(graphics, pshader);
-    Graphics_reset_modelview_matrix(graphics);
-
+  
     Graphics_uniformMatrix4fv(graphics,
                               UNIFORM_PARALLAX_PROJECTION_MATRIX,
                               graphics->projection_matrix.gl,
-                              GL_FALSE);
-    Graphics_uniformMatrix4fv(graphics,
-                              UNIFORM_PARALLAX_MODELVIEW_MATRIX,
-                              graphics->modelview_matrix.gl,
                               GL_FALSE);
     Graphics_uniform2f(graphics,
                        UNIFORM_PARALLAX_CAMERA_POS,
@@ -159,14 +155,19 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         hyp / screen_size.w,
         hyp / screen_size.h
     };
+    Graphics_uniform2f(graphics,
+                       UNIFORM_PARALLAX_STRETCH,
+                       stretch.x,
+                       stretch.y);
   
-    VVector4 texpos[4] = {
-      {.raw = {0,0,0,0}},
-      {.raw = {stretch.x,0,0,0}},
-      {.raw = {0,1.0,0,0}},
-      {.raw = {stretch.x,1.0,0,0}}
-    };
-
+  /*
+    Graphics_uniform1i(graphics,
+                       UNIFORM_PARALLAX_TEXTURE,
+                       0);
+   */
+  
+    Graphics_reset_modelview_matrix(graphics);
+  
     int i = 0;
     for (i = 0; i < DArray_count(parallax->layers); i++) {
         ParallaxLayer *layer = DArray_get(parallax->layers, i);
@@ -180,20 +181,26 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         // double final_scale = 1 + (sx - 1) * layer->p_factor;
         double layer_wiggle = layer->y_wiggle * bg_scale * wiggle_factor;
 
-        VRect rect = VRect_from_xywh(
-                0 - (hyp - parallax->camera->screen_size.w) / 2.0,
-                screen_center.y + layer->offset.y * final_scale
-                    - (y_wiggle + layer_wiggle),
-                hyp,
-                texture->size.h * final_scale
-        );
-        rect = VRect_round_out(rect);
+        Graphics_reset_modelview_matrix(graphics);
+        Graphics_translate_modelview_matrix(graphics, 0 - (hyp - parallax->camera->screen_size.w),
+                                            screen_center.y + layer->offset.y * final_scale
+                                              - (y_wiggle + layer_wiggle),
+                                            0);
+        Graphics_scale_modelview_matrix(graphics, hyp, texture->size.h * final_scale, 1);
+        Graphics_uniformMatrix4fv(graphics,
+                                  UNIFORM_PARALLAX_MODELVIEW_MATRIX,
+                                  graphics->modelview_matrix.gl,
+                                  GL_FALSE);
 
         double repeat_width = layer->texture->size.w * final_scale /
             parallax->camera->screen_size.w;
+      
+        // NOTE: I am storing the reciprocal width in the y slot here.
+        // If this were to ever be modified to do Y parallax, then the Y would
+        // be used and the reciprocals would need to be moved to a new uniform.
         Graphics_uniform2f(graphics,
                            UNIFORM_PARALLAX_REPEAT_SIZE,
-                           repeat_width, 1.0);
+                           repeat_width, 1.0 / repeat_width);
         Graphics_uniform1f(graphics,
                            UNIFORM_PARALLAX_TEX_SCALE,
                            final_scale);
@@ -206,7 +213,6 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
                            UNIFORM_PARALLAX_TEX_PORTION,
                            pot_scale.x, pot_scale.y);
 
-        
         double repeats =
             parallax->level_size.w / (texture->size.w * final_scale);
         Graphics_uniform1f(graphics,
@@ -223,25 +229,6 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         Graphics_uniform1f(graphics,
                            UNIFORM_PARALLAX_FACTOR,
                            layer->p_factor);
-
-        int j = 0;
-        for (j = 0; j < 4; j++) {
-          float adjust = 0;
-          texpos[j].raw[0] += adjust;
-        }
-      
-        VVector4 vertices[8] = {
-          // Vertex
-          {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
-          {.raw = {rect.tr.x, rect.tr.y, 0, 1}},
-          {.raw = {rect.bl.x, rect.bl.y, 0, 1}},
-          {.raw = {rect.br.x, rect.br.y, 0, 1}},
-
-          // Texture
-          texpos[0], texpos[1], texpos[2], texpos[3]
-        };
-        glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(VVector4), vertices,
-                GL_STATIC_DRAW);
       
         Graphics_uniform2f(graphics,
                            UNIFORM_PARALLAX_ORIG_PIXEL,
@@ -254,9 +241,6 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
                            UNIFORM_PARALLAX_CASCADE_BOTTOM,
                            layer->cascade_bottom);
       
-        Graphics_uniform1i(graphics,
-                           UNIFORM_PARALLAX_TEXTURE,
-                           0);
         glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

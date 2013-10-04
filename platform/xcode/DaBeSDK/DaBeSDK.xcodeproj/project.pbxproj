@@ -646,7 +646,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = SDK;
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "The Telemetry Group";
 				TargetAttributes = {
 					CAF42A451780F67700C3220A = {
@@ -900,7 +900,6 @@
 		CA705CCD1783588A00D2C6E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -931,7 +930,6 @@
 		CA705CCE1783588A00D2C6E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -966,7 +964,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -999,7 +996,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1035,6 +1031,8 @@
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -1059,6 +1057,8 @@
 					"$(PROJECT_DIR)/../../../include/**",
 					"$(SDKROOT)/usr/include/libxml2",
 					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
+					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";

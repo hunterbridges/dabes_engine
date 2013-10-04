@@ -85,7 +85,8 @@ VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
 #pragma mark - GfxTexture
 
 static inline int data_potize(unsigned char **data, int width, int height,
-                              int *pot_width, int *pot_height, int components) {
+                              int *pot_width, int *pot_height, int components,
+                              size_t size) {
   int pot_w = 2;
   int pot_h = 2;
   while (pot_w < width) pot_w <<= 1;
@@ -95,7 +96,7 @@ static inline int data_potize(unsigned char **data, int width, int height,
 
   unsigned char *old_data = *data;
   unsigned char *resized_data = NULL;
-  resized_data = realloc(old_data, pot_d * pot_d * sizeof(unsigned char) * 4);
+  resized_data = realloc(old_data, pot_d * pot_d * sizeof(unsigned char) * 4 * size);
   check(resized_data != NULL, "Couldn't realloc texture for potize");
 
   *data = resized_data;
@@ -104,18 +105,27 @@ static inline int data_potize(unsigned char **data, int width, int height,
   *pot_width = pot_d;
   *pot_height = pot_d;
 
-  int last_orig_index = (width * height - 1) * components;
-  int i = 0;
+  long int last_orig_index = (width * height - 1) * components;
+  long int i = 0;
   for (i = last_orig_index; i >= 0; i -= components) {
-    int idx = i / components;
-    int old_col = idx % width;
-    int old_row = idx / width;
-    int new_index = (old_row * pot_d + old_col) * 4;
+    long int idx = i / components;
+    long int old_col = idx % width;
+    long int old_row = idx / width;
+    long int new_index = (old_row * pot_d + old_col) * 4;
 
-    new_data[new_index] = new_data[i];         // R
-    if (components > 1) new_data[new_index + 1] = new_data[i + 1]; // G
-    if (components > 2) new_data[new_index + 2] = new_data[i + 2]; // B
-    if (components > 3) new_data[new_index + 3] = new_data[i + 3]; // A
+    memmove(new_data + (new_index) * size, new_data + (i) * size, size); // R
+    if (components > 1) {
+      memmove(new_data + (new_index + 1) * size,
+              new_data + (i + 1) * size, size); // G
+    }
+    if (components > 2) {
+      memmove(new_data + (new_index + 2) * size,
+              new_data + (i + 2) * size, size); // B
+    }
+    if (components > 3) {
+      memmove(new_data + (new_index + 3) * size,
+              new_data + (i + 3) * size, size); // A
+    }
   }
 
   return 1;
@@ -124,7 +134,7 @@ error:
 }
 
 GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
-        GLenum source_format, int mipmap) {
+        GLenum source_format, int mipmap, size_t size) {
     GfxTexture *texture = calloc(1, sizeof(GfxTexture));
     check(texture != NULL, "Couldn't not allocate texture");
     texture->size.w = width;
@@ -137,7 +147,8 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     } else if (source_format == GL_RGB) {
       num_components = 3;
     }
-    int rc = data_potize(data, width, height, &pot_width, &pot_height, num_components);
+    int rc = data_potize(data, width, height, &pot_width, &pot_height, num_components,
+                         size);
     check(rc == 1, "Could not potize data");
 
     texture->pot_size.w = pot_width;
@@ -147,7 +158,10 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glGenTextures(1, &texture->gl_tex);
     er = Graphics_check();
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
+  
     GLenum color_format = GL_RGBA;
+    GLenum type = size == sizeof(float) ? GL_FLOAT : GL_UNSIGNED_BYTE;
+  
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -158,14 +172,16 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipmap ? 8 : 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 #endif
+  
     if (mipmap) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     } else {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pot_width,
-                 pot_height, 0, color_format,
-                 GL_UNSIGNED_BYTE, *data);
+  
+    glTexImage2D(GL_TEXTURE_2D, 0, color_format, pot_width,
+                 pot_height, 0, GL_RGBA,
+                 type, *data);
     if (mipmap) {
         glGenerateMipmap(GL_TEXTURE_2D);
     }
@@ -184,7 +200,7 @@ GfxTexture *GfxTexture_from_image(const char *image_name, int mipmap) {
     int x, y, n;
     unsigned char *data = stbi_load(image_name, &x, &y, &n, 4);
     GfxTexture *texture =
-        GfxTexture_from_data(&data, x, y, GL_RGBA, mipmap);
+        GfxTexture_from_data(&data, x, y, GL_RGBA, mipmap, sizeof(char));
     stbi_image_free(data);
     return texture;
 }
@@ -212,7 +228,8 @@ GfxFontChar *GfxFontChar_create(FT_Bitmap *bitmap, FT_Vector advance, float bitm
     uint8_t *buf = calloc(1, sz);
     memcpy(buf, bitmap->buffer, sz);
     fontchar->texture =
-        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_LUMINANCE, 1);
+        GfxTexture_from_data(&buf, bitmap->width, bitmap->rows, GL_LUMINANCE, 1,
+                             sizeof(char));
 
     fontchar->advance = advance;
     fontchar->bitmap_top = bitmap_top;
@@ -355,7 +372,6 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
 
     VVector4 tex = {.raw = {0,0,0,0}};
 
-    Graphics_uniform1i(graphics, UNIFORM_DECAL_HAS_TEXTURE, 0);
     Graphics_uniformMatrix4fv(graphics, UNIFORM_DECAL_PROJECTION_MATRIX,
                               graphics->projection_matrix.gl,
                               GL_FALSE);
@@ -392,7 +408,9 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
     glBufferData(GL_ARRAY_BUFFER, 8 * num_points * sizeof(VVector4), vertices,
             GL_STATIC_DRAW);
 
-    // Texture
+    Graphics_uniform1f(graphics,
+                       UNIFORM_DECAL_TEX_ALPHA_ADJ,
+                       0.0);
 #ifdef DABES_SDL
     glDisable(GL_MULTISAMPLE);
 #endif
@@ -573,14 +591,16 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     if (draw_buffer) {
         DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 8, vertices);
     } else {
-        Graphics_uniform1i(graphics,
-                           UNIFORM_DECAL_HAS_TEXTURE,
-                           texture ? texture->gl_tex : 0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
         if (texture) {
-          // glUniform1i(GfxShader_uniforms[UNIFORM_DECAL_TEXTURE], 0);
+          Graphics_uniform1f(graphics,
+                             UNIFORM_DECAL_TEX_ALPHA_ADJ,
+                             1.0);
           glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         } else {
+          Graphics_uniform1f(graphics,
+                             UNIFORM_DECAL_TEX_ALPHA_ADJ,
+                             0.0);
           glBindTexture(GL_TEXTURE_2D, 0);
         }
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -607,6 +627,12 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
                               UNIFORM_TEXT_PROJECTION_MATRIX,
                               graphics->projection_matrix.gl,
                               GL_FALSE);
+  
+    VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
+    Graphics_uniform4f(graphics,
+                       UNIFORM_TEXT_COLOR,
+                       cVertex.r, cVertex.g, cVertex.b, cVertex.a);
+  
 
     // Unfortunately we need to do a pre-pass for right and center.
     float line_width = 0;
@@ -635,98 +661,43 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
 
         GfxTexture *texture = fontchar->texture;
 
-        VRect tex_rect = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
         VPoint pot_scale = {1, 1};
         if (texture) {
             pot_scale.x = texture->size.w / texture->pot_size.w;
             pot_scale.y = texture->size.h / texture->pot_size.h;
-
-            int i = 0;
-            for (i = 0; i < 4; i++) {
-                VPoint vertex = VRect_vertex(tex_rect, i);
-                vertex = VPoint_multiply(vertex, pot_scale);
-                VRect_set_vertex(&tex_rect, i, vertex);
-            }
         }
-
-        VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
-
-        // Transpose modelview matrix because attribute reads columns, not rows.
-        VMatrix tmvm = graphics->modelview_matrix;
-
-        VRect glyph_rect = VRectZero;
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TEXT_STRETCH,
+                           pot_scale.x, pot_scale.y);
+      
+        VPoint trans = VPointZero;
         switch (align) {
           case GfxTextAlignRight: {
-            glyph_rect = VRect_from_xywh(origin.x - line_width + xo,
-                                         origin.y - fontchar->bitmap_top,
-                                         texture->size.w,
-                                         texture->size.h);
+            trans = VPoint_make(origin.x - line_width + xo,
+                                origin.y - fontchar->bitmap_top);
           } break;
 
           case GfxTextAlignCenter: {
-            glyph_rect = VRect_from_xywh(origin.x - line_width / 2 + xo,
-                                         origin.y - fontchar->bitmap_top,
-                                         texture->size.w,
-                                         texture->size.h);
+            trans = VPoint_make(origin.x - line_width / 2 + xo,
+                                origin.y - fontchar->bitmap_top);
           } break;
 
           case GfxTextAlignLeft:
           default: {
-            glyph_rect = VRect_from_xywh(origin.x + xo,
-                                         origin.y - fontchar->bitmap_top,
-                                         texture->size.w,
-                                         texture->size.h);
+            trans = VPoint_make(origin.x + xo,
+                                origin.y - fontchar->bitmap_top);
           } break;
 
         }
+      
+        Graphics_reset_modelview_matrix(graphics);
+        Graphics_translate_modelview_matrix(graphics, trans.x, trans.y, 0);
+        Graphics_scale_modelview_matrix(graphics,
+                                        texture->size.w, texture->size.h, 1);
+        Graphics_uniformMatrix4fv(graphics,
+                                  UNIFORM_TEXT_MODELVIEW_MATRIX,
+                                  graphics->modelview_matrix.gl, GL_FALSE);
 
-        VVector4 vertices[7 * 6] = {
-            {.raw = {glyph_rect.tl.x, glyph_rect.tl.y, 0, 1}},
-                cVertex,
-                {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
-                tmvm.v[0],
-                tmvm.v[1],
-                tmvm.v[2],
-                tmvm.v[3],
-            {.raw = {glyph_rect.tr.x, glyph_rect.tr.y, 0, 1}},
-                cVertex,
-                {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
-                tmvm.v[0],
-                tmvm.v[1],
-                tmvm.v[2],
-                tmvm.v[3],
-            {.raw = {glyph_rect.br.x, glyph_rect.br.y, 0, 1}},
-                cVertex,
-                {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
-                tmvm.v[0],
-                tmvm.v[1],
-                tmvm.v[2],
-                tmvm.v[3],
-
-            {.raw = {glyph_rect.br.x, glyph_rect.br.y, 0, 1}},
-                cVertex,
-                {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
-                tmvm.v[0],
-                tmvm.v[1],
-                tmvm.v[2],
-                tmvm.v[3],
-            {.raw = {glyph_rect.bl.x, glyph_rect.bl.y, 0, 1}},
-                cVertex,
-                {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
-                tmvm.v[0],
-                tmvm.v[1],
-                tmvm.v[2],
-                tmvm.v[3],
-            {.raw = {glyph_rect.tl.x, glyph_rect.tl.y, 0, 1}},
-                cVertex,
-                {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
-                tmvm.v[0],
-                tmvm.v[1],
-                tmvm.v[2],
-                tmvm.v[3],
-        };
-
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
         Graphics_uniform1i(graphics, UNIFORM_TEXT_TEXTURE, 0);
         glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -828,6 +799,25 @@ void Graphics_uniform2f(Graphics *graphics, GraphicsUniform uniform,
   memcpy(buf, vector, sizeof(GLfloat) * 2);
   graphics->uniforms[loc] = buf;
   glUniform2f(loc, x, y);
+}
+
+void Graphics_uniform4f(Graphics *graphics, GraphicsUniform uniform,
+                        GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
+  int loc = GfxShader_uniforms[uniform];
+  if (loc < 0) return;
+  
+  GLfloat vector[4] = {x, y, z, w};
+  if (graphics->uniforms[loc]) {
+    int cmp = memcmp(vector, graphics->uniforms[loc], sizeof(GLfloat) * 4);
+    if (cmp == 0) {
+      return;
+    }
+  }
+  
+  GLfloat *buf = realloc(graphics->uniforms[loc], 4 * sizeof(GLfloat));
+  memcpy(buf, vector, sizeof(GLfloat) * 4);
+  graphics->uniforms[loc] = buf;
+  glUniform4f(loc, x, y, z, w);
 }
 
 #pragma mark - Matrices
@@ -973,11 +963,11 @@ void Graphics_build_decal_shader(Graphics *graphics) {
 
     GLuint program = shader->gl_program;
     Graphics_get_uniform(graphics, program,
-                         "hasTexture",
-                         UNIFORM_DECAL_HAS_TEXTURE);
-    Graphics_get_uniform(graphics, program,
                          "projection",
                           UNIFORM_DECAL_PROJECTION_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "texAlphaAdj",
+                         UNIFORM_DECAL_TEX_ALPHA_ADJ);
     GfxShader_attributes[ATTRIB_DECAL_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_DECAL_COLOR] =
@@ -994,6 +984,8 @@ void Graphics_build_decal_shader(Graphics *graphics) {
     set_up_decal_shader(shader, graphics);
     shader->set_up = &set_up_decal_shader;
     shader->tear_down = &tear_down_decal_shader;
+  
+    shader->gl_vertex_buffer = graphics->array_buffer;
 
     shader->draw_buffer = DrawBuffer_create();
     return;
@@ -1055,8 +1047,14 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
                          "sheetPotSize",
                          UNIFORM_TILEMAP_SHEET_POT_SIZE);
     Graphics_get_uniform(graphics, program,
+                         "sheetPortion",
+                         UNIFORM_TILEMAP_SHEET_PORTION);
+    Graphics_get_uniform(graphics, program,
                          "mapRowsCols",
                          UNIFORM_TILEMAP_MAP_ROWS_COLS);
+    Graphics_get_uniform(graphics, program,
+                         "texelPerMap",
+                         UNIFORM_TILEMAP_TEXEL_PER_MAP);
     Graphics_get_uniform(graphics, program,
                          "atlas",
                          UNIFORM_TILEMAP_ATLAS);
@@ -1074,6 +1072,9 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
     set_up_tilemap_shader(shader, graphics);
     shader->set_up = &set_up_tilemap_shader;
     shader->tear_down = &tear_down_tilemap_shader;
+  
+    shader->gl_vertex_buffer = graphics->array_buffer;
+  
     return;
 error:
     if (shader) free(shader);
@@ -1087,12 +1088,17 @@ void set_up_parallax_shader(GfxShader *shader, Graphics *graphics) {
 
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
+  
+    glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
+  
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, 0, 0);
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, 0,
                           (GLvoid *)(sizeof(VVector4) * 4));
+  
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
 
     graphics->bind_vao(0);
 }
@@ -1102,8 +1108,9 @@ void tear_down_parallax_shader (GfxShader *shader, Graphics *graphics) {
 
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
-
     graphics->bind_vao(0);
+  
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
 }
 
 void Graphics_build_parallax_shader(Graphics *graphics) {
@@ -1129,6 +1136,9 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
     Graphics_get_uniform(graphics, program,
                          "texPortion",
                          UNIFORM_PARALLAX_TEX_PORTION);
+    Graphics_get_uniform(graphics, program,
+                         "stretch",
+                          UNIFORM_PARALLAX_STRETCH);
     Graphics_get_uniform(graphics, program,
                          "cascadeTop",
                          UNIFORM_PARALLAX_CASCADE_TOP);
@@ -1160,7 +1170,31 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE] =
         glGetAttribLocation(program, "texture");
+  
+    glGenBuffers(1, &shader->gl_vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
+    VVector4 texpos[4] = {
+      {.raw = {0, 0, 0, 1}},
+      {.raw = {1.0, 0, 0, 1}},
+      {.raw = {0, 1.0, 0, 1}},
+      {.raw = {1.0, 1.0, 0, 1}}
+    };
 
+    VRect rect = VRect_from_xywh(0, 0, 1, 1);
+    VVector4 vertices[8] = {
+          // Vertex
+          {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
+          {.raw = {rect.tr.x, rect.tr.y, 0, 1}},
+          {.raw = {rect.bl.x, rect.bl.y, 0, 1}},
+          {.raw = {rect.br.x, rect.br.y, 0, 1}},
+
+          // Texture
+          texpos[0], texpos[1], texpos[2], texpos[3]
+    };
+    glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(VVector4), vertices,
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
+  
     graphics->gen_vao(1, &shader->gl_vertex_array);
 
     set_up_parallax_shader(shader, graphics);
@@ -1178,42 +1212,20 @@ void set_up_text_shader(GfxShader *shader, Graphics *graphics) {
     graphics->bind_vao(shader->gl_vertex_array);
 
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_VERTEX]);
-    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_COLOR]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_TEX_POS]);
-    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX]);
-    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 1);
-    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 2);
-    glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 3);
 
-    // Position, color, texture, modelView * 4
-    int v_size = sizeof(VVector4) * 7;
+    glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
+  
+    int v_size = sizeof(VVector4) * 2;
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, v_size, 0);
 
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_COLOR], 4,
+    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_TEX_POS], 4,
                           GL_FLOAT, GL_FALSE, v_size,
                           (GLvoid *)(sizeof(VVector4) * 1));
 
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_TEX_POS], 4,
-                          GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 2));
-
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX],
-                          4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 3));
-
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 1,
-                          4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 4));
-
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 2,
-                          4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 5));
-
-    glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 3,
-                          4, GL_FLOAT, GL_FALSE, v_size,
-                          (GLvoid *)(sizeof(VVector4) * 6));
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
 
     graphics->bind_vao(0);
 }
@@ -1222,12 +1234,7 @@ void tear_down_text_shader(GfxShader *shader, Graphics *graphics) {
     graphics->bind_vao(shader->gl_vertex_array);
 
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_VERTEX]);
-    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_COLOR]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_TEX_POS]);
-    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX]);
-    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 1);
-    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 2);
-    glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] + 3);
 
     graphics->bind_vao(0);
 }
@@ -1249,15 +1256,53 @@ void Graphics_build_text_shader(Graphics *graphics) {
     Graphics_get_uniform(graphics, program,
                          "projection",
                          UNIFORM_TEXT_PROJECTION_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "modelView",
+                         UNIFORM_TEXT_MODELVIEW_MATRIX);
+    Graphics_get_uniform(graphics, program,
+                         "stretch",
+                         UNIFORM_TEXT_STRETCH);
+    Graphics_get_uniform(graphics, program,
+                         "color",
+                         UNIFORM_TEXT_COLOR);
     GfxShader_attributes[ATTRIB_TEXT_VERTEX] =
         glGetAttribLocation(program, "position");
-    GfxShader_attributes[ATTRIB_TEXT_COLOR] =
-        glGetAttribLocation(program, "color");
     GfxShader_attributes[ATTRIB_TEXT_TEX_POS] =
         glGetAttribLocation(program, "texPos");
-    GfxShader_attributes[ATTRIB_TEXT_MODELVIEW_MATRIX] =
-        glGetAttribLocation(program, "modelView");
 
+    glGenBuffers(1, &shader->gl_vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
+    VVector4 texpos[4] = {
+      {.raw = {0, 0, 0, 1}},
+      {.raw = {1.0, 0, 0, 1}},
+      {.raw = {0, 1.0, 0, 1}},
+      {.raw = {1.0, 1.0, 0, 1}}
+    };
+
+    VRect rect = VRect_from_xywh(0, 0, 1, 1);
+    VVector4 vertices[2 * 6] = {
+          {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
+          texpos[0],
+      
+          {.raw = {rect.tr.x, rect.tr.y, 0, 1}},
+          texpos[1],
+      
+          {.raw = {rect.br.x, rect.br.y, 0, 1}},
+          texpos[3],
+           
+          {.raw = {rect.br.x, rect.br.y, 0, 1}},
+          texpos[3],
+      
+          {.raw = {rect.bl.x, rect.bl.y, 0, 1}},
+          texpos[2],
+      
+          {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
+          texpos[0],
+    };
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(VVector4), vertices,
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
+  
     graphics->gen_vao(1, &shader->gl_vertex_array);
 
     set_up_text_shader(shader, graphics);
@@ -1281,8 +1326,10 @@ Graphics *Graphics_create(Engine *engine) {
 
     graphics->screen_size.w = SCREEN_WIDTH;
     graphics->screen_size.h = SCREEN_HEIGHT;
+  
     glGenBuffers(1, &graphics->array_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
+  
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1437,10 +1484,12 @@ void Graphics_use_shader(Graphics *graphics, GfxShader *shader) {
         graphics->bind_vao(0);
 
         glUseProgram(0);
+        glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
     } else {
         graphics->bind_vao(shader->gl_vertex_array);
 
         glUseProgram(shader->gl_program);
+        glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
     }
     graphics->current_shader = shader;
 }

@@ -21,6 +21,7 @@ ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
 void ParallaxLayer_p_cascade(ParallaxLayer *layer, double top, double bot);
 
 struct Scene;
+struct Engine;
 typedef struct Parallax {
     DArray *layers;
     Camera *camera;
@@ -32,7 +33,7 @@ typedef struct Parallax {
     struct Scene *scene;
 } Parallax;
 
-Parallax *Parallax_create();
+Parallax *Parallax_create(struct Engine *engine);
 void Parallax_destroy(Parallax *parallax);
 int Parallax_add_layer(Parallax *parallax, ParallaxLayer *layer);
 void Parallax_render(Parallax *parallax, Graphics *graphics);
