@@ -173,18 +173,22 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 #endif
   
+#if defined(DABES_IOS) || defined(DABES_MAC)
     if (mipmap) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     } else {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     }
-  
+#endif
+
     glTexImage2D(GL_TEXTURE_2D, 0, color_format, pot_width,
                  pot_height, 0, GL_RGBA,
                  type, *data);
+#if defined(DABES_IOS) || defined(DABES_MAC)
     if (mipmap) {
         glGenerateMipmap(GL_TEXTURE_2D);
     }
+#endif
     er = Graphics_check();
     check(er == GL_NO_ERROR, "Error loading texture: %d", er);
     return texture;
