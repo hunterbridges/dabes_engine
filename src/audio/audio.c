@@ -221,9 +221,14 @@ void Audio_set_sfx_volume(Audio *audio, double vol) {
 void *Audio_t_work(void *threadarg) {
     Audio *audio = threadarg;
 
+    struct timespec tim, tim2;
+    tim.tv_sec = 0;
+    tim.tv_nsec = 31250000L;
+  
     int rc = 0;
     while (rc == 0) {
         rc = Audio_t_stream(audio);
+        nanosleep(&tim, &tim2);
     }
 
     log_info("Audio_t_work(): exiting...");
