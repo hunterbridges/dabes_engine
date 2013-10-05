@@ -885,44 +885,44 @@
                             </tabViewItem>
                             <tabViewItem label="Audio" identifier="" id="qcZ-zB-qra">
                                 <view key="view" id="dsN-si-owy">
-                                    <rect key="frame" x="10" y="33" width="228" height="266"/>
+                                    <rect key="frame" x="10" y="33" width="228" height="280"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HFh-AG-hbE">
-                                            <rect key="frame" x="14" y="246" width="200" height="17"/>
+                                            <rect key="frame" x="14" y="260" width="200" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Mixer" id="PVL-jF-rCY">
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MAd-va-fJb">
-                                            <rect key="frame" x="192" y="144" width="21" height="96"/>
+                                            <rect key="frame" x="192" y="158" width="21" height="96"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="left" sliderType="linear" id="FoG-Pu-DLQ"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="FoG-Pu-DLQ"/>
                                             <connections>
                                                 <action selector="masterVolSliderChanged:" target="539" id="PLl-Ct-Nmg"/>
                                             </connections>
                                         </slider>
                                         <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6x5-Ex-aIJ">
-                                            <rect key="frame" x="15" y="144" width="21" height="96"/>
+                                            <rect key="frame" x="15" y="158" width="21" height="96"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="left" sliderType="linear" id="XON-XH-f0K"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="XON-XH-f0K"/>
                                             <connections>
                                                 <action selector="sfxVolSliderChanged:" target="539" id="Jz3-jM-dkN"/>
                                             </connections>
                                         </slider>
                                         <slider horizontalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zYj-lt-6DT">
-                                            <rect key="frame" x="104" y="144" width="21" height="96"/>
+                                            <rect key="frame" x="104" y="158" width="21" height="96"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="left" sliderType="linear" id="qAs-II-hQ9"/>
+                                            <sliderCell key="cell" continuous="YES" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="right" sliderType="linear" id="qAs-II-hQ9"/>
                                             <connections>
                                                 <action selector="musicVolSliderChanged:" target="539" id="TOM-GD-FSf"/>
                                             </connections>
                                         </slider>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CeS-Dt-Pq5">
-                                            <rect key="frame" x="177" y="122" width="51" height="17"/>
+                                            <rect key="frame" x="177" y="136" width="51" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Master" id="f9U-mH-1B5">
                                                 <font key="font" metaFont="system"/>
@@ -931,7 +931,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o66-8f-7wg">
-                                            <rect key="frame" x="6" y="122" width="38" height="17"/>
+                                            <rect key="frame" x="6" y="136" width="38" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Sfx" id="vLU-DW-tPw">
                                                 <font key="font" metaFont="system"/>
@@ -940,13 +940,42 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eBf-63-ZaH">
-                                            <rect key="frame" x="94" y="122" width="41" height="17"/>
+                                            <rect key="frame" x="94" y="136" width="41" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Music" id="RG2-Ju-ngq">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7g4-26-hwi">
+                                            <rect key="frame" x="14" y="111" width="183" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Thread sleep duration (ns)" id="O2D-EM-Qic">
+                                                <font key="font" metaFont="systemBold"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cST-Fw-c5t">
+                                            <rect key="frame" x="15" y="84" width="198" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1000000000" doubleValue="325000000" tickMarkPosition="above" sliderType="linear" id="gHV-vj-7Iu"/>
+                                            <connections>
+                                                <action selector="threadSleepSliderChanged:" target="539" id="KTm-pq-CtC"/>
+                                            </connections>
+                                        </slider>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vcd-yW-GTH">
+                                            <rect key="frame" x="17" y="56" width="194" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" title="1000000000" drawsBackground="YES" id="DF6-0a-0ax">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="threadSleepTextFieldChanged:" target="539" id="rvD-gd-dzc"/>
+                                            </connections>
                                         </textField>
                                     </subviews>
                                     <constraints>
@@ -969,6 +998,8 @@
                             <outlet property="audioMasterVolSlider" destination="MAd-va-fJb" id="wL6-re-NYX"/>
                             <outlet property="audioMusicVolSlider" destination="zYj-lt-6DT" id="34x-ZN-MHj"/>
                             <outlet property="audioSfxVolSlider" destination="6x5-Ex-aIJ" id="tis-Vx-k0O"/>
+                            <outlet property="audioThreadSleepField" destination="Vcd-yW-GTH" id="d90-Lv-aPp"/>
+                            <outlet property="audioThreadSleepSlider" destination="cST-Fw-c5t" id="bhB-lm-xt3"/>
                             <outlet property="cameraDebugCheckbox" destination="826" id="846"/>
                             <outlet property="cameraFocalLabel" destination="775" id="813"/>
                             <outlet property="cameraFocalPanner" destination="725" id="812"/>

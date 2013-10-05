@@ -42,6 +42,8 @@ Audio *Audio_create() {
     audio->master_volume = 1.0;
     audio->music_volume = 1.0;
     audio->sfx_volume = 1.0;
+  
+    audio->t_sleep_nano = 100000000L;
 
     Audio_t_create(audio);
 
@@ -223,11 +225,11 @@ void *Audio_t_work(void *threadarg) {
 
     struct timespec tim, tim2;
     tim.tv_sec = 0;
-    tim.tv_nsec = 31250000L;
   
     int rc = 0;
     while (rc == 0) {
         rc = Audio_t_stream(audio);
+        tim.tv_nsec = audio->t_sleep_nano;
         nanosleep(&tim, &tim2);
     }
 

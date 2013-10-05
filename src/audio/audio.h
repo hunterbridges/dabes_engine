@@ -22,6 +22,8 @@ typedef struct Audio {
     double master_volume;
     double music_volume;
     double sfx_volume;
+  
+    long t_sleep_nano;
 
     pthread_t thread;
     pthread_mutex_t run_lock;

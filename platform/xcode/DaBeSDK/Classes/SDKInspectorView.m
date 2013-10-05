@@ -54,6 +54,8 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
 @property (nonatomic, strong) IBOutlet NSSlider *audioSfxVolSlider;
 @property (nonatomic, strong) IBOutlet NSSlider *audioMusicVolSlider;
 @property (nonatomic, strong) IBOutlet NSSlider *audioMasterVolSlider;
+@property (nonatomic, strong) IBOutlet NSSlider *audioThreadSleepSlider;
+@property (nonatomic, strong) IBOutlet NSTextField *audioThreadSleepField;
 
 @end
 
@@ -149,6 +151,8 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
       self.audioMasterVolSlider.doubleValue = self.engineVC.engine->audio->master_volume;
       self.audioMusicVolSlider.doubleValue = self.engineVC.engine->audio->music_volume;
       self.audioSfxVolSlider.doubleValue = self.engineVC.engine->audio->sfx_volume;
+      self.audioThreadSleepSlider.integerValue = self.engineVC.engine->audio->t_sleep_nano;
+      self.audioThreadSleepField.integerValue = self.engineVC.engine->audio->t_sleep_nano;
   }
   if (self.engineVC.scene) {
       self.cameraLerpSlider.doubleValue = self.engineVC.scene->camera->lerp;
@@ -431,6 +435,8 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
   }
 }
 
+#pragma mark - Audio Tab
+
 - (IBAction)sfxVolSliderChanged:(id)sender {
     if (!self.engineVC.engine) return;
     
@@ -450,6 +456,24 @@ NSString *kControlChangedNotification = @"kControlChangedNotification";
     
     NSSlider *slider = sender;
     Audio_set_master_volume(self.engineVC.engine->audio, slider.doubleValue);
+}
+
+- (IBAction)threadSleepSliderChanged:(id)sender {
+    NSSlider *slider = sender;
+    long sleep = [slider integerValue];
+    self.audioThreadSleepField.integerValue = sleep;
+    if (self.engineVC.engine) {
+      self.engineVC.engine->audio->t_sleep_nano = sleep;
+    }
+}
+
+- (IBAction)threadSleepTextFieldChanged:(id)sender {
+    NSTextField *field = sender;
+    long sleep = [field integerValue];
+    self.audioThreadSleepSlider.integerValue = sleep;
+    if (self.engineVC.engine) {
+      self.engineVC.engine->audio->t_sleep_nano = sleep;
+    }
 }
 
 #pragma mark - Recorder Panel Actions
