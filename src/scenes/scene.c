@@ -26,6 +26,10 @@ Scene *Scene_create(Engine *engine, SceneProto proto) {
     scene->cover_color = cover_color;
 
     scene->gravity = VPointZero;
+  
+    scene->bg_z = -255.f;
+    scene->cover_z = 0.f;
+  
     return scene;
 error:
     return NULL;
@@ -84,7 +88,7 @@ void Scene_draw_debug_grid(Scene *scene, Graphics *graphics) {
                                          row * grid * ppm,
                                          grid * ppm,
                                          grid * ppm);
-            Graphics_stroke_rect(graphics, rect, color, 1, 0);
+            Graphics_stroke_rect(graphics, rect, color, 1, 0, 0);
         }
     }
 }
@@ -200,8 +204,8 @@ void Scene_start(Scene *scene, Engine *engine) {
     check(engine != NULL, "Scene requires engine to start");
     if (scene->started) return;
     assert(scene->entities == NULL);
-    scene->entities = BSTree_create(Entity_z_cmp);
-    scene->overlays = BSTree_create(Overlay_z_cmp);
+    scene->entities = BSTree_create(Entity_cmp);
+    scene->overlays = BSTree_create(Overlay_cmp);
 
     if (scene->proto.start) scene->_(start)(scene, engine);
 
@@ -339,7 +343,7 @@ static inline int entity_render_sel_traverse_cb(BSTreeNode *node,
     VRect entity_rect = Entity_real_rect(entity);
     GLfloat color[4] = {1, 1, 1, 0.5};
     if (entity->selected) color[3] = 1.0;
-    Graphics_stroke_rect(ctx->engine->graphics, entity_rect, color, 2, 0);
+    Graphics_stroke_rect(ctx->engine->graphics, entity_rect, color, 2, 0, 0);
     return 0;
 }
 
@@ -355,7 +359,7 @@ void Scene_project_screen(Scene *scene, Engine *engine) {
     Graphics_project_screen_camera(engine->graphics, scene->camera);
 }
 
-void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z) {
     if (color.a > 0.0) {
         GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
         Graphics_use_shader(engine->graphics, dshader);
@@ -371,7 +375,7 @@ void Scene_fill(Scene *scene, Engine *engine, VVector4 color) {
                                   GL_FALSE);
         Graphics_draw_rect(engine->graphics, NULL, cover_rect,
                 color.raw, NULL, VPointZero, GfxSizeZero,
-                0, 0, 1);
+                0, 1, z);
     }
 }
 
@@ -392,7 +396,7 @@ void Scene_add_entity(Scene *scene, Engine *engine, struct Entity *entity) {
     assert(scene != NULL);
     entity->pixels_per_meter = scene->pixels_per_meter;
     Entity_set_add_index(entity, scene->entity_count++);
-    BSTree_set(scene->entities, &entity->z_key, entity);
+    BSTree_set(scene->entities, &entity->ukey, entity);
     entity->scene = scene;
     if (scene->proto.add_entity_cb) {
         scene->_(add_entity_cb)(scene, engine, entity);
@@ -403,7 +407,7 @@ void Scene_remove_entity(Scene *scene, Engine *engine,
                          struct Entity *entity) {
     assert(entity != NULL);
     assert(scene != NULL);
-    BSTree_delete(scene->entities, &entity->z_key);
+    BSTree_delete(scene->entities, &entity->ukey);
     if (scene->proto.remove_entity_cb) {
         scene->_(remove_entity_cb)(scene, engine, entity);
     }
@@ -413,12 +417,12 @@ void Scene_add_overlay(Scene *scene, Overlay *overlay) {
     assert(overlay != NULL);
     assert(scene != NULL);
     Overlay_set_add_index(overlay, scene->overlay_count++);
-    BSTree_set(scene->overlays, &overlay->z_key, overlay);
+    BSTree_set(scene->overlays, &overlay->ukey, overlay);
     overlay->scene = scene;
 }
 
 void Scene_remove_overlay(Scene *scene, Overlay *overlay) {
     assert(overlay != NULL);
     assert(scene != NULL);
-    BSTree_delete(scene->overlays, &overlay->z_key);
+    BSTree_delete(scene->overlays, &overlay->ukey);
 }

@@ -9,10 +9,11 @@ ParallaxLayer *ParallaxLayer_create(GfxTexture *tex) {
 
     layer->scale = 1;
     layer->texture = tex;
+    layer->z = -180.f;
     memcpy(&layer->texture_size, &layer->texture->size, sizeof(GfxSize));
 
     ParallaxLayer_p_cascade(layer, 1, 1);
-    
+  
     return layer;
 error:
     return NULL;
@@ -54,6 +55,8 @@ Parallax *Parallax_create(Engine *engine) {
     parallax->y_wiggle = 0.0;
     parallax->sea_level = 1.0;
 
+    parallax->bg_z = -200.f;
+  
     return parallax;
 error:
     if (parallax) free(parallax);
@@ -128,7 +131,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
             0 - (hyp - screen_size.h) / 2.0,
             hyp, hyp);
     Graphics_draw_rect(graphics, dshader->draw_buffer, sea_rect, parallax->sea_color.raw,
-        NULL, VPointZero, GfxSizeZero, 0, 0, 1);
+        NULL, VPointZero, GfxSizeZero, 0, 1, parallax->bg_z);
 
     // render sky color
     VRect sky_rect = VRect_from_xywh(
@@ -136,7 +139,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
             0 - (hyp - screen_size.h) / 2.0,
             hyp, hyp / 2.0 - y_wiggle);
     Graphics_draw_rect(graphics, dshader->draw_buffer, sky_rect, parallax->sky_color.raw,
-        NULL, VPointZero, GfxSizeZero, 0, 0, 1);
+        NULL, VPointZero, GfxSizeZero, 0, 1, parallax->bg_z + 10);
     DrawBuffer_draw(dshader->draw_buffer, graphics);
     DrawBuffer_empty(dshader->draw_buffer);
 
@@ -185,7 +188,7 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
         Graphics_translate_modelview_matrix(graphics, 0 - (hyp - parallax->camera->screen_size.w),
                                             screen_center.y + layer->offset.y * final_scale
                                               - (y_wiggle + layer_wiggle),
-                                            0);
+                                            layer->z);
         Graphics_scale_modelview_matrix(graphics, hyp, texture->size.h * final_scale, 1);
         Graphics_uniformMatrix4fv(graphics,
                                   UNIFORM_PARALLAX_MODELVIEW_MATRIX,

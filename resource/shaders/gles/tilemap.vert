@@ -9,6 +9,6 @@ uniform vec2 mapSize;
 
 void main()
 {
-  gl_Position = projection * modelView * position;
+  gl_Position = projection * (modelView * position);
   textureVarying = texture;
 }

@@ -73,6 +73,9 @@ typedef struct Scene {
     TileMap *tile_map;
     Canvas *canvas;
 
+    float bg_z;
+    float cover_z;
+  
     VVector4 bg_color;
     VVector4 cover_color;
 
@@ -110,7 +113,7 @@ int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 
 // Rendering
 void Scene_project_screen(Scene *scene, Engine *engine);
-void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z);
 void Scene_render_entities(Scene *scene, Engine *engine);
 void Scene_render_selected_entities(Scene *scene, Engine *engine);
 void Scene_render_overlays(Scene *scene, Engine *engine);

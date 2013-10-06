@@ -37,30 +37,6 @@ static inline GLenum Graphics_check() {
     return er;
 }
 
-int Graphics_init_GL(int UNUSED(swidth), int UNUSED(sheight)) {
-    GLenum error = glGetError();
-    glEnable(GL_BLEND);
-    error = glGetError();
-
-#if defined(DABES_MAC) || defined(DABES_SDL)
-    glEnable(GL_MULTISAMPLE);
-    glDisable(GL_ALPHA_TEST);
-    glDisable(GL_FOG);
-#endif
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_DITHER);
-    glDisable(GL_STENCIL_TEST);
-
-    error = glGetError();
-    check(error == GL_NO_ERROR, "OpenGL init error...");
-    return 1;
-error:
-#ifdef DABES_SDL
-    printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-#endif
-    return 0;
-}
-
 // GFX
 VRect VRect_fill_size(GfxSize source_size, GfxSize dest_size) {
     double x, y, w, h;
@@ -373,7 +349,7 @@ error:
 
 void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
                           VPoint center, GLfloat color[4], double line_width, double rotation,
-                          int loop) {
+                          int loop, GLfloat z) {
     Graphics_reset_modelview_matrix(graphics);
 
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
@@ -404,7 +380,7 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
         int mvm_4_idx = i * 8 + 7;
 
         VPoint point = points[i];
-        VVector4 pos = {.raw = {point.x, point.y, 0.0, 1.0}};
+        VVector4 pos = {.raw = {point.x, point.y, z, 1.0}};
         vertices[pos_idx] = pos;
         vertices[color_idx] = cVertex;
         vertices[alpha_idx] = aVertex;
@@ -432,7 +408,7 @@ void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
 }
 
 void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
-        VPoint center, GLfloat color[4], double line_width) {
+        VPoint center, GLfloat color[4], double line_width, GLfloat z) {
     VPoint points[precision];
     check(graphics != NULL, "Graphics required");
     
@@ -452,7 +428,7 @@ void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
 
     Graphics_stroke_path(graphics, points, precision,
                          VPoint_add(center, circle.center),
-                         color, line_width, 0, 1);
+                         color, line_width, 0, 1, z);
 
     return;
 error:
@@ -460,7 +436,7 @@ error:
 }
 
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-                          double line_width, double rotation) {
+                          double line_width, double rotation, GLfloat z) {
     double w = rect.tr.x - rect.tl.x;
     double h = rect.bl.y - rect.tl.y;
     VPoint center = {
@@ -474,14 +450,14 @@ void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
         poly[i] = VPoint_subtract(VRect_vertex(rect, i), center);
     }
 
-    Graphics_stroke_path(graphics, poly, 4, center, color, line_width, rotation, 1);
+    Graphics_stroke_path(graphics, poly, 4, center, color, line_width, rotation, 1, z);
 }
 
 
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index,
-                          GLfloat alpha) {
+                          GLfloat color[4], double rot_degs, GLfloat alpha,
+                          GLfloat z) {
     SpriteFrame *frame = &sprite->frames[sprite->current_frame];
     VPoint frame_offset = frame->offset;
     frame_offset.x += sprite->padding;
@@ -493,12 +469,12 @@ void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
         draw_size.w = -sprite->cell_size.w;
     }
     Graphics_draw_rect(graphics, draw_buffer, rect, color, sprite->texture,
-                       frame_offset, draw_size, rot_degs, z_index, alpha);
+                       frame_offset, draw_size, rot_degs, alpha, z);
 }
 
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index, GLfloat alpha) {
+        GfxSize textureSize, double rotation, GLfloat alpha, GLfloat z) {
     check_mem(graphics);
     Graphics_reset_modelview_matrix(graphics);
     double w = rect.tr.x - rect.tl.x;
@@ -508,7 +484,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         rect.tl.x + w / 2,
         rect.tl.y + h / 2
     };
-    Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
+    Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0);
     Graphics_rotate_modelview_matrix(graphics, rotation, 0, 0, 1);
 
     VRect tex_rect = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
@@ -546,7 +522,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     VMatrix tmvm = graphics->modelview_matrix;
 
     VVector4 vertices[8 * 6] = {
-        {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+        {.raw = {-w / 2.0, -h / 2.0, z, 1}},
             cVertex,
             aVertex,
             {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
@@ -554,7 +530,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
-        {.raw = {w / 2.0, -h / 2.0, 0, 1}},
+        {.raw = {w / 2.0, -h / 2.0, z, 1}},
             cVertex,
             aVertex,
             {.raw={tex_rect.tr.x, tex_rect.tr.y, 0, 0}},
@@ -562,7 +538,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
-        {.raw = {w / 2.0, h / 2.0, 0, 1}},
+        {.raw = {w / 2.0, h / 2.0, z, 1}},
             cVertex,
             aVertex,
             {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
@@ -571,7 +547,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[2],
             tmvm.v[3],
 
-        {.raw = {w / 2.0, h / 2.0, 0, 1}},
+        {.raw = {w / 2.0, h / 2.0, z, 1}},
             cVertex,
             aVertex,
             {.raw={tex_rect.br.x,tex_rect.br.y, 0, 0}},
@@ -579,7 +555,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
-        {.raw = {-w / 2.0, h / 2.0, 0, 1}},
+        {.raw = {-w / 2.0, h / 2.0, z, 1}},
             cVertex,
             aVertex,
             {.raw={tex_rect.bl.x, tex_rect.bl.y, 0, 0}},
@@ -587,7 +563,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
             tmvm.v[1],
             tmvm.v[2],
             tmvm.v[3],
-        {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
+        {.raw = {-w / 2.0, -h / 2.0, z, 1}},
             cVertex,
             aVertex,
             {.raw={tex_rect.tl.x, tex_rect.tl.y, 0, 0}},
@@ -598,7 +574,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
     };
 
     if (draw_buffer) {
-        DrawBuffer_buffer(draw_buffer, texture, z_index, 6, 8, vertices);
+        DrawBuffer_buffer(draw_buffer, texture, 6, 8, vertices);
     } else {
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
         if (texture) {
@@ -621,14 +597,14 @@ error:
 
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
-        GLfloat shadow_color[4], VPoint shadow_offset) {
+        GLfloat shadow_color[4], VPoint shadow_offset, GLfloat z) {
 
     if (shadow_color[3] > 0.0 &&
             VPoint_rel(shadow_offset, VPointZero) != VPointRelWithin) {
         // This is totally lazy and could be optimized.
         VPoint so = VPoint_add(origin, shadow_offset);
         Graphics_draw_string(graphics, text, font, shadow_color, so,
-                             align, GfxGLClearColor, VPointZero);
+                             align, GfxGLClearColor, VPointZero, z);
     }
 
     char *c = text;
@@ -700,7 +676,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         }
       
         Graphics_reset_modelview_matrix(graphics);
-        Graphics_translate_modelview_matrix(graphics, trans.x, trans.y, 0);
+        Graphics_translate_modelview_matrix(graphics, trans.x, trans.y, z);
         Graphics_scale_modelview_matrix(graphics,
                                         texture->size.w, texture->size.h, 1);
         Graphics_uniformMatrix4fv(graphics,
@@ -1192,10 +1168,10 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
     VRect rect = VRect_from_xywh(0, 0, 1, 1);
     VVector4 vertices[8] = {
           // Vertex
-          {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
-          {.raw = {rect.tr.x, rect.tr.y, 0, 1}},
-          {.raw = {rect.bl.x, rect.bl.y, 0, 1}},
-          {.raw = {rect.br.x, rect.br.y, 0, 1}},
+          {.raw = {rect.tl.x, rect.tl.y, 1, 1}},
+          {.raw = {rect.tr.x, rect.tr.y, 1, 1}},
+          {.raw = {rect.bl.x, rect.bl.y, 1, 1}},
+          {.raw = {rect.br.x, rect.br.y, 1, 1}},
 
           // Texture
           texpos[0], texpos[1], texpos[2], texpos[3]
@@ -1336,12 +1312,38 @@ Graphics *Graphics_create(Engine *engine) {
     graphics->screen_size.w = SCREEN_WIDTH;
     graphics->screen_size.h = SCREEN_HEIGHT;
   
+    GLenum error = glGetError();
+    error = glGetError();
+
+#if defined(DABES_MAC) || defined(DABES_SDL)
+    glEnable(GL_MULTISAMPLE);
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_FOG);
+#endif
+  
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+  
+    glDisable(GL_DITHER);
+  
+    glDisable(GL_STENCIL_TEST);
+  
     glGenBuffers(1, &graphics->array_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
   
+#ifdef DABES_IOS
+    glClearDepthf(1.0f);
+#else
+    glClearDepth(1.0);
+#endif
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
+  
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
+    error = glGetError();
+    check(error == GL_NO_ERROR, "OpenGL init error...");
+  
     graphics->current_shader = NULL;
     graphics->shaders = Hashmap_create(NULL, Hashmap_fnv1a_hash);
     graphics->shader_list = List_create();

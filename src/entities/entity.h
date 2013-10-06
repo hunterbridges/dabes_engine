@@ -27,11 +27,11 @@ typedef struct Entity {
 
     int pixels_per_meter;
 
-    uint16_t z_index;
+    float z;
+  
     uint32_t timestamp;
     uint16_t add_index;
-
-    uint64_t z_key;
+    uint64_t ukey;
 
     VPoint center;
     GfxSize size;
@@ -51,9 +51,8 @@ void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
-void Entity_set_z_index(Entity *entity, uint16_t z_index);
 void Entity_set_add_index(Entity *entity, uint16_t add_index);
-int Entity_z_cmp(void *a, void *b);
+int Entity_cmp(void *a, void *b);
 
 int Entity_set_center(Entity *entity, VPoint center);
 int Entity_set_size(Entity *entity, GfxSize size);

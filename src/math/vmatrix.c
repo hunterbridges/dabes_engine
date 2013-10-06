@@ -129,10 +129,10 @@ VMatrix VMatrix_translate(VMatrix matrix, double tx, double ty, double tz) {
 VMatrix VMatrix_make_ortho(float left, float right, float top,
                            float bottom, float near, float far) {
   VMatrix ortho = {.gl = {
-    2 / (right - left),    0,                  0,                 -1 * (right + left) / (right - left),
-    0,                     2 / (top - bottom), 0,                 -1 * (top + bottom) / (top - bottom),
-    0,                     0,                  -2 / (far - near), far * near / (far - near),
-    0,                     0,                  0,                 1
+    2 / (right - left),    0,                  0,                 0,
+    0,                     2 / (top - bottom), 0,                 0,
+    0,                     0,                  -2 / (far - near), 0,
+    -1 * (right + left) / (right - left), -1 * (right + left) / (right - left), -1 * (far + near) / (far - near), 1
   }};
   return ortho;
 }
@@ -141,10 +141,12 @@ VMatrix VMatrix_make_perspective(float fov_radians, float aspect, float near, fl
 {
   float cotan = 1.0f / tanf(fov_radians / 2.0f);
   
-  VMatrix pers = {.gl = { cotan / aspect, 0.0f, 0.0f, 0.0f,
+  VMatrix pers = {.gl = {
+    cotan / aspect, 0.0f, 0.0f, 0.0f,
     0.0f, cotan, 0.0f, 0.0f,
     0.0f, 0.0f, (far + near) / (near - far), -1.0f,
-    0.0f, 0.0f, (2.0f * far * near) / (near - far), 0.0f }};
+    0.0f, 0.0f, (2.0f * far * near) / (near - far), 0.0f
+  }};
   
   return pers;
 }

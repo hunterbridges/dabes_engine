@@ -33,11 +33,6 @@ Overlay = BoundObject:extend({
         --- *(read only)* The @{scene|Scene} that contains `Overlay`
         scene = BoundObject.fwd_func("get_scene"),
 
-        --- Just like in CSS, the highest `z_index` gets drawn in front.
-        --
-        -- Overlays are always drawn in front of @{entity|Entities}.
-        z_index = BoundObject.fwd_func("get_z_index"),
-
         --- The @{entity|Entity} tracked by `Overlay`.
         --
         -- This will make point ```{0, 0}``` `track_entity_edge`'s point on the
@@ -60,7 +55,6 @@ Overlay = BoundObject:extend({
 
     _setters = {
         scene = BoundObject.readonly,
-        z_index = BoundObject.fwd_func("set_z_index"),
         track_entity = BoundObject.fwd_func_real("set_track_entity"),
         track_entity_edge = BoundObject.fwd_func("set_track_entity_edge")
     },
@@ -138,8 +132,8 @@ Overlay = BoundObject:extend({
     --     shadow_offset = {0, 0}
     -- })
     draw_string = BoundObject.fwd_func_opts( "draw_string",
-        {"string", "color", "origin", "align", "shadow_color", "shadow_offset"},
-        {align = "left", color = {1, 1, 1, 1}, origin = {0, 0}}),
+        {"string", "color", "origin", "align", "shadow_color", "shadow_offset", "z"},
+        {align = "left", color = {1, 1, 1, 1}, origin = {0, 0}, z = 0}),
 
     --- Draw a @{sprite|Sprite} to `Overlay`.
     --
@@ -174,8 +168,8 @@ Overlay = BoundObject:extend({
     --     scale = {2, 1}
     -- })
     draw_sprite = BoundObject.fwd_func_opts( "draw_sprite",
-        {"sprite", "color", "center", "rotation", "scale"},
-        {color = {0, 0, 0, 0}, center = {0, 0}, rotation = 0, scale = {1, 1}}),
+        {"sprite", "color", "center", "rotation", "scale", "z"},
+        {color = {0, 0, 0, 0}, center = {0, 0}, rotation = 0, scale = {1, 1}, z = 0}),
 
 --- Hooks.
 -- Callbacks implemented in subclasses to customize behavior. Hooks are called

@@ -83,9 +83,11 @@ typedef struct ShapeMatcher {
     int debug_shapes;
     VVector4 debug_shape_color;
     int debug_shape_width;
+    float debug_shape_z;
 
     VVector4 dot_color;
     int dot_width;
+    float dot_z;
 } ShapeMatcher;
 
 struct Engine;

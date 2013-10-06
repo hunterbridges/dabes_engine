@@ -13,7 +13,7 @@ Entity *Entity_create(Engine *engine) {
     VVector4 bg_color = {.raw = {0, 0, 0, 0}};
     entity->bg_color = bg_color;
     entity->timestamp = (uint32_t)Engine_get_ticks(engine);
-    Entity_set_z_index(entity, 1);
+    entity->z = -100.f;
 
     return entity;
 error:
@@ -83,8 +83,8 @@ void Entity_render(Entity *entity, struct Engine *engine,
     float degrees = rads * 180.0 / M_PI;
 
     Graphics_draw_sprite(graphics, entity->sprite, draw_buffer, rect,
-                         entity->bg_color.raw, degrees, entity->z_index,
-                         entity->alpha);
+                         entity->bg_color.raw, degrees, entity->alpha,
+                         entity->z);
 }
 
 void Entity_update(Entity *entity, Engine *engine) {
@@ -100,29 +100,23 @@ error:
     return;
 }
 
-void Entity_refresh_z_key(Entity *entity) {
+void Entity_refresh_ukey(Entity *entity) {
     if (entity->scene) {
-        BSTree_delete(entity->scene->entities, &entity->z_key);
+        BSTree_delete(entity->scene->entities, &entity->ukey);
     }
-    entity->z_key = (((uint64_t)entity->z_index << 48) |
-                     ((uint64_t)entity->timestamp << 16) |
+    entity->ukey = (((uint64_t)entity->timestamp << 16) |
                      entity->add_index);
     if (entity->scene) {
-        BSTree_set(entity->scene->entities, &entity->z_key, entity);
+        BSTree_set(entity->scene->entities, &entity->ukey, entity);
     }
-}
-
-void Entity_set_z_index(Entity *entity, uint16_t z_index) {
-    entity->z_index = z_index;
-    Entity_refresh_z_key(entity);
 }
 
 void Entity_set_add_index(Entity *entity, uint16_t add_index) {
     entity->add_index = add_index;
-    Entity_refresh_z_key(entity);
+    Entity_refresh_ukey(entity);
 }
 
-int Entity_z_cmp(void *a, void *b) {
+int Entity_cmp(void *a, void *b) {
     uint64_t left = a ? *(uint64_t *)a : 0;
     uint64_t right = b ? *(uint64_t *)b : 0;
     if (left > right) return 1;

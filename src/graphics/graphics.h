@@ -17,8 +17,6 @@ extern GLfloat GfxGLClearColor[4];
 
 struct Graphics;
 
-int Graphics_init_GL(int swidth, int sheight);
-
 typedef struct GfxSize {
     double w;
     double h;
@@ -182,17 +180,17 @@ void Graphics_destroy(Graphics *graphics);
 
 void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
         VPoint center, GLfloat color[4], double line_width, double rotation,
-        int loop);
+        int loop, GLfloat z);
 void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
-        VPoint center, GLfloat color[4], double line_width);
+        VPoint center, GLfloat color[4], double line_width, GLfloat z);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-        double line_width, double rotation);
+        double line_width, double rotation, GLfloat z);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index, GLfloat alpha);
+        GfxSize textureSize, double rotation, GLfloat alpha, GLfloat z);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
-        GLfloat shadow_color[4], VPoint shadow_offset);
+        GLfloat shadow_color[4], VPoint shadow_offset, GLfloat z);
 
 // Uniforms
 void Graphics_get_uniform(Graphics *graphics, GLint program, const GLchar *name,
@@ -251,8 +249,8 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index,
-                          GLfloat alpha);
+                          GLfloat color[4], double rot_degs,
+                          GLfloat alpha, GLfloat z);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 

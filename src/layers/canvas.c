@@ -32,6 +32,11 @@ Canvas *Canvas_create(Engine *engine) {
     canvas->bg_color = CANVAS_DEFAULT_BG_COLOR;
     canvas->simplified_path_color = CANVAS_DEFAULT_SIMP_COLOR;
     canvas->angle_color = VVector4ClearColor;
+  
+    canvas->bg_z = -10.f;
+    canvas->draw_z = -9.f;
+    canvas->simplified_path_z = -8.f;
+    canvas->angle_z = -7.f;
 
     return canvas;
 error:
@@ -201,7 +206,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                               UNIFORM_DECAL_PROJECTION_MATRIX,
                               engine->graphics->projection_matrix.gl, GL_FALSE);
     Graphics_draw_rect(engine->graphics, NULL, bg_rect, canvas->bg_color.raw,
-                       NULL, VPointZero, GfxSizeZero, 0, 1, canvas->alpha);
+                       NULL, VPointZero, GfxSizeZero, 0, canvas->alpha, canvas->bg_z);
 
     if (canvas->raw_points) {
         int num_points = DArray_count(canvas->raw_points);
@@ -221,7 +226,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
 
             Graphics_stroke_path(engine->graphics, path, num_points,
                                  VPointZero, path_draw_color.raw,
-                                 canvas->draw_width, 0, 0);
+                                 canvas->draw_width, 0, 0, canvas->draw_z);
 
             free(path);
         }
@@ -240,14 +245,14 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
             VPoint inv_diff = VPoint_scale(screen_diff, -1);
             Graphics_stroke_path(engine->graphics, path, 2,
                                  inv_diff, path_draw_color.raw,
-                                 canvas->draw_width, 0, 0);
+                                 canvas->draw_width, 0, 0, canvas->angle_z);
 
             VCircle circle  = {
                 .center = path[0],
                 .radius = r
             };
             Graphics_stroke_circle(engine->graphics, circle, 40,
-                inv_diff, path_draw_color.raw, canvas->draw_width);
+                inv_diff, path_draw_color.raw, canvas->draw_width, canvas->angle_z);
         }
     }
 
@@ -265,7 +270,7 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
 
         Graphics_stroke_path(engine->graphics, staged_path, num_staged,
                              VPointZero, path_draw_color.raw,
-                             canvas->draw_width, 0, 0);
+                             canvas->draw_width, 0, 0, canvas->simplified_path_z);
     }
     if (staged_path) {
         free(staged_path);
@@ -284,7 +289,8 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                           path->num_points, screen_diff,
                           canvas->shape_matcher->debug_shape_color.raw,
                           canvas->shape_matcher->debug_shape_width,
-                          0, 0);
+                          0, 0,
+                          canvas->shape_matcher->debug_shape_z);
                 VPath_destroy(path);
             }
             if (paths) free(paths);
@@ -302,7 +308,8 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
             Graphics_stroke_circle(engine->graphics, circle, 40,
                 VPoint_scale(screen_diff, -1),
                 canvas->shape_matcher->dot_color.raw,
-                canvas->shape_matcher->dot_width);
+                canvas->shape_matcher->dot_width,
+                canvas->shape_matcher->dot_z);
         }
         if (circles) free(circles);
     }

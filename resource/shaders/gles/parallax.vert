@@ -8,7 +8,7 @@ uniform vec2 stretch;
 
 void main()
 {
-  gl_Position = projection * modelView * position;
+  gl_Position = projection * (modelView * position);
   
   textureVarying = texture.xy * vec2(stretch.x, 1.0);
 }

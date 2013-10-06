@@ -36,7 +36,6 @@ Engine *Engine_create(Engine_resource_path_func path_func,
     *sdl_screen =
         SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_OPENGL);
 #endif
-    check(Graphics_init_GL(SCREEN_WIDTH, SCREEN_HEIGHT) == 1, "Init OpenGL");
 
     engine->resource_path =
         path_func ? path_func : Engine_default_resource_path;

@@ -14,7 +14,6 @@ Overlay *Overlay_create(Engine *engine, char *font_name, int px_size) {
     overlay->sprites = DArray_create(sizeof(Sprite *), 8);
     overlay->timestamp = (uint32_t)Engine_get_ticks(engine);
     overlay->track_entity_edge = OVERLAY_ENTITY_EDGE_MC;
-    Overlay_set_z_index(overlay, 1);
 
     return overlay;
 error:
@@ -106,29 +105,23 @@ void Overlay_render(Overlay *overlay, Engine *engine) {
     Scripting_call_hook(engine->scripting, overlay, "render");
 }
 
-void Overlay_refresh_z_key(Overlay *overlay) {
+void Overlay_refresh_ukey(Overlay *overlay) {
     if (overlay->scene) {
-        BSTree_delete(overlay->scene->overlays, &overlay->z_key);
+        BSTree_delete(overlay->scene->overlays, &overlay->ukey);
     }
-    overlay->z_key = (((uint64_t)overlay->z_index << 48) |
-                     ((uint64_t)overlay->timestamp << 16) |
+    overlay->ukey = (((uint64_t)overlay->timestamp << 16) |
                      overlay->add_index);
     if (overlay->scene) {
-        BSTree_set(overlay->scene->overlays, &overlay->z_key, overlay);
+        BSTree_set(overlay->scene->overlays, &overlay->ukey, overlay);
     }
-}
-
-void Overlay_set_z_index(Overlay *overlay, uint16_t z_index) {
-    overlay->z_index = z_index;
-    Overlay_refresh_z_key(overlay);
 }
 
 void Overlay_set_add_index(Overlay *overlay, uint16_t add_index) {
     overlay->add_index = add_index;
-    Overlay_refresh_z_key(overlay);
+    Overlay_refresh_ukey(overlay);
 }
 
-int Overlay_z_cmp(void *a, void *b) {
+int Overlay_cmp(void *a, void *b) {
     uint64_t left = a ? *(uint64_t *)a : 0;
     uint64_t right = b ? *(uint64_t *)b : 0;
     if (left > right) return 1;

@@ -24,6 +24,11 @@ typedef struct Canvas {
     float distance_threshold;
     float draw_width;
 
+    float bg_z;
+    float draw_z;
+    float simplified_path_z;
+    float angle_z;
+  
     VVector4 bg_color;
     VVector4 draw_color;
     VVector4 simplified_path_color;

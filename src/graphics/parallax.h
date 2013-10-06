@@ -15,6 +15,7 @@ typedef struct ParallaxLayer {
     double y_wiggle;
     double cascade_top;
     double cascade_bottom;
+    float z;
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
@@ -30,6 +31,7 @@ typedef struct Parallax {
     VVector4 sea_color;
     double y_wiggle;
     double sea_level;
+    float bg_z;
     struct Scene *scene;
 } Parallax;
 

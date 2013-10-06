@@ -1,21 +1,30 @@
 #include "draw_buffer.h"
 
-DrawBufferLayer *DrawBufferLayer_create(int z_index) {
-    DrawBufferLayer *layer = calloc(1, sizeof(DrawBufferLayer));
-    check(layer != NULL, "Couldn't create draw buffer layer");
-    
-    layer->z_index = z_index;
-    layer->texture_buffers = Hashmap_create(NULL, Hashmap_fnv1a_hash);
-    layer->textures = DArray_create(sizeof(DrawBufferTexture *), 10);
-    
-    return layer;
+DrawBuffer *DrawBuffer_create() {
+    DrawBuffer *buffer = calloc(1, sizeof(DrawBuffer));
+    check(buffer != NULL, "Couldn't create Draw Buffer");
+  
+    buffer->texture_buffers = Hashmap_create(NULL, Hashmap_fnv1a_hash);
+    buffer->textures = DArray_create(sizeof(DrawBufferTexture *), 10);
+  
+    return buffer;
 error:
     return NULL;
 }
 
-void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
-        int num_points, int num_attrs, VVector4 vectors[]) {
-    check(layer != NULL, "No layer to buffer");
+void DrawBuffer_destroy(DrawBuffer *buffer) {
+    check(buffer != NULL, "No Draw Buffer to destroy");
+    DrawBuffer_empty(buffer);
+    free(buffer);
+    return;
+error:
+    return;
+}
+
+void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture,
+                       int num_points, int num_attrs, VVector4 vectors[]) {
+    assert(buffer != NULL);
+  
     char key[32];
     int result = sprintf(key, "%p", texture);
     assert(result < 31);
@@ -25,13 +34,13 @@ void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
     int i = 0;
     int found = 0;
     DArray *shapes = NULL;
-    if (layer->textures) {
-        for (i = 0; i < DArray_count(layer->textures); i++) {
-            DrawBufferTexture *buftex = DArray_get(layer->textures, i);
+    if (buffer->textures) {
+        for (i = 0; i < DArray_count(buffer->textures); i++) {
+            DrawBufferTexture *buftex = DArray_get(buffer->textures, i);
             if (bstrcmp(buftex->key, bkey) != 0) continue;
                 
             found = 1;
-            shapes = Hashmap_get(layer->texture_buffers, bkey);
+            shapes = Hashmap_get(buffer->texture_buffers, bkey);
             bdestroy(bkey);
             break;
         }
@@ -42,10 +51,10 @@ void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
         check(buftex != NULL, "Couldn't create draw buffer texture");
         buftex->texture = texture;
         buftex->key = bkey;
-        DArray_push(layer->textures, buftex);
+        DArray_push(buffer->textures, buftex);
         
         shapes = DArray_create(sizeof(DrawBufferShape *), 24);
-        Hashmap_set(layer->texture_buffers, bkey, shapes);
+        Hashmap_set(buffer->texture_buffers, bkey, shapes);
     }
     
     int num_vectors = num_attrs * num_points;
@@ -58,29 +67,39 @@ void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
     memcpy(shape->vectors, vectors, sizeof(VVector4) * num_vectors);
     
     DArray_push(shapes, shape);
-    
+  
+    buffer->populated = 1;
+  
     return;
 error:
     return;
 }
 
-void DrawBufferLayer_destroy(DrawBufferLayer *layer) {
-    check(layer != NULL, "No Draw buffer layer to destroy");
-    DArray_clear_destroy(layer->textures);
-    Hashmap_destroy(layer->texture_buffers,
-                    (Hashmap_destroy_func)DArray_clear_destroy);
-    free(layer);
-    return;
-error:
-    return;
+void DrawBuffer_empty(DrawBuffer *buffer) {
+    assert(buffer != NULL);
+  
+    if (buffer->populated) {
+      buffer->populated = 0;
+      DArray_clear_destroy(buffer->textures);
+      buffer->textures = DArray_create(sizeof(DrawBufferTexture *), 10);
+      Hashmap_destroy(buffer->texture_buffers,
+                      (Hashmap_destroy_func)DArray_clear_destroy);
+      buffer->texture_buffers = Hashmap_create(NULL, Hashmap_fnv1a_hash);
+    }
 }
 
-void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics) {
+void DrawBuffer_draw(DrawBuffer *buffer, Graphics *graphics) {
+    assert(buffer != NULL);
+  
+    if (!buffer->populated) {
+      return;
+    }
+  
     int i = 0;
     
-    for (i = 0; i < DArray_count(layer->textures); i++) {
-        DrawBufferTexture *buftex = DArray_get(layer->textures, i);
-        DArray *texshapes = Hashmap_get(layer->texture_buffers, buftex->key);
+    for (i = 0; i < DArray_count(buffer->textures); i++) {
+        DrawBufferTexture *buftex = DArray_get(buffer->textures, i);
+        DArray *texshapes = Hashmap_get(buffer->texture_buffers, buftex->key);
         int j = 0;
         int num_points = 0;
         int num_vectors = 0;
@@ -121,93 +140,6 @@ void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics) {
         glBufferData(GL_ARRAY_BUFFER, num_vectors * sizeof(VVector4), vectors,
                 GL_DYNAMIC_DRAW);
         glDrawArrays(GL_TRIANGLES, 0, num_points);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-DrawBuffer *DrawBuffer_create() {
-    DrawBuffer *buffer = calloc(1, sizeof(DrawBuffer));
-    check(buffer != NULL, "Couldn't create Draw Buffer");
-    
-    return buffer;
-error:
-    return NULL;
-}
-
-void DrawBuffer_destroy(DrawBuffer *buffer) {
-    check(buffer != NULL, "No Draw Buffer to destroy");
-    DrawBuffer_empty(buffer);
-    free(buffer);
-    return;
-error:
-    return;
-}
-
-void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture, int z_index,
-                       int num_points, int num_attrs, VVector4 vectors[]) {
-    assert(buffer != NULL);
-    if (!buffer->layers) {
-        buffer->layers = List_create();
-    }
-    
-    DrawBufferLayer *layer = NULL;
-    if (buffer->layers->first) {
-        LIST_FOREACH(buffer->layers, first, next, current) {
-            DrawBufferLayer *this_layer = current->value;
-            DrawBufferLayer *prev_layer = NULL;
-            if (current->prev) prev_layer = current->prev->value;
-            
-            if (this_layer->z_index == z_index) {
-                layer = this_layer;
-                break;
-            } else if (this_layer->z_index > z_index) {
-                layer = DrawBufferLayer_create(z_index);
-                if (prev_layer) {
-                    ListNode *insert = calloc(1, sizeof(ListNode));
-                    
-                    insert->value = layer;
-                    insert->prev = current->prev;
-                    insert->next = current;
-                    current->prev->next = insert;
-                    current->prev = insert;
-                    buffer->layers->count++;
-                    break;
-                } else {
-                    List_unshift(buffer->layers, layer);
-                    break;
-                }
-            } else if (this_layer->z_index < z_index && !current->next) {
-                layer = DrawBufferLayer_create(z_index);
-                List_push(buffer->layers, layer);
-                break;
-            }
-        }
-    } else {
-        layer = DrawBufferLayer_create(z_index);
-        List_push(buffer->layers, layer);
-    }
-    
-    DrawBufferLayer_buffer(layer, texture, num_points, num_attrs, vectors);
-}
-
-void DrawBuffer_empty(DrawBuffer *buffer) {
-    assert(buffer != NULL);
-    if (!buffer->layers) return;
-    
-    LIST_FOREACH(buffer->layers, first, next, current) {
-        DrawBufferLayer_destroy(current->value);
-    }
-    List_destroy(buffer->layers);
-    buffer->layers = NULL;
-}
-
-void DrawBuffer_draw(DrawBuffer *buffer, Graphics *graphics) {
-    assert(buffer != NULL);
-    if (!buffer->layers) return;
-    
-    LIST_FOREACH(buffer->layers, first, next, current) {
-        DrawBufferLayer_draw(current->value, graphics);
     }
 }
 

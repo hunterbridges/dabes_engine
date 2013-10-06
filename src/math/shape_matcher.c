@@ -174,10 +174,12 @@ ShapeMatcher *ShapeMatcher_create(Shape *shapes[], int num_shapes) {
     VVector4 dot_color = {.raw = {0.5, 0.5, 0.5, 0.75}};
     matcher->dot_color = dot_color;
     matcher->dot_width = 2;
+    matcher->dot_z = -5.f;
 
     VVector4 debug_shape_color = {.raw = {0, 1.0, 1.0, 1.0}};
     matcher->debug_shape_color = debug_shape_color;
     matcher->debug_shape_width = 5;
+    matcher->debug_shape_z = -6.f;
 
     return matcher;
 error:

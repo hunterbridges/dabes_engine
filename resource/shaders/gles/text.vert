@@ -8,6 +8,6 @@ varying vec2 texPosVarying;
 
 void main()
 {
-  gl_Position = projection * modelView * position;
+  gl_Position = projection * (modelView * position);
   texPosVarying = texPos.xy * stretch;
 }

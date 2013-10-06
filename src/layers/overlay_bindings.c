@@ -53,6 +53,7 @@ int luab_Overlay_draw_string(lua_State *L) {
     VVector4 color = luaL_tovvector4(L, 3);
     VPoint origin = luaL_tovpoint(L, 4);
     const char *align = lua_tostring(L, 5);
+    lua_Number z = lua_tonumber(L, 6);
   
     origin = VPoint_add(origin, overlay->track_entity_offset);
 
@@ -71,7 +72,7 @@ int luab_Overlay_draw_string(lua_State *L) {
     GfxShader *txshader = Graphics_get_shader(engine->graphics, "text");
     Graphics_use_shader(engine->graphics, txshader);
     Graphics_draw_string(engine->graphics, (char *)str, overlay->font,
-            color.raw, origin, text_align, shadow_color.raw, shadow_offset);
+            color.raw, origin, text_align, shadow_color.raw, shadow_offset, z);
 
     return 1;
 error:
@@ -86,6 +87,8 @@ int luab_Overlay_draw_sprite(lua_State *L) {
     VVector4 color = luaL_tovvector4(L, 3);
     VPoint center = luaL_tovpoint(L, 4);
     float rotation = lua_tonumber(L, 5);
+    lua_Number z = lua_tonumber(L, 6);
+  
     VPoint scale = {1, 1};
     if (lua_type(L, 6) == LUA_TTABLE) {
       scale = luaL_tovpoint(L, 6);
@@ -110,7 +113,7 @@ int luab_Overlay_draw_sprite(lua_State *L) {
                               engine->graphics->projection_matrix.gl,
                               GL_FALSE);
     Graphics_draw_sprite(engine->graphics, sprite, NULL,
-            rect, color.raw, rotation, 0, overlay->alpha);
+            rect, color.raw, rotation, overlay->alpha, z);
 
     return 1;
 error:
@@ -127,19 +130,6 @@ int luab_Overlay_get_scene(lua_State *L) {
     luaL_lookup_instance(L, overlay->scene);
 
     return 1;
-error:
-    return 0;
-}
-
-Scripting_num_getter(Overlay, z_index);
-
-int luab_Overlay_set_z_index(lua_State *L) {
-    int z_index = lua_tonumber(L, 2);
-    Overlay *overlay = luaL_tooverlay(L, 1);
-    check(overlay != NULL, "Overlay required");
-    Overlay_set_z_index(overlay, z_index);
-
-    return 0;
 error:
     return 0;
 }
@@ -189,8 +179,6 @@ static const struct luaL_Reg luab_Overlay_meths[] = {
     {"draw_string", luab_Overlay_draw_string},
     {"draw_sprite", luab_Overlay_draw_sprite},
     {"get_scene", luab_Overlay_get_scene},
-    {"get_z_index", luab_Overlay_get_z_index},
-    {"set_z_index", luab_Overlay_set_z_index},
     {"add_sprite", luab_Overlay_add_sprite},
     {"get_track_entity", luab_Overlay_get_track_entity},
     {"set_track_entity", luab_Overlay_set_track_entity},

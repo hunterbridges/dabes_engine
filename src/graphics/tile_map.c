@@ -143,6 +143,8 @@ TileMap *TileMap_create() {
   map->layers->expand_rate = 8;
 
   map->meters_per_tile = 1.0;
+  
+  map->z = -150.f;
 
   return map;
 
@@ -319,10 +321,10 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
       size_t v_size = 8 * sizeof(VVector4);
       VVector4 vertices[8] = {
         // Vertex
-        {.raw = {-w / 2.0, -h / 2.0, 0, 1}},
-        {.raw = {w / 2.0, -h / 2.0, 0, 1}},
-        {.raw = {-w / 2.0, h / 2.0, 0, 1}},
-        {.raw = {w / 2.0, h / 2.0, 0, 1}},
+        {.raw = {-w / 2.0, -h / 2.0, map->z, 1}},
+        {.raw = {w / 2.0, -h / 2.0, map->z, 1}},
+        {.raw = {-w / 2.0, h / 2.0, map->z, 1}},
+        {.raw = {w / 2.0, h / 2.0, map->z, 1}},
 
         // Texture
         tex_tl, tex_tr, tex_bl, tex_br

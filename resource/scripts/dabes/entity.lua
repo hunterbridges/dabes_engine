@@ -56,8 +56,13 @@ Entity = BoundObject:extend({
        --- The @{sprite|Sprite} linked with the `Entity`
        sprite = BoundObject.fwd_func('get_sprite'),
 
-       --- Just like in CSS, the highest `z_index` gets drawn in front.
-       z_index = BoundObject.fwd_func('get_z_index'),
+       --- The z position of the entity. This only affects the order in which
+       -- the entity appears in relation to other rendered objects. This can be
+       -- between `0.0` (closest to the screen, in front) and `-256.0`
+       -- (farthest from the screen, in back).
+       --
+       -- Default `100.0`
+       z = BoundObject.fwd_func('get_z'),
    },
 
    _setters = {
@@ -70,7 +75,7 @@ Entity = BoundObject:extend({
        scene = BoundObject.readonly,
        size = BoundObject.fwd_func('set_size'),
        sprite = BoundObject.fwd_func_real('set_sprite'),
-       z_index = BoundObject.fwd_func('set_z_index'),
+       z = BoundObject.fwd_func('set_z'),
    },
 
 --- Class Methods.

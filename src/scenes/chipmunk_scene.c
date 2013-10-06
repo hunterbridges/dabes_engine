@@ -218,7 +218,7 @@ static void render_shape_iter(cpShape *shape, void *data) {
         shape_verts[i].y = vert->y * iter_data->scene->pixels_per_meter;
     }
     Graphics_stroke_path(iter_data->engine->graphics, shape_verts,
-                         pshape->numVerts, vcenter, color, 1, rot, 1);
+                         pshape->numVerts, vcenter, color, 1, rot, 1, 0);
 }
 
 void ChipmunkScene_render_physdebug(struct Scene *scene, Engine *engine) {
@@ -246,13 +246,13 @@ void ChipmunkScene_render_debug_text(struct Scene *scene, Engine *engine) {
     float shagnitude = MAX(font->px_size / 12, 1);
     VPoint shadow_offset = {shagnitude, shagnitude};
     Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
-        white, offset, GfxTextAlignCenter, black, shadow_offset);
+        white, offset, GfxTextAlignCenter, black, shadow_offset, 0);
 
     VPoint line = {0, engine->graphics->debug_font->px_size};
     offset = VPoint_add(offset, line);
     sprintf(dTxt, "ACTUAL: %.02f", 1000.0 / engine->frame_ticks);
     Graphics_draw_string(engine->graphics, dTxt, engine->graphics->debug_font,
-        white, offset, GfxTextAlignCenter, black, shadow_offset);
+        white, offset, GfxTextAlignCenter, black, shadow_offset, 0);
 
     free(dTxt);
 }
@@ -265,7 +265,7 @@ void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
     GfxShader *txshader = Graphics_get_shader(graphics, "text");
 
-    Scene_fill(scene, engine, scene->bg_color);
+    Scene_fill(scene, engine, scene->bg_color, scene->bg_z);
 
     if (scene->parallax) {
         Parallax_render(scene->parallax, engine->graphics);
@@ -276,17 +276,18 @@ void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
         Graphics_use_shader(graphics, tshader);
         TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
     }
-
+  
+    Graphics_project_camera(graphics, scene->camera);
     Scene_render_entities(scene, engine);
     Scene_render_selected_entities(scene, engine);
 
     if (scene->canvas) {
         Canvas_render(scene->canvas, engine);
     }
-
+  
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
-    Scene_fill(scene, engine, scene->cover_color);
+    Scene_fill(scene, engine, scene->cover_color, scene->cover_z);
 
     if (scene->debug_camera) {
         Camera_debug(scene->camera, engine->graphics);
@@ -436,7 +437,7 @@ void hit_test_func(cpShape *shape, cpFloat UNUSED(distance),
         Entity **top = data;
         cpBody *cpb = shape->body;
         Body *body = cpb->data;
-        if (*top == NULL || body->state.entity->z_index > (*top)->z_index) {
+        if (*top == NULL || body->state.entity->z < (*top)->z) {
             *top = body->state.entity;
         }
     }

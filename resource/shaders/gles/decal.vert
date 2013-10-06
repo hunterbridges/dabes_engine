@@ -12,7 +12,7 @@ uniform int hasTexture;
 
 void main()
 {
-  gl_Position = projection * modelView * position;
+  gl_Position = projection * (modelView * position);
   colorVarying = color;
   alphaVarying = alpha;
   textureVarying = texture;

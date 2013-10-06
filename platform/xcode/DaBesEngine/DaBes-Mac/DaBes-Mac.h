@@ -1278,8 +1278,6 @@ extern GLfloat GfxGLClearColor[4];
 
 struct Graphics;
 
-int Graphics_init_GL(int swidth, int sheight);
-
 typedef struct GfxSize {
     double w;
     double h;
@@ -1443,17 +1441,17 @@ void Graphics_destroy(Graphics *graphics);
 
 void Graphics_stroke_path(Graphics *graphics, VPoint *points, int num_points,
         VPoint center, GLfloat color[4], double line_width, double rotation,
-        int loop);
+        int loop, GLfloat z);
 void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
-        VPoint center, GLfloat color[4], double line_width);
+        VPoint center, GLfloat color[4], double line_width, GLfloat z);
 void Graphics_stroke_rect(Graphics *graphics, VRect rect, GLfloat color[4],
-        double line_width, double rotation);
+        double line_width, double rotation, GLfloat z);
 void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
         VRect rect, GLfloat color[4], GfxTexture *texture, VPoint textureOffset,
-        GfxSize textureSize, double rotation, int z_index, GLfloat alpha);
+        GfxSize textureSize, double rotation, GLfloat alpha, GLfloat z);
 void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         GLfloat color[4], VPoint origin, GfxTextAlign align,
-        GLfloat shadow_color[4], VPoint shadow_offset);
+        GLfloat shadow_color[4], VPoint shadow_offset, GLfloat z);
 
 // Uniforms
 void Graphics_get_uniform(Graphics *graphics, GLint program, const GLchar *name,
@@ -1512,8 +1510,8 @@ GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_na
 struct Sprite;
 void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
                           struct DrawBuffer *draw_buffer, VRect rect,
-                          GLfloat color[4], double rot_degs, int z_index,
-                          GLfloat alpha);
+                          GLfloat color[4], double rot_degs,
+                          GLfloat alpha, GLfloat z);
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
@@ -1958,11 +1956,11 @@ typedef struct Entity {
 
     int pixels_per_meter;
 
-    uint16_t z_index;
+    float z;
+  
     uint32_t timestamp;
     uint16_t add_index;
-
-    uint64_t z_key;
+    uint64_t ukey;
 
     VPoint center;
     GfxSize size;
@@ -1982,9 +1980,8 @@ void Entity_update(Entity *entity, struct Engine *engine);
 VPoint Entity_center(Entity *entity);
 VRect Entity_real_rect(Entity *entity);
 VRect Entity_bounding_rect(Entity *entity);
-void Entity_set_z_index(Entity *entity, uint16_t z_index);
 void Entity_set_add_index(Entity *entity, uint16_t add_index);
-int Entity_z_cmp(void *a, void *b);
+int Entity_cmp(void *a, void *b);
 
 int Entity_set_center(Entity *entity, VPoint center);
 int Entity_set_size(Entity *entity, GfxSize size);
@@ -2133,25 +2130,15 @@ typedef struct DrawBufferTexture {
     bstring key;
 } DrawBufferTexture;
 
-typedef struct DrawBufferLayer {
-    int z_index;
+typedef struct DrawBuffer {
     DArray *textures;
     Hashmap *texture_buffers;
-} DrawBufferLayer;
-
-DrawBufferLayer *DrawBufferLayer_create(int z_index);
-void DrawBufferLayer_buffer(DrawBufferLayer *layer, GfxTexture *texture,
-                            int num_points, int num_attrs, VVector4 vectors[]);
-void DrawBufferLayer_destroy(DrawBufferLayer *layer);
-void DrawBufferLayer_draw(DrawBufferLayer *layer, Graphics *graphics);
-
-typedef struct DrawBuffer {
-    List *layers;
+    short int populated;
 } DrawBuffer;
 
 DrawBuffer *DrawBuffer_create();
 void DrawBuffer_destroy(DrawBuffer *buffer);
-void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture, int z_index,
+void DrawBuffer_buffer(DrawBuffer *buffer, GfxTexture *texture,
                        int num_points, int num_attrs, VVector4 vectors[]);
 void DrawBuffer_empty(DrawBuffer *buffer);
 void DrawBuffer_draw(DrawBuffer *buffer, Graphics *graphics);
@@ -2170,6 +2157,7 @@ typedef struct ParallaxLayer {
     double y_wiggle;
     double cascade_top;
     double cascade_bottom;
+    float z;
 } ParallaxLayer;
 
 ParallaxLayer *ParallaxLayer_create(GfxTexture *tex);
@@ -2185,6 +2173,7 @@ typedef struct Parallax {
     VVector4 sea_color;
     double y_wiggle;
     double sea_level;
+    float bg_z;
     struct Scene *scene;
 } Parallax;
 
@@ -2558,6 +2547,7 @@ typedef struct TileMap {
   DArray *layers;
   DArray *collision_shapes;
   float meters_per_tile;
+  float z;
 } TileMap;
 
 TileMap *TileMap_create();
@@ -2565,8 +2555,6 @@ void TileMap_destroy(TileMap *map);
 void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter);
 TilesetTile *TileMap_resolve_tile_gid(TileMap *map, uint32_t gid);
 GfxSize TileMap_draw_size(TileMap *map, int pixels_per_meter);
-
-void TileMapLayer_draw(TileMapLayer *layer, TileMap *map, Graphics *graphics);
 
 #endif
 #ifndef __tile_map_parse_h
@@ -2679,9 +2667,11 @@ typedef struct ShapeMatcher {
     int debug_shapes;
     VVector4 debug_shape_color;
     int debug_shape_width;
+    float debug_shape_z;
 
     VVector4 dot_color;
     int dot_width;
+    float dot_z;
 } ShapeMatcher;
 
 struct Engine;
@@ -2722,6 +2712,11 @@ typedef struct Canvas {
     float distance_threshold;
     float draw_width;
 
+    float bg_z;
+    float draw_z;
+    float simplified_path_z;
+    float angle_z;
+  
     VVector4 bg_color;
     VVector4 draw_color;
     VVector4 simplified_path_color;
@@ -2960,6 +2955,9 @@ typedef struct Scene {
     TileMap *tile_map;
     Canvas *canvas;
 
+    float bg_z;
+    float cover_z;
+  
     VVector4 bg_color;
     VVector4 cover_color;
 
@@ -2997,7 +2995,7 @@ int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 
 // Rendering
 void Scene_project_screen(Scene *scene, Engine *engine);
-void Scene_fill(Scene *scene, Engine *engine, VVector4 color);
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z);
 void Scene_render_entities(Scene *scene, Engine *engine);
 void Scene_render_selected_entities(Scene *scene, Engine *engine);
 void Scene_render_overlays(Scene *scene, Engine *engine);
@@ -3041,11 +3039,9 @@ typedef struct Overlay {
   
     float alpha;
   
-    uint16_t z_index;
     uint32_t timestamp;
     uint16_t add_index;
-
-    uint64_t z_key;
+    uint64_t ukey;
 } Overlay;
 
 Overlay *Overlay_create(Engine *engine, char *font_name, int px_size);
@@ -3053,9 +3049,8 @@ void Overlay_destroy(Overlay *overlay);
 void Overlay_update(Overlay *overlay, Engine *engine);
 void Overlay_render(Overlay *overlay, Engine *engine);
 void Overlay_add_sprite(Overlay *overlay, struct Sprite *sprite);
-void Overlay_set_z_index(Overlay *overlay, uint16_t z_index);
 void Overlay_set_add_index(Overlay *overlay, uint16_t add_index);
-int Overlay_z_cmp(void *a, void *b);
+int Overlay_cmp(void *a, void *b);
 
 #endif
 #ifndef __overlay_bindings_h
