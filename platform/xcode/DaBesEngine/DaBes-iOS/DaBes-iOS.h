@@ -1288,6 +1288,7 @@ typedef void (*DrawEventFunc)(struct DrawEvent *event,
 typedef struct DrawEvent {
     DrawEventKind kind;
     float z;
+    short int opaque;
 
     struct GfxShader *shader;
 
@@ -1313,6 +1314,8 @@ void DrawEvent_draw(DrawEvent *event, struct Graphics *graphics);
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#define GRAPHICS_Z_FAR 256
 
 extern GLfloat GfxGLClearColor[4];
 

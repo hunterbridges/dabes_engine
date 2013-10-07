@@ -589,6 +589,7 @@ void Graphics_draw_rect(Graphics *graphics, struct DrawBuffer *draw_buffer,
                              0.0);
           glBindTexture(GL_TEXTURE_2D, 0);
         }
+      
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
     return;
@@ -1322,7 +1323,7 @@ Graphics *Graphics_create(Engine *engine) {
     glDisable(GL_FOG);
 #endif
 
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
     glDisable(GL_DITHER);

@@ -15,6 +15,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#define GRAPHICS_Z_FAR 256
+
 extern GLfloat GfxGLClearColor[4];
 
 struct Graphics;

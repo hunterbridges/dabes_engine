@@ -285,6 +285,9 @@ void Parallax_render(Parallax *parallax, Graphics *graphics) {
                                            parallax->bg_z, dshader);
     bg_event->context = bg_ctx;
     bg_event->func = parallax_draw_bg;
+    if (parallax->sky_color.a >= 1.0 && parallax->sea_color.a >= 1.0) {
+      bg_event->opaque = 1;
+    }
     Graphics_enqueue_draw_event(graphics, bg_event);
 
     VPoint stretch = {

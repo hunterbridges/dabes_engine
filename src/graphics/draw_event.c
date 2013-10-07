@@ -1,12 +1,25 @@
 #include "draw_event.h"
 #include "graphics.h"
 
+static float sort_idx(DrawEvent *ev) {
+  if (ev->z > 0.f) return GRAPHICS_Z_FAR;
+  if (ev->z < -GRAPHICS_Z_FAR) return 0.f;
+  float adj_z = ev->z + GRAPHICS_Z_FAR;
+  if (ev->opaque) {
+      adj_z *= -1;
+  }
+  return adj_z;
+}
+
 int DrawEvent_cmp(const void *a, const void *b) {
     DrawEvent *ev_a = *(DrawEvent **)a;
     DrawEvent *ev_b = *(DrawEvent **)b;
+  
+    float a_idx = sort_idx(ev_a);
+    float b_idx = sort_idx(ev_b);
 
-    if (ev_a->z < ev_b->z) return -1;
-    if (ev_a->z > ev_b->z) return 1;
+    if (a_idx < b_idx) return -1;
+    if (a_idx > b_idx) return 1;
     return 0;
 }
 

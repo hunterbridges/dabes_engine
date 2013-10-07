@@ -379,6 +379,11 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
                                                canvas->bg_z, dshader);
         bg_event->context = bg_ctx;
         bg_event->func = canvas_draw_bg;
+      
+        if (canvas->bg_color.a * canvas->alpha >= 1.0) {
+          bg_event->opaque = 1;
+        }
+      
         Graphics_enqueue_draw_event(engine->graphics, bg_event);
     }
 

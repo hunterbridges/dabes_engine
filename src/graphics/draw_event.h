@@ -24,6 +24,7 @@ typedef void (*DrawEventFunc)(struct DrawEvent *event,
 typedef struct DrawEvent {
     DrawEventKind kind;
     float z;
+    short int opaque;
 
     struct GfxShader *shader;
 

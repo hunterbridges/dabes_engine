@@ -391,6 +391,10 @@ void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z,
         DrawEvent *event = DrawEvent_create(DRAW_EVENT_SCENE_FILL, z, dshader);
         event->context = ctx;
         event->func = scene_fill_draw;
+      
+        if (color.a >= 1.0) {
+          event->opaque = 1;
+        }
 
         if (immediate) {
             DrawEvent_draw(event, engine->graphics);

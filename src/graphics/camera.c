@@ -235,7 +235,7 @@ void Graphics_project_camera(Graphics *graphics, Camera *camera) {
             camera->screen_size.w / 2.0,
             -camera->screen_size.h / 2.0,
             camera->screen_size.h / 2.0,
-            0.0, 256.0); // mediump float max
+            0.0, GRAPHICS_Z_FAR); // mediump float max
     Graphics_scale_projection_matrix(graphics, camera->tracking.scale,
             camera->tracking.scale, 1);
     Graphics_rotate_projection_matrix(graphics,
