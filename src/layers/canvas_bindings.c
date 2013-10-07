@@ -48,16 +48,24 @@ Scripting_num_getter(Canvas, angle_threshold);
 Scripting_num_setter(Canvas, angle_threshold);
 Scripting_VVector4_getter(Canvas, angle_color);
 Scripting_VVector4_setter(Canvas, angle_color);
+Scripting_num_getter(Canvas, angle_z);
+Scripting_num_setter(Canvas, angle_z);
 Scripting_VVector4_getter(Canvas, bg_color);
 Scripting_VVector4_setter(Canvas, bg_color);
+Scripting_num_getter(Canvas, bg_z);
+Scripting_num_setter(Canvas, bg_z);
 Scripting_num_getter(Canvas, distance_threshold);
 Scripting_num_setter(Canvas, distance_threshold);
 Scripting_VVector4_getter(Canvas, draw_color);
 Scripting_VVector4_setter(Canvas, draw_color);
+Scripting_num_getter(Canvas, draw_z);
+Scripting_num_setter(Canvas, draw_z);
 Scripting_num_getter(Canvas, draw_width);
 Scripting_num_setter(Canvas, draw_width);
 Scripting_VVector4_getter(Canvas, simplified_path_color);
 Scripting_VVector4_setter(Canvas, simplified_path_color);
+Scripting_num_getter(Canvas, simplified_path_z);
+Scripting_num_setter(Canvas, simplified_path_z);
 
 Scripting_bool_getter(Canvas, enabled);
 
@@ -107,18 +115,26 @@ static const struct luaL_Reg luab_Canvas_meths[] = {
     {"set_angle_threshold", luab_Canvas_set_angle_threshold},
     {"get_angle_color", luab_Canvas_get_angle_color},
     {"set_angle_color", luab_Canvas_set_angle_color},
+    {"get_angle_z", luab_Canvas_get_angle_z},
+    {"set_angle_z", luab_Canvas_set_angle_z},
     {"get_bg_color", luab_Canvas_get_bg_color},
     {"set_bg_color", luab_Canvas_set_bg_color},
+    {"get_bg_z", luab_Canvas_get_bg_z},
+    {"set_bg_z", luab_Canvas_set_bg_z},
     {"get_distance_threshold", luab_Canvas_get_distance_threshold},
     {"set_distance_threshold", luab_Canvas_set_distance_threshold},
     {"get_draw_color", luab_Canvas_get_draw_color},
     {"set_draw_color", luab_Canvas_set_draw_color},
     {"get_draw_width", luab_Canvas_get_draw_width},
     {"set_draw_width", luab_Canvas_set_draw_width},
+    {"get_draw_z", luab_Canvas_get_draw_z},
+    {"set_draw_z", luab_Canvas_set_draw_z},
     {"get_enabled", luab_Canvas_get_enabled},
     {"set_enabled", luab_Canvas_set_enabled},
     {"get_simplified_path_color", luab_Canvas_get_simplified_path_color},
     {"set_simplified_path_color", luab_Canvas_set_simplified_path_color},
+    {"get_simplified_path_z", luab_Canvas_get_simplified_path_z},
+    {"set_simplified_path_z", luab_Canvas_set_simplified_path_z},
     {"get_shape_matcher", luab_Canvas_get_shape_matcher},
     {"set_shape_matcher", luab_Canvas_set_shape_matcher},
     {NULL, NULL}

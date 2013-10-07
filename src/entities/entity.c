@@ -4,6 +4,7 @@
 #include "../audio/sfx.h"
 #include "../physics/world.h"
 #include "../scenes/scene.h"
+#include "../graphics/draw_event.h"
 
 Entity *Entity_create(Engine *engine) {
     Entity *entity = calloc(1, sizeof(Entity));
@@ -71,22 +72,6 @@ VRect Entity_bounding_rect(Entity *entity) {
     return VRect_bounding_box(real);
 }
 
-void Entity_render(Entity *entity, struct Engine *engine,
-                   struct DrawBuffer *draw_buffer) {
-    Graphics *graphics = engine->graphics;
-
-    VRect rect = Entity_base_rect(entity);
-    float rads = 0;
-    if (entity->body) {
-      rads = entity->body->_(get_angle)(entity->body);
-    }
-    float degrees = rads * 180.0 / M_PI;
-
-    Graphics_draw_sprite(graphics, entity->sprite, draw_buffer, rect,
-                         entity->bg_color.raw, degrees, entity->alpha,
-                         entity->z);
-}
-
 void Entity_update(Entity *entity, Engine *engine) {
     check(entity != NULL, "Need entity to update entity");
     check(engine != NULL, "Need engine to update entity");
@@ -139,3 +124,48 @@ int Entity_set_size(Entity *entity, GfxSize size) {
     entity->size = size;
     return 1;
 }
+
+typedef struct EntityRenderCtx {
+    Entity *entity;
+    VRect rect;
+    float degrees;
+    VMatrix projection;
+} EntityRenderCtx;
+
+void entity_draw_func(DrawEvent *event, Graphics *graphics) {
+    EntityRenderCtx *ctx = event->context;
+    Entity *entity = ctx->entity;
+    graphics->projection_matrix = ctx->projection;
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              graphics->projection_matrix.gl,
+                              GL_FALSE);
+    Graphics_draw_sprite(graphics, entity->sprite, NULL, ctx->rect,
+                         entity->bg_color.raw, ctx->degrees, entity->alpha,
+                         event->z);
+}
+
+void Entity_render(Entity *entity, struct Engine *engine,
+                   struct DrawBuffer *UNUSED(draw_buffer)) {
+    Graphics *graphics = engine->graphics;
+
+    VRect rect = Entity_base_rect(entity);
+    float rads = 0;
+    if (entity->body) {
+      rads = entity->body->_(get_angle)(entity->body);
+    }
+    float degrees = rads * 180.0 / M_PI;
+
+    EntityRenderCtx *ctx = calloc(1, sizeof(EntityRenderCtx));
+    ctx->entity = entity;
+    ctx->rect = rect;
+    ctx->degrees = degrees;
+    ctx->projection = engine->graphics->projection_matrix;
+
+    DrawEvent *ev = DrawEvent_create(DRAW_EVENT_ENTITY, entity->z,
+                                     Graphics_get_shader(graphics, "decal"));
+    ev->context = ctx;
+    ev->func = entity_draw_func;
+    Graphics_enqueue_draw_event(graphics, ev);
+}
+

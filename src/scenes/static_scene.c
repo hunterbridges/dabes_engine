@@ -37,7 +37,7 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
     GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
-    Scene_fill(scene, engine, scene->bg_color, scene->bg_z);
+    Scene_fill(scene, engine, scene->bg_color, scene->bg_z, 0);
 
     if (scene->parallax) {
         Parallax_render(scene->parallax, engine->graphics);
@@ -58,7 +58,7 @@ void StaticScene_render(struct Scene *scene, Engine *engine) {
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_render_selected_entities(scene, engine);
-    Scene_fill(scene, engine, scene->cover_color, scene->cover_z);
+    Scene_fill(scene, engine, scene->cover_color, scene->cover_z, 0);
     if (scene->debug_camera) {
         Camera_debug(scene->camera, engine->graphics);
     }

@@ -176,7 +176,7 @@ void TelemetrySplashScene_render(struct Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(graphics, "decal");
 
     Graphics_project_screen_camera(engine->graphics, scene->camera);
-    Scene_fill(scene, engine, scene->bg_color, -256.0);
+    Scene_fill(scene, engine, scene->bg_color, -256.0, 1);
 
     Graphics_use_shader(graphics, dshader);
     Camera *camera = scene->camera;
@@ -222,7 +222,7 @@ void TelemetrySplashScene_render(struct Scene *scene, Engine *engine) {
     Graphics_draw_string(engine->graphics, "TELEMETRY", context->text_overlay->font,
             context->text_color.raw, txt_origin, GfxTextAlignRight, clear.raw, VPointZero, -1);
 
-    Scene_fill(scene, engine, scene->cover_color, 0);
+    Scene_fill(scene, engine, scene->cover_color, 0, 1);
 }
 
 SceneProto TelemetrySplashSceneProto = {

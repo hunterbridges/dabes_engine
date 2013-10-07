@@ -335,6 +335,7 @@ static void iOS_input_change_preferred_style_cb(Input *input,
   
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Scene_render(scene_, engine_);
+  Graphics_flush_draw_events(engine_->graphics);
 }
 
 - (void)didEnterBackground {

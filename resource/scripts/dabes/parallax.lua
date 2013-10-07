@@ -71,14 +71,19 @@ Parallax = BoundObject:extend({
         -- are creating an ocean.
         --
         -- Default `0.5`
-        sea_level = BoundObject.fwd_func("get_sea_level")
+        sea_level = BoundObject.fwd_func("get_sea_level"),
+
+        --- The z value for the `Parallax`'s sky and sea background rectangles.
+        -- Default `-200.0`
+        bg_z = BoundObject.fwd_func("get_bg_z")
     },
 
     _setters = {
         sky_color = BoundObject.fwd_func("set_sky_color"),
         sea_color = BoundObject.fwd_func("set_sea_color"),
         y_wiggle = BoundObject.fwd_func("set_y_wiggle"),
-        sea_level = BoundObject.fwd_func("set_sea_level")
+        sea_level = BoundObject.fwd_func("set_sea_level"),
+        bg_z = BoundObject.fwd_func("set_bg_z")
     },
 
 --- Class Methods.

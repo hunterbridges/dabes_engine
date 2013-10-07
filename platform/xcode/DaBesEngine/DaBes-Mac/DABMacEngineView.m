@@ -52,6 +52,7 @@ static unsigned short int keysDown[128];
   Scene *scene = self.scene;
   if (!scene) return;
   Scene_render(scene, self.engine);
+  Graphics_flush_draw_events(self.engine->graphics);
   [self.openGLContext flushBuffer];
 }
 

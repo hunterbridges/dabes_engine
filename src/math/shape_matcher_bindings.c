@@ -106,10 +106,14 @@ Scripting_bool_getter(ShapeMatcher, debug_shapes);
 Scripting_bool_setter(ShapeMatcher, debug_shapes);
 Scripting_VVector4_getter(ShapeMatcher, debug_shape_color);
 Scripting_VVector4_setter(ShapeMatcher, debug_shape_color);
+Scripting_num_getter(ShapeMatcher, debug_shape_z);
+Scripting_num_setter(ShapeMatcher, debug_shape_z);
 Scripting_num_getter(ShapeMatcher, debug_shape_width);
 Scripting_num_setter(ShapeMatcher, debug_shape_width);
 Scripting_VVector4_getter(ShapeMatcher, dot_color);
 Scripting_VVector4_setter(ShapeMatcher, dot_color);
+Scripting_num_getter(ShapeMatcher, dot_z);
+Scripting_num_setter(ShapeMatcher, dot_z);
 Scripting_num_getter(ShapeMatcher, dot_width);
 Scripting_num_setter(ShapeMatcher, dot_width);
 
@@ -138,6 +142,10 @@ static const struct luaL_Reg luab_ShapeMatcher_meths[] = {
         luab_ShapeMatcher_get_debug_shape_color},
     {"set_debug_shape_color",
         luab_ShapeMatcher_set_debug_shape_color},
+    {"get_debug_shape_z",
+        luab_ShapeMatcher_get_debug_shape_z},
+    {"set_debug_shape_z",
+        luab_ShapeMatcher_set_debug_shape_z},
     {"get_debug_shape_width",
         luab_ShapeMatcher_get_debug_shape_width},
     {"set_debug_shape_width",
@@ -146,6 +154,10 @@ static const struct luaL_Reg luab_ShapeMatcher_meths[] = {
         luab_ShapeMatcher_get_dot_color},
     {"set_dot_color",
         luab_ShapeMatcher_set_dot_color},
+    {"get_dot_z",
+        luab_ShapeMatcher_get_dot_z},
+    {"set_dot_z",
+        luab_ShapeMatcher_set_dot_z},
     {"get_dot_width",
         luab_ShapeMatcher_get_dot_width},
     {"set_dot_width",

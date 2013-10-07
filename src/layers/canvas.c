@@ -1,5 +1,6 @@
 #include "canvas.h"
 #include "../scenes/scene.h"
+#include "../graphics/draw_event.h"
 
 static const float CANVAS_DEFAULT_ANGLE_THRESH = 30.f;
 static const float CANVAS_DEFAULT_DISTANCE_THRESH = 25.f;
@@ -32,8 +33,8 @@ Canvas *Canvas_create(Engine *engine) {
     canvas->bg_color = CANVAS_DEFAULT_BG_COLOR;
     canvas->simplified_path_color = CANVAS_DEFAULT_SIMP_COLOR;
     canvas->angle_color = VVector4ClearColor;
-  
-    canvas->bg_z = -10.f;
+
+    canvas->bg_z = -120.f;
     canvas->draw_z = -9.f;
     canvas->simplified_path_z = -8.f;
     canvas->angle_z = -7.f;
@@ -187,74 +188,100 @@ error:
     return;
 }
 
-void Canvas_render(Canvas *canvas, Engine *engine) {
-    check(canvas != NULL, "Canvas required");
-    check(canvas->scene != NULL, "Canvas is not in a scene");
+typedef struct CanvasDrawContext {
+    Canvas *canvas;
+    VPoint screen_diff;
+} CanvasDrawContext;
 
-    if (canvas->alpha == 0.0) return;
+void canvas_draw_bg(DrawEvent *event, Graphics *graphics) {
+    CanvasDrawContext *ctx = event->context;
+    Canvas *canvas = ctx->canvas;
 
-    Graphics_reset_modelview_matrix(engine->graphics);
-    Scene_project_screen(canvas->scene, engine);
-    VPoint screen_diff = {canvas->scene->camera->screen_size.w / 2.0,
-                          canvas->scene->camera->screen_size.h / 2.0};
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(canvas->scene, graphics);
+
+    VPoint screen_diff = ctx->screen_diff;
     VRect bg_rect =
         VRect_from_xywh(-screen_diff.x,
                         -screen_diff.y,
                         canvas->scene->camera->screen_size.w,
                         canvas->scene->camera->screen_size.h);
-    Graphics_uniformMatrix4fv(engine->graphics,
+    Graphics_uniformMatrix4fv(graphics,
                               UNIFORM_DECAL_PROJECTION_MATRIX,
-                              engine->graphics->projection_matrix.gl, GL_FALSE);
-    Graphics_draw_rect(engine->graphics, NULL, bg_rect, canvas->bg_color.raw,
-                       NULL, VPointZero, GfxSizeZero, 0, canvas->alpha, canvas->bg_z);
+                              graphics->projection_matrix.gl, GL_FALSE);
+    Graphics_draw_rect(graphics, NULL, bg_rect, canvas->bg_color.raw,
+                       NULL, VPointZero, GfxSizeZero, 0, canvas->alpha,
+                       event->z);
 
-    if (canvas->raw_points) {
-        int num_points = DArray_count(canvas->raw_points);
-        if (canvas->draw_color.a > 0.0) {
-            // Adjust each point cause canvas points are relative to screen top left
-            // and projection matrix thinks <0, 0> is screen center
-            VPoint *path =
-                malloc(sizeof(VPoint) * num_points);
-            int i = 0;
-            for (i = 0; i < num_points; i++) {
-                VPoint *point = DArray_get(canvas->raw_points, i);
-                path[i] = VPoint_subtract(*point, screen_diff);
-            }
+}
 
-            VVector4 path_draw_color = canvas->draw_color;
-            path_draw_color.a *= canvas->alpha;
+void canvas_draw_raw(DrawEvent *event, Graphics *graphics) {
+    CanvasDrawContext *ctx = event->context;
+    Canvas *canvas = ctx->canvas;
+    VPoint screen_diff = ctx->screen_diff;
 
-            Graphics_stroke_path(engine->graphics, path, num_points,
-                                 VPointZero, path_draw_color.raw,
-                                 canvas->draw_width, 0, 0, canvas->draw_z);
+    int num_points = DArray_count(canvas->raw_points);
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(canvas->scene, graphics);
 
-            free(path);
-        }
-
-        if (canvas->angle_color.a > 0.0 && num_points >= 2) {
-            VPoint path[2] = {
-                *(VPoint *)DArray_get(canvas->raw_points, 0),
-                *(VPoint *)DArray_last(canvas->raw_points)
-            };
-
-            float r = VPoint_distance(path[0], path[1]);
-
-            VVector4 path_draw_color = canvas->angle_color;
-            path_draw_color.a *= canvas->alpha;
-
-            VPoint inv_diff = VPoint_scale(screen_diff, -1);
-            Graphics_stroke_path(engine->graphics, path, 2,
-                                 inv_diff, path_draw_color.raw,
-                                 canvas->draw_width, 0, 0, canvas->angle_z);
-
-            VCircle circle  = {
-                .center = path[0],
-                .radius = r
-            };
-            Graphics_stroke_circle(engine->graphics, circle, 40,
-                inv_diff, path_draw_color.raw, canvas->draw_width, canvas->angle_z);
-        }
+    // Adjust each point cause canvas points are relative to screen top left
+    // and projection matrix thinks <0, 0> is screen center
+    VPoint *path =
+        malloc(sizeof(VPoint) * num_points);
+    int i = 0;
+    for (i = 0; i < num_points; i++) {
+        VPoint *point = DArray_get(canvas->raw_points, i);
+        path[i] = VPoint_subtract(*point, screen_diff);
     }
+
+    VVector4 path_draw_color = canvas->draw_color;
+    path_draw_color.a *= canvas->alpha;
+
+    Graphics_stroke_path(graphics, path, num_points,
+                         VPointZero, path_draw_color.raw,
+                         canvas->draw_width, 0, 0, event->z);
+
+    free(path);
+}
+
+void canvas_draw_angle(DrawEvent *event, Graphics *graphics) {
+    CanvasDrawContext *ctx = event->context;
+    Canvas *canvas = ctx->canvas;
+    VPoint screen_diff = ctx->screen_diff;
+
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(canvas->scene, graphics);
+
+    VPoint path[2] = {
+        *(VPoint *)DArray_get(canvas->raw_points, 0),
+        *(VPoint *)DArray_last(canvas->raw_points)
+    };
+
+    float r = VPoint_distance(path[0], path[1]);
+
+    VVector4 path_draw_color = canvas->angle_color;
+    path_draw_color.a *= canvas->alpha;
+
+    VPoint inv_diff = VPoint_scale(screen_diff, -1);
+    Graphics_stroke_path(graphics, path, 2,
+                         inv_diff, path_draw_color.raw,
+                         canvas->draw_width, 0, 0, event->z);
+
+    VCircle circle  = {
+        .center = path[0],
+        .radius = r
+    };
+    Graphics_stroke_circle(graphics, circle, 40,
+        inv_diff, path_draw_color.raw, canvas->draw_width, event->z);
+}
+
+void canvas_draw_simplified_path(DrawEvent *event, Graphics *graphics) {
+    CanvasDrawContext *ctx = event->context;
+    Canvas *canvas = ctx->canvas;
+    VPoint screen_diff = ctx->screen_diff;
+
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(canvas->scene, graphics);
 
     int num_staged;
     VPoint *staged_path = simplifier_staged_path(canvas, &num_staged);
@@ -268,50 +295,145 @@ void Canvas_render(Canvas *canvas, Engine *engine) {
         VVector4 path_draw_color = canvas->simplified_path_color;
         path_draw_color.a *= canvas->alpha;
 
-        Graphics_stroke_path(engine->graphics, staged_path, num_staged,
+        Graphics_stroke_path(graphics, staged_path, num_staged,
                              VPointZero, path_draw_color.raw,
-                             canvas->draw_width, 0, 0, canvas->simplified_path_z);
+                             canvas->draw_width, 0, 0, event->z);
     }
     if (staged_path) {
         free(staged_path);
     }
+}
+
+void canvas_draw_debug_shape(DrawEvent *event, Graphics *graphics) {
+    CanvasDrawContext *ctx = event->context;
+    Canvas *canvas = ctx->canvas;
+    VPoint screen_diff = ctx->screen_diff;
+
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(canvas->scene, graphics);
+
+    VPath **paths = NULL;
+    int num_paths = 0;
+    ShapeMatcher_get_potential_shape_paths(canvas->shape_matcher, &paths,
+        &num_paths);
+    int i = 0;
+    for (i = 0; i < num_paths; i++) {
+        VPath *path = paths[i];
+        Graphics_stroke_path(graphics, path->points,
+                  path->num_points, screen_diff,
+                  canvas->shape_matcher->debug_shape_color.raw,
+                  canvas->shape_matcher->debug_shape_width,
+                  0, 0,
+                  event->z);
+        VPath_destroy(path);
+    }
+    if (paths) free(paths);
+}
+
+void canvas_draw_dot(DrawEvent *event, Graphics *graphics) {
+    CanvasDrawContext *ctx = event->context;
+    Canvas *canvas = ctx->canvas;
+    VPoint screen_diff = ctx->screen_diff;
+
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(canvas->scene, graphics);
+
+    // Like maybe the potential shapes we could draw
+    // The next points we could draw to
+    VCircle *circles = NULL;
+    int num_circles = 0;
+    ShapeMatcher_get_connect_dots(canvas->shape_matcher, &circles,
+        &num_circles);
+    int i = 0;
+    for (i = 0; i < num_circles; i++) {
+        VCircle circle = circles[i];
+        Graphics_stroke_circle(graphics, circle, 40,
+            VPoint_scale(screen_diff, -1),
+            canvas->shape_matcher->dot_color.raw,
+            canvas->shape_matcher->dot_width,
+            event->z);
+    }
+    if (circles) free(circles);
+}
+
+void Canvas_render(Canvas *canvas, Engine *engine) {
+    check(canvas != NULL, "Canvas required");
+    check(canvas->scene != NULL, "Canvas is not in a scene");
+
+    if (canvas->alpha == 0.0) return;
+
+    GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
+
+    VPoint screen_diff = {canvas->scene->camera->screen_size.w / 2.0,
+                          canvas->scene->camera->screen_size.h / 2.0};
+    CanvasDrawContext ctx_tpl = {
+        .canvas = canvas,
+        .screen_diff = screen_diff
+    };
+
+    if (canvas->bg_color.a > 0.0f) {
+        CanvasDrawContext *bg_ctx = calloc(1, sizeof(CanvasDrawContext));
+        *bg_ctx = ctx_tpl;
+
+        DrawEvent *bg_event = DrawEvent_create(DRAW_EVENT_CANVAS_BG,
+                                               canvas->bg_z, dshader);
+        bg_event->context = bg_ctx;
+        bg_event->func = canvas_draw_bg;
+        Graphics_enqueue_draw_event(engine->graphics, bg_event);
+    }
+
+    if (canvas->raw_points) {
+        int num_points = DArray_count(canvas->raw_points);
+
+        if (canvas->draw_color.a > 0.0) {
+            CanvasDrawContext *raw_ctx = calloc(1, sizeof(CanvasDrawContext));
+            *raw_ctx = ctx_tpl;
+            DrawEvent *raw_event = DrawEvent_create(DRAW_EVENT_CANVAS_PATHS,
+                                                    canvas->draw_z, dshader);
+            raw_event->context = raw_ctx;
+            raw_event->func = canvas_draw_raw;
+            Graphics_enqueue_draw_event(engine->graphics, raw_event);
+        }
+
+        if (canvas->angle_color.a > 0.0 && num_points >= 2) {
+            CanvasDrawContext *angle_ctx = calloc(1, sizeof(CanvasDrawContext));
+            *angle_ctx = ctx_tpl;
+            DrawEvent *angle_event = DrawEvent_create(DRAW_EVENT_CANVAS_PATHS,
+                                                    canvas->angle_z, dshader);
+            angle_event->context = angle_ctx;
+            angle_event->func = canvas_draw_angle;
+            Graphics_enqueue_draw_event(engine->graphics, angle_event);
+        }
+    }
+
+    CanvasDrawContext *simplified_path_ctx = calloc(1, sizeof(CanvasDrawContext));
+    *simplified_path_ctx = ctx_tpl;
+    DrawEvent *simplified_path_event = DrawEvent_create(DRAW_EVENT_CANVAS_PATHS,
+                                            canvas->simplified_path_z, dshader);
+    simplified_path_event->context = simplified_path_ctx;
+    simplified_path_event->func = canvas_draw_simplified_path;
+    Graphics_enqueue_draw_event(engine->graphics, simplified_path_event);
 
     if (canvas->shape_matcher) {
         if (canvas->shape_matcher->debug_shapes) {
-            VPath **paths = NULL;
-            int num_paths = 0;
-            ShapeMatcher_get_potential_shape_paths(canvas->shape_matcher, &paths,
-                &num_paths);
-            int i = 0;
-            for (i = 0; i < num_paths; i++) {
-                VPath *path = paths[i];
-                Graphics_stroke_path(engine->graphics, path->points,
-                          path->num_points, screen_diff,
-                          canvas->shape_matcher->debug_shape_color.raw,
-                          canvas->shape_matcher->debug_shape_width,
-                          0, 0,
-                          canvas->shape_matcher->debug_shape_z);
-                VPath_destroy(path);
-            }
-            if (paths) free(paths);
+            CanvasDrawContext *debug_shape_ctx = calloc(1, sizeof(CanvasDrawContext));
+            *debug_shape_ctx = ctx_tpl;
+            DrawEvent *debug_shape_event =
+                DrawEvent_create(DRAW_EVENT_CANVAS_PATHS,
+                                 canvas->shape_matcher->debug_shape_z, dshader);
+            debug_shape_event->context = debug_shape_ctx;
+            debug_shape_event->func = canvas_draw_debug_shape;
+            Graphics_enqueue_draw_event(engine->graphics, debug_shape_event);
         }
 
-        // Like maybe the potential shapes we could draw
-        // The next points we could draw to
-        VCircle *circles = NULL;
-        int num_circles = 0;
-        ShapeMatcher_get_connect_dots(canvas->shape_matcher, &circles,
-            &num_circles);
-        int i = 0;
-        for (i = 0; i < num_circles; i++) {
-            VCircle circle = circles[i];
-            Graphics_stroke_circle(engine->graphics, circle, 40,
-                VPoint_scale(screen_diff, -1),
-                canvas->shape_matcher->dot_color.raw,
-                canvas->shape_matcher->dot_width,
-                canvas->shape_matcher->dot_z);
-        }
-        if (circles) free(circles);
+        CanvasDrawContext *dot_ctx = calloc(1, sizeof(CanvasDrawContext));
+        *dot_ctx = ctx_tpl;
+        DrawEvent *dot_event =
+            DrawEvent_create(DRAW_EVENT_CANVAS_PATHS,
+                             canvas->shape_matcher->dot_z, dshader);
+        dot_event->context = dot_ctx;
+        dot_event->func = canvas_draw_dot;
+        Graphics_enqueue_draw_event(engine->graphics, dot_event);
     }
 
     return;

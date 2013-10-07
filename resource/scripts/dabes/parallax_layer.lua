@@ -54,14 +54,20 @@ ParallaxLayer = BoundObject:extend({
 
         --- *(readonly)* A `{w, h}` vector representing the size of the layer's
         -- texture in pixels.
-        texture_size = BoundObject.fwd_func("get_texture_size")
+        texture_size = BoundObject.fwd_func("get_texture_size"),
+
+        --- The `ParallaxLayer`'s z value.
+        --
+        -- Default `-180.0`
+        z = BoundObject.fwd_func("get_z"),
     },
 
     _setters = {
         p_factor = BoundObject.fwd_func("set_p_factor"),
         offset = BoundObject.fwd_func("set_offset"),
         y_wiggle = BoundObject.fwd_func("set_y_wiggle"),
-        texture_size = BoundObject.readonly
+        texture_size = BoundObject.readonly,
+        z = BoundObject.fwd_func("set_z")
     },
 
 --- Class Methods.

@@ -14,7 +14,7 @@ int luab_ParallaxLayer_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(ParallaxLayer_userdata));
     check(ud != NULL, "Could not make ParralaxLayer userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_ParallaxLayer_metatable);
     lua_setmetatable(L, -2);
 
@@ -46,10 +46,10 @@ int luab_ParallaxLayer_close(lua_State *L) {
 int luab_ParallaxLayer_p_cascade(lua_State *L) {
     ParallaxLayer *layer = luaL_toparallaxlayer(L, 1);
     check(layer != NULL, "ParallaxLayer required");
-    
+
     double top = lua_tonumber(L, 2);
     double bot = lua_tonumber(L, 3);
-    
+
     ParallaxLayer_p_cascade(layer, top, bot);
 
     return 0;
@@ -63,6 +63,8 @@ Scripting_GfxSize_getter(ParallaxLayer, texture_size);
 
 Scripting_num_getter(ParallaxLayer, y_wiggle);
 Scripting_num_setter(ParallaxLayer, y_wiggle);
+Scripting_num_getter(ParallaxLayer, z);
+Scripting_num_setter(ParallaxLayer, z);
 
 static const struct luaL_Reg luab_ParallaxLayer_meths[] = {
     {"__gc", luab_ParallaxLayer_close},
@@ -74,6 +76,8 @@ static const struct luaL_Reg luab_ParallaxLayer_meths[] = {
     {"set_offset", luab_ParallaxLayer_set_offset},
     {"get_y_wiggle", luab_ParallaxLayer_get_y_wiggle},
     {"set_y_wiggle", luab_ParallaxLayer_set_y_wiggle},
+    {"get_z", luab_ParallaxLayer_get_z},
+    {"set_z", luab_ParallaxLayer_set_z},
     {NULL, NULL}
 };
 
@@ -96,7 +100,7 @@ int luab_Parallax_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(Parallax_userdata));
     check(ud != NULL, "Could not make Parralax userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_Parallax_metatable);
     lua_setmetatable(L, -2);
 
@@ -149,6 +153,9 @@ Scripting_num_setter(Parallax, y_wiggle);
 Scripting_num_getter(Parallax, sea_level);
 Scripting_num_setter(Parallax, sea_level);
 
+Scripting_num_getter(Parallax, bg_z);
+Scripting_num_setter(Parallax, bg_z);
+
 static const struct luaL_Reg luab_Parallax_meths[] = {
     {"__gc", luab_Parallax_close},
     {"add_layer", luab_Parallax_add_layer},
@@ -160,6 +167,8 @@ static const struct luaL_Reg luab_Parallax_meths[] = {
     {"set_y_wiggle", luab_Parallax_set_y_wiggle},
     {"get_sea_level", luab_Parallax_get_sea_level},
     {"set_sea_level", luab_Parallax_set_sea_level},
+    {"get_bg_z", luab_Parallax_get_bg_z},
+    {"set_bg_z", luab_Parallax_set_bg_z},
     {NULL, NULL}
 };
 

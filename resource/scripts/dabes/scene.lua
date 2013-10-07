@@ -3,21 +3,9 @@
 -- `Scene` is comparable to the idea of a "level" or "screen", but could be
 -- either of the two.
 --
--- The `Scene` renders its contents in a certain order, back to front:
+-- The `Scene` renders its contents in ascending Z order, back to front.
 --
--- 1. `bg_color`
---
--- 2. `parallax`
---
--- 3. Tile Map
---
--- 4. Added @{entity|Entities}, ordered by `z_index`
---
--- 5. Debug rendering
---
--- 6. Added @{overlay|Overlays}, ordered by `z_index`
---
--- 7. `cover_color`
+-- Z values are in the range `-256.0` (back) to `0.0` (front)
 --
 -- @{scene|Scene} extends @{bound_object|BoundObject}
 --
@@ -66,6 +54,11 @@ Scene = BoundObject:extend({
         --
         -- Default `{0, 0, 0, 1}` (solid black)
         bg_color = BoundObject.fwd_func("get_bg_color"),
+
+        --- The z value for the `Scene`'s background color rectangle.
+        --
+        -- Default `-256.0`
+        bg_z = BoundObject.fwd_func("get_bg_z"),
 
         --- *(read only)* The `Scene`'s @{camera|Camera}. This is implicit
         -- (constructed automatically).
@@ -122,6 +115,7 @@ Scene = BoundObject:extend({
 
     _setters = {
         bg_color = BoundObject.fwd_func("set_bg_color"),
+        bg_z = BoundObject.fwd_func("set_bg_z"),
         cover_color = BoundObject.fwd_func("set_cover_color"),
         canvas = BoundObject.fwd_func_real("set_canvas"),
         debug_camera = BoundObject.fwd_func("set_debug_camera"),
@@ -260,6 +254,7 @@ Scene = BoundObject:extend({
     -- base64/gzip encoded!**
     -- @tparam number meters_per_tile Length of the edge of a single tile in
     -- meters
+    -- @tparam number z The z value of the map. Default `-150.0`
     -- @treturn nil
     load_map = BoundObject.fwd_func("load_map"),
 

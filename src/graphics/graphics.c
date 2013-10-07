@@ -9,6 +9,7 @@
 #include <freetype/ftstroke.h>
 #include <lcthw/hashmap_algos.h>
 #include <lcthw/bstrlib.h>
+#include <lcthw/darray_algos.h>
 #include "draw_buffer.h"
 #include "graphics.h"
 #include "stb_image.h"
@@ -134,10 +135,10 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glGenTextures(1, &texture->gl_tex);
     er = Graphics_check();
     glBindTexture(GL_TEXTURE_2D, texture->gl_tex);
-  
+
     GLenum color_format = GL_RGBA;
     GLenum type = size == sizeof(float) ? GL_FLOAT : GL_UNSIGNED_BYTE;
-  
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -148,7 +149,7 @@ GfxTexture *GfxTexture_from_data(unsigned char **data, int width, int height,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipmap ? 8 : 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 #endif
-  
+
 #if defined(DABES_IOS) || defined(DABES_MAC)
   /*
     if (mipmap) {
@@ -411,7 +412,7 @@ void Graphics_stroke_circle(Graphics *graphics, VCircle circle, int precision,
         VPoint center, GLfloat color[4], double line_width, GLfloat z) {
     VPoint points[precision];
     check(graphics != NULL, "Graphics required");
-    
+
     if (circle.radius <= 0) {
         return;
     }
@@ -612,12 +613,12 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
                               UNIFORM_TEXT_PROJECTION_MATRIX,
                               graphics->projection_matrix.gl,
                               GL_FALSE);
-  
+
     VVector4 cVertex = {.raw = {color[0], color[1], color[2], color[3]}};
     Graphics_uniform4f(graphics,
                        UNIFORM_TEXT_COLOR,
                        cVertex.r, cVertex.g, cVertex.b, cVertex.a);
-  
+
 
     // Unfortunately we need to do a pre-pass for right and center.
     float line_width = 0;
@@ -654,7 +655,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
         Graphics_uniform2f(graphics,
                            UNIFORM_TEXT_STRETCH,
                            pot_scale.x, pot_scale.y);
-      
+
         VPoint trans = VPointZero;
         switch (align) {
           case GfxTextAlignRight: {
@@ -674,7 +675,7 @@ void Graphics_draw_string(Graphics *graphics, char *text, GfxFont *font,
           } break;
 
         }
-      
+
         Graphics_reset_modelview_matrix(graphics);
         Graphics_translate_modelview_matrix(graphics, trans.x, trans.y, z);
         Graphics_scale_modelview_matrix(graphics,
@@ -717,14 +718,14 @@ void Graphics_uniformMatrix4fv(Graphics *graphics, GraphicsUniform uniform,
                                GLfloat vector[16], GLboolean transpose) {
   int loc = GfxShader_uniforms[uniform];
   if (loc < 0) return;
-  
+
   if (graphics->uniforms[loc]) {
      int cmp = memcmp(vector, graphics->uniforms[loc], sizeof(GLfloat) * 16);
      if (cmp == 0) {
        return;
      }
   }
-  
+
   GLfloat *buf = realloc(graphics->uniforms[loc], 16 * sizeof(GLfloat));
   memcpy(buf, vector, sizeof(GLfloat) * 16);
   graphics->uniforms[loc] = buf;
@@ -735,14 +736,14 @@ void Graphics_uniform1i(Graphics *graphics, GraphicsUniform uniform,
                         GLint x) {
   int loc = GfxShader_uniforms[uniform];
   if (loc < 0) return;
-  
+
   if (graphics->uniforms[loc]) {
     int cmp = memcmp(&x, graphics->uniforms[loc], sizeof(GLint));
     if (cmp == 0) {
       return;
     }
   }
-  
+
   GLint *buf = realloc(graphics->uniforms[loc], sizeof(GLint));
   memcpy(buf, &x, sizeof(GLint));
   graphics->uniforms[loc] = buf;
@@ -753,14 +754,14 @@ void Graphics_uniform1f(Graphics *graphics, GraphicsUniform uniform,
                         GLfloat x) {
   int loc = GfxShader_uniforms[uniform];
   if (loc < 0) return;
-  
+
   if (graphics->uniforms[loc]) {
     int cmp = memcmp(&x, graphics->uniforms[loc], sizeof(GLfloat));
     if (cmp == 0) {
       return;
     }
   }
-  
+
   GLfloat *buf = realloc(graphics->uniforms[loc], sizeof(GLfloat));
   memcpy(buf, &x, sizeof(GLfloat));
   graphics->uniforms[loc] = buf;
@@ -771,7 +772,7 @@ void Graphics_uniform2f(Graphics *graphics, GraphicsUniform uniform,
                         GLfloat x, GLfloat y) {
   int loc = GfxShader_uniforms[uniform];
   if (loc < 0) return;
-  
+
   GLfloat vector[2] = {x, y};
   if (graphics->uniforms[loc]) {
     int cmp = memcmp(vector, graphics->uniforms[loc], sizeof(GLfloat) * 2);
@@ -779,7 +780,7 @@ void Graphics_uniform2f(Graphics *graphics, GraphicsUniform uniform,
       return;
     }
   }
-  
+
   GLfloat *buf = realloc(graphics->uniforms[loc], 2 * sizeof(GLfloat));
   memcpy(buf, vector, sizeof(GLfloat) * 2);
   graphics->uniforms[loc] = buf;
@@ -790,7 +791,7 @@ void Graphics_uniform4f(Graphics *graphics, GraphicsUniform uniform,
                         GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
   int loc = GfxShader_uniforms[uniform];
   if (loc < 0) return;
-  
+
   GLfloat vector[4] = {x, y, z, w};
   if (graphics->uniforms[loc]) {
     int cmp = memcmp(vector, graphics->uniforms[loc], sizeof(GLfloat) * 4);
@@ -798,7 +799,7 @@ void Graphics_uniform4f(Graphics *graphics, GraphicsUniform uniform,
       return;
     }
   }
-  
+
   GLfloat *buf = realloc(graphics->uniforms[loc], 4 * sizeof(GLfloat));
   memcpy(buf, vector, sizeof(GLfloat) * 4);
   graphics->uniforms[loc] = buf;
@@ -969,7 +970,7 @@ void Graphics_build_decal_shader(Graphics *graphics) {
     set_up_decal_shader(shader, graphics);
     shader->set_up = &set_up_decal_shader;
     shader->tear_down = &tear_down_decal_shader;
-  
+
     shader->gl_vertex_buffer = graphics->array_buffer;
 
     shader->draw_buffer = DrawBuffer_create();
@@ -1046,7 +1047,7 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
     Graphics_get_uniform(graphics, program,
                          "tileset",
                          UNIFORM_TILEMAP_TILESET);
-  
+
     GfxShader_attributes[ATTRIB_TILEMAP_VERTEX] =
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_TILEMAP_TEXTURE] =
@@ -1057,9 +1058,9 @@ void Graphics_build_tilemap_shader(Graphics *graphics) {
     set_up_tilemap_shader(shader, graphics);
     shader->set_up = &set_up_tilemap_shader;
     shader->tear_down = &tear_down_tilemap_shader;
-  
+
     shader->gl_vertex_buffer = graphics->array_buffer;
-  
+
     return;
 error:
     if (shader) free(shader);
@@ -1073,16 +1074,16 @@ void set_up_parallax_shader(GfxShader *shader, Graphics *graphics) {
 
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
-  
+
     glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
-  
+
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX], 4,
                           GL_FLOAT, GL_FALSE, 0, 0);
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE], 4,
                           GL_FLOAT, GL_FALSE, 0,
                           (GLvoid *)(sizeof(VVector4) * 4));
-  
+
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
 
     graphics->bind_vao(0);
@@ -1094,7 +1095,7 @@ void tear_down_parallax_shader (GfxShader *shader, Graphics *graphics) {
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_VERTEX]);
     glDisableVertexAttribArray(GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE]);
     graphics->bind_vao(0);
-  
+
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
 }
 
@@ -1155,7 +1156,7 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
         glGetAttribLocation(program, "position");
     GfxShader_attributes[ATTRIB_PARALLAX_TEXTURE] =
         glGetAttribLocation(program, "texture");
-  
+
     glGenBuffers(1, &shader->gl_vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
     VVector4 texpos[4] = {
@@ -1179,7 +1180,7 @@ void Graphics_build_parallax_shader(Graphics *graphics) {
     glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(VVector4), vertices,
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
-  
+
     graphics->gen_vao(1, &shader->gl_vertex_array);
 
     set_up_parallax_shader(shader, graphics);
@@ -1200,7 +1201,7 @@ void set_up_text_shader(GfxShader *shader, Graphics *graphics) {
     glEnableVertexAttribArray(GfxShader_attributes[ATTRIB_TEXT_TEX_POS]);
 
     glBindBuffer(GL_ARRAY_BUFFER, shader->gl_vertex_buffer);
-  
+
     int v_size = sizeof(VVector4) * 2;
 
     glVertexAttribPointer(GfxShader_attributes[ATTRIB_TEXT_VERTEX], 4,
@@ -1268,26 +1269,26 @@ void Graphics_build_text_shader(Graphics *graphics) {
     VVector4 vertices[2 * 6] = {
           {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
           texpos[0],
-      
+
           {.raw = {rect.tr.x, rect.tr.y, 0, 1}},
           texpos[1],
-      
+
           {.raw = {rect.br.x, rect.br.y, 0, 1}},
           texpos[3],
-           
+
           {.raw = {rect.br.x, rect.br.y, 0, 1}},
           texpos[3],
-      
+
           {.raw = {rect.bl.x, rect.bl.y, 0, 1}},
           texpos[2],
-      
+
           {.raw = {rect.tl.x, rect.tl.y, 0, 1}},
           texpos[0],
     };
     glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(VVector4), vertices,
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
-  
+
     graphics->gen_vao(1, &shader->gl_vertex_array);
 
     set_up_text_shader(shader, graphics);
@@ -1311,7 +1312,7 @@ Graphics *Graphics_create(Engine *engine) {
 
     graphics->screen_size.w = SCREEN_WIDTH;
     graphics->screen_size.h = SCREEN_HEIGHT;
-  
+
     GLenum error = glGetError();
     error = glGetError();
 
@@ -1320,30 +1321,30 @@ Graphics *Graphics_create(Engine *engine) {
     glDisable(GL_ALPHA_TEST);
     glDisable(GL_FOG);
 #endif
-  
-    glEnable(GL_DEPTH_TEST);
+
+    //glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-  
+
     glDisable(GL_DITHER);
-  
+
     glDisable(GL_STENCIL_TEST);
-  
+
     glGenBuffers(1, &graphics->array_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, graphics->array_buffer);
-  
+
 #ifdef DABES_IOS
     glClearDepthf(1.0f);
 #else
     glClearDepth(1.0);
 #endif
     glClearColor(0.65f, 0.65f, 0.65f, 1.0f);
-  
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
+
     error = glGetError();
     check(error == GL_NO_ERROR, "OpenGL init error...");
-  
+
     graphics->current_shader = NULL;
     graphics->shaders = Hashmap_create(NULL, Hashmap_fnv1a_hash);
     graphics->shader_list = List_create();
@@ -1379,12 +1380,12 @@ Graphics *Graphics_create(Engine *engine) {
 
     // graphics->num_uniforms is still 0 here. It gets populated by the shader
     // compiles.
-  
+
     Graphics_build_decal_shader(graphics);
     Graphics_build_tilemap_shader(graphics);
     Graphics_build_parallax_shader(graphics);
     Graphics_build_text_shader(graphics);
-  
+
     // Now we have the uniform count
     graphics->uniforms = calloc(graphics->num_uniforms, sizeof(void *));
 
@@ -1489,7 +1490,7 @@ GfxShader *Graphics_get_shader(Graphics *graphics, char *name) {
 
 void Graphics_use_shader(Graphics *graphics, GfxShader *shader) {
     if (shader == graphics->current_shader) return;
-  
+
     Graphics_clear_uniforms(graphics);
     if (shader == NULL) {
         graphics->bind_vao(0);
@@ -1531,7 +1532,8 @@ void Graphics_log_program(GLuint program) {
     }
 }
 
-GfxTexture *Graphics_texture_from_image(Graphics *graphics, const char *image_name, int mipmap) {
+GfxTexture *Graphics_texture_from_image(Graphics *graphics,
+        const char *image_name, int mipmap) {
     bstring bimage_name = bfromcstr(image_name);
 
     void *val = Hashmap_get(graphics->textures, bimage_name);
@@ -1555,4 +1557,38 @@ Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     return sprite;
 error:
     return NULL;
+}
+
+void Graphics_enqueue_draw_event(Graphics *graphics, DrawEvent *event) {
+    if (graphics->draw_queue == NULL) {
+        graphics->draw_queue = DArray_create(sizeof(DrawEvent *), 128);
+    }
+
+    DArray_push(graphics->draw_queue, event);
+}
+
+void Graphics_flush_draw_events(Graphics *graphics) {
+    if (graphics->draw_queue == NULL) return;
+    DArray_mergesort(graphics->draw_queue, DrawEvent_cmp);
+
+    int i = 0;
+    for (i = 0; i < DArray_count(graphics->draw_queue); i++) {
+        DrawEvent *ev = DArray_get(graphics->draw_queue, i);
+        DrawEvent_draw(ev, graphics);
+    }
+
+    Graphics_empty_draw_events(graphics);
+}
+
+void Graphics_empty_draw_events(Graphics *graphics) {
+    if (graphics->draw_queue == NULL) return;
+
+    int i = 0;
+    for (i = 0; i < DArray_count(graphics->draw_queue); i++) {
+        DrawEvent *ev = DArray_get(graphics->draw_queue, i);
+        DrawEvent_destroy(ev);
+    }
+
+    DArray_destroy(graphics->draw_queue);
+    graphics->draw_queue = NULL;
 }

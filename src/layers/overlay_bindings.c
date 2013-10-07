@@ -45,6 +45,28 @@ int luab_Overlay_close(lua_State *L) {
     return 0;
 }
 
+typedef struct OverlayDrawStringCtx {
+    Overlay *overlay;
+    VVector4 color;
+    VPoint origin;
+    GfxTextAlign text_align;
+    VVector4 shadow_color;
+    VPoint shadow_offset;
+    VMatrix projection;
+    VMatrix modelview;
+    char *str;
+} OverlayDrawStringCtx;
+
+void overlay_draw_string(DrawEvent *event, Graphics *graphics) {
+    OverlayDrawStringCtx *ctx = event->context;
+    graphics->projection_matrix = ctx->projection;
+    Graphics_uniformMatrix4fv(graphics, UNIFORM_TEXT_MODELVIEW_MATRIX,
+                              ctx->modelview.gl, GL_FALSE);
+    Graphics_draw_string(graphics, ctx->str, ctx->overlay->font,
+            ctx->color.raw, ctx->origin, ctx->text_align, ctx->shadow_color.raw,
+            ctx->shadow_offset, event->z);
+}
+
 int luab_Overlay_draw_string(lua_State *L) {
     Overlay *overlay = luaL_tooverlay(L, 1);
     check(overlay != NULL, "Overlay required");
@@ -53,8 +75,8 @@ int luab_Overlay_draw_string(lua_State *L) {
     VVector4 color = luaL_tovvector4(L, 3);
     VPoint origin = luaL_tovpoint(L, 4);
     const char *align = lua_tostring(L, 5);
-    lua_Number z = lua_tonumber(L, 6);
-  
+    lua_Number z = lua_tonumber(L, 8);
+
     origin = VPoint_add(origin, overlay->track_entity_offset);
 
     GfxTextAlign text_align = GfxTextAlignLeft;
@@ -70,13 +92,47 @@ int luab_Overlay_draw_string(lua_State *L) {
     Engine *engine = luaL_get_engine(L);
 
     GfxShader *txshader = Graphics_get_shader(engine->graphics, "text");
-    Graphics_use_shader(engine->graphics, txshader);
-    Graphics_draw_string(engine->graphics, (char *)str, overlay->font,
-            color.raw, origin, text_align, shadow_color.raw, shadow_offset, z);
+
+    OverlayDrawStringCtx *ctx = calloc(1, sizeof(OverlayDrawStringCtx));
+    ctx->overlay = overlay;
+    ctx->color = color;
+    ctx->origin = origin;
+    ctx->text_align = text_align;
+    ctx->shadow_color = shadow_color;
+    ctx->shadow_offset = shadow_offset;
+    ctx->projection = engine->graphics->projection_matrix;
+    ctx->modelview = engine->graphics->modelview_matrix;
+    ctx->str = calloc(1, strlen(str) + 1);
+    strcpy(ctx->str, str);
+
+    DrawEvent *event = DrawEvent_create(DRAW_EVENT_OVERLAY_STRING, z, txshader);
+    event->context = ctx;
+    event->func = overlay_draw_string;
+    Graphics_enqueue_draw_event(engine->graphics, event);
 
     return 1;
 error:
     return 0;
+}
+
+typedef struct OverlayDrawSpriteCtx {
+    Overlay *overlay;
+    Sprite *sprite;
+    VRect rect;
+    VVector4 color;
+    VMatrix projection;
+    float rotation;
+} OverlayDrawSpriteCtx;
+
+void overlay_draw_sprite(DrawEvent *event, Graphics *graphics) {
+    OverlayDrawSpriteCtx *ctx = event->context;
+
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              ctx->projection.gl, GL_FALSE);
+    Graphics_draw_sprite(graphics, ctx->sprite, NULL,
+            ctx->rect, ctx->color.raw, ctx->rotation, ctx->overlay->alpha,
+            event->z);
 }
 
 int luab_Overlay_draw_sprite(lua_State *L) {
@@ -87,8 +143,8 @@ int luab_Overlay_draw_sprite(lua_State *L) {
     VVector4 color = luaL_tovvector4(L, 3);
     VPoint center = luaL_tovpoint(L, 4);
     float rotation = lua_tonumber(L, 5);
-    lua_Number z = lua_tonumber(L, 6);
-  
+    lua_Number z = lua_tonumber(L, 7);
+
     VPoint scale = {1, 1};
     if (lua_type(L, 6) == LUA_TTABLE) {
       scale = luaL_tovpoint(L, 6);
@@ -107,13 +163,20 @@ int luab_Overlay_draw_sprite(lua_State *L) {
                                  sprite->cell_size.w * scale.x,
                                  sprite->cell_size.h * scale.y);
     GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
-    Graphics_use_shader(engine->graphics, dshader);
-    Graphics_uniformMatrix4fv(engine->graphics,
-                              UNIFORM_DECAL_PROJECTION_MATRIX,
-                              engine->graphics->projection_matrix.gl,
-                              GL_FALSE);
-    Graphics_draw_sprite(engine->graphics, sprite, NULL,
-            rect, color.raw, rotation, overlay->alpha, z);
+
+    OverlayDrawSpriteCtx *ctx = calloc(1, sizeof(OverlayDrawSpriteCtx));
+    ctx->overlay = overlay;
+    ctx->sprite = sprite;
+    ctx->projection = engine->graphics->projection_matrix;
+    ctx->color = color;
+    ctx->rotation = rotation;
+    ctx->rect = rect;
+
+    DrawEvent *event = DrawEvent_create(DRAW_EVENT_OVERLAY_SPRITE, z,
+                                        dshader);
+    event->context = ctx;
+    event->func = overlay_draw_sprite;
+    Graphics_enqueue_draw_event(engine->graphics, event);
 
     return 1;
 error:

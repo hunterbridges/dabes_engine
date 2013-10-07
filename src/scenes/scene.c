@@ -26,10 +26,10 @@ Scene *Scene_create(Engine *engine, SceneProto proto) {
     scene->cover_color = cover_color;
 
     scene->gravity = VPointZero;
-  
+
     scene->bg_z = -255.f;
     scene->cover_z = 0.f;
-  
+
     return scene;
 error:
     return NULL;
@@ -322,17 +322,13 @@ static inline int entity_render_traverse_cb(BSTreeNode *node, void *context) {
 void Scene_render_entities(Scene *scene, Engine *engine) {
     GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
     Graphics_use_shader(engine->graphics, dshader);
-    Graphics_uniformMatrix4fv(engine->graphics,
-                              UNIFORM_DECAL_PROJECTION_MATRIX,
-                              engine->graphics->projection_matrix.gl,
-                              GL_FALSE);
 
     SceneTraverseCtx ctx = {.engine = engine,
         .draw_buffer = dshader->draw_buffer};
     BSTree_traverse(scene->entities, entity_render_traverse_cb, &ctx);
 
-    DrawBuffer_draw(dshader->draw_buffer, engine->graphics);
-    DrawBuffer_empty(dshader->draw_buffer);
+    // DrawBuffer_draw(dshader->draw_buffer, engine->graphics);
+    // DrawBuffer_empty(dshader->draw_buffer);
 }
 
 static inline int entity_render_sel_traverse_cb(BSTreeNode *node,
@@ -355,27 +351,53 @@ void Scene_render_selected_entities(Scene *scene, Engine *engine) {
     }
 }
 
-void Scene_project_screen(Scene *scene, Engine *engine) {
-    Graphics_project_screen_camera(engine->graphics, scene->camera);
+void Scene_project_screen(Scene *scene, Graphics *graphics) {
+    Graphics_project_screen_camera(graphics, scene->camera);
 }
 
-void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z) {
+typedef struct SceneFillDrawCtx {
+    Scene *scene;
+    VVector4 color;
+} SceneFillDrawCtx;
+
+void scene_fill_draw(DrawEvent *event, Graphics *graphics) {
+    SceneFillDrawCtx *ctx = event->context;
+    Scene *scene = ctx->scene;
+
+    Graphics_reset_modelview_matrix(graphics);
+    Scene_project_screen(scene, graphics);
+    VRect cover_rect = VRect_from_xywh(-scene->camera->screen_size.w / 2.0,
+                                       -scene->camera->screen_size.h / 2.0,
+                                       scene->camera->screen_size.w,
+                                       scene->camera->screen_size.h);
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_DECAL_PROJECTION_MATRIX,
+                              graphics->projection_matrix.gl,
+                              GL_FALSE);
+    Graphics_draw_rect(graphics, NULL, cover_rect,
+            ctx->color.raw, NULL, VPointZero, GfxSizeZero,
+            0, 1, event->z);
+}
+
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z,
+        int immediate) {
     if (color.a > 0.0) {
         GfxShader *dshader = Graphics_get_shader(engine->graphics, "decal");
-        Graphics_use_shader(engine->graphics, dshader);
-        Graphics_reset_modelview_matrix(engine->graphics);
-        Scene_project_screen(scene, engine);
-        VRect cover_rect = VRect_from_xywh(-scene->camera->screen_size.w / 2.0,
-                                           -scene->camera->screen_size.h / 2.0,
-                                           scene->camera->screen_size.w,
-                                           scene->camera->screen_size.h);
-        Graphics_uniformMatrix4fv(engine->graphics,
-                                  UNIFORM_DECAL_PROJECTION_MATRIX,
-                                  engine->graphics->projection_matrix.gl,
-                                  GL_FALSE);
-        Graphics_draw_rect(engine->graphics, NULL, cover_rect,
-                color.raw, NULL, VPointZero, GfxSizeZero,
-                0, 1, z);
+
+        SceneFillDrawCtx *ctx = calloc(1, sizeof(SceneFillDrawCtx));
+        ctx->scene = scene;
+        ctx->color = color;
+
+        DrawEvent *event = DrawEvent_create(DRAW_EVENT_SCENE_FILL, z, dshader);
+        event->context = ctx;
+        event->func = scene_fill_draw;
+
+        if (immediate) {
+            DrawEvent_draw(event, engine->graphics);
+            DrawEvent_destroy(event);
+        } else {
+            Graphics_enqueue_draw_event(engine->graphics, event);
+        }
     }
 }
 

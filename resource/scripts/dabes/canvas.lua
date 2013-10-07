@@ -26,8 +26,18 @@ Canvas = BoundObject:extend({
         -- between the first and last point of the draw action.
         angle_color = BoundObject.fwd_func("get_angle_color"),
 
+        --- The z value for the angle line.
+        --
+        -- Default `-7.0`
+        angle_z = BoundObject.fwd_func("get_angle_z"),
+
         --- An `{r, g, b, a}` vector representing the Canvas background color.
         bg_color = BoundObject.fwd_func("get_bg_color"),
+
+        --- The z value for the canvas background.
+        --
+        -- Default `-120.0`
+        bg_z = BoundObject.fwd_func("get_bg_z"),
 
         --- The minimum distance required for the path simplifier to recognize
         -- a new vertex. In pixels
@@ -35,6 +45,11 @@ Canvas = BoundObject:extend({
 
         --- An `{r, g, b, a}` vector representing the Canvas draw color.
         draw_color = BoundObject.fwd_func("get_draw_color"),
+
+        --- The z value for the canvas draw path.
+        --
+        -- Default `-9.0`
+        draw_z = BoundObject.fwd_func("get_draw_z"),
 
         --- Draw render width in pixels
         draw_width = BoundObject.fwd_func("get_draw_width"),
@@ -46,6 +61,12 @@ Canvas = BoundObject:extend({
         simplified_path_color =
             BoundObject.fwd_func("get_simplified_path_color"),
 
+        --- The z value for the simplified path.
+        --
+        -- Default `-8.0`
+        simplified_path_z =
+            BoundObject.fwd_func("get_simplified_path_z"),
+
         --- A @{shape_matcher|ShapeMatcher} hosted by the Canvas
         shape_matcher =
             BoundObject.fwd_func("get_shape_matcher"),
@@ -55,13 +76,18 @@ Canvas = BoundObject:extend({
         alpha = BoundObject.fwd_func("set_alpha"),
         angle_threshold = BoundObject.fwd_func("set_angle_threshold"),
         angle_color = BoundObject.fwd_func("set_angle_color"),
+        angle_z = BoundObject.fwd_func("set_angle_z"),
         bg_color = BoundObject.fwd_func("set_bg_color"),
+        bg_z = BoundObject.fwd_func("set_bg_z"),
         distance_threshold = BoundObject.fwd_func("set_distance_threshold"),
         draw_color = BoundObject.fwd_func("set_draw_color"),
+        draw_z = BoundObject.fwd_func("set_draw_z"),
         draw_width = BoundObject.fwd_func("set_draw_width"),
         enabled = BoundObject.fwd_func("set_enabled"),
         simplified_path_color =
             BoundObject.fwd_func("set_simplified_path_color"),
+        simplified_path_z =
+            BoundObject.fwd_func("set_simplified_path_z"),
         shape_matcher =
             BoundObject.fwd_func_real("set_shape_matcher"),
     },

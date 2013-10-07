@@ -106,6 +106,11 @@ ShapeMatcher = BoundObject:extend({
         -- @class field
         debug_shape_color = BoundObject.fwd_func("get_debug_shape_color"),
 
+        --- The z value for the debug shapes.
+        --
+        -- Default `-6.0`
+        debug_shape_z = BoundObject.fwd_func("get_debug_shape_z"),
+
         --- The width of the `debug_shapes` stroke.
         -- @class field
         debug_shape_width = BoundObject.fwd_func("get_debug_shape_width"),
@@ -113,6 +118,11 @@ ShapeMatcher = BoundObject:extend({
         --- An `{r, g, b, a}` vector representing the dot color.
         -- @class field
         dot_color = BoundObject.fwd_func("get_dot_color"),
+
+        --- The z value for the dots.
+        --
+        -- Default `-5.0`
+        dot_z = BoundObject.fwd_func("get_dot_z"),
 
         --- The width of the dot stroke.
         dot_width = BoundObject.fwd_func("get_dot_width")
@@ -134,8 +144,10 @@ ShapeMatcher = BoundObject:extend({
         intended_convex_winding = BoundObject.readonly,
         debug_shapes = BoundObject.fwd_func("set_debug_shapes"),
         debug_shape_color = BoundObject.fwd_func("set_debug_shape_color"),
+        debug_shape_z = BoundObject.fwd_func("set_debug_shape_z"),
         debug_shape_width = BoundObject.fwd_func("set_debug_shape_width"),
         dot_color = BoundObject.fwd_func("set_dot_color"),
+        dot_z = BoundObject.fwd_func("set_dot_z"),
         dot_width = BoundObject.fwd_func("set_dot_width")
     },
 

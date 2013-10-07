@@ -1,10 +1,12 @@
 #ifndef __graphics_h
 #define __graphics_h
 #include <lcthw/hashmap.h>
+#include <lcthw/darray.h>
 #include "../prefix.h"
 #include "../math/vmatrix.h"
 #include "../math/vrect.h"
 #include "../math/vcircle.h"
+#include "draw_event.h"
 
 #ifdef DABES_SDL
 #include <SDL/SDL_ttf.h>
@@ -164,7 +166,8 @@ typedef struct Graphics {
     Hashmap *shaders;
     List *shader_list;
     Hashmap *sprites;
-  
+    DArray *draw_queue;
+
     int num_uniforms;
     void **uniforms;
 
@@ -254,6 +257,11 @@ void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
+// Draw Event Queue
+
 extern Object GraphicsProto;
+void Graphics_enqueue_draw_event(Graphics *graphics, DrawEvent *event);
+void Graphics_flush_draw_events(Graphics *graphics);
+void Graphics_empty_draw_events(Graphics *graphics);
 
 #endif

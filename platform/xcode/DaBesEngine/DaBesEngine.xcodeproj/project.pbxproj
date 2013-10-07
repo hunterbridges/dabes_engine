@@ -24,6 +24,10 @@
 		CA2788891780FDBF005A242D /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2788881780FDBF005A242D /* libxml2.dylib */; };
 		CA27888B1780FDC4005A242D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CA27888A1780FDC4005A242D /* libz.dylib */; };
 		CA27888C178101DF005A242D /* DaBes-Mac.h in Headers */ = {isa = PBXBuildFile; fileRef = CAF429831780F36300C3220A /* DaBes-Mac.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA363B6518020EEE004D7303 /* draw_event.c in Sources */ = {isa = PBXBuildFile; fileRef = CA363B6318020EEE004D7303 /* draw_event.c */; };
+		CA363B6618020EEE004D7303 /* draw_event.c in Sources */ = {isa = PBXBuildFile; fileRef = CA363B6318020EEE004D7303 /* draw_event.c */; };
+		CA363B6718020EEE004D7303 /* draw_event.h in Headers */ = {isa = PBXBuildFile; fileRef = CA363B6418020EEE004D7303 /* draw_event.h */; };
+		CA363B6818020EEE004D7303 /* draw_event.h in Headers */ = {isa = PBXBuildFile; fileRef = CA363B6418020EEE004D7303 /* draw_event.h */; };
 		CA51FC821783659A000C73E0 /* DABiOSEngineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CA51FC801783659A000C73E0 /* DABiOSEngineViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA51FC831783659A000C73E0 /* DABiOSEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA51FC811783659A000C73E0 /* DABiOSEngineViewController.m */; };
 		CA69E37417E2E2E000E9CC98 /* shape_matcher_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E36E17E2E2E000E9CC98 /* shape_matcher_bindings.c */; };
@@ -520,6 +524,8 @@
 		CA30660F17054C1E00629F80 /* gzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzip.c; sourceTree = "<group>"; };
 		CA30661217062E5D00629F80 /* tile_map_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tile_map_parse.c; sourceTree = "<group>"; };
 		CA30661317062E5D00629F80 /* tile_map_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map_parse.h; sourceTree = "<group>"; };
+		CA363B6318020EEE004D7303 /* draw_event.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = draw_event.c; sourceTree = "<group>"; };
+		CA363B6418020EEE004D7303 /* draw_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = draw_event.h; sourceTree = "<group>"; };
 		CA382AB3177A45450049B645 /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
 		CA382ABA177A45540049B645 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		CA3F99B8172F85E000ED1135 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = ../../../../third_party/OggVorbis/Ogg.framework; sourceTree = "<group>"; };
@@ -800,6 +806,8 @@
 				CA02010717654206008F719D /* camera_bindings.h */,
 				CA02010B176D86EE008F719D /* draw_buffer.c */,
 				CA02010D176D86FC008F719D /* draw_buffer.h */,
+				CA363B6318020EEE004D7303 /* draw_event.c */,
+				CA363B6418020EEE004D7303 /* draw_event.h */,
 				CA24C77116FC20900045D5DE /* graphics.c */,
 				CA24C77216FC20900045D5DE /* graphics.h */,
 				CAC581C717586044004A8161 /* parallax_bindings.c */,
@@ -1191,6 +1199,7 @@
 				CAF9160117D46BA000EE204E /* overlay.h in Headers */,
 				CA03FAFE17D56A6B00E25C2F /* DABTouchpadControllerOverlayView.h in Headers */,
 				CA69E37717E2E2E000E9CC98 /* shape_matcher_bindings.h in Headers */,
+				CA363B6818020EEE004D7303 /* draw_event.h in Headers */,
 				CAFC4E9817F2589E00CE740E /* net_match.h in Headers */,
 				CA69E37B17E2E2E000E9CC98 /* shape_matcher.h in Headers */,
 				CAFC4E8117F2587000CE740E /* DABGameCenterNet.h in Headers */,
@@ -1248,6 +1257,7 @@
 				CAF42A2B1780F62500C3220A /* controller.h in Headers */,
 				CAF42A2C1780F62500C3220A /* input.h in Headers */,
 				CAF42A2D1780F62500C3220A /* vpoint.h in Headers */,
+				CA363B6718020EEE004D7303 /* draw_event.h in Headers */,
 				CAFC4E9717F2589E00CE740E /* net_match.h in Headers */,
 				CAF42A2E1780F62500C3220A /* vrect.h in Headers */,
 				CAF42A2F1780F62500C3220A /* vmatrix.h in Headers */,
@@ -1595,6 +1605,7 @@
 				CA705BF9178350BD00D2C6E4 /* easer_bindings.c in Sources */,
 				CAFC4EA817F26D5B00CE740E /* GameCenterNetMatchProto.m in Sources */,
 				CA705BFA178350BD00D2C6E4 /* easer.c in Sources */,
+				CA363B6618020EEE004D7303 /* draw_event.c in Sources */,
 				CA705BFB178350BD00D2C6E4 /* engine.c in Sources */,
 				CA705BFD178350BD00D2C6E4 /* gzip.c in Sources */,
 				CA705BFE178350BD00D2C6E4 /* stepper.c in Sources */,
@@ -1707,6 +1718,7 @@
 				CAF429DF1780F40D00C3220A /* chipmunk_scene.c in Sources */,
 				CAF429E01780F40D00C3220A /* scene.c in Sources */,
 				CAF429E11780F40D00C3220A /* scene_bindings.c in Sources */,
+				CA363B6518020EEE004D7303 /* draw_event.c in Sources */,
 				CAF429E51780F41100C3220A /* scripting.c in Sources */,
 				CAF429E71780F41400C3220A /* object.c in Sources */,
 				CAF429E81780F41400C3220A /* util.c in Sources */,

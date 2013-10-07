@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
                 if (scene->started) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                     Scene_render(scene, engine);
+                    Graphics_flush_draw_events(engine->graphics);
                 }
             }
             SDL_GL_SwapBuffers();

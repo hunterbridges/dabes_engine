@@ -61,7 +61,7 @@ Entity = BoundObject:extend({
        -- between `0.0` (closest to the screen, in front) and `-256.0`
        -- (farthest from the screen, in back).
        --
-       -- Default `100.0`
+       -- Default `-100.0`
        z = BoundObject.fwd_func('get_z'),
    },
 

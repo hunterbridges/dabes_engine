@@ -133,7 +133,8 @@ Overlay = BoundObject:extend({
     -- })
     draw_string = BoundObject.fwd_func_opts( "draw_string",
         {"string", "color", "origin", "align", "shadow_color", "shadow_offset", "z"},
-        {align = "left", color = {1, 1, 1, 1}, origin = {0, 0}, z = 0}),
+        {align = "left", color = {1, 1, 1, 1}, origin = {0, 0},
+         shadow_color = {0, 0, 0, 0}, shadow_offset = {0, 0}, z = -2}),
 
     --- Draw a @{sprite|Sprite} to `Overlay`.
     --
@@ -169,7 +170,7 @@ Overlay = BoundObject:extend({
     -- })
     draw_sprite = BoundObject.fwd_func_opts( "draw_sprite",
         {"sprite", "color", "center", "rotation", "scale", "z"},
-        {color = {0, 0, 0, 0}, center = {0, 0}, rotation = 0, scale = {1, 1}, z = 0}),
+        {color = {0, 0, 0, 0}, center = {0, 0}, rotation = 0, scale = {1, 1}, z = -2}),
 
 --- Hooks.
 -- Callbacks implemented in subclasses to customize behavior. Hooks are called

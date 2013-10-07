@@ -75,10 +75,16 @@ int luab_Scene_load_map(lua_State *L) {
     check(lua_isnumber(L, 3),
             "Please provide a meters-per-tile conversion factor");
 
+
     const char *file = lua_tostring(L, 2);
     float meters_per_tile = lua_tonumber(L, 3);
 
     Scene_load_tile_map(scene, engine, (char *)file, 0, meters_per_tile);
+
+    if (lua_isnumber(L, 4)) {
+        lua_Number z = lua_tonumber(L, 4);
+        scene->tile_map->z = z;
+    }
 
     return 1;
 error:
@@ -309,6 +315,9 @@ Scripting_VVector4_setter(Scene, bg_color);
 Scripting_VVector4_getter(Scene, cover_color);
 Scripting_VVector4_setter(Scene, cover_color);
 
+Scripting_num_getter(Scene, bg_z);
+Scripting_num_setter(Scene, bg_z);
+
 int luab_Scene_get_gravity(lua_State *L) {
     Scene *scene = luaL_toscene(L, 1);
     check(scene != NULL, "Scene required");
@@ -356,6 +365,8 @@ static const struct luaL_Reg luab_Scene_meths[] = {
     {"set_debug_camera", luab_Scene_set_debug_camera},
     {"get_bg_color", luab_Scene_get_bg_color},
     {"set_bg_color", luab_Scene_set_bg_color},
+    {"get_bg_z", luab_Scene_get_bg_z},
+    {"set_bg_z", luab_Scene_set_bg_z},
     {"get_cover_color", luab_Scene_get_cover_color},
     {"set_cover_color", luab_Scene_set_cover_color},
     {"get_gravity", luab_Scene_get_gravity},

@@ -40,7 +40,7 @@ GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
       layer->raw_atlas = malloc(sizeof(GLfloat) * layer->gid_count * 4);
       check(layer->raw_atlas != NULL, "Could not alloc raw atlas");
   }
-  
+
   int sheet_cols, sheet_rows;
   for (i = 0; i < layer->gid_count * 4; i += 4) {
     int tile_idx = i / 4;
@@ -48,7 +48,7 @@ GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
     uint32_t first_gid = 0;
     uint32_t diff_gid = UINT32_MAX;
     uint32_t this_gid = 0;
-    
+
     int flip_x = 0;
     int flip_y = 0;
     int flip_xy = 0;
@@ -56,33 +56,33 @@ GfxTexture *TileMapLayer_create_atlas(TileMapLayer *layer, TileMap *map) {
     float base_y = 0;
     if (tile) {
       layer->tileset = tile->tileset;
-      
+
       sheet_cols = layer->tileset->texture->size.w / layer->tileset->tile_size.w;
       sheet_rows = layer->tileset->texture->size.h / layer->tileset->tile_size.h;
-      
+
       first_gid = tile->tileset->first_gid;
       this_gid = layer->tile_gids[tile_idx];
-      
+
       flip_x = this_gid & FLIPPED_HORIZONTALLY_FLAG;
       flip_y = this_gid & FLIPPED_VERTICALLY_FLAG;
       flip_xy = this_gid & FLIPPED_DIAGONALLY_FLAG;
-      
+
       this_gid &= ~(FLIPPED_HORIZONTALLY_FLAG |
                     FLIPPED_VERTICALLY_FLAG |
                     FLIPPED_DIAGONALLY_FLAG);
-      
+
       diff_gid = this_gid - first_gid;
-      
+
       int col = diff_gid % sheet_cols;
       int row = diff_gid / sheet_rows;
       base_x = col * layer->tileset->tile_size.w;
       base_y = row * layer->tileset->tile_size.h;
       base_x /= layer->tileset->texture->size.w;
       base_y /= layer->tileset->texture->size.h;
-      
+
       free(tile);
     }
-    
+
     // TODO support flipping
 
     layer->raw_atlas[i]   = base_x;
@@ -143,7 +143,7 @@ TileMap *TileMap_create() {
   map->layers->expand_rate = 8;
 
   map->meters_per_tile = 1.0;
-  
+
   map->z = -150.f;
 
   return map;
@@ -212,6 +212,123 @@ error:
   return NULL;
 }
 
+typedef struct TileMapLayerDrawCtx {
+    TileMap *map;
+    VMatrix modelview;
+    VMatrix projection;
+    VRect rect;
+    VPoint center;
+    TileMapLayer *layer;
+} TileMapLayerDrawCtx;
+
+void tile_map_layer_draw(DrawEvent *event, Graphics *graphics) {
+    TileMapLayerDrawCtx *ctx = event->context;
+
+    TileMapLayer *layer = ctx->layer;
+    VRect rect = ctx->rect;
+
+    double w = rect.tr.x - rect.tl.x;
+    double h = rect.bl.y - rect.tl.y;
+
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_TILEMAP_PROJECTION_MATRIX,
+                              ctx->projection.gl,
+                              GL_FALSE);
+    Graphics_uniformMatrix4fv(graphics,
+                              UNIFORM_TILEMAP_MODELVIEW_MATRIX,
+                              ctx->modelview.gl,
+                              GL_FALSE);
+
+    VVector4 tex_tl = {.raw = {0,0,0,0}};
+    VVector4 tex_tr = {.raw = {1,0,0,0}};
+    VVector4 tex_bl = {.raw = {0,1,0,0}};
+    VVector4 tex_br = {.raw = {1,1,0,0}};
+    Graphics_uniform1i(graphics, UNIFORM_TILEMAP_ATLAS, 0);
+    if (layer->atlas) {
+        Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS,
+                           layer->atlas->pot_size.w, layer->atlas->pot_size.h);
+        Graphics_uniform2f(graphics, UNIFORM_TILEMAP_TEXEL_PER_MAP,
+                           1.0 / layer->atlas->pot_size.w, 1.0 / layer->atlas->pot_size.h);
+
+        glBindTexture(GL_TEXTURE_2D, layer->atlas->gl_tex);
+
+        VPoint pot_scale = {
+            layer->atlas->size.w / layer->atlas->pot_size.w,
+            layer->atlas->size.h / layer->atlas->pot_size.h
+        };
+        tex_tl.x *= pot_scale.x;
+        tex_tr.x *= pot_scale.x;
+        tex_bl.x *= pot_scale.x;
+        tex_br.x *= pot_scale.x;
+        tex_tl.y *= pot_scale.y;
+        tex_tr.y *= pot_scale.y;
+        tex_bl.y *= pot_scale.y;
+        tex_br.y *= pot_scale.y;
+    } else {
+        Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS, 1, 1);
+        Graphics_uniform2f(graphics, UNIFORM_TILEMAP_TEXEL_PER_MAP, 1, 1);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+
+    if (layer->tileset) {
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_TILE_SIZE,
+                           layer->tileset->tile_size.w / layer->tileset->texture->size.w,
+                           layer->tileset->tile_size.h / layer->tileset->texture->size.h);
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_SHEET_ROWS_COLS,
+                           layer->tileset->texture->size.w / layer->tileset->tile_size.w,
+                           layer->tileset->texture->size.h / layer->tileset->tile_size.h);
+        Graphics_uniform2f(graphics,
+            UNIFORM_TILEMAP_SHEET_POT_SIZE,
+            layer->tileset->texture->size.w / layer->tileset->texture->pot_size.w,
+            layer->tileset->texture->size.h / layer->tileset->texture->pot_size.h);
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_SHEET_PORTION,
+                           layer->tileset->tile_size.w / layer->tileset->texture->pot_size.w ,
+                           layer->tileset->tile_size.h / layer->tileset->texture->pot_size.h);
+    } else {
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_TILE_SIZE,
+                           1, 1);
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_SHEET_ROWS_COLS,
+                           1, 1);
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_SHEET_POT_SIZE,
+                           1, 1);
+        Graphics_uniform2f(graphics,
+                           UNIFORM_TILEMAP_SHEET_PORTION,
+                           1, 1);
+    }
+
+    glActiveTexture(GL_TEXTURE1);
+    Graphics_uniform1i(graphics,
+                       UNIFORM_TILEMAP_TILESET, 1);
+    if (layer->tileset && layer->tileset->texture) {
+        glBindTexture(GL_TEXTURE_2D, layer->tileset->texture->gl_tex);
+    } else {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    size_t v_size = 8 * sizeof(VVector4);
+    VVector4 vertices[8] = {
+      // Vertex
+      {.raw = {-w / 2.0, -h / 2.0, event->z, 1}},
+      {.raw = {w / 2.0, -h / 2.0, event->z, 1}},
+      {.raw = {-w / 2.0, h / 2.0, event->z, 1}},
+      {.raw = {w / 2.0, h / 2.0, event->z, 1}},
+
+      // Texture
+      tex_tl, tex_tr, tex_bl, tex_br
+    };
+    glBufferData(GL_ARRAY_BUFFER, v_size, vertices, GL_STATIC_DRAW);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glActiveTexture(GL_TEXTURE0);
+}
+
 void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
     if (map == NULL) return;
 
@@ -228,14 +345,15 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
     };
     Graphics_translate_modelview_matrix(graphics, center.x, center.y, 0.f);
 
-    Graphics_uniformMatrix4fv(graphics,
-                              UNIFORM_TILEMAP_PROJECTION_MATRIX,
-                              graphics->projection_matrix.gl,
-                              GL_FALSE);
-    Graphics_uniformMatrix4fv(graphics,
-                              UNIFORM_TILEMAP_MODELVIEW_MATRIX,
-                              graphics->modelview_matrix.gl,
-                              GL_FALSE);
+    TileMapLayerDrawCtx ctx_template = {
+        .map = map,
+        .modelview = graphics->modelview_matrix,
+        .projection = graphics->projection_matrix,
+        .rect = rect,
+        .center = center
+    };
+
+    GfxShader *tshader = Graphics_get_shader(graphics, "tilemap");
 
     int layer_idx = 0;
     for (layer_idx = 0; layer_idx < map->layers->end;
@@ -245,93 +363,14 @@ void TileMap_render(TileMap *map, Graphics *graphics, int pixels_per_meter) {
         layer->atlas = TileMapLayer_create_atlas(layer, map);
       }
 
-      VVector4 tex_tl = {.raw = {0,0,0,0}};
-      VVector4 tex_tr = {.raw = {1,0,0,0}};
-      VVector4 tex_bl = {.raw = {0,1,0,0}};
-      VVector4 tex_br = {.raw = {1,1,0,0}};
-      Graphics_uniform1i(graphics, UNIFORM_TILEMAP_ATLAS, 0);
-      if (layer->atlas) {
-          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS,
-                             layer->atlas->pot_size.w, layer->atlas->pot_size.h);
-          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_TEXEL_PER_MAP,
-                             1.0 / layer->atlas->pot_size.w, 1.0 / layer->atlas->pot_size.h);
+      TileMapLayerDrawCtx *ctx = calloc(1, sizeof(TileMapLayerDrawCtx));
+      memcpy(ctx, &ctx_template, sizeof(TileMapLayerDrawCtx));
+      ctx->layer = layer;
 
-          glBindTexture(GL_TEXTURE_2D, layer->atlas->gl_tex);
-
-          VPoint pot_scale = {
-              layer->atlas->size.w / layer->atlas->pot_size.w,
-              layer->atlas->size.h / layer->atlas->pot_size.h
-          };
-          tex_tl.x *= pot_scale.x;
-          tex_tr.x *= pot_scale.x;
-          tex_bl.x *= pot_scale.x;
-          tex_br.x *= pot_scale.x;
-          tex_tl.y *= pot_scale.y;
-          tex_tr.y *= pot_scale.y;
-          tex_bl.y *= pot_scale.y;
-          tex_br.y *= pot_scale.y;
-      } else {
-          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_MAP_ROWS_COLS, 1, 1);
-          Graphics_uniform2f(graphics, UNIFORM_TILEMAP_TEXEL_PER_MAP, 1, 1);
-          glBindTexture(GL_TEXTURE_2D, 0);
-      }
-
-
-      if (layer->tileset) {
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_TILE_SIZE,
-                             layer->tileset->tile_size.w / layer->tileset->texture->size.w,
-                             layer->tileset->tile_size.h / layer->tileset->texture->size.h);
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_SHEET_ROWS_COLS,
-                             layer->tileset->texture->size.w / layer->tileset->tile_size.w,
-                             layer->tileset->texture->size.h / layer->tileset->tile_size.h);
-          Graphics_uniform2f(graphics,
-              UNIFORM_TILEMAP_SHEET_POT_SIZE,
-              layer->tileset->texture->size.w / layer->tileset->texture->pot_size.w,
-              layer->tileset->texture->size.h / layer->tileset->texture->pot_size.h);
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_SHEET_PORTION,
-                             layer->tileset->tile_size.w / layer->tileset->texture->pot_size.w ,
-                             layer->tileset->tile_size.h / layer->tileset->texture->pot_size.h);
-      } else {
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_TILE_SIZE,
-                             1, 1);
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_SHEET_ROWS_COLS,
-                             1, 1);
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_SHEET_POT_SIZE,
-                             1, 1);
-          Graphics_uniform2f(graphics,
-                             UNIFORM_TILEMAP_SHEET_PORTION,
-                             1, 1);
-      }
-
-      glActiveTexture(GL_TEXTURE1);
-      Graphics_uniform1i(graphics,
-                         UNIFORM_TILEMAP_TILESET, 1);
-      if (layer->tileset && layer->tileset->texture) {
-          glBindTexture(GL_TEXTURE_2D, layer->tileset->texture->gl_tex);
-      } else {
-          glBindTexture(GL_TEXTURE_2D, 0);
-      }
-
-      size_t v_size = 8 * sizeof(VVector4);
-      VVector4 vertices[8] = {
-        // Vertex
-        {.raw = {-w / 2.0, -h / 2.0, map->z, 1}},
-        {.raw = {w / 2.0, -h / 2.0, map->z, 1}},
-        {.raw = {-w / 2.0, h / 2.0, map->z, 1}},
-        {.raw = {w / 2.0, h / 2.0, map->z, 1}},
-
-        // Texture
-        tex_tl, tex_tr, tex_bl, tex_br
-      };
-      glBufferData(GL_ARRAY_BUFFER, v_size, vertices, GL_STATIC_DRAW);
-
-      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-      glActiveTexture(GL_TEXTURE0);
+      DrawEvent *event = DrawEvent_create(DRAW_EVENT_TILEMAP_LAYER,
+                                          map->z, tshader);
+      event->context = ctx;
+      event->func = tile_map_layer_draw;
+      Graphics_enqueue_draw_event(graphics, event);
     }
 }

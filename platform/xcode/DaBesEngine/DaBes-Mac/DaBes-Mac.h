@@ -1263,9 +1263,49 @@ typedef struct VCircle {
 } VCircle;
 
 #endif
+#ifndef __draw_event_h
+#define __draw_event_h
+
+typedef enum {
+    DRAW_EVENT_ENTITY = 1,
+    DRAW_EVENT_CANVAS_BG,
+    DRAW_EVENT_CANVAS_PATHS,
+    DRAW_EVENT_TILEMAP_LAYER,
+    DRAW_EVENT_PARALLAX_BG,
+    DRAW_EVENT_PARALLAX_LAYER,
+    DRAW_EVENT_OVERLAY_STRING,
+    DRAW_EVENT_OVERLAY_SPRITE,
+    DRAW_EVENT_SCENE_FILL
+} DrawEventKind;
+
+struct Graphics;
+struct GfxShader;
+struct DrawEvent;
+
+typedef void (*DrawEventFunc)(struct DrawEvent *event,
+                              struct Graphics *graphics);
+
+typedef struct DrawEvent {
+    DrawEventKind kind;
+    float z;
+
+    struct GfxShader *shader;
+
+    DrawEventFunc func;
+    void *context;
+} DrawEvent;
+
+int DrawEvent_cmp(const void *a, const void *b);
+DrawEvent *DrawEvent_create(DrawEventKind kind, float z,
+        struct GfxShader *shader);
+void DrawEvent_destroy(DrawEvent *event);
+void DrawEvent_draw(DrawEvent *event, struct Graphics *graphics);
+
+#endif
 #ifndef __graphics_h
 #define __graphics_h
 #include <lcthw/hashmap.h>
+#include <lcthw/darray.h>
 
 #ifdef DABES_SDL
 #include <SDL/SDL_ttf.h>
@@ -1425,7 +1465,8 @@ typedef struct Graphics {
     Hashmap *shaders;
     List *shader_list;
     Hashmap *sprites;
-  
+    DArray *draw_queue;
+
     int num_uniforms;
     void **uniforms;
 
@@ -1515,7 +1556,12 @@ void Graphics_draw_sprite(Graphics *graphics, struct Sprite *sprite,
 struct Sprite *Graphics_sprite_from_image(Graphics *graphics, const char *image_name,
     GfxSize cell_size, int padding);
 
+// Draw Event Queue
+
 extern Object GraphicsProto;
+void Graphics_enqueue_draw_event(Graphics *graphics, DrawEvent *event);
+void Graphics_flush_draw_events(Graphics *graphics);
+void Graphics_empty_draw_events(Graphics *graphics);
 
 #endif
 #ifndef __stepper_h
@@ -2957,7 +3003,7 @@ typedef struct Scene {
 
     float bg_z;
     float cover_z;
-  
+
     VVector4 bg_color;
     VVector4 cover_color;
 
@@ -2994,8 +3040,8 @@ void Scene_set_selection_mode(Scene *scene, SceneEntitySelectionMode mode);
 int Scene_select_entities_at(Scene *scene, VPoint screen_point);
 
 // Rendering
-void Scene_project_screen(Scene *scene, Engine *engine);
-void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z);
+void Scene_project_screen(Scene *scene, Graphics *graphics);
+void Scene_fill(Scene *scene, Engine *engine, VVector4 color, GLfloat z, int immediate);
 void Scene_render_entities(Scene *scene, Engine *engine);
 void Scene_render_selected_entities(Scene *scene, Engine *engine);
 void Scene_render_overlays(Scene *scene, Engine *engine);
