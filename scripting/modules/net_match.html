@@ -135,6 +135,10 @@
 	<td class="name" nowrap><a href="#MSG_PACKED_RECORDER">MSG_PACKED_RECORDER</a></td>
 	<td class="summary">A message kind that contains a <a href="../modules/recorder.html#">Recorder</a> in the <code>payload</code>.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MSG_JSON">MSG_JSON</a></td>
+	<td class="summary">A general-purpose JSON message.</td>
+	</tr>
 </table>
 
 <br/>
@@ -366,6 +370,24 @@
 
 <p> <strong>Receiving:</strong> A new <a href="../modules/recorder.html#">Recorder</a> instance.  It still needs to
  be added to a <a href="../modules/scene.html#">Scene</a> and assigned an <a href="../modules/entity.html#">Entity</a>.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MSG_JSON"></a>
+    <strong>MSG_JSON</strong>
+    </dt>
+    <dd>
+    A general-purpose JSON message. </p>
+
+<p> <strong>Sending:</strong> Will encode <code>payload</code> into JSON.</p>
+
+<p> <strong>Receiving:</strong> Will decode the JSON and pass the decoded object as
+ the <code>payload</code>.
 
 
 

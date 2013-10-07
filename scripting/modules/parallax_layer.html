@@ -34,6 +34,7 @@
 <ul>
 <li><a href="#Properties">Properties </a></li>
 <li><a href="#Class_Methods">Class Methods </a></li>
+<li><a href="#Instance_Methods">Instance Methods </a></li>
 </ul>
 
 
@@ -93,12 +94,29 @@
 	<td class="summary">The pixel range across which to translate the <code>ParallaxLayer</code>
  against the <a href="../modules/camera.html#focal">camera.focal</a> <code>y</code> position.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#texture_size">texture_size</a></td>
+	<td class="summary"><em>(readonly)</em> A <code>{w, h}</code> vector representing the size of the layer's
+ texture in pixels.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#z">z</a></td>
+	<td class="summary">The <code>ParallaxLayer</code>'s z value.</td>
+	</tr>
 </table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#ParallaxLayer:new">ParallaxLayer:new&nbsp;(image)</a></td>
 	<td class="summary">Create a new <code>ParallaxLayer</code> by loading an image.</td>
+	</tr>
+</table>
+<h2><a href="#Instance_Methods">Instance Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#parallax_layer:p_cascade">parallax_layer:p_cascade&nbsp;(top, bottom)</a></td>
+	<td class="summary">Create a linear <a href="../modules/parallax_layer.html#p_factor">p_factor</a>  interpolation across the height of the
+ <code>ParallaxLayer</code>.</td>
 	</tr>
 </table>
 
@@ -181,6 +199,35 @@
 
 
 </dd>
+    <dt>
+    <a name = "texture_size"></a>
+    <strong>texture_size</strong>
+    </dt>
+    <dd>
+    <em>(readonly)</em> A <code>{w, h}</code> vector representing the size of the layer's
+ texture in pixels.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "z"></a>
+    <strong>z</strong>
+    </dt>
+    <dd>
+    The <code>ParallaxLayer</code>'s z value. </p>
+
+<p> Default <code>-180.0</code>
+
+
+
+
+
+
+</dd>
 </dl>
     <h2><a name="Class_Methods"></a>Class Methods </h2>
         Class Methods.
@@ -209,6 +256,41 @@
 
 
     </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Instance_Methods"></a>Instance Methods </h2>
+        Instance Methods.
+ Must be called on an instance of <code>Class</code>.
+ e.g. <code>instance:method("foo")</code>
+    <dl class="function">
+    <dt>
+    <a name = "parallax_layer:p_cascade"></a>
+    <strong>parallax_layer:p_cascade&nbsp;(top, bottom)</strong>
+    </dt>
+    <dd>
+    Create a linear <a href="../modules/parallax_layer.html#p_factor">p_factor</a>  interpolation across the height of the
+ <code>ParallaxLayer</code>. </p>
+
+<p> This allows fine-grained control over a layer's parallax behavior with
+ a simple interface. First, <code>p_cascade</code> will set the <a href="../modules/parallax_layer.html#p_factor">p_factor</a>  of the
+ layer to be MAX(<code>top</code>, <code>bottom</code>). Then it will interpolate between
+ the two values and set a parallax factor for each row of pixels in the
+ layer's texture.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">top</span>
+            <span class="types"><span class="type">number</span></span>
+         The p_factor for the top row of layer's pixels</li>
+        <li><span class="parameter">bottom</span>
+            <span class="types"><span class="type">number</span></span>
+         The p_factor for the bottom row of layer's pixels</li>
+    </ul>
+
 
 
 

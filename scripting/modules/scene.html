@@ -80,17 +80,9 @@
 <p> <code>Scene</code> is comparable to the idea of a "level" or "screen", but could be
  either of the two.</p>
 
-<p> The <code>Scene</code> renders its contents in a certain order, back to front:</p>
+<p> The <code>Scene</code> renders its contents in ascending Z order, back to front.</p>
 
-<ol>
-    <li><p><a href="../modules/scene.html#bg_color">bg_color</a> </p></li>
-    <li><p><a href="../modules/parallax.html#">parallax</a> </p></li>
-    <li><p>Tile Map</p></li>
-    <li><p>Added <a href="../modules/entity.html#">Entities</a>, ordered by <code>z_index</code></p></li>
-    <li><p>Debug rendering</p></li>
-    <li><p>Added <a href="../modules/overlay.html#">Overlays</a>, ordered by <code>z_index</code></p></li>
-    <li><p><a href="../modules/scene.html#cover_color">cover_color</a> </p></li>
-</ol>
+<p> Z values are in the range <code>-256.0</code> (back) to <code>0.0</code> (front)</p>
 
 <p> <a href="../modules/scene.html#">Scene</a> extends <a href="../modules/bound_object.html#">BoundObject</a></p>
 
@@ -100,6 +92,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#bg_color">bg_color</a></td>
 	<td class="summary">An <code>{r, g, b, a}</code> vector of the background color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bg_z">bg_z</a></td>
+	<td class="summary">The z value for the <code>Scene</code>'s background color rectangle.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#camera">camera</a></td>
@@ -178,7 +174,7 @@
 	<td class="summary">Stop the scene.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#scene:load_map">scene:load_map&nbsp;(map, meters_per_tile)</a></td>
+	<td class="name" nowrap><a href="#scene:load_map">scene:load_map&nbsp;(map, meters_per_tile, z)</a></td>
 	<td class="summary">Load a TMX tile map.</td>
 	</tr>
 </table>
@@ -239,6 +235,21 @@
     An <code>{r, g, b, a}</code> vector of the background color. </p>
 
 <p> Default <code>{0, 0, 0, 1}</code> (solid black)
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bg_z"></a>
+    <strong>bg_z</strong>
+    </dt>
+    <dd>
+    The z value for the <code>Scene</code>'s background color rectangle. </p>
+
+<p> Default <code>-256.0</code>
 
 
 
@@ -563,7 +574,7 @@
 </dd>
     <dt>
     <a name = "scene:load_map"></a>
-    <strong>scene:load_map&nbsp;(map, meters_per_tile)</strong>
+    <strong>scene:load_map&nbsp;(map, meters_per_tile, z)</strong>
     </dt>
     <dd>
     Load a TMX tile map.
@@ -578,6 +589,9 @@
             <span class="types"><span class="type">number</span></span>
          Length of the edge of a single tile in
  meters</li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         The z value of the map. Default <code>-150.0</code></li>
     </ul>
 
     <h3>Returns:</h3>

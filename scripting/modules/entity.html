@@ -121,8 +121,8 @@
 	<td class="summary">The <a href="../modules/sprite.html#">Sprite</a> linked with the <code>Entity</code></td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#z_index">z_index</a></td>
-	<td class="summary">Just like in CSS, the highest <a href="../modules/entity.html#z_index">z_index</a>  gets drawn in front.</td>
+	<td class="name" nowrap><a href="#z">z</a></td>
+	<td class="summary">The z position of the entity.</td>
 	</tr>
 </table>
 <h2><a href="#Class_Methods">Class Methods </a></h2>
@@ -285,11 +285,16 @@
 
 </dd>
     <dt>
-    <a name = "z_index"></a>
-    <strong>z_index</strong>
+    <a name = "z"></a>
+    <strong>z</strong>
     </dt>
     <dd>
-    Just like in CSS, the highest <a href="../modules/entity.html#z_index">z_index</a>  gets drawn in front.
+    The z position of the entity.  This only affects the order in which
+ the entity appears in relation to other rendered objects. This can be
+ between <code>0.0</code> (closest to the screen, in front) and <code>-256.0</code>
+ (farthest from the screen, in back).</p>
+
+<p> Default <code>-100.0</code>
 
 
 
