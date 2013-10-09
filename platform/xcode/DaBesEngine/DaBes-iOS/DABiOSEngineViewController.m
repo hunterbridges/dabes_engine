@@ -1,4 +1,5 @@
 #import <DaBes-iOS/DaBes-iOS.h>
+#import <GameController/GameController.h>
 #import "DABiOSEngineViewController.h"
 #import "DABProjectManager.h"
 #import "DABPlatformerControllerOverlayView.h"
@@ -53,6 +54,7 @@ char *bundlePath__;
 @property (nonatomic, assign) Engine *engine;
 @property (nonatomic, assign) Scene *scene;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) GCController *gcController;
 
 @property (nonatomic, assign) Input *touchInput;
 @property (nonatomic, assign) InputStyle currentInputStyle;
@@ -97,6 +99,17 @@ static DABiOSEngineViewController *sharediOSEngineVC = nil;
 
 - (void)viewDidLoad {
   [super viewDidLoad];
+  
+  if (NSClassFromString(@"GCController") != nil) {
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(setUpControllers)
+        name:GCControllerDidConnectNotification
+        object:nil];
+    [GCController startWirelessControllerDiscoveryWithCompletionHandler:nil];
+    [self setUpControllers];
+  }
+  
   bundlePath__ = (char *)[[NSString stringWithFormat:@"%@/",
                            [[NSBundle mainBundle] bundlePath]]
                  cStringUsingEncoding:NSASCIIStringEncoding];
@@ -306,6 +319,7 @@ static void iOS_input_change_preferred_style_cb(Input *input,
   if (!self.engine) return;
   
   Engine_regulate(engine_);
+  [self pollGcControllerState];
   Input_touch(engine_->input, self.touchInput);
   
   scene_ = Engine_get_current_scene(engine_);
@@ -373,6 +387,57 @@ static void iOS_input_change_preferred_style_cb(Input *input,
   Engine_destroy(engine_);
   self.engine = NULL;
   [self initEngine];
+}
+
+#pragma mark - Controllers
+
+- (void)setUpControllers {
+  self.gcController = [[GCController controllers] firstObject];
+  self.gcController.controllerPausedHandler = ^(GCController *controller) {
+    // Do pause stuff here.
+  };
+  
+  NSLog(@"See if this works: %@", self.gcController);
+}
+
+- (void)pollGcControllerState {
+  if (self.gcController) {
+    Controller *controller = self.touchInput->controllers[0];
+    controller->jump = self.gcController.gamepad.buttonA.pressed;
+    
+    GCControllerDirectionPad *dpad = self.gcController.gamepad.dpad;
+    GCControllerDirectionPad *leftAnalog = self.gcController.extendedGamepad.leftThumbstick;
+    if (dpad.up.pressed || leftAnalog.up.pressed) {
+      controller->dpad |= CONTROLLER_DPAD_UP;
+    } else {
+      controller->dpad &= ~(CONTROLLER_DPAD_UP);
+    }
+    
+    if (dpad.down.pressed || leftAnalog.down.pressed) {
+      controller->dpad |= CONTROLLER_DPAD_DOWN;
+    } else {
+      controller->dpad &= ~(CONTROLLER_DPAD_DOWN);
+    }
+    
+    if (dpad.left.pressed || leftAnalog.left.pressed) {
+      controller->dpad |= CONTROLLER_DPAD_LEFT;
+    } else {
+      controller->dpad &= ~(CONTROLLER_DPAD_LEFT);
+    }
+    
+    if (dpad.right.pressed || leftAnalog.right.pressed) {
+      controller->dpad |= CONTROLLER_DPAD_RIGHT;
+    } else {
+      controller->dpad &= ~(CONTROLLER_DPAD_RIGHT);
+    }
+    
+    /*
+    dpad.right.valueChangedHandler =
+        ^(GCControllerButtonInput *button, float value, BOOL pressed) {
+      
+        };
+     */
+  }
 }
 
 @end

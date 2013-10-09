@@ -28,6 +28,7 @@
 		CA363B6618020EEE004D7303 /* draw_event.c in Sources */ = {isa = PBXBuildFile; fileRef = CA363B6318020EEE004D7303 /* draw_event.c */; };
 		CA363B6718020EEE004D7303 /* draw_event.h in Headers */ = {isa = PBXBuildFile; fileRef = CA363B6418020EEE004D7303 /* draw_event.h */; };
 		CA363B6818020EEE004D7303 /* draw_event.h in Headers */ = {isa = PBXBuildFile; fileRef = CA363B6418020EEE004D7303 /* draw_event.h */; };
+		CA363BB31805F17E004D7303 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA363BB21805F17E004D7303 /* GameController.framework */; };
 		CA51FC821783659A000C73E0 /* DABiOSEngineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CA51FC801783659A000C73E0 /* DABiOSEngineViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA51FC831783659A000C73E0 /* DABiOSEngineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA51FC811783659A000C73E0 /* DABiOSEngineViewController.m */; };
 		CA69E37417E2E2E000E9CC98 /* shape_matcher_bindings.c in Sources */ = {isa = PBXBuildFile; fileRef = CA69E36E17E2E2E000E9CC98 /* shape_matcher_bindings.c */; };
@@ -526,6 +527,7 @@
 		CA30661317062E5D00629F80 /* tile_map_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile_map_parse.h; sourceTree = "<group>"; };
 		CA363B6318020EEE004D7303 /* draw_event.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = draw_event.c; sourceTree = "<group>"; };
 		CA363B6418020EEE004D7303 /* draw_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = draw_event.h; sourceTree = "<group>"; };
+		CA363BB21805F17E004D7303 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		CA382AB3177A45450049B645 /* stb_image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stb_image.c; sourceTree = "<group>"; };
 		CA382ABA177A45540049B645 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		CA3F99B8172F85E000ED1135 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = ../../../../third_party/OggVorbis/Ogg.framework; sourceTree = "<group>"; };
@@ -671,6 +673,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA363BB31805F17E004D7303 /* GameController.framework in Frameworks */,
 				CAB8494617EC337C00FCF11A /* libogg-iOS.a in Frameworks */,
 				CAB8494717EC337C00FCF11A /* libvorbis-iOS.a in Frameworks */,
 				CAFAF73B17EBB153002AA22A /* libChipmunk-iPhone.a in Frameworks */,
@@ -948,6 +951,7 @@
 		CA705CD3178359C500D2C6E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA363BB21805F17E004D7303 /* GameController.framework */,
 				CA3F99B8172F85E000ED1135 /* Ogg.framework */,
 				CA3F99B9172F85E000ED1135 /* Vorbis.framework */,
 			);
