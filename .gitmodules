@@ -1,16 +1,16 @@
 [submodule "submodules/liblcthw"]
 	path = submodules/liblcthw
-    url = git@github.com:hunterbridges/liblcthw.git
+    url = https://github.com/hunterbridges/liblcthw.git
     ignore = dirty
 [submodule "submodules/lua-ios-library"]
 	path = submodules/lua-ios-library
-	url = git@github.com:hunterbridges/lua-ios-library.git
+	url = https://github.com/hunterbridges/lua-ios-library.git
 [submodule "submodules/Fragaria"]
 	path = submodules/Fragaria
-	url = git@github.com:hunterbridges/Fragaria.git
+	url = https://github.com/hunterbridges/Fragaria.git
 [submodule "submodules/PSMTabBarControl"]
 	path = submodules/PSMTabBarControl
-	url = git@github.com:hunterbridges/PSMTabBarControl.git
+	url = https://github.com/hunterbridges/PSMTabBarControl.git
 [submodule "submodules/freetype2-ios"]
 	path = submodules/freetype2-ios
-	url = git@github.com:hunterbridges/freetype2-ios.git
+	url = https://github.com/hunterbridges/freetype2-ios.git
