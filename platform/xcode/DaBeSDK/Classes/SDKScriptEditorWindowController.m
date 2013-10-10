@@ -96,6 +96,8 @@
 }
 
 - (NSTabViewItem *)openPath:(NSString *)path andSelect:(BOOL)select {
+  if (path == nil) return nil;
+  
   for (NSTabViewItem *tabItem in self.tabView.tabViewItems) {
     SDKScriptTabModel *tabModel = tabItem.identifier;
     if ([tabModel.scriptEditor.path isEqualToString:path]) {
@@ -284,6 +286,9 @@
             tabModel = item.identifier;
         }
         [tabModel.scriptEditor setErrorLine:errorLine withMessage:errMsg];
+        if (tabModel == nil) {
+          NSLog(@"SCRIPT ERROR: %@", string);
+        }
     } @catch (NSException *exception) {
         SDKScriptTabModel *tabModel = nil;
         NSTabViewItem *item = [self.tabView selectedTabViewItem];

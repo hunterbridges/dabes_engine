@@ -113,8 +113,7 @@ int OggStream_play(OggStream *ogg_stream) {
           break;
         }
         ogg_stream->buf_count++;
-        if (sz < BUFFER_SIZE ||
-            ogg_stream->stream.end <= ogg_stream->buf_count * BUFFER_SIZE) {
+        if (sz < BUFFER_SIZE) {
             break;
         }
     }
@@ -212,11 +211,12 @@ int OggStream_buffer(OggStream *ogg_stream, ALuint buffer, size_t *sz) {
     if (size == 0) {
         return 0;
     }
+  /*
     if (size < BUFFER_SIZE) {
         log_info("OggStream_stream(): Buffer %u size %d < %d", buffer,
                  size, BUFFER_SIZE);
-      
     }
+   */
 
     alBufferData(buffer, ogg_stream->format, data, size,
             (ALsizei)ogg_stream->vorbis_info->rate);

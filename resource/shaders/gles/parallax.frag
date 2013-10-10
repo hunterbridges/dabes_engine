@@ -18,8 +18,14 @@ uniform float cascadeBottom;
 void main()
 {
   vec2 texCoord = textureVarying;
+  /*
   float cascade = mix(cascadeTop, cascadeBottom, texCoord.y);
-    
+   */
+  float slope = cascadeBottom - cascadeTop;
+  float snapY = texCoord.y - mod(texCoord.y, origPixel.y);
+  float cascade = cascadeTop + slope * snapY;
+  
+  
   texCoord.x = (cameraPos.x * parallaxFactor * cascade * texScale) +
     (xShift * texScale) - 0.618 + texCoord.x;
   texCoord.x = mod(texCoord.x, repeatSize.x) * repeatSize.y;

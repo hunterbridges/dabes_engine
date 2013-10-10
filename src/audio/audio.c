@@ -42,7 +42,7 @@ Audio *Audio_create() {
     audio->master_volume = 1.0;
     audio->music_volume = 1.0;
     audio->sfx_volume = 1.0;
-  
+
     audio->t_sleep_nano = 100000000L;
 
     Audio_t_create(audio);
@@ -109,7 +109,7 @@ void Audio_sweep(Audio *audio, Engine *engine) {
         if (sfx->ended) {
             ListNode *old = node;
             node = node->next;
-            Scripting_call_hook(engine->scripting, sfx, "ended");
+            Scripting_call_hook(engine->scripting, sfx, "_ended_private");
             List_remove(audio->active_sfx, old);
             Sfx_destroy(sfx);
             continue;
@@ -225,7 +225,7 @@ void *Audio_t_work(void *threadarg) {
 
     struct timespec tim, tim2;
     tim.tv_sec = 0;
-  
+
     int rc = 0;
     while (rc == 0) {
         rc = Audio_t_stream(audio);

@@ -397,6 +397,12 @@ static void iOS_input_change_preferred_style_cb(Input *input,
     // Do pause stuff here.
   };
   
+  // Use self.gcController.isAttachedToDevice to detect whether the
+  // controller is form-fitting or separated from the device.
+  //
+  // May need to modify UI for controllers that are not connected to device
+  // physically.
+  
   NSLog(@"See if this works: %@", self.gcController);
 }
 

@@ -24,6 +24,7 @@ typedef struct ChipmunkRecorderCtx {
     dab_int keyframe_every;
     ChipmunkRecorderFrame *prev_frame;
     ChipmunkRecorderFrame tracking_frame;
+    int was_rogue;
 } ChipmunkRecorderCtx;
 
 extern RecorderProto ChipmunkRecorderProto;
