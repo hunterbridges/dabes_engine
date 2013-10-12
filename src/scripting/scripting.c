@@ -63,7 +63,7 @@ int Scripting_handle_panic(lua_State *L) {
 }
 
 Scripting *Scripting_create(struct Engine *engine, const char *boot_script) {
-    Scripting *scripting = malloc(sizeof(Scripting));
+    Scripting *scripting = calloc(1, sizeof(Scripting));
     check(scripting != NULL, "Could not create scripting");
 
     scripting->L = luaL_newstate();

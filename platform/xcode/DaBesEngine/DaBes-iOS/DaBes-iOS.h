@@ -1169,10 +1169,11 @@ struct Engine;
 typedef struct NetProto {
     int (*init)(struct Net *net, struct Engine *engine);
     int (*cleanup)(struct Net *net);
+    int (*check_local_player)(struct Net *net, struct Engine *engine);
     int (*authenticate)(struct Net *net, struct Engine *engine);
     int (*authenticate_cb)(struct Net *net, struct Engine *engine);
     int (*find_matches)(struct Net *net, struct Engine *engine);
-    int (*find_matches_cb)(struct Net *net, struct Engine *engine, void *assoc);
+    int (*joined_match_cb)(struct Net *net, struct Engine *engine, void *assoc);
 } NetProto;
 
 typedef struct Net {

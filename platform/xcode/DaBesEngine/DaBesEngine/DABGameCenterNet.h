@@ -21,7 +21,7 @@
 
 - (id)initWithEngine:(Engine *)engine;
 
-- (void)authenticate;
+- (void)authenticate:(BOOL)active;
 - (void)findMatches;
 
 @end

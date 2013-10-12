@@ -19,6 +19,10 @@ Net *Net_create(struct Engine *engine) {
         net->_(init)(net, engine);
     }
   
+    if (net->proto.check_local_player) {
+        net->_(check_local_player)(net, engine);
+    }
+  
     return net;
 error:
     return NULL;
@@ -43,8 +47,9 @@ error:
 NetProto DefaultNetProto = {
     .init = NULL,
     .cleanup = NULL,
+    .check_local_player = NULL,
     .authenticate = NULL,
     .authenticate_cb = NULL,
     .find_matches = NULL,
-    .find_matches_cb = NULL,
+    .joined_match_cb = NULL,
 };

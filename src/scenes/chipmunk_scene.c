@@ -192,9 +192,9 @@ static void render_shape_iter(cpShape *shape, void *data) {
     int i = 0;
     cpVect *vert = pshape->verts;
     cpBody *body = cpShapeGetBody(shape);
-    cpVect center = {0, 0};
+    cpVect center;
     VPoint vcenter = {0, 0};
-    float rot = 0;
+    float rot;
     GLfloat color[4] = {1,1,1,1};
 
     rot = cpBodyGetAngle(body) * 180 / M_PI;

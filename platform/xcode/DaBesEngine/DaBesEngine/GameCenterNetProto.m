@@ -34,12 +34,23 @@ error:
     return 0;
 }
 
+int GameCenterNet_check_local_player(Net *net, Engine *engine) {
+    GameCenterNetCtx *ctx = net->context;
+    DABGameCenterNet *gcn = (__bridge DABGameCenterNet *)ctx->game_center_net;
+    
+    [gcn authenticate:NO];
+  
+    return 1;
+error:
+    return 0;
+}
+
 int GameCenterNet_authenticate(Net *net, Engine *engine) {
     GameCenterNetCtx *ctx = net->context;
     DABGameCenterNet *gcn = (__bridge DABGameCenterNet *)ctx->game_center_net;
     
-    [gcn authenticate];
-    
+    [gcn authenticate:YES];
+  
     return 1;
 error:
     return 0;
@@ -66,14 +77,14 @@ error:
     return 0;
 }
 
-int GameCenterNet_find_matches_cb(Net *net, Engine *engine, void *assoc) {
+int GameCenterNet_joined_match_cb(Net *net, Engine *engine, void *assoc) {
     check(net != NULL, "No Net for find_matches callback");
     
     if (assoc) {
         NetMatch *match = luaL_instantiate_netmatch(engine->scripting->L);
         match->_(associate_native)(match, assoc);
         
-        Scripting_call_dhook(engine->scripting, net, "found_match",
+        Scripting_call_dhook(engine->scripting, net, "joined_match",
                              LUA_TUSERDATA, match, nil);
         
         lua_pop(engine->scripting->L, 1);
@@ -89,8 +100,9 @@ error:
 NetProto GameCenterNetProto = {
     .init = GameCenterNet_init,
     .cleanup = GameCenterNet_cleanup,
+    .check_local_player = GameCenterNet_check_local_player,
     .authenticate = GameCenterNet_authenticate,
     .authenticate_cb = GameCenterNet_authenticate_cb,
     .find_matches = GameCenterNet_find_matches,
-    .find_matches_cb = GameCenterNet_find_matches_cb
+    .joined_match_cb = GameCenterNet_joined_match_cb
 };
