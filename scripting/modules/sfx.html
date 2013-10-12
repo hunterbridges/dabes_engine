@@ -92,6 +92,10 @@
 	<td class="name" nowrap><a href="#Sfx:new">Sfx:new&nbsp;(filename)</a></td>
 	<td class="summary">Create a new <code>Sfx</code> by loading an OGG file</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Sfx:oneshot">Sfx:oneshot&nbsp;(filename, volume, ended)</a></td>
+	<td class="summary">Helper function to immediately load and play a sound.</td>
+	</tr>
 </table>
 <h2><a href="#Instance_Methods">Instance Methods </a></h2>
 <table class="function_list">
@@ -147,6 +151,39 @@
         <li><span class="parameter">filename</span>
             <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
          The filename of the OGG file</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+          <span class="types"><span class="type">Sfx</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Sfx:oneshot"></a>
+    <strong>Sfx:oneshot&nbsp;(filename, volume, ended)</strong>
+    </dt>
+    <dd>
+    Helper function to immediately load and play a sound.
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filename</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         The filename of the OGG file</li>
+        <li><span class="parameter">volume</span>
+            <span class="types"><span class="type">number</span></span>
+         The volume to play the sound. Default <code>1.0</code></li>
+        <li><span class="parameter">ended</span>
+            <span class="types"><span class="type">function</span></span>
+         A callback that is fired when the Sfx ends</li>
     </ul>
 
     <h3>Returns:</h3>
