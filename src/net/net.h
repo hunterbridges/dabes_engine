@@ -21,6 +21,7 @@ typedef struct Net {
 
 Net *Net_create(struct Engine *engine);
 void Net_destroy(Net *net);
+void Net_check_local_player(Net *net, struct Engine *engine);
 
 extern NetProto DefaultNetProto;
 

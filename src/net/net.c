@@ -19,10 +19,6 @@ Net *Net_create(struct Engine *engine) {
         net->_(init)(net, engine);
     }
   
-    if (net->proto.check_local_player) {
-        net->_(check_local_player)(net, engine);
-    }
-  
     return net;
 error:
     return NULL;
@@ -40,6 +36,12 @@ void Net_destroy(Net *net) {
     return;
 error:
     return;
+}
+
+void Net_check_local_player(Net *net, struct Engine *engine) {
+    if (net->proto.check_local_player) {
+        net->_(check_local_player)(net, engine);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

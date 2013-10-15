@@ -105,8 +105,10 @@ void Music_set_loop(Music *music, int loop) {
 
 void Music_t_end(Music *music) {
     log_info("Music_t_end(): Ending music...");
-    alSourceStop(music->source);
-    Music_t_uninitialize(music);
+    if (music->initialized) {
+      alSourceStop(music->source);
+      Music_t_uninitialize(music);
+    }
     music->ended = 1;
 }
 

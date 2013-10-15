@@ -16,7 +16,7 @@ int luab_SpriteAnimation_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(SpriteAnimation_userdata));
     check(ud != NULL, "Could not make SpriteAnimation userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_SpriteAnimation_metatable);
     lua_setmetatable(L, -2);
 
@@ -85,7 +85,7 @@ int luab_Sprite_new(lua_State *L) {
     ud = lua_newuserdata(L, sizeof(Sprite_userdata));
     check(ud != NULL, "Could not make Sprite userdata");
     ud->p = NULL;
-  
+
     luaL_getmetatable(L, luab_Sprite_metatable);
     lua_setmetatable(L, -2);
 
@@ -153,6 +153,8 @@ error:
 
 Scripting_num_getter(Sprite, direction);
 Scripting_num_setter(Sprite, direction);
+Scripting_bool_getter(Sprite, manual_frames);
+Scripting_bool_setter(Sprite, manual_frames);
 
 int luab_Sprite_get_current_animation(lua_State *L) {
     Sprite *sprite = luaL_tosprite(L, 1);
@@ -176,6 +178,8 @@ static const struct luaL_Reg luab_Sprite_meths[] = {
     {"get_current_animation", luab_Sprite_get_current_animation},
     {"get_direction", luab_Sprite_get_direction},
     {"set_direction", luab_Sprite_set_direction},
+    {"get_manual_frames", luab_Sprite_get_manual_frames},
+    {"set_manual_frames", luab_Sprite_set_manual_frames},
     {NULL, NULL}
 };
 

@@ -1,6 +1,8 @@
 --- Assorted utility functions
 -- @module util
 
+require 'table'
+
 --- Global Functions.
 -- @section functions
 
@@ -72,5 +74,19 @@ end
 -- @treturn number
 function frame_ticks()
     return dab_engine.frame_ticks()
+end
+
+--- Return a copy of `table` containing the members for which `func` returns
+-- true.
+-- @treturn table
+function filter(t, func)
+    local newtable = {}
+    for i, v in ipairs(t) do
+        local keep = func(v)
+        if keep then
+            table.insert(newtable, v)
+        end
+    end
+    return newtable
 end
 

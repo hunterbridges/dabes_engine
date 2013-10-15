@@ -326,4 +326,14 @@ Scene = BoundObject:extend({
     -- @tparam Easer easer The `Easer` controlling the transition
     fade_out_effect = nil,
 
+    --- Called whenever a pair of bodies collides.
+    --
+    -- This only applies in the `chipmunk` scene.
+    --
+    -- @function bodies_collided
+    -- @tparam Scene scene The `Scene` instance
+    -- @tparam Body a
+    -- @tparam Body b
+    bodies_collided = function(self, a, b)
+    end
 })

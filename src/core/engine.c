@@ -53,6 +53,8 @@ Engine *Engine_create(Engine_resource_path_func path_func,
     engine->scripting = Scripting_create(engine, boot_script);
     check(engine == luaL_get_engine(engine->scripting->L),
             "Did not properly register engine in scripting subsystem");
+  
+    Net_check_local_player(engine->net, engine);
 
     engine->reg_initialized = 0;
     engine->frame_now = 0;

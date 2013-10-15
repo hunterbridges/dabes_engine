@@ -24,12 +24,20 @@ Sprite = BoundObject:extend({
         -- the sprite horizontally.
         --
         -- Default `0`
-        direction = BoundObject.fwd_func('get_direction')
+        direction = BoundObject.fwd_func('get_direction'),
+
+        --- **(bool)** Whether the sprite's frames should be controlled
+        -- manually.
+        --
+        -- If you set this to `true`, the sprite's frames will not be
+        -- updated automatically. Default is `false`.
+        manual_frames = BoundObject.fwd_func('get_manual_frames')
     },
 
     _setters = {
         current_animation = BoundObject.readonly,
-        direction = BoundObject.fwd_func('set_direction')
+        direction = BoundObject.fwd_func('set_direction'),
+        manual_frames = BoundObject.fwd_func('set_manual_frames'),
     },
 
 --- Class Methods.

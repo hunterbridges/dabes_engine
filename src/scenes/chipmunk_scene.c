@@ -21,6 +21,9 @@ typedef struct ChipmunkSceneTraverseCtx {
 } OCSTraverseCtx;
 
 typedef struct ChipmunkSceneCtx {
+    Scene *scene;
+    Engine *engine;
+  
     List *tile_shapes;
     cpSpace *space;
     BSTree *recorders;
@@ -87,8 +90,12 @@ void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
     scene->started = 0;
 }
 
-void ChipmunkScene_start(struct Scene *scene, Engine *UNUSED(engine)) {
+void ChipmunkScene_start(struct Scene *scene, Engine *engine) {
     ChipmunkSceneCtx *context = calloc(1, sizeof(ChipmunkSceneCtx));
+  
+    context->scene = scene;
+    context->engine = engine;
+  
     scene->context = context;
     context->tile_shapes = List_create();
     context->recorders = BSTree_create((BSTree_compare)strcmp);
@@ -331,24 +338,44 @@ error:
     return;
 }
 
-int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
-        void *UNUSED(data)) {
-    cpBody *eBody, *tBody;
-    cpArbiterGetBodies(arb, &eBody, &tBody);
-    Body *body = cpBodyGetUserData(eBody);
-    body->state.on_ground++;
-    return 1;
+static int coll_build_arb_data(lua_State *L, void *context) {
+  cpArbiter *arb = context;
+  
+  lua_newtable(L);
+  
+  // Total impulse
+  cpVect imp = cpArbiterTotalImpulse(arb);
+  lua_createtable(L, 2, 0);
+  lua_pushnumber(L, 1);
+  lua_pushnumber(L, imp.x);
+  lua_settable(L, -3);
+  lua_pushnumber(L, 2);
+  lua_pushnumber(L, imp.y);
+  lua_settable(L, -3);
+  lua_setfield(L, -2, "total_impulse");
+  
+  return 1;
 }
 
-void collision_seperate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
-        void *UNUSED(data)) {
-    cpBody *eBody, *tBody;
-    cpArbiterGetBodies(arb, &eBody, &tBody);
-    Body *body = cpBodyGetUserData(eBody);
-
-    body->state.on_ground--;
-    if (body->state.on_ground < 0) {
-        body->state.on_ground = 0;
+void collision_post_solve_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *data) {
+    cpBody *a_cpbody, *b_cpbody;
+    cpArbiterGetBodies(arb, &a_cpbody, &b_cpbody);
+    Body *a_body = cpBodyGetUserData(a_cpbody);
+    Body *b_body = cpBodyGetUserData(b_cpbody);
+    ChipmunkSceneCtx *ctx = data;
+  
+    if (cpArbiterIsFirstContact(arb)) {
+        Scripting_dhook_arg_closure closure = {
+            .function = coll_build_arb_data,
+            .context = arb
+        };
+        Scripting_call_dhook(ctx->engine->scripting, ctx->scene, "bodies_collided",
+                             LUA_TUSERDATA, a_body,
+                             LUA_TUSERDATA, b_body,
+                             LUA_TFUNCTION, &closure,
+                             NULL);
+      
     }
 }
 
@@ -540,8 +567,8 @@ int ChipmunkScene_create_space(Scene *scene, Engine *engine) {
     cpSpaceSetIdleSpeedThreshold(scene->space, 1.0);
 
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
-                               OCSCollisionTypeTile, collision_begin_cb, NULL,
-                               NULL, collision_seperate_cb, NULL);
+                               OCSCollisionTypeEntity, NULL, NULL,
+                               collision_post_solve_cb, NULL, context);
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
                                OCSCollisionTypeTile, sensor_coll_begin_cb, NULL,
                                NULL, sensor_coll_seperate_cb, NULL);

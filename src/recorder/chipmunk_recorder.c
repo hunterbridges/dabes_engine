@@ -149,20 +149,21 @@ error:
 }
 
 void ChipmunkRecorder_start_play_cb(struct Recorder *recorder) {
+    ChipmunkRecorderCtx *context = (ChipmunkRecorderCtx *)recorder->context;
+    context->was_manual_frames = recorder->entity->sprite->manual_frames;
     recorder->entity->sprite->manual_frames = 1;
     recorder->entity->auto_control = 1;
     Body *body = recorder->entity->body;
-  
-    ChipmunkRecorderCtx *context = (ChipmunkRecorderCtx *)recorder->context;
+
     context->was_rogue = body->_(get_is_rogue)(body);
     body->_(set_is_rogue)(body, 1);
 }
 
 void ChipmunkRecorder_stop_play_cb(struct Recorder *recorder) {
-    recorder->entity->sprite->manual_frames = 0;
-    recorder->entity->auto_control = 0;
-  
     ChipmunkRecorderCtx *context = (ChipmunkRecorderCtx *)recorder->context;
+    recorder->entity->sprite->manual_frames = context->was_manual_frames;
+    recorder->entity->auto_control = 0;
+
     Body *body = recorder->entity->body;
     body->_(set_is_rogue)(body, context->was_rogue);
 }
