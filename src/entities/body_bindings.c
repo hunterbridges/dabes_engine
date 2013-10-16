@@ -334,7 +334,7 @@ error:
 int luab_Body_set_collision_layers(lua_State *L) {
     Body *body = luaL_tobody(L, 1);
     check(body != NULL, "Body required");
-    int collision_layers = lua_tointeger(L, 2);
+    dab_uint32 collision_layers = (dab_uint32)lua_tointeger(L, 2);
     body->_(set_collision_layers)(body, collision_layers);
 
     return 0;

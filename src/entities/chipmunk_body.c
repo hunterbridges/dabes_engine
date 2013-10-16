@@ -141,14 +141,15 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
     cp_body->velocity_func = ChipmunkBody_update_velocity;
 
     cpShape *shape = cpBoxShapeNew(cp_body, w, h);
-    cpShapeSetBody(shape, cp_body);
     cpShapeSetCollisionType(shape, OCSCollisionTypeEntity);
     body->cp_shape = shape;
+  
+    body->collision_layers = CP_ALL_LAYERS;
 
     return 1;
 }
 
-void body_clear_shapes(cpBody *UNUSED(cpBody), cpShape *shape, void *data) {
+void body_clear_shapes(cpBody *cpBody, cpShape *shape, void *data) {
     Body *body = data;
     if (shape->space_private) {
       cpSpaceRemoveShape(shape->space_private, shape);
@@ -214,6 +215,7 @@ void ChipmunkBody_add_sensor(Body *body, Sensor *sensor) {
     cpShapeSetSensor(shape, 1);
     cpShapeSetUserData(shape, sensor);
     cpShapeSetCollisionType(shape, OCSCollisionTypeSensor);
+    cpShapeSetLayers(shape, body->collision_layers);
     sensor->body = body;
     sensor->cp_shape = shape;
 
@@ -223,7 +225,7 @@ void ChipmunkBody_add_sensor(Body *body, Sensor *sensor) {
     }
 }
 
-void ChipmunkBody_remove_sensor(Body *UNUSED(body), Sensor *sensor) {
+void ChipmunkBody_remove_sensor(Body *body, Sensor *sensor) {
     if (cpShapeGetSpace(sensor->cp_shape)) {
         cpSpaceRemoveShape(sensor->cp_space, sensor->cp_shape);
     }
@@ -269,6 +271,8 @@ void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset) {
     if (body->cp_space) {
         cpSpaceAddShape(body->cp_space, body->cp_shape);
     }
+  
+    cpShapeSetLayers(shape, body->collision_layers);
 
     GfxSize sz = {.w = w, .h = h};
     if (body->state.entity) {
@@ -402,9 +406,13 @@ int ChipmunkBody_get_collision_layers(Body *body) {
     return cpShapeGetLayers(body->cp_shape);
 }
 
-void ChipmunkBody_set_collision_layers(Body *body, int collision_layers) {
+void ChipmunkBody_set_collision_layers(Body *body, dab_uint32 collision_layers) {
     body->collision_layers = collision_layers;
     cpShapeSetLayers(body->cp_shape, collision_layers);
+    LIST_FOREACH(body->sensors, first, next, current) {
+        Sensor *sensor = current->value;
+        cpShapeSetLayers(sensor->cp_shape, collision_layers);
+    }
 }
 
 BodyProto ChipmunkBodyProto = {

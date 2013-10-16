@@ -1,6 +1,11 @@
 require 'table'
 require 'math'
 
+function isvpoint(x)
+    if type(x) ~= 'table' then return false end
+    return x._isvpoint == true
+end
+
 VPoint = {
     _isvpoint = true,
 
@@ -9,7 +14,7 @@ VPoint = {
     end,
 
     __add = function(a, b)
-        if not a._isvpoint or not b._isvpoint then
+        if not isvpoint(a) or not isvpoint(b) then
             error("Both operands must be a VPoint", 2)
         end
 
@@ -17,7 +22,7 @@ VPoint = {
     end,
 
     __sub = function(a, b)
-        if not a._isvpoint or not b._isvpoint then
+        if not isvpoint(a) or not isvpoint(b) then
             error("Both operands must be a VPoint", 2)
         end
 
@@ -25,17 +30,17 @@ VPoint = {
     end,
 
     __mul = function(a, b)
-        if a._isvpoint and b._isvpoint then
+        if isvpoint(a) and isvpoint(b) then
             return VPoint.new(a.x * b.x, a.y * b.y)
-        elseif a._isvpoint and not b._isvpoint then
+        elseif isvpoint(a) and type(b) == 'number' then
             return VPoint.new(a.x * b, a.y * b)
         end
     end,
 
     __div = function(a, b)
-        if a._isvpoint and b._isvpoint then
+        if isvpoint(a) and isvpoint(b) then
             error("Right operand must not be a VPoint", 2)
-        elseif a._isvpoint and not b._isvpoint then
+        elseif isvpoint(a) and type(b) == 'number' then
             return VPoint.new(a.x / b, a.y / b)
         end
     end,

@@ -161,7 +161,7 @@ cpBodyAddShape(cpBody *body, cpShape *shape)
 {
 	cpShape *next = body->shapeList;
 	if(next) next->prev = shape;
-	
+  
 	shape->next = next;
 	body->shapeList = shape;
 }
