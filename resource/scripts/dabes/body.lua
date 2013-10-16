@@ -146,6 +146,19 @@ Body = BoundObject:extend({
     -- @usage body:apply_force({100, 0}, {0, 0}) -- Push right
     apply_force = BoundObject.fwd_func("apply_force"),
 
+    --- Apply an impulse.
+    --
+    -- @function body:apply_impulse
+    -- @tparam table impulse An `{x, y}` vector of the impulse
+    -- (kg * m / s ^ 2).
+    --
+    -- @tparam table offset An `{x, y}` vector of the offset from center
+    -- the impulse is applied to (in respect to rotation).
+    --
+    -- @treturn nil
+    -- @usage body:apply_impulse({100, 0}, {0, 0}) -- Push right
+    apply_impulse = BoundObject.fwd_func("apply_impulse"),
+
     --- Set the `Body`'s collision box in relation to the `Body`'s dimensions.
     --
     -- @function body:set_hit_box

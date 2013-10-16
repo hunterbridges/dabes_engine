@@ -241,6 +241,10 @@ void ChipmunkBody_apply_force(Body *body, VPoint force, VPoint offset) {
     cpBodyApplyForce(body->cp_body, tocp(force), tocp(offset));
 }
 
+void ChipmunkBody_apply_impulse(Body *body, VPoint impulse, VPoint offset) {
+    cpBodyApplyImpulse(body->cp_body, tocp(impulse), tocp(offset));
+}
+
 void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset) {
     if (body->cp_space) {
         if (body->cp_shape) {
@@ -426,6 +430,7 @@ BodyProto ChipmunkBodyProto = {
     .remove_sensor = ChipmunkBody_remove_sensor,
 
     .apply_force = ChipmunkBody_apply_force,
+    .apply_impulse = ChipmunkBody_apply_impulse,
     .set_hit_box = ChipmunkBody_set_hit_box,
 
     .get_pos = ChipmunkBody_get_pos,

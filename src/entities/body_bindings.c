@@ -84,6 +84,18 @@ error:
     return 0;
 }
 
+int luab_Body_apply_impulse(lua_State *L) {
+    Body *body = luaL_tobody(L, 1);
+    check(body != NULL, "Body required");
+    VPoint impulse = luaL_tovpoint(L, 2);
+    VPoint offset = luaL_tovpoint(L, 3);
+    body->_(apply_impulse)(body, impulse, offset);
+
+    return 0;
+error:
+    return 0;
+}
+
 int luab_Body_set_hit_box(lua_State *L) {
     Body *body = luaL_tobody(L, 1);
     check(body != NULL, "Body required");
@@ -348,6 +360,7 @@ static const struct luaL_Reg luab_Body_meths[] = {
     {"add_sensor", luab_Body_add_sensor},
     {"remove_sensor", luab_Body_remove_sensor},
     {"apply_force", luab_Body_apply_force},
+    {"apply_impulse", luab_Body_apply_impulse},
     {"set_hit_box", luab_Body_set_hit_box},
     {"get_entity", luab_Body_get_entity},
     {"get_pos", luab_Body_get_pos},
