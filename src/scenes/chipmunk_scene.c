@@ -23,7 +23,7 @@ typedef struct ChipmunkSceneTraverseCtx {
 typedef struct ChipmunkSceneCtx {
     Scene *scene;
     Engine *engine;
-  
+
     List *tile_shapes;
     cpSpace *space;
     BSTree *recorders;
@@ -65,7 +65,7 @@ void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
             cpSpaceRemoveShape(scene->space, shape);
         }
         DArray_destroy(shapes);
-        
+
         DArray *bodies = DArray_create(sizeof(cpBody *), 128);
         cpSpaceEachBody(scene->space, remove_all_bodies_cb, bodies);
         for (i = 0; i < DArray_count(bodies); i++) {
@@ -92,10 +92,10 @@ void ChipmunkScene_stop(struct Scene *scene, Engine *engine) {
 
 void ChipmunkScene_start(struct Scene *scene, Engine *engine) {
     ChipmunkSceneCtx *context = calloc(1, sizeof(ChipmunkSceneCtx));
-  
+
     context->scene = scene;
     context->engine = engine;
-  
+
     scene->context = context;
     context->tile_shapes = List_create();
     context->recorders = BSTree_create((BSTree_compare)strcmp);
@@ -185,6 +185,7 @@ void ChipmunkScene_update(struct Scene *scene, Engine *engine) {
     while (Stepper_pop(engine->physics->stepper)) {
         ChipmunkScene_play_recorders(scene, engine);
         cpSpaceStep(scene->space, engine->physics->stepper->step_skip / 1000.0);
+        Scripting_call_hook(engine->scripting, scene, "postsolve");
         ChipmunkScene_record_recorders(scene, engine);
     }
 }
@@ -283,7 +284,7 @@ void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
         Graphics_use_shader(graphics, tshader);
         TileMap_render(scene->tile_map, graphics, scene->pixels_per_meter);
     }
-  
+
     Graphics_project_camera(graphics, scene->camera);
     Scene_render_entities(scene, engine);
     Scene_render_selected_entities(scene, engine);
@@ -291,7 +292,7 @@ void ChipmunkScene_render(struct Scene *scene, Engine *engine) {
     if (scene->canvas) {
         Canvas_render(scene->canvas, engine);
     }
-  
+
     Scene_render_overlays(scene, engine);
     Graphics_use_shader(graphics, dshader);
     Scene_fill(scene, engine, scene->cover_color, scene->cover_z, 0);
@@ -340,9 +341,9 @@ error:
 
 static int coll_build_arb_data(lua_State *L, void *context) {
   cpArbiter *arb = context;
-  
+
   lua_newtable(L);
-  
+
   // Total impulse
   cpVect imp = cpArbiterTotalImpulse(arb);
   lua_createtable(L, 2, 0);
@@ -353,7 +354,7 @@ static int coll_build_arb_data(lua_State *L, void *context) {
   lua_pushnumber(L, imp.y);
   lua_settable(L, -3);
   lua_setfield(L, -2, "total_impulse");
-  
+
   return 1;
 }
 
@@ -364,7 +365,7 @@ void collision_post_solve_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     Body *a_body = cpBodyGetUserData(a_cpbody);
     Body *b_body = cpBodyGetUserData(b_cpbody);
     ChipmunkSceneCtx *ctx = data;
-  
+
     if (cpArbiterIsFirstContact(arb)) {
         Scripting_dhook_arg_closure closure = {
             .function = coll_build_arb_data,
@@ -375,7 +376,7 @@ void collision_post_solve_cb(cpArbiter *arb, cpSpace *UNUSED(space),
                              LUA_TUSERDATA, b_body,
                              LUA_TFUNCTION, &closure,
                              NULL);
-      
+
     }
 }
 

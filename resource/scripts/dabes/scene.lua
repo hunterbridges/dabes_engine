@@ -335,5 +335,13 @@ Scene = BoundObject:extend({
     -- @tparam Body a
     -- @tparam Body b
     bodies_collided = function(self, a, b)
+    end,
+
+    --- Called after each step of the physics solve.
+    --
+    -- May be called multiple times per frame.
+    -- @function postsolve
+    -- @tparam Scene scene The `Scene` instance
+    postsolve = function(self)
     end
 })
