@@ -43,9 +43,14 @@ void ChipmunkBody_update_velocity(cpBody *body, cpVect gravity, cpFloat damping,
     GroundingContext_update(&context->grounding, body);
 
     // TODO: Fancier stuff
-    if (dab_body->is_rogue) return;
-  
     cpBodyUpdateVelocity(body, gravity, damping, dt);
+}
+
+void ChipmunkBody_update_position(cpBody *body, cpFloat dt) {
+    Body *dab_body = cpBodyGetUserData(body);
+  
+    if (dab_body->is_rogue) return;
+    cpBodyUpdatePosition(body, dt);
 }
 
 void ChipmunkBody_set_hit_box(Body *body, float w, float h, VPoint offset);
@@ -146,6 +151,7 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
     body->context = ctx;
     cpBodySetUserData(cp_body, body);
     cp_body->velocity_func = ChipmunkBody_update_velocity;
+    cp_body->position_func = ChipmunkBody_update_position;
 
     cpShape *shape = cpBoxShapeNew(cp_body, w, h);
     cpShapeSetCollisionType(shape, OCSCollisionTypeEntity);
@@ -382,16 +388,6 @@ int ChipmunkBody_get_is_rogue(Body *body) {
 void ChipmunkBody_set_is_rogue(Body *body, int is_rogue) {
     if (is_rogue == body->is_rogue) return;
     body->is_rogue = is_rogue;
-  
-    ChipmunkBodyContext *ctx = body->context;
-    if (is_rogue) {
-        ctx->pre_rogue_velo = cpBodyGetVel(body->cp_body);
-        cpBodySetVel(body->cp_body, cpvzero);
-    } else {
-        cpBodySetVel(body->cp_body, cpvadd(cpBodyGetVel(body->cp_body),
-                                           ctx->pre_rogue_velo));
-        ctx->pre_rogue_velo = cpvzero;
-    }
 
   /*
     if (is_rogue) {
