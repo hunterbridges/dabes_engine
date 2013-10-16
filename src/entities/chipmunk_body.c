@@ -33,6 +33,7 @@ void GroundingContext_update(GroundingContext *context, cpBody *body)
 
 typedef struct ChipmunkBodyContext {
     GroundingContext grounding;
+    cpVect pre_rogue_velo;
 } ChipmunkBodyContext;
 
 void ChipmunkBody_update_velocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
@@ -42,6 +43,8 @@ void ChipmunkBody_update_velocity(cpBody *body, cpVect gravity, cpFloat damping,
     GroundingContext_update(&context->grounding, body);
 
     // TODO: Fancier stuff
+    if (dab_body->is_rogue) return;
+  
     cpBodyUpdateVelocity(body, gravity, damping, dt);
 }
 
@@ -136,7 +139,11 @@ int ChipmunkBody_init(Body *body, float w, float h, float mass,
     float moment = (can_rotate ? cpMomentForBox(mass, w, h) : INFINITY);
     cpBody *cp_body = cpBodyNew(mass, moment);
     body->cp_body = cp_body;
-    body->context = calloc(1, sizeof(ChipmunkBodyContext));
+  
+    ChipmunkBodyContext *ctx = calloc(1, sizeof(ChipmunkBodyContext));
+    ctx->pre_rogue_velo = cpvzero;
+  
+    body->context = ctx;
     cpBodySetUserData(cp_body, body);
     cp_body->velocity_func = ChipmunkBody_update_velocity;
 
@@ -375,7 +382,18 @@ int ChipmunkBody_get_is_rogue(Body *body) {
 void ChipmunkBody_set_is_rogue(Body *body, int is_rogue) {
     if (is_rogue == body->is_rogue) return;
     body->is_rogue = is_rogue;
+  
+    ChipmunkBodyContext *ctx = body->context;
+    if (is_rogue) {
+        ctx->pre_rogue_velo = cpBodyGetVel(body->cp_body);
+        cpBodySetVel(body->cp_body, cpvzero);
+    } else {
+        cpBodySetVel(body->cp_body, cpvadd(cpBodyGetVel(body->cp_body),
+                                           ctx->pre_rogue_velo));
+        ctx->pre_rogue_velo = cpvzero;
+    }
 
+  /*
     if (is_rogue) {
         cpBodySetMass(body->cp_body, INFINITY);
         cpBodySetMoment(body->cp_body, INFINITY);
@@ -387,6 +405,7 @@ void ChipmunkBody_set_is_rogue(Body *body, int is_rogue) {
         if (body->cp_space)
             cpSpaceAddBody(body->cp_space, body->cp_body);
     }
+   */
 }
 
 int ChipmunkBody_get_is_static(Body *body) {

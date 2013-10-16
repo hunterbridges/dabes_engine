@@ -1851,6 +1851,7 @@ typedef struct BodyProto {
     void (*remove_sensor)(struct Body *body, struct Sensor *sensor);
 
     void (*apply_force)(struct Body *body, VPoint force, VPoint offset);
+    void (*apply_impulse)(struct Body *body, VPoint impulse, VPoint offset);
     void (*set_hit_box)(struct Body *body, float w, float h, VPoint offset);
 
     VPoint (*get_pos)(struct Body *body);
