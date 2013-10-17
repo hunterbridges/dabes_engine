@@ -388,6 +388,8 @@ int ChipmunkBody_get_is_rogue(Body *body) {
 void ChipmunkBody_set_is_rogue(Body *body, int is_rogue) {
     if (is_rogue == body->is_rogue) return;
     body->is_rogue = is_rogue;
+  
+    cpBodySetVel(body->cp_body, cpvzero);
 
   /*
     if (is_rogue) {
