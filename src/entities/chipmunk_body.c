@@ -43,7 +43,12 @@ void ChipmunkBody_update_velocity(cpBody *body, cpVect gravity, cpFloat damping,
     GroundingContext_update(&context->grounding, body);
 
     // TODO: Fancier stuff
-    cpBodyUpdateVelocity(body, gravity, damping, dt);
+    if (dab_body->is_rogue) {
+      cpBodyUpdateVelocity(body, cpvzero, 0, dt);
+    } else {
+      cpBodyUpdateVelocity(body, gravity, damping, dt);
+      
+    }
 }
 
 void ChipmunkBody_update_position(cpBody *body, cpFloat dt) {
@@ -389,8 +394,6 @@ void ChipmunkBody_set_is_rogue(Body *body, int is_rogue) {
     if (is_rogue == body->is_rogue) return;
     body->is_rogue = is_rogue;
   
-    cpBodySetVel(body->cp_body, cpvzero);
-
   /*
     if (is_rogue) {
         cpBodySetMass(body->cp_body, INFINITY);
