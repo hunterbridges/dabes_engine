@@ -125,7 +125,7 @@
 - (void)presentViewController:(VC_CLASS *)vc
 {
 #ifdef DABES_MAC
-    [[GKDialogController sharedDialogController] presentViewController:vc];
+    [[GKDialogController sharedDialogController] presentViewController:(NSViewController<GKViewController> *)vc];
 #endif
 #ifdef DABES_IOS
     [[DABiOSEngineViewController sharedInstance]

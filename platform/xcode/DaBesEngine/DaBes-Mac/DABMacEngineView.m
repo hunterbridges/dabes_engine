@@ -26,8 +26,24 @@ static unsigned short int keysDown[128];
     GLint swapInterval = 1;
     [[self openGLContext] setValues:&swapInterval
                        forParameter:NSOpenGLCPSwapInterval];
+    
+     [[NSNotificationCenter defaultCenter]
+         addObserver:self
+         selector:@selector(windowResignedKey:)
+         name:NSWindowDidResignKeyNotification
+         object:nil];
   }
   return self;
+}
+
+- (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)windowResignedKey:(NSNotification *)notif {
+  if (notif.object == self.window) {
+    self.touchInput->controllers[0]->dpad = CONTROLLER_DPAD_NONE;
+  }
 }
 
 - (void)update {

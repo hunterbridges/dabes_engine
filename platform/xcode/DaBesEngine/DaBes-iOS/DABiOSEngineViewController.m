@@ -150,6 +150,10 @@ static DABiOSEngineViewController *sharediOSEngineVC = nil;
   if (!engine_) [self initEngine];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+  self.touchInput->controllers[0]->dpad = CONTROLLER_DPAD_NONE;
+}
+
 - (void)primeThread {
   NSLog(@"Priming engine for multithreading...");
   if ([NSThread isMultiThreaded]) {

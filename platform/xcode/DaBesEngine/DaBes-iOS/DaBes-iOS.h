@@ -1183,6 +1183,7 @@ typedef struct Net {
 
 Net *Net_create(struct Engine *engine);
 void Net_destroy(Net *net);
+void Net_check_local_player(Net *net, struct Engine *engine);
 
 extern NetProto DefaultNetProto;
 
@@ -1850,6 +1851,7 @@ typedef struct BodyProto {
     void (*remove_sensor)(struct Body *body, struct Sensor *sensor);
 
     void (*apply_force)(struct Body *body, VPoint force, VPoint offset);
+    void (*apply_impulse)(struct Body *body, VPoint impulse, VPoint offset);
     void (*set_hit_box)(struct Body *body, float w, float h, VPoint offset);
 
     VPoint (*get_pos)(struct Body *body);
@@ -1873,7 +1875,7 @@ typedef struct BodyProto {
     int (*get_is_static)(struct Body *body);
     void (*set_is_static)(struct Body *body, int is_static);
     int (*get_collision_layers)(struct Body *body);
-    void (*set_collision_layers)(struct Body *body, int collision_layers);
+    void (*set_collision_layers)(struct Body *body, dab_uint32 collision_layers);
 
 } BodyProto;
 
@@ -1887,7 +1889,7 @@ typedef struct Body {
     cpShape *cp_shape;
     cpBody *cp_body;
 
-    int collision_layers;
+    dab_uint32 collision_layers;
     int is_rogue;
     int is_static;
     int can_rotate;

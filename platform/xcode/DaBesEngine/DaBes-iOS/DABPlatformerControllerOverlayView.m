@@ -42,6 +42,12 @@ static NSTimeInterval kDebounceDelay = 0.1;
                forControlEvents:UIControlEventTouchUpInside];
     [self.leftButton addTarget:self
                         action:@selector(buttonReleased:)
+              forControlEvents:UIControlEventTouchCancel];
+    [self.rightButton addTarget:self
+                         action:@selector(buttonReleased:)
+               forControlEvents:UIControlEventTouchCancel];
+    [self.leftButton addTarget:self
+                        action:@selector(buttonReleased:)
               forControlEvents:UIControlEventTouchUpOutside];
     [self.rightButton addTarget:self
                          action:@selector(buttonReleased:)
