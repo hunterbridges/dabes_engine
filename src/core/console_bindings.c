@@ -11,14 +11,33 @@ void concat_log_message(lua_State *L, bstring message) {
   bstring space = bfromcstr(" ");
   int i = 0;
   for (i = 0; i < c; i++) {
-    const char *str = lua_tostring(L, 1);
+    const char *str = NULL;
+    
+    lua_pushvalue(L, 1);
+    lua_remove(L, 1);
+    
+    if (lua_type(L, 1) == LUA_TSTRING) {
+      str = lua_tostring(L, -1);
+    } else {
+      lua_getglobal(L, "tostring");
+      lua_pushvalue(L, -2);
+      lua_remove(L, -3);
+      int rt = lua_pcall(L, 1, 1, 1);
+      if (rt == 0) {
+        str = lua_tostring(L, -1);
+      } else {
+        str = "<Could not convert arg to str>";
+      }
+    }
+    
     bstring bstr = bfromcstr(str);
     if (i > 0) {
       bconcat(message, space);
     }
     bconcat(message, bstr);
     bdestroy(bstr);
-    lua_remove(L, 1);
+    
+    lua_pop(L, 1);
   }
   bdestroy(space);
 }

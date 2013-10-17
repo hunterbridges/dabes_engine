@@ -334,7 +334,52 @@ Scene = BoundObject:extend({
     -- @tparam Scene scene The `Scene` instance
     -- @tparam Body a
     -- @tparam Body b
-    bodies_collided = function(self, a, b)
+    -- @tparam table info Additional info about the collision
+    -- @tparam boolean is_first_contact whether the collision step is first
+    -- contact between the two bodies
+    collision_begin = function(self, a, b, info, is_first_contact)
+    end,
+
+    --- Called pre-solve each step a pair of bodies is colliding
+    --
+    -- This only applies in the `chipmunk` scene.
+    --
+    -- @function bodies_collided
+    -- @tparam Scene scene The `Scene` instance
+    -- @tparam Body a
+    -- @tparam Body b
+    -- @tparam table info Additional info about the collision
+    -- @tparam boolean is_first_contact whether the collision step is first
+    -- contact between the two bodies
+    collision_pre_solve = function(self, a, b, info, is_first_contact)
+    end,
+
+    --- Called post-solve each step a pair of bodies is colliding
+    --
+    -- This only applies in the `chipmunk` scene.
+    --
+    -- @function bodies_collided
+    -- @tparam Scene scene The `Scene` instance
+    -- @tparam Body a
+    -- @tparam Body b
+    -- @tparam table info Additional info about the collision
+    -- @tparam boolean is_first_contact whether the collision step is first
+    -- contact between the two bodies
+    collision_post_solve = function(self, a, b, info, is_first_contact)
+    end,
+
+    --- Called when a pair of bodies separates
+    --
+    -- This only applies in the `chipmunk` scene.
+    --
+    -- @function bodies_collided
+    -- @tparam Scene scene The `Scene` instance
+    -- @tparam Body a
+    -- @tparam Body b
+    -- @tparam table info Additional info about the collision
+    -- @tparam boolean is_first_contact whether the collision step is first
+    -- contact between the two bodies
+    collision_separate = function(self, a, b, info, is_first_contact)
     end,
 
     --- Called after each step of the physics solve.

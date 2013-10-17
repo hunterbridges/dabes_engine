@@ -358,6 +358,50 @@ static int coll_build_arb_data(lua_State *L, void *context) {
   return 1;
 }
 
+int collision_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *data) {
+    cpBody *a_cpbody, *b_cpbody;
+    cpArbiterGetBodies(arb, &a_cpbody, &b_cpbody);
+    Body *a_body = cpBodyGetUserData(a_cpbody);
+    Body *b_body = cpBodyGetUserData(b_cpbody);
+    ChipmunkSceneCtx *ctx = data;
+
+    Scripting_dhook_arg_closure closure = {
+        .function = coll_build_arb_data,
+        .context = arb
+    };
+    int is_first = cpArbiterIsFirstContact(arb);
+    Scripting_call_dhook(ctx->engine->scripting, ctx->scene, "collision_begin",
+                         LUA_TUSERDATA, a_body,
+                         LUA_TUSERDATA, b_body,
+                         LUA_TFUNCTION, &closure,
+                         LUA_TBOOLEAN, is_first,
+                         NULL);
+    return 1;
+}
+
+int collision_pre_solve_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *data) {
+    cpBody *a_cpbody, *b_cpbody;
+    cpArbiterGetBodies(arb, &a_cpbody, &b_cpbody);
+    Body *a_body = cpBodyGetUserData(a_cpbody);
+    Body *b_body = cpBodyGetUserData(b_cpbody);
+    ChipmunkSceneCtx *ctx = data;
+
+    Scripting_dhook_arg_closure closure = {
+        .function = coll_build_arb_data,
+        .context = arb
+    };
+    int is_first = cpArbiterIsFirstContact(arb);
+    Scripting_call_dhook(ctx->engine->scripting, ctx->scene, "collision_pre_solve",
+                         LUA_TUSERDATA, a_body,
+                         LUA_TUSERDATA, b_body,
+                         LUA_TFUNCTION, &closure,
+                         LUA_TBOOLEAN, is_first,
+                         NULL);
+    return 1;
+}
+
 void collision_post_solve_cb(cpArbiter *arb, cpSpace *UNUSED(space),
         void *data) {
     cpBody *a_cpbody, *b_cpbody;
@@ -366,18 +410,38 @@ void collision_post_solve_cb(cpArbiter *arb, cpSpace *UNUSED(space),
     Body *b_body = cpBodyGetUserData(b_cpbody);
     ChipmunkSceneCtx *ctx = data;
 
-    if (cpArbiterIsFirstContact(arb)) {
-        Scripting_dhook_arg_closure closure = {
-            .function = coll_build_arb_data,
-            .context = arb
-        };
-        Scripting_call_dhook(ctx->engine->scripting, ctx->scene, "bodies_collided",
-                             LUA_TUSERDATA, a_body,
-                             LUA_TUSERDATA, b_body,
-                             LUA_TFUNCTION, &closure,
-                             NULL);
+    Scripting_dhook_arg_closure closure = {
+        .function = coll_build_arb_data,
+        .context = arb
+    };
+    int is_first = cpArbiterIsFirstContact(arb);
+    Scripting_call_dhook(ctx->engine->scripting, ctx->scene, "collision_post_solve",
+                         LUA_TUSERDATA, a_body,
+                         LUA_TUSERDATA, b_body,
+                         LUA_TFUNCTION, &closure,
+                         LUA_TBOOLEAN, is_first,
+                         NULL);
+}
 
-    }
+void collision_separate_cb(cpArbiter *arb, cpSpace *UNUSED(space),
+        void *data) {
+    cpBody *a_cpbody, *b_cpbody;
+    cpArbiterGetBodies(arb, &a_cpbody, &b_cpbody);
+    Body *a_body = cpBodyGetUserData(a_cpbody);
+    Body *b_body = cpBodyGetUserData(b_cpbody);
+    ChipmunkSceneCtx *ctx = data;
+
+    Scripting_dhook_arg_closure closure = {
+        .function = coll_build_arb_data,
+        .context = arb
+    };
+    int is_first = cpArbiterIsFirstContact(arb);
+    Scripting_call_dhook(ctx->engine->scripting, ctx->scene, "collision_separate",
+                         LUA_TUSERDATA, a_body,
+                         LUA_TUSERDATA, b_body,
+                         LUA_TFUNCTION, &closure,
+                         LUA_TBOOLEAN, is_first,
+                         NULL);
 }
 
 int sensor_coll_begin_cb(cpArbiter *arb, cpSpace *UNUSED(space),
@@ -568,8 +632,10 @@ int ChipmunkScene_create_space(Scene *scene, Engine *engine) {
     cpSpaceSetIdleSpeedThreshold(scene->space, 1.0);
 
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeEntity,
-                               OCSCollisionTypeEntity, NULL, NULL,
-                               collision_post_solve_cb, NULL, context);
+                               OCSCollisionTypeEntity, collision_begin_cb,
+                               collision_pre_solve_cb,
+                               collision_post_solve_cb,
+                               collision_separate_cb, context);
     cpSpaceAddCollisionHandler(scene->space, OCSCollisionTypeSensor,
                                OCSCollisionTypeTile, sensor_coll_begin_cb, NULL,
                                NULL, sensor_coll_seperate_cb, NULL);
