@@ -23,7 +23,9 @@
 
 @property (nonatomic, assign) BOOL didAuthenticate;
 @property (nonatomic, assign) BOOL didRegisterInviteHandler;
+@property (nonatomic, assign) BOOL didRegisterAuthHandler;
 @property (nonatomic, strong) GKMatch *currentMatch;
+@property (nonatomic, strong) VC_CLASS *loginVc;
 @property (nonatomic, strong) VC_CLASS *mmvc;
 
 @end
@@ -47,42 +49,39 @@
 
 - (void)authenticate:(BOOL)active
 {
-    if (self.didAuthenticate) {
+    if ([[GKLocalPlayer localPlayer] isAuthenticated]) {
       [self callAuthCallback];
       return;
+    } else {
+      if (self.loginVc && active) {
+        [self presentViewController:self.loginVc];
+        return;
+      }
     }
   
-    if ([GKLocalPlayer localPlayer].isAuthenticated) {
-        Net *net = self.engine->net;
-        net->_(authenticate_cb)(net, self.engine);
+    if (self.didRegisterAuthHandler) {
         return;
     }
-    
+  
     [GKLocalPlayer localPlayer].authenticateHandler =
         ^(VC_CLASS *viewController, NSError *error) {
             if (error) {
                 NSLog(@"%@", [error description]);
             }
           
-            if (viewController && active) {
-#ifdef DABES_MAC
-                [[GKDialogController sharedDialogController]
-                     presentViewController:(NSViewController<GKViewController> *)viewController];
-#endif
-#ifdef DABES_IOS
-                [[DABiOSEngineViewController sharedInstance]
-                     presentViewController:viewController
-                     animated:YES
-                     completion:^{
-                     
-                     }];
-#endif
-            } else {
-                if ([GKLocalPlayer localPlayer].isAuthenticated) {
-                    self.didAuthenticate = YES;
+            if (viewController) {
+                self.loginVc = viewController;
+                if (active) {
+                    [self presentViewController:viewController];
                 }
             }
+          
+            if (!error && !viewController) {
+                self.loginVc = nil;
+                self.didAuthenticate = YES;
+            }
         };
+    self.didRegisterAuthHandler = YES;
 }
 
 - (void)registerInviteHandler {
