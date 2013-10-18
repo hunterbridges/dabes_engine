@@ -167,7 +167,10 @@
 }
 
 - (void)joinMatch:(GKMatch *)match {
-  if (self.currentMatch == match) {
+   Net *net = self.engine->net;
+  Engine *engine = self.engine;
+  
+  if (match && self.currentMatch == match) {
       NSAssert(NO, @"Tried to join %@ twice", match);
   }
   
@@ -175,10 +178,13 @@
       // TODO: Cleanup previous match
   }
   
-  Net *net = self.engine->net;
-  Engine *engine = self.engine;
   self.currentMatch = match;
-  net->proto.joined_match_cb(net, engine, (__bridge void *)match);
+  
+  if (match) {
+      net->proto.joined_match_cb(net, engine, (__bridge void *)match);
+  } else {
+      net->proto.joined_match_cb(net, engine, NULL);
+  }
 }
 
 #pragma mark - Matchmaker Delegate
@@ -202,7 +208,9 @@
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
                 didFailWithError:(NSError *)error
 {
-    
+     [self dismiss:^{
+        [self joinMatch:nil];
+     }];
 }
 
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController
@@ -228,8 +236,7 @@
 - (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController
 {
     [self dismiss:^{
-        Net *net = self.engine->net;
-        net->_(joined_match_cb)(net, self.engine, NULL);
+        [self joinMatch:nil];
     }];
 }
 
