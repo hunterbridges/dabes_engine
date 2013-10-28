@@ -36,7 +36,19 @@ AABB = {
             return self.size.x
         elseif key == 4 or key == 'h' then
             return self.size.y
+        elseif key == 'tl' then
+            return self.origin
+        elseif key == 'tr' then
+            return VPoint.new(self.origin.x + self.size.x,
+                              self.origin.y)
+        elseif key == 'bl' then
+            return VPoint.new(self.origin.x,
+                              self.origin.y + self.size.y)
+        elseif key == 'br' then
+            return VPoint.new(self.origin.x + self.size.x,
+                              self.origin.y + self.size.y)
         end
+
         return rawget(AABB, key)
     end,
 
@@ -49,6 +61,70 @@ AABB = {
             self.size.x = value
         elseif key == 4 or key == 'h' then
             self.size.y = value
+        end
+    end,
+
+    contains = function(self, other)
+        if isvpoint(other) then
+            local br = self.br
+            local tl = self.tl
+
+            return (other.x <= br.x and
+                    other.x >= tl.x and
+                    other.y <= br.y and
+                    other.y >= tl.y)
+        elseif isaabb(other) then
+            local s_br = self.br
+            local s_tl = self.tl
+            local o_br = other.br
+            local o_tl = other.tl
+
+            return (o_br.x <= s_br.x and
+                    o_tl.x >= s_tl.x and
+                    o_br.y <= s_br.y and
+                    o_tl.y >= s_tl.y)
+        else
+            error("Second parameter must be VPoint or AABB", 2)
+        end
+    end,
+
+    intersects = function(self, other)
+        if isaabb(other) then
+            local s_br = self.br
+            local s_tl = self.tl
+            local o_br = other.br
+            local o_tl = other.tl
+
+            return (s_tl.x < o_br.x and
+                    s_br.x > o_tl.x and
+                    s_tl.y < o_br.y and
+                    s_br.y > o_tl.y)
+        else
+            error("Second parameter must be AABB", 2)
+        end
+    end,
+
+    area = function(self)
+        return self.size.x * self.size.y
+    end,
+
+    convert = function(self, other)
+        if isvpoint(other) then
+            return other - self.origin
+        elseif isaabb(other) then
+            return AABB.new(other.origin - self.origin, other.size)
+        else
+            error("Second parameter must be AABB or VPoint", 2)
+        end
+    end,
+
+    convert_from = function(self, other)
+        if isvpoint(other) then
+            return other + self.origin
+        elseif isaabb(other) then
+            return AABB.new(other.origin + self.origin, other.size)
+        else
+            error("Second parameter must be AABB or VPoint", 2)
         end
     end
 }
