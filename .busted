@@ -1,0 +1,7 @@
+return {
+    default = {
+        verbose = true,
+        ROOT = "tests/scripts",
+        lpath = "resource/scripts/?.lua;"
+    }
+}

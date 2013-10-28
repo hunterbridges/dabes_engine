@@ -10,7 +10,7 @@ VPoint = {
     _isvpoint = true,
 
     __unm = function(a)
-        return VPoint.new(-a.x, -b.y)
+        return VPoint.new(-a.x, -a.y)
     end,
 
     __add = function(a, b)
