@@ -11,6 +11,10 @@ AABB = {
 
     _isaabb = true,
 
+    __tostring = function(a)
+        return "<"..tostring(a.origin)..", "..tostring(a.size)..">"
+    end,
+
     __sub = function(a, b)
         if not isvpoint(b) then
             error("Second operand must be a VPoint", 2)
@@ -25,6 +29,13 @@ AABB = {
         end
 
         return AABB.new(a.origin + b, a.size)
+    end,
+
+    __eq = function(a, b)
+        if not isaabb(b) then
+            return false
+        end
+        return (a.origin == b.origin) and (a.size == b.size)
     end,
 
     __index = function(self, key)

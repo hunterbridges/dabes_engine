@@ -66,6 +66,16 @@ describe("VPoint", function()
             assert.are_equal(c.x, 0.5)
             assert.are_equal(c.y, 1)
         end)
+
+        it("should be able to test equivalence", function()
+            local a = VPoint.new(1, 1)
+            local b = VPoint.new(1, 1)
+            local c = VPoint.new(1, 2)
+            local d = 1
+            assert.is_true(a == b)
+            assert.is_false(a == c)
+            assert.is_false(a == d)
+        end)
     end)
 
     describe("methods", function()

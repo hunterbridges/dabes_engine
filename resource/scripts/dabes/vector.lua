@@ -9,6 +9,10 @@ end
 VPoint = {
     _isvpoint = true,
 
+    __tostring = function(a)
+        return "<"..a.x..", "..a.y..">"
+    end,
+
     __unm = function(a)
         return VPoint.new(-a.x, -a.y)
     end,
@@ -60,6 +64,13 @@ VPoint = {
         elseif key == 2 or key == 'y' then
             return rawset(self, 2, value)
         end
+    end,
+
+    __eq = function(a, b)
+        if not isvpoint(b) then
+            return false
+        end
+        return a.x == b.x and a.y == b.y
     end,
 
     mag = function(self)
