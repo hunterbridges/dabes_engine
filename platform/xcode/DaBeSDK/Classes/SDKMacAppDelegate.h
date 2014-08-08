@@ -41,4 +41,6 @@
 @property (assign) IBOutlet NSMenuItem *renderNormalItem;
 @property (assign) IBOutlet NSMenuItem *renderPhysicsItem;
 
+- (void)windowWillClose:(NSNotification *)notif;
+
 @end

@@ -21,6 +21,7 @@
 @end
 
 @implementation SDKPanner
+@synthesize enabled = _enabled;
 
 - (void)commonInit {
   NSBox *box = [[NSBox alloc] initWithFrame:self.bounds];

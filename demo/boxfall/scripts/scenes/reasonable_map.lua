@@ -95,6 +95,10 @@ ReasonableMap = Scene:extend({
         self.canvas.angle_color = {1, 1, 1, 1}
         self.canvas.shape_matcher = self.matcher
     end,
+    
+    main = function(self)
+    
+    end,
 
 -- Private
     gen_parallax = function()

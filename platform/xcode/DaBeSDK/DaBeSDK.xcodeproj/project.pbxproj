@@ -1028,11 +1028,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../../../include/**",
-					"$(SDKROOT)/usr/include/libxml2",
-					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
-					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
-					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
+					"\"$(PROJECT_DIR)/../../../include\"/**",
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"\"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include\"/**",
+					"\"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include\"/**",
+					"\"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include\"/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -1054,11 +1054,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DaBeSDK/DaBeSDK-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../../../include/**",
-					"$(SDKROOT)/usr/include/libxml2",
-					"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include/**",
-					"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include/**",
-					"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include/**",
+					"\"$(PROJECT_DIR)/../../../include\"/**",
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"\"$(PROJECT_DIR)/../../../submodules/freetype2-ios/include\"/**",
+					"\"$(PROJECT_DIR)/../../../third_party/libogg-1.3.1/include\"/**",
+					"\"$(PROJECT_DIR)/../../../third_party/libvorbis-1.3.3/include\"/**",
 				);
 				INFOPLIST_FILE = "DaBeSDK/DaBeSDK-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";

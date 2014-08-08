@@ -326,7 +326,7 @@
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
-  [[NSApp delegate] windowWillClose:notification];
+  [(SDKMacAppDelegate *)[NSApp delegate] windowWillClose:notification];
 }
   
 #pragma mark - Tab View Delegate

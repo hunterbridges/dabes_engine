@@ -1,7 +1,7 @@
 require 'set'
 require 'pathname'
 
-hfiles=`find #{ARGV[0]} -name "*.h"`.split("\n")
+hfiles=`find "#{ARGV[0]}" -name "*.h"`.split("\n")
 
 def depend_hfile(path, added, order, depth=[])
   pn = Pathname.new(path).cleanpath
